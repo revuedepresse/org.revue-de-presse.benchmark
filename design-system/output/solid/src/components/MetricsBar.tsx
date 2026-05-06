@@ -8,6 +8,7 @@ type MetricsBarProps = {
 import { t } from "../utils/i18n";
 import { formatCount } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
+import Icon from "./Icon";
 
 function MetricsBar(props: MetricsBarProps) {
   return (
@@ -23,7 +24,7 @@ function MetricsBar(props: MetricsBarProps) {
             props.locale ?? "fr-FR"
           )}
         >
-          💬
+          <Icon name="reply" size={16} decorative={true}></Icon>
           {formatCount(props.replies, props.locale ?? "fr-FR")}
         </span>
         <span
@@ -36,7 +37,7 @@ function MetricsBar(props: MetricsBarProps) {
             props.locale ?? "fr-FR"
           )}
         >
-          🔁
+          <Icon name="retweet" size={16} decorative={true}></Icon>
           {formatCount(props.reposts, props.locale ?? "fr-FR")}
         </span>
         <span
@@ -49,7 +50,8 @@ function MetricsBar(props: MetricsBarProps) {
             props.locale ?? "fr-FR"
           )}
         >
-          ❤{formatCount(props.likes, props.locale ?? "fr-FR")}
+          <Icon name="like-metric" size={16} decorative={true}></Icon>
+          {formatCount(props.likes, props.locale ?? "fr-FR")}
         </span>
         <style>{`
         .rdp-metrics-bar {

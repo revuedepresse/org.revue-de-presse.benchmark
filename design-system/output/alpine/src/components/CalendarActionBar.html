@@ -7,7 +7,7 @@
     class="rdp-calendar-action-bar__pill"
     x-on:click="onDateClick?.()"
   >
-    <span x-html="formatDate(date, 'shortDay', locale ?? 'fr-FR')"></span>
+    <span x-html="formatLegacyShortDay(date, locale ?? 'fr-FR')"></span>
   </button>
   <button
     type="button"

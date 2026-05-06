@@ -5,7 +5,7 @@
     x-bind:aria-label="t('web-intents.reply.aria-label')"
     x-on:click="onReply?.(postId)"
   >
-    ↩
+    <Icon name="reply" x-bind:size="24" x-bind:decorative="true"></Icon>
   </button>
   <button
     type="button"
@@ -13,7 +13,7 @@
     x-bind:aria-label="t('web-intents.repost.aria-label')"
     x-on:click="onRepost?.(postId)"
   >
-    🔁
+    <Icon name="retweet" x-bind:size="24" x-bind:decorative="true"></Icon>
   </button>
   <button
     type="button"
@@ -21,7 +21,7 @@
     x-bind:aria-label="t('web-intents.like.aria-label')"
     x-on:click="onLike?.(postId)"
   >
-    ♡
+    <Icon name="like-intent" x-bind:size="24" x-bind:decorative="true"></Icon>
   </button>
   <button
     type="button"
@@ -29,21 +29,22 @@
     x-bind:aria-label="t('web-intents.share.aria-label')"
     x-on:click="onShare?.(postId)"
   >
-    ↗
+    <Icon name="share" x-bind:size="24" x-bind:decorative="true"></Icon>
   </button>
   <style>
     <span x-html="`
             .rdp-web-intents { display: inline-flex; gap: var(--separation-2); }
             .rdp-web-intents__btn {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
               width: 24px;
               height: 24px;
+              padding: 0;
               background: transparent;
               border: none;
-              color: var(--color-light-grey);
               cursor: pointer;
-              font-size: 16px;
             }
-            .rdp-web-intents__btn:hover { color: var(--color-brand-active); }
           `"></span>
   </style>
 </div>

@@ -8,6 +8,7 @@ type MonthPickerProps = {
   onSelect?: (monthIndex: number) => void;
 };
 import { t } from "../utils/i18n";
+import { localizedMonthLong } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
 
 function MonthPicker(props: MonthPickerProps) {
@@ -16,10 +17,7 @@ function MonthPicker(props: MonthPickerProps) {
       {
         length: 12,
       },
-      (_, i) =>
-        new Intl.DateTimeFormat(props.locale ?? "fr-FR", {
-          month: "long",
-        }).format(new Date(props.year, i, 1))
+      (_, i) => localizedMonthLong(i, props.locale ?? "fr-FR")
     );
   }
 

@@ -45,10 +45,14 @@ export const Sidebar = component$((props: SidebarProps) => {
       <style>{`
         .rdp-sidebar {
           width: 336px;
+          max-width: 100%;
+          box-sizing: border-box;
           display: flex;
           flex-direction: column;
           gap: var(--separation-2);
+          min-width: 0;
         }
+        .rdp-sidebar > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
       `}</style>
     </aside>
   );

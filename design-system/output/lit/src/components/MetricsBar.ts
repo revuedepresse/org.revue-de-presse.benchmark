@@ -1,6 +1,7 @@
 import { t } from "../utils/i18n";
 import { formatCount } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
+import "./Icon.ts";
 
 import { LitElement, html, css } from "lit";
 import { customElement, property, state, query } from "lit/decorators";
@@ -32,8 +33,7 @@ export default class MetricsBar extends LitElement {
               count: this.replies,
             },
             this.locale ?? "fr-FR"
-          )} >
-                💬
+          )} ><my-icon  name="reply"  .size=${16}  .decorative=${true} ></my-icon>
         ${formatCount(this.replies, this.locale ?? "fr-FR")}</span>
         <span  aria-label=${t(
           "metrics.reposts.aria-label",
@@ -41,8 +41,7 @@ export default class MetricsBar extends LitElement {
             count: this.reposts,
           },
           this.locale ?? "fr-FR"
-        )} >
-                🔁
+        )} ><my-icon  name="retweet"  .size=${16}  .decorative=${true} ></my-icon>
         ${formatCount(this.reposts, this.locale ?? "fr-FR")}</span>
         <span  aria-label=${t(
           "metrics.likes.aria-label",
@@ -50,8 +49,7 @@ export default class MetricsBar extends LitElement {
             count: this.likes,
           },
           this.locale ?? "fr-FR"
-        )} >
-                ❤
+        )} ><my-icon  name="like-metric"  .size=${16}  .decorative=${true} ></my-icon>
         ${formatCount(this.likes, this.locale ?? "fr-FR")}</span>
         <style >${`
               .rdp-metrics-bar {

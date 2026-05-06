@@ -1,5 +1,5 @@
 import { t } from "../utils/i18n";
-import { formatDate } from "../utils/intl";
+import { formatLegacyShortDay } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
 
 import {
@@ -36,7 +36,7 @@ export class CalendarActionBar {
           type="button"
           onClick={() => this.dateClick?.()}
         >
-          {formatDate(this.date, "shortDay", this.locale ?? "fr-FR")}
+          {formatLegacyShortDay(this.date, this.locale ?? "fr-FR")}
         </button>
         <button
           class="rdp-calendar-action-bar__nav"

@@ -1,6 +1,7 @@
 import { t } from "../utils/i18n";
 import { formatCount } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
+import { Icon } from "./Icon";
 
 import { Component, h, Fragment, Prop } from "@stencil/core";
 
@@ -28,7 +29,7 @@ export class MetricsBar {
             this.locale ?? "fr-FR"
           )}
         >
-          💬
+          <icon name="reply" size={16} decorative={true}></icon>
           {formatCount(this.replies, this.locale ?? "fr-FR")}
         </span>
         <span
@@ -41,7 +42,7 @@ export class MetricsBar {
             this.locale ?? "fr-FR"
           )}
         >
-          🔁
+          <icon name="retweet" size={16} decorative={true}></icon>
           {formatCount(this.reposts, this.locale ?? "fr-FR")}
         </span>
         <span
@@ -54,7 +55,8 @@ export class MetricsBar {
             this.locale ?? "fr-FR"
           )}
         >
-          ❤{formatCount(this.likes, this.locale ?? "fr-FR")}
+          <icon name="like-metric" size={16} decorative={true}></icon>
+          {formatCount(this.likes, this.locale ?? "fr-FR")}
         </span>
         <style>{`
         .rdp-metrics-bar {

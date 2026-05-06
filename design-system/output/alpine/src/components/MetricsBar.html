@@ -5,7 +5,7 @@
   count: replies
 }, locale ?? 'fr-FR')"
   >
-    💬
+    <Icon name="reply" x-bind:size="16" x-bind:decorative="true"></Icon>
     <span x-html="formatCount(replies, locale ?? 'fr-FR')"></span>
   </span>
   <span
@@ -14,7 +14,7 @@
   count: reposts
 }, locale ?? 'fr-FR')"
   >
-    🔁
+    <Icon name="retweet" x-bind:size="16" x-bind:decorative="true"></Icon>
     <span x-html="formatCount(reposts, locale ?? 'fr-FR')"></span>
   </span>
   <span
@@ -23,7 +23,7 @@
   count: likes
 }, locale ?? 'fr-FR')"
   >
-    ❤
+    <Icon name="like-metric" x-bind:size="16" x-bind:decorative="true"></Icon>
     <span x-html="formatCount(likes, locale ?? 'fr-FR')"></span>
   </span>
   <style>
