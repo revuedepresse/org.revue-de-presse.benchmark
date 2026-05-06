@@ -1,0 +1,10 @@
+{
+  "name": "@revue-de-presse/design-system-provider-qwik",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "peerDependencies": {
+    "@builder.io/qwik": ">=1.5"
+  }
+}

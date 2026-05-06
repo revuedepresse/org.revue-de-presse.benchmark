@@ -1,0 +1,10 @@
+{
+  "name": "@revue-de-presse/design-system-provider-stencil",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/rdp-design-system-provider.tsx",
+  "types": "./src/rdp-design-system-provider.tsx",
+  "peerDependencies": {
+    "@stencil/core": ">=4"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "@revue-de-presse/design-system-provider-alpine",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "peerDependencies": {
+    "alpinejs": ">=3"
+  }
+}
