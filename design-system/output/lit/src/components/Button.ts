@@ -1,4 +1,5 @@
 import  { t } from '../utils/i18n';
+import './Icon.ts';
 import type { ButtonVariant, IconName } from '../types';
 
 
@@ -52,16 +53,16 @@ onClick?: () => void;
     render() {
       return html`
 
-          <button  class={`rdp-button rdp-button--${props.variant}`}  type="button"  data-loading=${this.loading ? 'true' : undefined}  .disabled=${this.disabled || this.loading}  aria-label=${this.ariaLabel}  @click=${(event) => this.onClick?.()} >${this.icon ?
-              html`<span >${this.icon}</span>`
+          <button  class={`rdp-button rdp-button--${props.variant}`}  type="button"  data-loading=${this.loading ? 'true' : undefined}  .disabled=${this.disabled || this.loading}  aria-label=${this.ariaLabel}  @click=${(event) => this.onClick?.()} >${!!this.icon ?
+              html`<span ><my-icon  .name=${this.icon!}  .size=${24}  .decorative=${true} ></my-icon></span>`
             : null}
         ${this.variant !== 'scrollTop' && this.variant !== 'avatar' ?
               html`<span >${this.labelKey ?
             html`${t(this.labelKey)}`
           : html`${this.label ?? ''}`}</span>`
             : null}
-        ${this.iconAfter ?
-              html`<span >${this.iconAfter}</span>`
+        ${!!this.iconAfter ?
+              html`<span ><my-icon  .name=${this.iconAfter!}  .size=${24}  .decorative=${true} ></my-icon></span>`
             : null}
         <style >${`
               .rdp-button {
