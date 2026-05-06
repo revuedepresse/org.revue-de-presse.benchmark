@@ -1,0 +1,54 @@
+<div class="rdp-web-intents" x-data="webIntents()">
+  <button
+    type="button"
+    class="rdp-web-intents__btn"
+    x-bind:aria-label="t('web-intents.reply.aria-label')"
+    x-on:click="onReply?.(postId)"
+  >
+    ↩
+  </button>
+  <button
+    type="button"
+    class="rdp-web-intents__btn"
+    x-bind:aria-label="t('web-intents.repost.aria-label')"
+    x-on:click="onRepost?.(postId)"
+  >
+    🔁
+  </button>
+  <button
+    type="button"
+    class="rdp-web-intents__btn"
+    x-bind:aria-label="t('web-intents.like.aria-label')"
+    x-on:click="onLike?.(postId)"
+  >
+    ♡
+  </button>
+  <button
+    type="button"
+    class="rdp-web-intents__btn"
+    x-bind:aria-label="t('web-intents.share.aria-label')"
+    x-on:click="onShare?.(postId)"
+  >
+    ↗
+  </button>
+  <style>
+    <span x-html="`
+            .rdp-web-intents { display: inline-flex; gap: var(--separation-2); }
+            .rdp-web-intents__btn {
+              width: 24px;
+              height: 24px;
+              background: transparent;
+              border: none;
+              color: var(--color-light-grey);
+              cursor: pointer;
+              font-size: 16px;
+            }
+            .rdp-web-intents__btn:hover { color: var(--color-brand-active); }
+          `"></span>
+  </style>
+</div>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("webIntents", () => ({}));
+  });
+</script>

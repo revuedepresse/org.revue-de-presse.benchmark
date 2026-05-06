@@ -1,0 +1,28 @@
+<a
+  x-data="link()"
+  x-bind:class="`rdp-link rdp-link--${variant ?? 'underline'}`"
+  x-bind:href="href"
+  x-bind:target="external ? '_blank' : undefined"
+  x-bind:rel="external ? 'noopener noreferrer' : undefined"
+>
+  <template x-if="labelKey">
+    <span x-html="t(labelKey)"></span>
+  </template>
+  <style>
+    <span x-html="`
+            .rdp-link {
+              color: var(--color-brand-active);
+              text-decoration: none;
+              font-family: 'Roboto', sans-serif;
+            }
+            .rdp-link--underline { text-decoration: underline; }
+            .rdp-link--plain { color: inherit; }
+            .rdp-link:hover { color: var(--color-brand); }
+          `"></span>
+  </style>
+</a>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("link", () => ({}));
+  });
+</script>

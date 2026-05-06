@@ -1,0 +1,22 @@
+<svg
+  class="rdp-icon"
+  viewBox="0 0 24 24"
+  x-data="icon()"
+  x-bind:width="size ?? 24"
+  x-bind:height="size ?? 24"
+  x-bind:aria-hidden="decorative ?? !ariaLabel ? 'true' : undefined"
+  x-bind:aria-label="decorative ?? !ariaLabel ? undefined : ariaLabel"
+  x-bind:role="decorative ?? !ariaLabel ? undefined : 'img'"
+>
+  <use x-bind:href="`#${name}`"></use>
+  <style>
+    <span x-html="`
+            .rdp-icon { display: inline-block; vertical-align: middle; color: currentColor; }
+          `"></span>
+  </style>
+</svg>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("icon", () => ({}));
+  });
+</script>
