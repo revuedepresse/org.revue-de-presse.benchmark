@@ -18,6 +18,7 @@ locale?: Locale;
   import  { t } from '../utils/i18n';
 import  { formatCount } from '../utils/intl';
 import type { Locale } from '../utils/i18n';
+import  Icon from './Icon.svelte';
 
 
 
@@ -49,11 +50,8 @@ export let likes: MetricsBarProps['likes'];
 
   <div  class="rdp-metrics-bar" ><span  class="rdp-metrics-bar__pill rdp-metrics-bar__pill--reply"  aria-label={t('metrics.replies.aria-label', {
 count: replies
-}, locale ?? 'fr-FR')} >
-      💬 {formatCount(replies, locale ?? 'fr-FR')}</span><span  class="rdp-metrics-bar__pill rdp-metrics-bar__pill--repost"  aria-label={t('metrics.reposts.aria-label', {
+}, locale ?? 'fr-FR')} ><Icon  name="reply"  size={16}  decorative={true} ></Icon>{formatCount(replies, locale ?? 'fr-FR')}</span><span  class="rdp-metrics-bar__pill rdp-metrics-bar__pill--repost"  aria-label={t('metrics.reposts.aria-label', {
 count: reposts
-}, locale ?? 'fr-FR')} >
-      🔁 {formatCount(reposts, locale ?? 'fr-FR')}</span><span  class="rdp-metrics-bar__pill rdp-metrics-bar__pill--like"  aria-label={t('metrics.likes.aria-label', {
+}, locale ?? 'fr-FR')} ><Icon  name="retweet"  size={16}  decorative={true} ></Icon>{formatCount(reposts, locale ?? 'fr-FR')}</span><span  class="rdp-metrics-bar__pill rdp-metrics-bar__pill--like"  aria-label={t('metrics.likes.aria-label', {
 count: likes
-}, locale ?? 'fr-FR')} >
-      ❤ {formatCount(likes, locale ?? 'fr-FR')}</span></div>
+}, locale ?? 'fr-FR')} ><Icon  name="like-metric"  size={16}  decorative={true} ></Icon>{formatCount(likes, locale ?? 'fr-FR')}</span></div>

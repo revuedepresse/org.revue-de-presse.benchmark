@@ -8,7 +8,7 @@ type CalendarActionBarProps = {
 };
 
 import { t } from "../utils/i18n";
-import { formatDate } from "../utils/intl";
+import { formatLegacyShortDay } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
 
 function CalendarActionBar(props: CalendarActionBarProps) {
@@ -24,7 +24,7 @@ function CalendarActionBar(props: CalendarActionBarProps) {
           type="button"
           onClick={(event) => props.onDateClick?.()}
         >
-          {formatDate(props.date, "shortDay", props.locale ?? "fr-FR")}
+          {formatLegacyShortDay(props.date, props.locale ?? "fr-FR")}
         </button>
         <button
           class="rdp-calendar-action-bar__nav"

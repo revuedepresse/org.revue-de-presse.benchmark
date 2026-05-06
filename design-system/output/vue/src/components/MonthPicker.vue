@@ -49,6 +49,7 @@
 import { computed } from "vue";
 
 import { t } from "../utils/i18n";
+import { localizedMonthLong } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
 
 type MonthPickerProps = {
@@ -65,10 +66,7 @@ const months = computed(() => {
     {
       length: 12,
     },
-    (_, i) =>
-      new Intl.DateTimeFormat(props.locale ?? "fr-FR", {
-        month: "long",
-      }).format(new Date(props.year, i, 1))
+    (_, i) => localizedMonthLong(i, props.locale ?? "fr-FR")
   );
 });
 </script>

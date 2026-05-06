@@ -11,8 +11,8 @@
           locale ?? 'fr-FR'
         )
       "
-    >
-      💬 {{ formatCount(replies, locale ?? "fr-FR") }}</span
+      ><Icon name="reply" :size="16" :decorative="true"></Icon
+      >{{ formatCount(replies, locale ?? "fr-FR") }}</span
     ><span
       class="rdp-metrics-bar__pill rdp-metrics-bar__pill--repost"
       :aria-label="
@@ -24,8 +24,8 @@
           locale ?? 'fr-FR'
         )
       "
-    >
-      🔁 {{ formatCount(reposts, locale ?? "fr-FR") }}</span
+      ><Icon name="retweet" :size="16" :decorative="true"></Icon
+      >{{ formatCount(reposts, locale ?? "fr-FR") }}</span
     ><span
       class="rdp-metrics-bar__pill rdp-metrics-bar__pill--like"
       :aria-label="
@@ -37,8 +37,8 @@
           locale ?? 'fr-FR'
         )
       "
-    >
-      ❤ {{ formatCount(likes, locale ?? "fr-FR") }}</span
+      ><Icon name="like-metric" :size="16" :decorative="true"></Icon
+      >{{ formatCount(likes, locale ?? "fr-FR") }}</span
     ><component :is="'style'">{{
       `
         .rdp-metrics-bar {
@@ -67,6 +67,7 @@
 import { t } from "../utils/i18n";
 import { formatCount } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
+import Icon from "./Icon.vue";
 
 type MetricsBarProps = {
   replies: number;

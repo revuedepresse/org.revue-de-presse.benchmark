@@ -2,6 +2,8 @@ import { Locale, t } from "../utils/i18n";
 
 import { formatCount } from "../utils/intl";
 
+import Icon from "./Icon.jsx";
+
 import { Fragment, component$, h } from "@builder.io/qwik";
 
 type MetricsBarProps = {
@@ -23,7 +25,8 @@ export const MetricsBar = component$((props: MetricsBarProps) => {
           props.locale ?? "fr-FR"
         )}
       >
-        💬 {formatCount(props.replies, props.locale ?? "fr-FR")}
+        <Icon name="reply" size={16} decorative={true}></Icon>
+        {formatCount(props.replies, props.locale ?? "fr-FR")}
       </span>
       <span
         class="rdp-metrics-bar__pill rdp-metrics-bar__pill--repost"
@@ -35,7 +38,8 @@ export const MetricsBar = component$((props: MetricsBarProps) => {
           props.locale ?? "fr-FR"
         )}
       >
-        🔁 {formatCount(props.reposts, props.locale ?? "fr-FR")}
+        <Icon name="retweet" size={16} decorative={true}></Icon>
+        {formatCount(props.reposts, props.locale ?? "fr-FR")}
       </span>
       <span
         class="rdp-metrics-bar__pill rdp-metrics-bar__pill--like"
@@ -47,7 +51,8 @@ export const MetricsBar = component$((props: MetricsBarProps) => {
           props.locale ?? "fr-FR"
         )}
       >
-        ❤ {formatCount(props.likes, props.locale ?? "fr-FR")}
+        <Icon name="like-metric" size={16} decorative={true}></Icon>
+        {formatCount(props.likes, props.locale ?? "fr-FR")}
       </span>
       <style>{`
         .rdp-metrics-bar {

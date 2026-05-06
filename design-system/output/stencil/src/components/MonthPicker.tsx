@@ -1,4 +1,5 @@
 import { t } from "../utils/i18n";
+import { localizedMonthLong } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
 
 import {
@@ -24,10 +25,7 @@ export class MonthPicker {
       {
         length: 12,
       },
-      (_, i) =>
-        new Intl.DateTimeFormat(this.locale ?? "fr-FR", {
-          month: "long",
-        }).format(new Date(this.year, i, 1))
+      (_, i) => localizedMonthLong(i, this.locale ?? "fr-FR")
     );
   }
 

@@ -1,5 +1,7 @@
 import { Locale, t } from "../utils/i18n";
 
+import { localizedMonthLong } from "../utils/intl";
+
 import { $, Fragment, component$, h, useComputed$ } from "@builder.io/qwik";
 
 type MonthPickerProps = {
@@ -14,10 +16,7 @@ export const MonthPicker = component$((props: MonthPickerProps) => {
       {
         length: 12,
       },
-      (_, i) =>
-        new Intl.DateTimeFormat(props.locale ?? "fr-FR", {
-          month: "long",
-        }).format(new Date(props.year, i, 1))
+      (_, i) => localizedMonthLong(i, props.locale ?? "fr-FR")
     );
   });
   const state: any = {};

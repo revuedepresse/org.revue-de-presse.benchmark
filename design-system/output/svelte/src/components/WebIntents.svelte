@@ -17,6 +17,7 @@ onShare?: (id: string) => void;
 
 
 import  { t } from '../utils/i18n';
+import  Icon from './Icon.svelte';
 
 
 
@@ -47,12 +48,4 @@ export let onShare: WebIntentsProps['onShare']= undefined;
 
 </script>
 
-<div  class="rdp-web-intents" ><button  type="button"  class="rdp-web-intents__btn"  aria-label={t('web-intents.reply.aria-label')}  on:click="{(event) => {onReply?.(postId)}}" >
-    ↩
-  </button><button  type="button"  class="rdp-web-intents__btn"  aria-label={t('web-intents.repost.aria-label')}  on:click="{(event) => {onRepost?.(postId)}}" >
-    🔁
-  </button><button  type="button"  class="rdp-web-intents__btn"  aria-label={t('web-intents.like.aria-label')}  on:click="{(event) => {onLike?.(postId)}}" >
-    ♡
-  </button><button  type="button"  class="rdp-web-intents__btn"  aria-label={t('web-intents.share.aria-label')}  on:click="{(event) => {onShare?.(postId)}}" >
-    ↗
-  </button></div>
+<div  class="rdp-web-intents" ><button  type="button"  class="rdp-web-intents__btn"  aria-label={t('web-intents.reply.aria-label')}  on:click="{(event) => {onReply?.(postId)}}" ><Icon  name="reply"  size={24}  decorative={true} ></Icon></button><button  type="button"  class="rdp-web-intents__btn"  aria-label={t('web-intents.repost.aria-label')}  on:click="{(event) => {onRepost?.(postId)}}" ><Icon  name="retweet"  size={24}  decorative={true} ></Icon></button><button  type="button"  class="rdp-web-intents__btn"  aria-label={t('web-intents.like.aria-label')}  on:click="{(event) => {onLike?.(postId)}}" ><Icon  name="like-intent"  size={24}  decorative={true} ></Icon></button><button  type="button"  class="rdp-web-intents__btn"  aria-label={t('web-intents.share.aria-label')}  on:click="{(event) => {onShare?.(postId)}}" ><Icon  name="share"  size={24}  decorative={true} ></Icon></button></div>

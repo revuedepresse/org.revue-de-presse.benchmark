@@ -1,3 +1,4 @@
+import { t } from './i18n';
 import type { Locale } from './i18n';
 
 export type DateKind = 'shortDay' | 'longDay' | 'monthYear' | 'iso';
@@ -18,4 +19,49 @@ export function formatCount(n: number, locale: Locale): string {
     notation: 'compact',
     maximumFractionDigits: 1,
   }).format(n);
+}
+
+const WEEKDAY_KEYS = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+] as const;
+
+const MONTH_KEYS = [
+  'january',
+  'february',
+  'march',
+  'april',
+  'may',
+  'june',
+  'july',
+  'august',
+  'september',
+  'october',
+  'november',
+  'december',
+] as const;
+
+export function localizedWeekdayShort(date: Date, locale: Locale): string {
+  return t(`calendar.weekdays.short.${WEEKDAY_KEYS[date.getDay()]}`, undefined, locale);
+}
+
+export function localizedMonthShort(monthIndex: number, locale: Locale): string {
+  return t(`calendar.months.short.${MONTH_KEYS[monthIndex]}`, undefined, locale);
+}
+
+export function localizedMonthLong(monthIndex: number, locale: Locale): string {
+  return t(`calendar.months.long.${MONTH_KEYS[monthIndex]}`, undefined, locale);
+}
+
+// Legacy "Ven. 2 Avr. 2021" composition — sourced from locale.json so the
+// abbreviations and casing match the legacy revue-de-presse.org rendering.
+export function formatLegacyShortDay(date: Date, locale: Locale): string {
+  const weekday = localizedWeekdayShort(date, locale);
+  const month = localizedMonthShort(date.getMonth(), locale);
+  return `${weekday} ${date.getDate()} ${month} ${date.getFullYear()}`;
 }

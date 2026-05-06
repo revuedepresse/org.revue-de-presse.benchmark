@@ -7,6 +7,7 @@ type WebIntentsProps = {
 };
 
 import { t } from "../utils/i18n";
+import Icon from "./Icon";
 
 function WebIntents(props: WebIntentsProps) {
   return (
@@ -18,7 +19,7 @@ function WebIntents(props: WebIntentsProps) {
           aria-label={t("web-intents.reply.aria-label")}
           onClick={(event) => props.onReply?.(props.postId)}
         >
-          ↩
+          <Icon name="reply" size={24} decorative={true}></Icon>
         </button>
         <button
           class="rdp-web-intents__btn"
@@ -26,7 +27,7 @@ function WebIntents(props: WebIntentsProps) {
           aria-label={t("web-intents.repost.aria-label")}
           onClick={(event) => props.onRepost?.(props.postId)}
         >
-          🔁
+          <Icon name="retweet" size={24} decorative={true}></Icon>
         </button>
         <button
           class="rdp-web-intents__btn"
@@ -34,7 +35,7 @@ function WebIntents(props: WebIntentsProps) {
           aria-label={t("web-intents.like.aria-label")}
           onClick={(event) => props.onLike?.(props.postId)}
         >
-          ♡
+          <Icon name="like-intent" size={24} decorative={true}></Icon>
         </button>
         <button
           class="rdp-web-intents__btn"
@@ -42,20 +43,21 @@ function WebIntents(props: WebIntentsProps) {
           aria-label={t("web-intents.share.aria-label")}
           onClick={(event) => props.onShare?.(props.postId)}
         >
-          ↗
+          <Icon name="share" size={24} decorative={true}></Icon>
         </button>
         <style>{`
         .rdp-web-intents { display: inline-flex; gap: var(--separation-2); }
         .rdp-web-intents__btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
           width: 24px;
           height: 24px;
+          padding: 0;
           background: transparent;
           border: none;
-          color: var(--color-light-grey);
           cursor: pointer;
-          font-size: 16px;
         }
-        .rdp-web-intents__btn:hover { color: var(--color-brand-active); }
       `}</style>
       </div>
     </>
