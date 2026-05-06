@@ -1,0 +1,35 @@
+name: design-system-ci
+
+on:
+  push:
+    branches: [main]
+    paths: ['design-system/**']
+  pull_request:
+    paths: ['design-system/**']
+
+jobs:
+  build-and-test:
+    name: build-and-test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: design-system
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: design-system/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Token sync check
+        run: node scripts/sync-tokens.mjs --check
+      - name: Mitosis build
+        run: pnpm build:mitosis
+      - name: Unit tests
+        run: pnpm test
+      - name: Type check
+        run: pnpm typecheck
