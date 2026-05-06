@@ -21,7 +21,7 @@
     "verify:visual": "node scripts/visual-regression.mjs"
   },
   "devDependencies": {
-    "@angular/common": "^18",
+    "@angular/common": "^19",
     "@angular/core": "^18",
     "@builder.io/mitosis": "^0.13.0",
     "@builder.io/mitosis-cli": "^0.13.0",
