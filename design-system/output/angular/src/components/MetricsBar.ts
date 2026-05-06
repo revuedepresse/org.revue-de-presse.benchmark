@@ -23,24 +23,24 @@ import type { Locale } from "../utils/i18n";
         [attr.aria-label]="t('metrics.replies.aria-label', {
           count: replies
         }, locale ?? 'fr-FR')"
-      >
-        💬 {{formatCount(replies, locale ?? 'fr-FR')}}</span
+        ><icon name="reply" [size]="16" [decorative]="true"></icon>
+        {{formatCount(replies, locale ?? 'fr-FR')}}</span
       >
       <span
         class="rdp-metrics-bar__pill rdp-metrics-bar__pill--repost"
         [attr.aria-label]="t('metrics.reposts.aria-label', {
           count: reposts
         }, locale ?? 'fr-FR')"
-      >
-        🔁 {{formatCount(reposts, locale ?? 'fr-FR')}}</span
+        ><icon name="retweet" [size]="16" [decorative]="true"></icon>
+        {{formatCount(reposts, locale ?? 'fr-FR')}}</span
       >
       <span
         class="rdp-metrics-bar__pill rdp-metrics-bar__pill--like"
         [attr.aria-label]="t('metrics.likes.aria-label', {
           count: likes
         }, locale ?? 'fr-FR')"
-      >
-        ❤ {{formatCount(likes, locale ?? 'fr-FR')}}</span
+        ><icon name="like-metric" [size]="16" [decorative]="true"></icon>
+        {{formatCount(likes, locale ?? 'fr-FR')}}</span
       >
       <style>
         {{\`
@@ -85,7 +85,7 @@ export default class MetricsBar {
 
 @NgModule({
   declarations: [MetricsBar],
-  imports: [CommonModule],
+  imports: [CommonModule, IconModule],
   exports: [MetricsBar],
 })
 export class MetricsBarModule {}

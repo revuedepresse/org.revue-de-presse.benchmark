@@ -16,6 +16,7 @@ onSelect?: (monthIndex: number) => void;
 
 
   import  { t } from '../utils/i18n';
+import  { localizedMonthLong } from '../utils/intl';
 import type { Locale } from '../utils/i18n';
 
 
@@ -33,9 +34,7 @@ export let onSelect: MonthPickerProps['onSelect']= undefined;
     $: months = () => {
 return Array.from({
   length: 12
-}, (_, i) => new Intl.DateTimeFormat(locale ?? 'fr-FR', {
-  month: 'long'
-}).format(new Date(year, i, 1)));
+}, (_, i) => localizedMonthLong(i, locale ?? 'fr-FR'));
 };
 
 

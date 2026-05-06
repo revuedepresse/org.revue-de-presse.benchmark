@@ -13,7 +13,7 @@ type CalendarActionBarProps = {
 };
 
 import { t } from "../utils/i18n";
-import { formatDate } from "../utils/intl";
+import { formatLegacyShortDay } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
 
 @Component({
@@ -27,7 +27,7 @@ import type { Locale } from "../utils/i18n";
         class="rdp-calendar-action-bar__pill"
         (click)="onDateClick?.()"
       >
-        {{formatDate(date, 'shortDay', locale ?? 'fr-FR')}}
+        {{formatLegacyShortDay(date, locale ?? 'fr-FR')}}
       </button>
       <button
         type="button"
@@ -91,7 +91,7 @@ import type { Locale } from "../utils/i18n";
 })
 export default class CalendarActionBar {
   t = t;
-  formatDate = formatDate;
+  formatLegacyShortDay = formatLegacyShortDay;
 
   @Input() position!: CalendarActionBarProps["position"];
   @Input() onDateClick!: CalendarActionBarProps["onDateClick"];

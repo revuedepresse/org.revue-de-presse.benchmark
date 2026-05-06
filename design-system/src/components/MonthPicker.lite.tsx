@@ -1,5 +1,6 @@
 import { useStore } from '@builder.io/mitosis';
 import { t } from '../utils/i18n';
+import { localizedMonthLong } from '../utils/intl';
 import type { Locale } from '../utils/i18n';
 
 type MonthPickerProps = {
@@ -13,9 +14,7 @@ export default function MonthPicker(props: MonthPickerProps) {
   const state = useStore({
     get months(): string[] {
       return Array.from({ length: 12 }, (_, i) =>
-        new Intl.DateTimeFormat(props.locale ?? 'fr-FR', { month: 'long' }).format(
-          new Date(props.year, i, 1)
-        )
+        localizedMonthLong(i, props.locale ?? 'fr-FR')
       );
     },
   });

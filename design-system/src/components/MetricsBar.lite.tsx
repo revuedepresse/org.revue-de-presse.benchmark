@@ -1,6 +1,7 @@
 import { t } from '../utils/i18n';
 import { formatCount } from '../utils/intl';
 import type { Locale } from '../utils/i18n';
+import Icon from './Icon.lite';
 
 type MetricsBarProps = {
   replies: number;
@@ -16,19 +17,22 @@ export default function MetricsBar(props: MetricsBarProps) {
         class="rdp-metrics-bar__pill rdp-metrics-bar__pill--reply"
         aria-label={t('metrics.replies.aria-label', { count: props.replies }, props.locale ?? 'fr-FR')}
       >
-        💬 {formatCount(props.replies, props.locale ?? 'fr-FR')}
+        <Icon name="reply" size={16} decorative={true} />
+        {formatCount(props.replies, props.locale ?? 'fr-FR')}
       </span>
       <span
         class="rdp-metrics-bar__pill rdp-metrics-bar__pill--repost"
         aria-label={t('metrics.reposts.aria-label', { count: props.reposts }, props.locale ?? 'fr-FR')}
       >
-        🔁 {formatCount(props.reposts, props.locale ?? 'fr-FR')}
+        <Icon name="retweet" size={16} decorative={true} />
+        {formatCount(props.reposts, props.locale ?? 'fr-FR')}
       </span>
       <span
         class="rdp-metrics-bar__pill rdp-metrics-bar__pill--like"
         aria-label={t('metrics.likes.aria-label', { count: props.likes }, props.locale ?? 'fr-FR')}
       >
-        ❤ {formatCount(props.likes, props.locale ?? 'fr-FR')}
+        <Icon name="like-metric" size={16} decorative={true} />
+        {formatCount(props.likes, props.locale ?? 'fr-FR')}
       </span>
       <style>{`
         .rdp-metrics-bar {
