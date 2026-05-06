@@ -6,6 +6,9 @@ import { fileURLToPath, URL } from 'node:url';
 export default defineConfig({
   plugins: [HstVue()],
   storyMatch: ['stories/**/*.story.vue'],
+  setupFile: {
+    browser: '/stories/setup.ts',
+  },
   vite: {
     plugins: [vue()],
     resolve: {
