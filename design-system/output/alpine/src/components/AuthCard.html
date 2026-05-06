@@ -1,0 +1,89 @@
+<section  class="rdp-auth-card"  x-data="authCard()" ><template x-if="flow === 'confirm' && !!noticeKey">
+    <Notice  x-bind:headlineKey="noticeKey.headline"  x-bind:bodyKey="noticeKey.body" ></Notice>
+    </template>
+<template x-if="flow !== 'confirm'">
+    <div  class="rdp-auth-card__panel" ><h2  class="rdp-auth-card__title" ><span x-html="t(`auth.${flow}.title`)"></span></h2>
+<template x-if="flow === 'reset'">
+    <p ><span x-html="t('auth.reset.body')"></span></p>
+    </template>
+<template x-if="flow === 'login' || flow === 'signup' || flow === 'reset' || flow === 'edit-email'">
+    <EmailField  name="email"  x-bind:value="email"  x-on:change="email = v"></EmailField>
+    </template>
+<template x-if="flow === 'login'">
+    <PasswordField  name="password"  mode="login"  x-bind:value="password"  x-on:change="password = v"></PasswordField>
+<Checkbox  name="rememberMe"  labelKey="auth.remember-me"  x-bind:checked="rememberMe"  x-on:change="rememberMe = v"></Checkbox>
+    </template>
+<template x-if="flow === 'signup'">
+    <PasswordField  name="password"  mode="new"  x-bind:value="password"  x-on:change="password = v"></PasswordField>
+<Checkbox  name="tos"  labelKey="auth.tos.checkbox-label"  x-bind:checked="tos"  x-on:change="tos = v"></Checkbox>
+    </template>
+<template x-if="flow === 'edit-email'">
+    <PasswordField  name="currentPassword"  mode="login"  labelKey="auth.edit-email.current-password-label"  x-bind:value="currentPassword"  x-on:change="currentPassword = v"></PasswordField>
+    </template>
+<template x-if="flow === 'edit-password'">
+    <PasswordField  name="currentPassword"  mode="login"  labelKey="auth.edit-password.current-label"  x-bind:value="currentPassword"  x-on:change="currentPassword = v"></PasswordField>
+<PasswordField  name="newPassword"  mode="new"  labelKey="auth.edit-password.new-label"  x-bind:value="newPassword"  x-on:change="newPassword = v"></PasswordField>
+<PasswordField  name="confirmPassword"  mode="new"  labelKey="auth.edit-password.confirm-label"  x-bind:value="confirmPassword"  x-on:change="confirmPassword = v" x-bind:showHelper="false" ></PasswordField>
+    </template>
+<Button  variant="form"  x-bind:labelKey="`auth.${flow}.submit-label`"  x-on:click="submit()"></Button>
+<template x-if="!!formErrors && formErrors.length > 0">
+    <FormError  x-bind:errors="formErrors" ></FormError>
+    </template>
+<template x-if="flow === 'login'">
+    <Link  href="#"  labelKey="auth.login.forgot-password" ></Link>
+    </template></div>
+    </template>
+<style ><span x-html="`
+        .rdp-auth-card { display: grid; gap: var(--separation-2); }
+        .rdp-auth-card__panel {
+          background: var(--color-white);
+          padding: var(--separation-3);
+          border-radius: var(--radius-default);
+          display: grid;
+          gap: var(--separation-1);
+          font-family: 'Roboto', sans-serif;
+        }
+        .rdp-auth-card__title {
+          margin: 0;
+          font-family: 'Signika', sans-serif;
+          color: var(--color-content-text);
+          text-align: center;
+        }
+      `"></span></style></section><script>
+          document.addEventListener('alpine:init', () => {
+  Alpine.data('authCard', () => ({
+    email: '',
+    password: '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+    rememberMe: false,
+    tos: false,
+    submit() {
+      const values = {};
+      if (props.flow === 'login') {
+        values.email = this.email;
+        values.password = this.password;
+        values.rememberMe = this.rememberMe;
+      } else if (props.flow === 'signup') {
+        values.email = this.email;
+        values.password = this.password;
+        values.tos = this.tos;
+      } else if (props.flow === 'reset') {
+        values.email = this.email;
+      } else if (props.flow === 'edit-email') {
+        values.email = this.email;
+        values.currentPassword = this.currentPassword;
+      } else if (props.flow === 'edit-password') {
+        values.currentPassword = this.currentPassword;
+        values.newPassword = this.newPassword;
+        values.confirmPassword = this.confirmPassword;
+      }
+      props.onSubmit?.({
+        flow: props.flow,
+        values
+      });
+    }
+  }));
+});
+        </script>

@@ -1,0 +1,118 @@
+<div
+  role="dialog"
+  x-data="calendar()"
+  x-bind:class="`rdp-calendar rdp-calendar--${presentation ?? 'inline'}`"
+  x-bind:aria-modal="presentation === 'sheet' ? 'true' : 'false'"
+>
+  <template x-if="presentation === 'sheet'">
+    <div
+      class="rdp-calendar__scrim"
+      aria-hidden="true"
+      x-on:click="onDismiss?.()"
+    ></div>
+  </template>
+  <div class="rdp-calendar__panel">
+    <CalendarActionBar
+      position="top"
+      x-bind:date="selectedDate"
+      x-bind:locale="locale"
+      x-on:date-click="setView('month')"
+      x-on:prev="prev()"
+      x-on:next="next()"
+    ></CalendarActionBar>
+    <template x-if="viewMode === 'day'">
+      <DateGrid
+        x-bind:year="focusedYear"
+        x-bind:month="focusedMonth"
+        x-bind:selectedDate="selectedDate"
+        x-bind:locale="locale"
+        x-on:select="selectDay(d)"
+      ></DateGrid>
+    </template>
+    <template x-if="viewMode === 'month'">
+      <MonthPicker
+        x-bind:year="focusedYear"
+        x-bind:selectedMonth="focusedMonth"
+        x-bind:locale="locale"
+        x-on:select="selectMonth(idx)"
+      ></MonthPicker>
+    </template>
+    <template x-if="viewMode === 'year'">
+      <YearPicker
+        x-bind:yearRange="yearRange"
+        x-bind:selectedYear="focusedYear"
+        x-on:select="selectYear(y)"
+      ></YearPicker>
+    </template>
+  </div>
+  <style>
+    <span x-html="`
+            .rdp-calendar { font-family: 'Roboto', sans-serif; }
+            .rdp-calendar--inline {
+              background: var(--color-white);
+              border: 1px solid var(--color-border);
+              border-radius: var(--radius-default);
+              padding: var(--separation-2);
+            }
+            .rdp-calendar--sheet { position: fixed; inset: 0; display: grid; align-items: end; }
+            .rdp-calendar__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }
+            .rdp-calendar--sheet .rdp-calendar__panel {
+              position: relative;
+              background: var(--color-white);
+              padding: var(--separation-2);
+              border-radius: var(--radius-default) var(--radius-default) 0 0;
+            }
+          `"></span>
+  </style>
+</div>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("calendar", () => ({
+      viewMode: "day",
+      focusedYear: 0,
+      focusedMonth: 0,
+      initialised: false,
+      ensureInit() {
+        if (!this.initialised) {
+          this.focusedYear = props.selectedDate.getFullYear();
+          this.focusedMonth = props.selectedDate.getMonth();
+          this.initialised = true;
+        }
+      },
+      setView(mode) {
+        this.viewMode = mode;
+      },
+      selectDay(d) {
+        this.focusedYear = d.getFullYear();
+        this.focusedMonth = d.getMonth();
+        props.onSelect?.(d);
+      },
+      selectMonth(idx) {
+        this.focusedMonth = idx;
+        this.viewMode = "day";
+      },
+      selectYear(y) {
+        this.focusedYear = y;
+        this.viewMode = "month";
+      },
+      prev() {
+        if (this.viewMode === "day") {
+          const m = this.focusedMonth - 1;
+          if (m < 0) {
+            this.focusedMonth = 11;
+            this.focusedYear -= 1;
+          } else this.focusedMonth = m;
+        }
+      },
+      next() {
+        if (this.viewMode === "day") {
+          const m = this.focusedMonth + 1;
+          if (m > 11) {
+            this.focusedMonth = 0;
+            this.focusedYear += 1;
+          } else this.focusedMonth = m;
+        }
+      },
+    }));
+  });
+</script>
