@@ -11,6 +11,7 @@ const BASE = process.env.HISTOIRE_URL ?? 'http://localhost:6006';
 
 // One entry per story. variantCount drives the iteration.
 const STORIES = [
+  // M1 atoms
   { id: 'stories-button-story-vue', variantCount: 9, name: 'Button' },
   { id: 'stories-checkbox-story-vue', variantCount: 2, name: 'Checkbox' },
   { id: 'stories-emailfield-story-vue', variantCount: 2, name: 'EmailField' },
@@ -22,6 +23,15 @@ const STORIES = [
   { id: 'stories-mediaplaceholder-story-vue', variantCount: 2, name: 'MediaPlaceholder' },
   { id: 'stories-passwordfield-story-vue', variantCount: 3, name: 'PasswordField' },
   { id: 'stories-textfield-story-vue', variantCount: 2, name: 'TextField' },
+  // M2 molecules
+  { id: 'stories-monthpicker-story-vue', variantCount: 2, name: 'MonthPicker' },
+  { id: 'stories-yearpicker-story-vue', variantCount: 1, name: 'YearPicker' },
+  { id: 'stories-dategrid-story-vue', variantCount: 1, name: 'DateGrid' },
+  { id: 'stories-calendaractionbar-story-vue', variantCount: 2, name: 'CalendarActionBar' },
+  { id: 'stories-metricsbar-story-vue', variantCount: 2, name: 'MetricsBar' },
+  { id: 'stories-alert-story-vue', variantCount: 3, name: 'Alert' },
+  { id: 'stories-notice-story-vue', variantCount: 2, name: 'Notice' },
+  { id: 'stories-webintents-story-vue', variantCount: 1, name: 'WebIntents' },
 ];
 
 const browser = await chromium.launch();
