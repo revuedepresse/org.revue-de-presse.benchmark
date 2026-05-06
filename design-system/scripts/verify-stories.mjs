@@ -32,6 +32,15 @@ const STORIES = [
   { id: 'stories-alert-story-vue', variantCount: 3, name: 'Alert' },
   { id: 'stories-notice-story-vue', variantCount: 2, name: 'Notice' },
   { id: 'stories-webintents-story-vue', variantCount: 1, name: 'WebIntents' },
+  // M3 organisms
+  { id: 'stories-footer-story-vue', variantCount: 1, name: 'Footer' },
+  { id: 'stories-bannerabout-story-vue', variantCount: 2, name: 'BannerAbout' },
+  { id: 'stories-appheader-story-vue', variantCount: 3, name: 'AppHeader' },
+  { id: 'stories-snapshotslist-story-vue', variantCount: 2, name: 'SnapshotsList' },
+  { id: 'stories-calendar-story-vue', variantCount: 1, name: 'Calendar' },
+  { id: 'stories-blueskypostcard-story-vue', variantCount: 2, name: 'BlueskyPostCard' },
+  { id: 'stories-sidebar-story-vue', variantCount: 1, name: 'Sidebar' },
+  { id: 'stories-authcard-story-vue', variantCount: 7, name: 'AuthCard' },
 ];
 
 const browser = await chromium.launch();
