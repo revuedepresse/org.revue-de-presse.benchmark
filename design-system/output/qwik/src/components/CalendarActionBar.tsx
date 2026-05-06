@@ -1,6 +1,6 @@
 import { Locale, t } from "../utils/i18n";
 
-import { formatDate } from "../utils/intl";
+import { formatLegacyShortDay } from "../utils/intl";
 
 import { $, Fragment, component$, h } from "@builder.io/qwik";
 
@@ -24,7 +24,7 @@ export const CalendarActionBar = component$((props: CalendarActionBarProps) => {
         class="rdp-calendar-action-bar__pill"
         onClick$={$((event) => props.onDateClick?.())}
       >
-        {formatDate(props.date, "shortDay", props.locale ?? "fr-FR")}
+        {formatLegacyShortDay(props.date, props.locale ?? "fr-FR")}
       </button>
       <button
         type="button"

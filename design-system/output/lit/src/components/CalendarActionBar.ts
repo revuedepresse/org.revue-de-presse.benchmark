@@ -1,5 +1,5 @@
 import  { t } from '../utils/i18n';
-import  { formatDate } from '../utils/intl';
+import  { formatLegacyShortDay } from '../utils/intl';
 import type { Locale } from '../utils/i18n';
 
 
@@ -47,7 +47,7 @@ position?: 'top' | 'bottom';
     render() {
       return html`
 
-          <div  class={`rdp-calendar-action-bar rdp-calendar-action-bar--${props.position ?? 'bottom'}`} ><button  type="button"  @click=${(event) => this.onDateClick?.()} >${formatDate(this.date, 'shortDay', this.locale ?? 'fr-FR')}</button>
+          <div  class={`rdp-calendar-action-bar rdp-calendar-action-bar--${props.position ?? 'bottom'}`} ><button  type="button"  @click=${(event) => this.onDateClick?.()} >${formatLegacyShortDay(this.date, this.locale ?? 'fr-FR')}</button>
         <button  type="button"  aria-label=${t('actions.previous', undefined, this.locale ?? 'fr-FR')}  @click=${(event) => this.onPrev?.()} >
                 ‹
               </button>

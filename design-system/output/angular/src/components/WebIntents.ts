@@ -23,7 +23,7 @@ import { t } from "../utils/i18n";
         [attr.aria-label]="t('web-intents.reply.aria-label')"
         (click)="onReply?.(postId)"
       >
-        ↩
+        <icon name="reply" [size]="24" [decorative]="true"></icon>
       </button>
       <button
         type="button"
@@ -31,7 +31,7 @@ import { t } from "../utils/i18n";
         [attr.aria-label]="t('web-intents.repost.aria-label')"
         (click)="onRepost?.(postId)"
       >
-        🔁
+        <icon name="retweet" [size]="24" [decorative]="true"></icon>
       </button>
       <button
         type="button"
@@ -39,7 +39,7 @@ import { t } from "../utils/i18n";
         [attr.aria-label]="t('web-intents.like.aria-label')"
         (click)="onLike?.(postId)"
       >
-        ♡
+        <icon name="like-intent" [size]="24" [decorative]="true"></icon>
       </button>
       <button
         type="button"
@@ -47,21 +47,22 @@ import { t } from "../utils/i18n";
         [attr.aria-label]="t('web-intents.share.aria-label')"
         (click)="onShare?.(postId)"
       >
-        ↗
+        <icon name="share" [size]="24" [decorative]="true"></icon>
       </button>
       <style>
         {{\`
                 .rdp-web-intents { display: inline-flex; gap: var(--separation-2); }
                 .rdp-web-intents__btn {
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
                   width: 24px;
                   height: 24px;
+                  padding: 0;
                   background: transparent;
                   border: none;
-                  color: var(--color-light-grey);
                   cursor: pointer;
-                  font-size: 16px;
                 }
-                .rdp-web-intents__btn:hover { color: var(--color-brand-active); }
               \`}}
       </style>
     </div>
@@ -86,7 +87,7 @@ export default class WebIntents {
 
 @NgModule({
   declarations: [WebIntents],
-  imports: [CommonModule],
+  imports: [CommonModule, IconModule],
   exports: [WebIntents],
 })
 export class WebIntentsModule {}

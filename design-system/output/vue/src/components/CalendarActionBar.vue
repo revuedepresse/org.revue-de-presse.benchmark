@@ -9,7 +9,7 @@
       class="rdp-calendar-action-bar__pill"
       @click="async (event) => onDateClick?.()"
     >
-      {{ formatDate(date, "shortDay", locale ?? "fr-FR") }}</button
+      {{ formatLegacyShortDay(date, locale ?? "fr-FR") }}</button
     ><button
       type="button"
       class="rdp-calendar-action-bar__nav"
@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 import { t } from "../utils/i18n";
-import { formatDate } from "../utils/intl";
+import { formatLegacyShortDay } from "../utils/intl";
 import type { Locale } from "../utils/i18n";
 
 type CalendarActionBarProps = {

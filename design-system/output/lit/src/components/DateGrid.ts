@@ -68,8 +68,10 @@ isSelected(d: Date) {
             ))}</tbody>
         <style >${`
                .rdp-date-grid {
+                 width: 100%;
+                 table-layout: fixed;
                  border-collapse: separate;
-                 border-spacing: 4px;
+                 border-spacing: 2px;
                  font-family: 'Roboto', sans-serif;
                  font-size: var(--font-size-calendar-month-day-cell);
                }
@@ -77,17 +79,17 @@ isSelected(d: Date) {
                  font-weight: normal;
                  font-size: var(--font-size-calendar-month-day);
                  color: var(--color-brand-active);
-                 padding: 4px;
+                 padding: 4px 0;
+                 text-align: center;
                }
                .rdp-date-grid__cell {
-                 padding: 6px 8px;
+                 padding: 6px 0;
                  border: 1px solid var(--color-border);
                  border-radius: var(--radius-selectable);
                  color: var(--color-content-text);
                  background: var(--color-background-future-date);
                  cursor: pointer;
                  text-align: center;
-                 min-width: 32px;
                }
                .rdp-date-grid__cell[data-other-month="true"] {
                  background: var(--color-background-other-month);

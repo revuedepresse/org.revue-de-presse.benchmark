@@ -1,4 +1,5 @@
 import { t } from "../utils/i18n";
+import "./Icon.ts";
 
 import { LitElement, html, css } from "lit";
 import { customElement, property, state, query } from "lit/decorators";
@@ -28,36 +29,41 @@ export default class WebIntents extends LitElement {
 
           <div ><button  type="button"  aria-label=${t(
             "web-intents.reply.aria-label"
-          )}  @click=${(event) => this.onReply?.(this.postId)} >
-                ↩
-              </button>
+          )}  @click=${(event) =>
+      this.onReply?.(
+        this.postId
+      )} ><my-icon  name="reply"  .size=${24}  .decorative=${true} ></my-icon></button>
         <button  type="button"  aria-label=${t(
           "web-intents.repost.aria-label"
-        )}  @click=${(event) => this.onRepost?.(this.postId)} >
-                🔁
-              </button>
+        )}  @click=${(event) =>
+      this.onRepost?.(
+        this.postId
+      )} ><my-icon  name="retweet"  .size=${24}  .decorative=${true} ></my-icon></button>
         <button  type="button"  aria-label=${t(
           "web-intents.like.aria-label"
-        )}  @click=${(event) => this.onLike?.(this.postId)} >
-                ♡
-              </button>
+        )}  @click=${(event) =>
+      this.onLike?.(
+        this.postId
+      )} ><my-icon  name="like-intent"  .size=${24}  .decorative=${true} ></my-icon></button>
         <button  type="button"  aria-label=${t(
           "web-intents.share.aria-label"
-        )}  @click=${(event) => this.onShare?.(this.postId)} >
-                ↗
-              </button>
+        )}  @click=${(event) =>
+      this.onShare?.(
+        this.postId
+      )} ><my-icon  name="share"  .size=${24}  .decorative=${true} ></my-icon></button>
         <style >${`
               .rdp-web-intents { display: inline-flex; gap: var(--separation-2); }
               .rdp-web-intents__btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
                 width: 24px;
                 height: 24px;
+                padding: 0;
                 background: transparent;
                 border: none;
-                color: var(--color-light-grey);
                 cursor: pointer;
-                font-size: 16px;
               }
-              .rdp-web-intents__btn:hover { color: var(--color-brand-active); }
             `}</style></div>
         `;
   }
