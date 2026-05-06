@@ -1,0 +1,9 @@
+{
+  "name": "@revue-de-presse/design-system-provider-svelte",
+  "version": "0.1.0",
+  "type": "module",
+  "svelte": "./src/Provider.svelte",
+  "peerDependencies": {
+    "svelte": ">=4"
+  }
+}

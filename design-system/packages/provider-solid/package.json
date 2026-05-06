@@ -1,0 +1,10 @@
+{
+  "name": "@revue-de-presse/design-system-provider-solid",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "peerDependencies": {
+    "solid-js": ">=1"
+  }
+}
