@@ -11,10 +11,10 @@
   "scripts": {
     "build:tokens": "node scripts/sync-tokens.mjs --check",
     "tokens:sync": "node scripts/sync-tokens.mjs --write",
-    "build:mitosis": "mitosis build",
+    "build:mitosis": "mitosis build && node scripts/post-mitosis.mjs",
     "build": "pnpm build:tokens && pnpm build:mitosis",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
     "demo": "pnpm --filter @revue-de-presse/design-system-demo dev",
     "story": "histoire dev --config stories/histoire.config.ts"
   },
