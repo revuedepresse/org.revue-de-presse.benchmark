@@ -53,7 +53,7 @@ export let vars: FieldErrorProps['vars']= undefined;
 {:else}
 {message ?? ''}
 
-{/if}{@html `<${'style'}  >${}<${'/style'}>`}</p>
+{/if}</p>
 
 
 {/if}

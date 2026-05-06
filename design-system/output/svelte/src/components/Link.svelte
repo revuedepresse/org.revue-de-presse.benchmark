@@ -55,4 +55,4 @@ export let label: LinkProps['label']= undefined;
 {:else}
 {label ?? ''}
 
-{/if}{@html `<${'style'}  >${}<${'/style'}>`}</a>
+{/if}</a>

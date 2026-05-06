@@ -56,7 +56,7 @@ onDismiss?.();
         </button>
 
 
-{/if}{@html `<${'style'}  >${}<${'/style'}>`}</aside>
+{/if}</aside>
 
 
 {/if}

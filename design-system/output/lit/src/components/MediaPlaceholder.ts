@@ -20,11 +20,11 @@ export default class MediaPlaceholder extends LitElement {
   render() {
     return html`
 
-          <div  aria-hidden="true"  .style=${`width:${
-            this.width ? `${this.width}px` : "100%"
-          };${this.height ? `height:${this.height}px;` : ""}${
-            this.aspectRatio ? `aspect-ratio:${this.aspectRatio};` : ""
-          }`} ><svg  viewBox="0 0 100 60"  preserveAspectRatio="none" ><line  x1="0"  y1="0"  x2="100"  y2="60"  stroke="var(--color-light-grey)"  strokeWidth="1" ></line>
+          <div  aria-hidden="true"  .style=${{
+            width: this.width ? `${this.width}px` : "100%",
+            height: this.height ? `${this.height}px` : undefined,
+            aspectRatio: this.aspectRatio,
+          }} ><svg  viewBox="0 0 100 60"  preserveAspectRatio="none" ><line  x1="0"  y1="0"  x2="100"  y2="60"  stroke="var(--color-light-grey)"  strokeWidth="1" ></line>
         <line  x1="100"  y1="0"  x2="0"  y2="60"  stroke="var(--color-light-grey)"  strokeWidth="1" ></line></svg>
         <style >${`
               .rdp-media-placeholder {

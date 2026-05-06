@@ -55,4 +55,4 @@ export let onNext: CalendarActionBarProps['onNext']= undefined;
     ‹
   </button><button  type="button"  class="rdp-calendar-action-bar__nav"  aria-label={t('actions.next', undefined, locale ?? 'fr-FR')}  on:click="{(event) => {onNext?.()}}" >
     ›
-  </button>{@html `<${'style'}  >${}<${'/style'}>`}</div>
+  </button></div>

@@ -59,4 +59,4 @@ export let labelChildren: CheckboxProps['labelChildren']= undefined;
 {:else}
 {label ?? ''}
 
-{/if}{labelChildren}</span>{@html `<${'style'}  >${}<${'/style'}>`}</label>
+{/if}{labelChildren}</span></label>

@@ -10,9 +10,11 @@ function MediaPlaceholder(props: MediaPlaceholderProps) {
       <div
         class="rdp-media-placeholder"
         aria-hidden="true"
-        style={`width:${props.width ? `${props.width}px` : "100%"};${
-          props.height ? `height:${props.height}px;` : ""
-        }${props.aspectRatio ? `aspect-ratio:${props.aspectRatio};` : ""}`}
+        style={{
+          width: props.width ? `${props.width}px` : "100%",
+          height: props.height ? `${props.height}px` : undefined,
+          "aspect-ratio": props.aspectRatio,
+        }}
       >
         <svg viewBox="0 0 100 60" preserveAspectRatio="none">
           <line

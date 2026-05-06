@@ -72,4 +72,4 @@ export let onSelect: SnapshotsListProps['onSelect']= undefined;
 </ul>
 
 
-{/if}</div>{@html `<${'style'}  >${}<${'/style'}>`}</div>
+{/if}</div></div>

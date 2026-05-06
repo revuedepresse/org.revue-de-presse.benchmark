@@ -54,7 +54,7 @@ return (errors ?? []).length > 1 ? '- ' : '';
 {#each items() as item }
 <p  class="rdp-form-error__item" >{prefix()}{item.text}</p>
 {/each}
-{@html `<${'style'}  >${}<${'/style'}>`}</div>
+</div>
 
 
 {/if}

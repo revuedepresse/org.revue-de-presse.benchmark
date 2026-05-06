@@ -49,4 +49,4 @@ export let onChange: EmailFieldProps['onChange']= undefined;
 
 </script>
 
-<div  class="rdp-textfield"  data-error={error ? 'true' : undefined} ><label  class="rdp-textfield__label"  for={`field-${name}`} >{t(labelKey ?? 'auth.email-label')}</label><input  type="email"  autocomplete="email"  id={`field-${name}`}  name={name}  value={value}  required={required}  on:input="{(event) => {onChange?.(event.target.value)}}"  />{@html `<${'style'}  >${}<${'/style'}>`}</div>
+<div  class="rdp-textfield"  data-error={error ? 'true' : undefined} ><label  class="rdp-textfield__label"  for={`field-${name}`} >{t(labelKey ?? 'auth.email-label')}</label><input  type="email"  autocomplete="email"  id={`field-${name}`}  name={name}  value={value}  required={required}  on:input="{(event) => {onChange?.(event.target.value)}}"  /></div>
