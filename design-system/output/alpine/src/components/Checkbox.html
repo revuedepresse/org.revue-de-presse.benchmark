@@ -1,0 +1,36 @@
+<label class="rdp-checkbox" x-data="checkbox()">
+  <input
+    type="checkbox"
+    x-bind:name="name"
+    x-bind:checked="checked ?? false"
+    x-bind:disabled="disabled"
+    x-on:change="onChange?.($event.target.checked)"
+  />
+  <span class="rdp-checkbox__label">
+    <template x-if="labelKey">
+      <span x-html="t(labelKey)"></span>
+    </template>
+    <span x-html="labelChildren"></span>
+  </span>
+  <style>
+    <span x-html="`
+            .rdp-checkbox {
+              display: inline-flex;
+              align-items: center;
+              gap: var(--separation-1);
+              font-family: 'Roboto', sans-serif;
+              font-size: var(--font-size-content);
+              color: var(--color-content-text);
+              cursor: pointer;
+            }
+            .rdp-checkbox__label { display: inline-flex; gap: 4px; align-items: baseline; }
+            .rdp-checkbox input { accent-color: var(--color-brand-active); }
+            .rdp-checkbox input:disabled + .rdp-checkbox__label { opacity: 0.5; }
+          `"></span>
+  </style>
+</label>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("checkbox", () => ({}));
+  });
+</script>

@@ -1,0 +1,102 @@
+<table class="rdp-date-grid" role="grid" x-data="dateGrid()">
+  <thead>
+    <tr>
+      <template x-for="w in weekdays">
+        <th scope="col" class="rdp-date-grid__weekday">
+          <span
+            x-html="t(`calendar.weekdays.short.${w}`, undefined, locale ?? 'fr-FR')"
+          ></span>
+        </th>
+      </template>
+    </tr>
+  </thead>
+  <tbody>
+    <template x-for="row in rows">
+      <tr>
+        <template x-for="d in row">
+          <td
+            role="gridcell"
+            x-bind:aria-selected="isSelected(d) ? 'true' : 'false'"
+            x-bind:data-other-month="d.getMonth() !== month ? 'true' : undefined"
+            x-bind:class="`rdp-date-grid__cell${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`"
+            x-on:click="onSelect?.(d)"
+          >
+            <span x-html="d.getDate()"></span>
+          </td>
+        </template>
+      </tr>
+    </template>
+  </tbody>
+  <style>
+    <span x-html="`
+            .rdp-date-grid {
+              border-collapse: separate;
+              border-spacing: 4px;
+              font-family: 'Roboto', sans-serif;
+              font-size: var(--font-size-calendar-month-day-cell);
+            }
+            .rdp-date-grid__weekday {
+              font-weight: normal;
+              font-size: var(--font-size-calendar-month-day);
+              color: var(--color-brand-active);
+              padding: 4px;
+            }
+            .rdp-date-grid__cell {
+              padding: 6px 8px;
+              border: 1px solid var(--color-border);
+              border-radius: var(--radius-selectable);
+              color: var(--color-content-text);
+              background: var(--color-background-future-date);
+              cursor: pointer;
+              text-align: center;
+              min-width: 32px;
+            }
+            .rdp-date-grid__cell[data-other-month="true"] {
+              background: var(--color-background-other-month);
+              color: var(--color-light-grey);
+            }
+            .rdp-date-grid__cell--selected {
+              background: var(--color-brand-active);
+              color: var(--color-white);
+              border-color: var(--color-brand-active);
+            }
+          `"></span>
+  </style>
+</table>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("dateGrid", () => ({
+      weekdays: [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+      ],
+      get rows() {
+        const first = new Date(props.year, props.month, 1);
+        const offset = (first.getDay() + 6) % 7;
+        const start = new Date(props.year, props.month, 1 - offset);
+        const all = Array.from(
+          {
+            length: 42,
+          },
+          (_, i) =>
+            new Date(start.getFullYear(), start.getMonth(), start.getDate() + i)
+        );
+        return [0, 1, 2, 3, 4, 5].map((row) => all.slice(row * 7, row * 7 + 7));
+      },
+      isSelected(d) {
+        const sel = props.selectedDate;
+        return (
+          !!sel &&
+          sel.getFullYear() === d.getFullYear() &&
+          sel.getMonth() === d.getMonth() &&
+          sel.getDate() === d.getDate()
+        );
+      },
+    }));
+  });
+</script>
