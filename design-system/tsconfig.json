@@ -8,5 +8,6 @@
       "@design-system/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "tests/**/*", "scripts/**/*"]
+  "include": ["src/**/*", "tests/**/*", "scripts/**/*"],
+  "exclude": ["src/components/**/*.lite.tsx"]
 }
