@@ -1,0 +1,10 @@
+{
+  "name": "@revue-de-presse/design-system-provider-preact",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "peerDependencies": {
+    "preact": ">=10"
+  }
+}

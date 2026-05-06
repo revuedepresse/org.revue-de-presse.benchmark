@@ -1,0 +1,11 @@
+{
+  "name": "@revue-de-presse/design-system-provider-angular",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/design-system.module.ts",
+  "types": "./src/design-system.module.ts",
+  "peerDependencies": {
+    "@angular/core": ">=18",
+    "@angular/common": ">=18"
+  }
+}
