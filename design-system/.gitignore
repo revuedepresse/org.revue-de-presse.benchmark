@@ -1,0 +1,9 @@
+node_modules
+output/*/dist
+output/*/node_modules
+.DS_Store
+*.log
+.histoire
+.vite
+coverage
+dist
