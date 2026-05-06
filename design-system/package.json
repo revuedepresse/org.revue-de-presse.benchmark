@@ -22,6 +22,7 @@
     "@builder.io/mitosis": "^0.13.0",
     "@builder.io/mitosis-cli": "^0.13.0",
     "@types/node": "^20.14.0",
+    "@vitejs/plugin-vue": "^5.0.0",
     "histoire": "^0.17.17",
     "@histoire/plugin-vue": "^0.17.17",
     "tsup": "^8.0.0",
