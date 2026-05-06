@@ -1,21 +1,25 @@
+// Icon names match the symbols emitted by scripts/build-sprite.mjs from
+// the legacy `org.revue-de-presse/assets/icons/` set.
 export type IconName =
-  | 'logo'
-  | 'bluesky'
-  | 'chevron-up'
-  | 'chevron-down'
-  | 'chevron-left'
-  | 'chevron-right'
-  | 'grid-view'
-  | 'list-view'
-  | 'eye'
-  | 'share'
+  | 'funding'
+  | 'github'
   | 'heart'
-  | 'bell'
-  | 'x'
-  | 'user'
+  | 'introducing'
+  | 'like-clicked'
+  | 'like-intent'
+  | 'like-metric'
+  | 'next-day'
+  | 'next-item'
+  | 'pick-day'
+  | 'pick-item'
+  | 'pick-list'
+  | 'previous-day'
+  | 'previous-item'
   | 'reply'
-  | 'repost'
-  | 'like';
+  | 'retweet'
+  | 'share'
+  | 'sharing'
+  | 'warning';
 
 export type ButtonVariant =
   | 'primary'
