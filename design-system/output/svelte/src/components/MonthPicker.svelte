@@ -58,4 +58,4 @@ year: year
 {#each months() as name, index }
 <li  role="option"  aria-selected={index === selectedMonth ? 'true' : 'false'}  class={`rdp-month-picker__item${index === selectedMonth ? ' rdp-month-picker__item--selected' : ''}`}  on:click="{(event) => {onSelect?.(index)}}" >{name}</li>
 {/each}
-{@html `<${'style'}  >${}<${'/style'}>`}</ul>
+</ul>

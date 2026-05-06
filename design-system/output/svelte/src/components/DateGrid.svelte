@@ -71,4 +71,4 @@ return [0, 1, 2, 3, 4, 5].map(row => all.slice(row * 7, row * 7 + 7));
 {/each}
 </tr>
 {/each}
-</tbody>{@html `<${'style'}  >${}<${'/style'}>`}</table>
+</tbody></table>

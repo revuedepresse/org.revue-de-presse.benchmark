@@ -59,4 +59,4 @@ min: MIN_LENGTH_NO_MFA
 })}</p>
 
 
-{/if}{@html `<${'style'}  >${}<${'/style'}>`}</div>
+{/if}</div>

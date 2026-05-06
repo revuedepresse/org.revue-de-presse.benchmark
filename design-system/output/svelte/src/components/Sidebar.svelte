@@ -63,4 +63,4 @@ export let onDateSelect: SidebarProps['onDateSelect']= undefined;
 
 </script>
 
-<aside  class="rdp-sidebar" ><SnapshotsList  items={lists}  selectedId={selectedListId}  onSelect={(id) => onListSelect?.(id)}></SnapshotsList><Calendar  selectedDate={selectedDate}  locale={locale}  yearRange={yearRange}  onSelect={(d) => onDateSelect?.(d)}></Calendar><BannerAbout ></BannerAbout><Footer ></Footer>{@html `<${'style'}  >${}<${'/style'}>`}</aside>
+<aside  class="rdp-sidebar" ><SnapshotsList  items={lists}  selectedId={selectedListId}  onSelect={(id) => onListSelect?.(id)}></SnapshotsList><Calendar  selectedDate={selectedDate}  locale={locale}  yearRange={yearRange}  onSelect={(d) => onDateSelect?.(d)}></Calendar><BannerAbout ></BannerAbout><Footer ></Footer></aside>

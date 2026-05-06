@@ -27,11 +27,11 @@ const showError = ref(false);
 
     <section>
       <h2>Buttons</h2>
-      <Button variant="primary" label="Connexion" />
+      <Button variant="primary" label="Connexion" icon="pick-day" />
       <Button variant="secondary" label="Avril 2021" />
       <Button variant="form" label="S'inscrire" />
-      <Button variant="quit" label="Quitter" icon-after="x" />
-      <Button variant="scrollTop" icon="chevron-up" aria-label="Remonter" />
+      <Button variant="quit" label="Quitter" icon-after="next-item" />
+      <Button variant="scrollTop" icon="next-day" aria-label="Remonter" />
     </section>
 
     <section>

@@ -55,4 +55,4 @@ export let onShare: WebIntentsProps['onShare']= undefined;
     ♡
   </button><button  type="button"  class="rdp-web-intents__btn"  aria-label={t('web-intents.share.aria-label')}  on:click="{(event) => {onShare?.(postId)}}" >
     ↗
-  </button>{@html `<${'style'}  >${}<${'/style'}>`}</div>
+  </button></div>

@@ -43,4 +43,4 @@ export let vars: AlertProps['vars']= undefined;
 
 </script>
 
-<div  role="status"  class={`rdp-alert rdp-alert--${variant ?? 'empty'}`} ><span  aria-hidden="true"  class="rdp-alert__icon" >⚠</span><span  class="rdp-alert__text" >{t(messageKey, vars)}</span>{@html `<${'style'}  >${}<${'/style'}>`}</div>
+<div  role="status"  class={`rdp-alert rdp-alert--${variant ?? 'empty'}`} ><span  aria-hidden="true"  class="rdp-alert__icon" >⚠</span><span  class="rdp-alert__text" >{t(messageKey, vars)}</span></div>

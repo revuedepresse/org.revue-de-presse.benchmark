@@ -45,4 +45,4 @@ export let name: IconProps['name'];
 
 </script>
 
-<svg  class="rdp-icon"  viewBox="0 0 24 24"  width={size ?? 24}  height={size ?? 24}  aria-hidden={decorative ?? !ariaLabel ? 'true' : undefined}  aria-label={decorative ?? !ariaLabel ? undefined : ariaLabel}  role={decorative ?? !ariaLabel ? undefined : 'img'} ><use  href={`#${name}`} ></use>{@html `<${'style'}  >${}<${'/style'}>`}</svg>
+<svg  class="rdp-icon"  viewBox="0 0 24 24"  width={size ?? 24}  height={size ?? 24}  aria-hidden={decorative ?? !ariaLabel ? 'true' : undefined}  aria-label={decorative ?? !ariaLabel ? undefined : ariaLabel}  role={decorative ?? !ariaLabel ? undefined : 'img'} ><use  href={`#${name}`} ></use></svg>

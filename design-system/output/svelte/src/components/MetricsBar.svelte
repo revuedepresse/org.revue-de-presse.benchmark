@@ -56,4 +56,4 @@ count: reposts
       🔁 {formatCount(reposts, locale ?? 'fr-FR')}</span><span  class="rdp-metrics-bar__pill rdp-metrics-bar__pill--like"  aria-label={t('metrics.likes.aria-label', {
 count: likes
 }, locale ?? 'fr-FR')} >
-      ❤ {formatCount(likes, locale ?? 'fr-FR')}</span>{@html `<${'style'}  >${}<${'/style'}>`}</div>
+      ❤ {formatCount(likes, locale ?? 'fr-FR')}</span></div>
