@@ -7,20 +7,30 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '../..');
 
 describe('Icon sprite', () => {
-  it('contains every M1 glyph', () => {
+  it('contains every legacy icon', () => {
     const path = join(root, 'src/icons/sprite.svg');
     const svg = readFileSync(path, 'utf8');
+    // 19 icons sourced from org.revue-de-presse/assets/icons via scripts/build-sprite.mjs.
     for (const id of [
-      'chevron-up',
-      'chevron-down',
-      'chevron-left',
-      'chevron-right',
-      'eye',
-      'share',
+      'funding',
+      'github',
       'heart',
-      'bell',
-      'x',
-      'user',
+      'introducing',
+      'like-clicked',
+      'like-intent',
+      'like-metric',
+      'next-day',
+      'next-item',
+      'pick-day',
+      'pick-item',
+      'pick-list',
+      'previous-day',
+      'previous-item',
+      'reply',
+      'retweet',
+      'share',
+      'sharing',
+      'warning',
     ]) {
       expect(svg).toContain(`id="${id}"`);
     }
