@@ -13,6 +13,7 @@ type ButtonProps = {
   onClick?: () => void;
 };
 import { t } from "../utils/i18n";
+import Icon from "./Icon";
 import type { ButtonVariant, IconName } from "../types";
 
 function Button(props: ButtonProps) {
@@ -25,16 +26,20 @@ function Button(props: ButtonProps) {
       aria-label={props.ariaLabel}
       onClick={(event) => props.onClick?.()}
     >
-      {props.icon ? (
-        <span className="rdp-button__icon">{props.icon}</span>
+      {!!props.icon ? (
+        <span className="rdp-button__icon">
+          <Icon name={props.icon!} size={24} decorative />
+        </span>
       ) : null}
       {props.variant !== "scrollTop" && props.variant !== "avatar" ? (
         <span className="rdp-button__label">
           {props.labelKey ? <>{t(props.labelKey)}</> : <>{props.label ?? ""}</>}
         </span>
       ) : null}
-      {props.iconAfter ? (
-        <span className="rdp-button__icon-after">{props.iconAfter}</span>
+      {!!props.iconAfter ? (
+        <span className="rdp-button__icon-after">
+          <Icon name={props.iconAfter!} size={24} decorative />
+        </span>
       ) : null}
       <style>{`
         .rdp-button {

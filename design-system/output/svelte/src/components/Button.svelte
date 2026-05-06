@@ -21,6 +21,7 @@ onClick?: () => void;
 
 
   import  { t } from '../utils/i18n';
+import  Icon from './Icon.svelte';
 import type { ButtonVariant, IconName } from '../types';
 
 
@@ -57,8 +58,8 @@ export let iconAfter: ButtonProps['iconAfter']= undefined;
   </script>
 
   <button  type="button"  class={`rdp-button rdp-button--${variant}`}  data-loading={loading ? 'true' : undefined}  disabled={disabled || loading}  aria-label={ariaLabel}  on:click="{(event) => {onClick?.()}}" >
-{#if icon }
-<span  class="rdp-button__icon" >{icon}</span>
+{#if !!icon }
+<span  class="rdp-button__icon" ><Icon  name={icon}  size={24}  decorative={true} ></Icon></span>
 
 
 {/if}
@@ -75,8 +76,8 @@ export let iconAfter: ButtonProps['iconAfter']= undefined;
 
 
 {/if}
-{#if iconAfter }
-<span  class="rdp-button__icon-after" >{iconAfter}</span>
+{#if !!iconAfter }
+<span  class="rdp-button__icon-after" ><Icon  name={iconAfter}  size={24}  decorative={true} ></Icon></span>
 
 
 {/if}{@html `<${'style'}  >${}<${'/style'}>`}</button>
