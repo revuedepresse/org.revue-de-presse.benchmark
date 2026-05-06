@@ -1,0 +1,68 @@
+<button
+  type="button"
+  x-data="button()"
+  x-bind:class="`rdp-button rdp-button--${variant}`"
+  x-bind:data-loading="loading ? 'true' : undefined"
+  x-bind:disabled="disabled || loading"
+  x-bind:aria-label="ariaLabel"
+  x-on:click="onClick?.()"
+>
+  <template x-if="!!icon">
+    <span class="rdp-button__icon">
+      <Icon x-bind:name="icon" x-bind:size="24" x-bind:decorative="true"></Icon>
+    </span>
+  </template>
+  <template x-if="variant !== 'scrollTop' && variant !== 'avatar'">
+    <span class="rdp-button__label">
+      <template x-if="labelKey">
+        <span x-html="t(labelKey)"></span>
+      </template>
+    </span>
+  </template>
+  <template x-if="!!iconAfter">
+    <span class="rdp-button__icon-after">
+      <Icon
+        x-bind:name="iconAfter"
+        x-bind:size="24"
+        x-bind:decorative="true"
+      ></Icon>
+    </span>
+  </template>
+  <style>
+    <span x-html="`
+            .rdp-button {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              gap: var(--separation-1);
+              border: none;
+              cursor: pointer;
+              font-family: 'Roboto', sans-serif;
+              font-size: var(--font-size-content);
+              padding: var(--separation-1) var(--separation-2);
+              border-radius: var(--radius-default);
+              background: var(--button-bg-primary);
+              color: var(--button-fg-primary);
+              transition: background 120ms;
+            }
+            .rdp-button:hover { background: var(--button-bg-primary-hover); }
+            .rdp-button:disabled { background: var(--button-bg-disabled); cursor: not-allowed; }
+            .rdp-button--secondary {
+              background: var(--button-bg-secondary);
+              color: var(--color-brand-active);
+              border: 1px solid var(--button-border-secondary);
+            }
+            .rdp-button--scrollTop, .rdp-button--avatar {
+              width: 48px; height: 48px; padding: 0; border-radius: 50%;
+            }
+            .rdp-button--quit { background: transparent; color: var(--color-content-text); padding: 0; }
+            .rdp-button--calendarNav { padding: 0; width: 32px; height: 32px; border-radius: 50%; }
+            .rdp-button--form { width: 100%; padding: var(--separation-2); }
+          `"></span>
+  </style>
+</button>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("button", () => ({}));
+  });
+</script>

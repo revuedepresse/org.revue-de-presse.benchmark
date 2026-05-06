@@ -1,6 +1,5 @@
 /**
- * Mitosis configuration: M2 ships React, Vue, Svelte, Solid, Lit.
- * M4 adds Angular, Qwik, Preact, Stencil, Alpine.
+ * Mitosis configuration: M4 ships all 10 spec targets.
  */
 module.exports = {
   files: 'src/components/**/*.lite.tsx',
@@ -12,6 +11,22 @@ module.exports = {
     svelte: { typescript: true },
     solid: { typescript: true },
     lit: { typescript: true },
+    angular: { typescript: true },
+    qwik: { typescript: true },
+    preact: { typescript: true, stylesType: 'styled-jsx' },
+    stencil: { typescript: true },
+    alpine: {},
   },
-  targets: ['react', 'vue', 'svelte', 'solid', 'lit'],
+  targets: [
+    'react',
+    'vue',
+    'svelte',
+    'solid',
+    'lit',
+    'angular',
+    'qwik',
+    'preact',
+    'stencil',
+    'alpine',
+  ],
 };

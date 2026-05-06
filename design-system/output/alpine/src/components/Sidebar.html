@@ -1,0 +1,30 @@
+<aside class="rdp-sidebar" x-data="sidebar()">
+  <SnapshotsList
+    x-bind:items="lists"
+    x-bind:selectedId="selectedListId"
+    x-on:select="onListSelect?.(id)"
+  ></SnapshotsList>
+  <Calendar
+    x-bind:selectedDate="selectedDate"
+    x-bind:locale="locale"
+    x-bind:yearRange="yearRange"
+    x-on:select="onDateSelect?.(d)"
+  ></Calendar>
+  <BannerAbout></BannerAbout>
+  <footer></footer>
+  <style>
+    <span x-html="`
+            .rdp-sidebar {
+              width: 336px;
+              display: flex;
+              flex-direction: column;
+              gap: var(--separation-2);
+            }
+          `"></span>
+  </style>
+</aside>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("sidebar", () => ({}));
+  });
+</script>

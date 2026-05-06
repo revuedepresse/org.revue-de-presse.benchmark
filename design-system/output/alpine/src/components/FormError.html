@@ -1,0 +1,36 @@
+<template x-if="items.length > 0">
+  <div class="rdp-form-error" role="alert" aria-live="polite">
+    <template x-for="item in items">
+      <p class="rdp-form-error__item">
+        <span x-html="prefix"></span>
+        <span x-html="item.text"></span>
+      </p>
+    </template>
+    <style>
+      <span x-html="`
+                .rdp-form-error {
+                  color: var(--form-error-fg);
+                  font-size: var(--font-size-publication-date);
+                  font-family: 'Roboto', sans-serif;
+                  margin-top: var(--separation-1);
+                }
+                .rdp-form-error__item { margin: 0; }
+              `"></span>
+    </style>
+  </div>
+</template>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("formError", () => ({
+      get items() {
+        return (props.errors ?? []).map((e) => ({
+          key: e.key,
+          text: t(e.key, e.vars),
+        }));
+      },
+      get prefix() {
+        return (props.errors ?? []).length > 1 ? "- " : "";
+      },
+    }));
+  });
+</script>

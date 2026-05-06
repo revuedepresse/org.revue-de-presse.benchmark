@@ -1,0 +1,23 @@
+<template x-if="!!(messageKey || message)">
+  <p class="rdp-field-error" role="alert">
+    <template x-if="messageKey">
+      <span x-html="t(messageKey, vars)"></span>
+    </template>
+    <style>
+      <span x-html="`
+                .rdp-field-error {
+                  font-size: var(--font-size-publication-date);
+                  color: var(--form-error-fg);
+                  margin: 0;
+                  padding-left: var(--separation-1);
+                  font-family: 'Roboto', sans-serif;
+                }
+              `"></span>
+    </style>
+  </p>
+</template>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("fieldError", () => ({}));
+  });
+</script>

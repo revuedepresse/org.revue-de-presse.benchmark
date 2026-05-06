@@ -1,0 +1,55 @@
+<div class="rdp-metrics-bar" x-data="metricsBar()">
+  <span
+    class="rdp-metrics-bar__pill rdp-metrics-bar__pill--reply"
+    x-bind:aria-label="t('metrics.replies.aria-label', {
+  count: replies
+}, locale ?? 'fr-FR')"
+  >
+    💬
+    <span x-html="formatCount(replies, locale ?? 'fr-FR')"></span>
+  </span>
+  <span
+    class="rdp-metrics-bar__pill rdp-metrics-bar__pill--repost"
+    x-bind:aria-label="t('metrics.reposts.aria-label', {
+  count: reposts
+}, locale ?? 'fr-FR')"
+  >
+    🔁
+    <span x-html="formatCount(reposts, locale ?? 'fr-FR')"></span>
+  </span>
+  <span
+    class="rdp-metrics-bar__pill rdp-metrics-bar__pill--like"
+    x-bind:aria-label="t('metrics.likes.aria-label', {
+  count: likes
+}, locale ?? 'fr-FR')"
+  >
+    ❤
+    <span x-html="formatCount(likes, locale ?? 'fr-FR')"></span>
+  </span>
+  <style>
+    <span x-html="`
+            .rdp-metrics-bar {
+              display: inline-flex;
+              gap: var(--separation-1);
+              font-size: var(--font-size-vanity-metric);
+              font-family: 'Roboto', sans-serif;
+            }
+            .rdp-metrics-bar__pill {
+              display: inline-flex;
+              align-items: center;
+              gap: 4px;
+              padding: 2px var(--separation-1);
+              border-radius: 999px;
+              color: var(--color-white);
+            }
+            .rdp-metrics-bar__pill--reply { background: var(--color-vanity-metric-reply); }
+            .rdp-metrics-bar__pill--repost { background: var(--color-vanity-metric-retweet); }
+            .rdp-metrics-bar__pill--like { background: var(--color-vanity-metric-like); }
+          `"></span>
+  </style>
+</div>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("metricsBar", () => ({}));
+  });
+</script>
