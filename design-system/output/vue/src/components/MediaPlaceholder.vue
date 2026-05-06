@@ -2,9 +2,11 @@
   <div
     class="rdp-media-placeholder"
     aria-hidden="true"
-    :style="`width:${width ? `${width}px` : '100%'};${
-      height ? `height:${height}px;` : ''
-    }${aspectRatio ? `aspect-ratio:${aspectRatio};` : ''}`"
+    :style="{
+      width: width ? `${width}px` : '100%',
+      height: height ? `${height}px` : undefined,
+      aspectRatio: aspectRatio,
+    }"
   >
     <svg viewBox="0 0 100 60" preserveAspectRatio="none">
       <line

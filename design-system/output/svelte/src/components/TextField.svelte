@@ -65,4 +65,4 @@ export let onChange: TextFieldProps['onChange']= undefined;
 {:else}
 {label ?? ''}
 
-{/if}</label><input  id={`field-${name}`}  type={type ?? 'text'}  name={name}  value={value}  placeholder={placeholder}  autocomplete={autocomplete}  required={required}  on:input="{(event) => {onChange?.(event.target.value)}}"  />{@html `<${'style'}  >${}<${'/style'}>`}</div>
+{/if}</label><input  id={`field-${name}`}  type={type ?? 'text'}  name={name}  value={value}  placeholder={placeholder}  autocomplete={autocomplete}  required={required}  on:input="{(event) => {onChange?.(event.target.value)}}"  /></div>

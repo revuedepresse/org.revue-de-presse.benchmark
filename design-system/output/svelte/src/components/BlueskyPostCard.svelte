@@ -71,4 +71,4 @@ export let locale: BlueskyPostCardProps['locale']= undefined;
 <MediaPlaceholder  width={270}  height={160} ></MediaPlaceholder>
 
 
-{/if}<footer  class="rdp-bsky-post__footer" ><time  class="rdp-bsky-post__timestamp" >{formatDate(post.publishedAt, 'longDay', locale ?? 'fr-FR')}</time><WebIntents  postId={post.id} ></WebIntents></footer>{@html `<${'style'}  >${}<${'/style'}>`}</article>
+{/if}<footer  class="rdp-bsky-post__footer" ><time  class="rdp-bsky-post__timestamp" >{formatDate(post.publishedAt, 'longDay', locale ?? 'fr-FR')}</time><WebIntents  postId={post.id} ></WebIntents></footer></article>

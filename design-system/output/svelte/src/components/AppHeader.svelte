@@ -58,4 +58,4 @@ onMySpaceClick?.();
 }}" >{t('header.my-space')}</a>
 
 
-{/if}<button  type="button"  class="rdp-app-header__account"  aria-label={t('header.my-account.aria-label')}  on:click="{(event) => {onAccountClick?.()}}" ><Icon  name="pick-item"  size={32}  decorative={true} ></Icon></button>{@html `<${'style'}  >${}<${'/style'}>`}</header>
+{/if}<button  type="button"  class="rdp-app-header__account"  aria-label={t('header.my-account.aria-label')}  on:click="{(event) => {onAccountClick?.()}}" ><Icon  name="pick-item"  size={32}  decorative={true} ></Icon></button></header>
