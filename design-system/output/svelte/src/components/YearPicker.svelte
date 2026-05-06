@@ -54,4 +54,4 @@ return Array.from({
 {#each years() as y }
 <li  role="option"  aria-selected={y === selectedYear ? 'true' : 'false'}  class={`rdp-year-picker__item${y === selectedYear ? ' rdp-year-picker__item--selected' : ''}`}  on:click="{(event) => {onSelect?.(y)}}" >{y}</li>
 {/each}
-{@html `<${'style'}  >${}<${'/style'}>`}</ul>
+</ul>

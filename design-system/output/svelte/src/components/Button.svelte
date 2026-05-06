@@ -80,4 +80,4 @@ export let iconAfter: ButtonProps['iconAfter']= undefined;
 <span  class="rdp-button__icon-after" ><Icon  name={iconAfter}  size={24}  decorative={true} ></Icon></span>
 
 
-{/if}{@html `<${'style'}  >${}<${'/style'}>`}</button>
+{/if}</button>

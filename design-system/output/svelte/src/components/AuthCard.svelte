@@ -145,4 +145,4 @@ let tos = false;
 {/if}</div>
 
 
-{/if}{@html `<${'style'}  >${}<${'/style'}>`}</section>
+{/if}</section>

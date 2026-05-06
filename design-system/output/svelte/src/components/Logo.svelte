@@ -48,4 +48,4 @@ export let showWordmark: LogoProps['showWordmark']= undefined;
 <span  class="rdp-logo__wordmark" >Revue de presse</span>
 
 
-{/if}{@html `<${'style'}  >${}<${'/style'}>`}</span>
+{/if}</span>

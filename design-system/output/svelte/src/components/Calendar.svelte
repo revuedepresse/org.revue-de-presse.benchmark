@@ -119,4 +119,4 @@ let initialised = false;
 <YearPicker  yearRange={yearRange}  selectedYear={focusedYear}  onSelect={(y) => selectYear(y)}></YearPicker>
 
 
-{/if}</div>{@html `<${'style'}  >${}<${'/style'}>`}</div>
+{/if}</div></div>

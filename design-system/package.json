@@ -16,7 +16,9 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
     "demo": "pnpm --filter @revue-de-presse/design-system-demo dev",
-    "story": "histoire dev --config stories/histoire.config.ts"
+    "story": "histoire dev --config stories/histoire.config.ts",
+    "verify:cross-target": "node scripts/verify-cross-target.mjs",
+    "verify:visual": "node scripts/visual-regression.mjs"
   },
   "devDependencies": {
     "@angular/common": "^18",
@@ -26,7 +28,9 @@
     "@builder.io/qwik": "^1.5",
     "@histoire/plugin-vue": "^0.17.17",
     "@stencil/core": "^4",
+    "@sveltejs/vite-plugin-svelte": "^4",
     "@types/node": "^20.14.0",
+    "@vitejs/plugin-react": "^4.3",
     "@vitejs/plugin-vue": "^5.0.0",
     "@zxcvbn-ts/core": "^3",
     "@zxcvbn-ts/language-common": "^3",
@@ -35,12 +39,15 @@
     "alpinejs": "^3",
     "histoire": "^0.17.17",
     "lit": "^3.2.0",
+    "pixelmatch": "^7.2.0",
     "playwright": "^1.59.1",
+    "pngjs": "^7.0.0",
     "preact": "^10",
     "solid-js": "^1.9.0",
     "svelte": "^5.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.5.0",
+    "vite-plugin-solid": "^2.10",
     "vitest": "^2.0.0",
     "vue": "^3.5.0"
   }

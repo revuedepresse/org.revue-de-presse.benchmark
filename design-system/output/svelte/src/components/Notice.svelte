@@ -45,4 +45,4 @@ export let bodyVars: NoticeProps['bodyVars']= undefined;
 
 </script>
 
-<div  class="rdp-notice"  role="status" ><h2  class="rdp-notice__headline" >{t(headlineKey, headlineVars)}</h2><p  class="rdp-notice__body" >{t(bodyKey, bodyVars)}</p>{@html `<${'style'}  >${}<${'/style'}>`}</div>
+<div  class="rdp-notice"  role="status" ><h2  class="rdp-notice__headline" >{t(headlineKey, headlineVars)}</h2><p  class="rdp-notice__body" >{t(bodyKey, bodyVars)}</p></div>

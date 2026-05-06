@@ -15,9 +15,11 @@ export class MediaPlaceholder {
       <div
         class="rdp-media-placeholder"
         aria-hidden="true"
-        style={`width:${this.width ? `${this.width}px` : "100%"};${
-          this.height ? `height:${this.height}px;` : ""
-        }${this.aspectRatio ? `aspect-ratio:${this.aspectRatio};` : ""}`}
+        style={{
+          width: this.width ? `${this.width}px` : "100%",
+          height: this.height ? `${this.height}px` : undefined,
+          aspectRatio: this.aspectRatio,
+        }}
       >
         <svg viewBox="0 0 100 60" preserveAspectRatio="none">
           <line
