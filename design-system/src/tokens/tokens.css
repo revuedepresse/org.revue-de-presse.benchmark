@@ -1,0 +1,73 @@
+:root {
+  /* Foundation — colour. Sourced verbatim from research/live-tokens.json. */
+  --color-white: #fff;
+  --color-black: #000;
+  --color-brand: #006663;
+  --color-brand-active: #00cdc7;
+  --color-content-text: #2f394d;
+  --color-content-background: #2f394d;
+  --color-content-font: #e6e6e6;
+  --color-light-grey: #657786;
+  --color-taupe-grey: #ebeef0;
+  --color-border: #e6e6e6;
+  --color-background-other-month: #e6e6e6;
+  --color-background-future-date: #fff;
+  --color-error: #ffaa00;
+  --color-brand-bluesky: #1d9bf0;
+  --color-vanity-metric-like: #851430;
+  --color-vanity-metric-retweet: #09442c;
+  --color-vanity-metric-reply: #1d9bf0;
+
+  /* Foundation — spacing. */
+  --separation-0: 6px;
+  --separation-1: 8px;
+  --separation-2: 16px;
+  --separation-3: 19px;
+  --margin-status: 15px;
+  --margin-title: 20px;
+  --margin-navigation: 10px;
+
+  /* Foundation — radius. */
+  --radius-default: 8px;
+  --radius-date-picker: 4px;
+  --radius-selectable: 4px;
+
+  /* Foundation — typography. */
+  --line-height-base: 1.4em;
+  --font-size-content: 14px;
+  --font-size-status-text: 19px;
+  --font-size-publication-date: 12px;
+  --font-size-calendar-month-day: 12px;
+  --font-size-calendar-month-day-cell: 16px;
+  --font-size-vanity-metric: 15px;
+  --font-size-date-picker: 16px;
+  --font-size-footer-paragraph: 16px;
+  --font-size-footer-title: 26px;
+  --font-size-footer-copyright: 12px;
+  --font-size-footer-outer-link: 14px;
+
+  /* Component layer — Button. */
+  --button-bg-primary: var(--color-brand-active);
+  --button-bg-primary-hover: var(--color-brand);
+  --button-fg-primary: var(--color-white);
+  --button-bg-secondary: transparent;
+  --button-border-secondary: var(--color-brand-active);
+  --button-bg-disabled: var(--color-background-other-month);
+
+  /* Component layer — Input. */
+  --input-border-default: var(--color-border);
+  --input-border-error: var(--color-vanity-metric-like);
+  --input-bg-default: var(--color-white);
+  --input-fg-default: var(--color-content-text);
+
+  /* Component layer — FormError. */
+  --form-error-fg: var(--color-vanity-metric-like);
+
+  /* Component layer — Alert. */
+  --alert-bg-empty: var(--color-error);
+  --alert-fg-empty: var(--color-content-text);
+
+  /* Component layer — Banner about. */
+  --banner-about-bg: var(--color-content-background);
+  --banner-about-fg: var(--color-content-font);
+}
