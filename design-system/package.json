@@ -1,0 +1,32 @@
+{
+  "name": "@revue-de-presse/design-system-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "build:tokens": "node scripts/sync-tokens.mjs --check",
+    "tokens:sync": "node scripts/sync-tokens.mjs --write",
+    "build:mitosis": "mitosis build",
+    "build": "pnpm build:tokens && pnpm build:mitosis",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "demo": "pnpm --filter @revue-de-presse/design-system-demo dev",
+    "story": "histoire dev --config stories/histoire.config.ts"
+  },
+  "devDependencies": {
+    "@builder.io/mitosis": "^0.13.0",
+    "@builder.io/mitosis-cli": "^0.13.0",
+    "@types/node": "^20.14.0",
+    "histoire": "^0.17.17",
+    "@histoire/plugin-vue": "^0.17.17",
+    "tsup": "^8.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0",
+    "vue": "^3.5.0"
+  }
+}
