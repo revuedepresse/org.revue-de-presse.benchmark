@@ -25,10 +25,7 @@
     <a
       class="rdp-banner-about__outer-link"
       x-bind:href="legalNoticeHref ?? '/mentions-legales'"
-      x-on:click="if (onLegalNoticeClick) {
-  $event.preventDefault();
-  onLegalNoticeClick();
-}"
+      x-on:click="handleLegalClick($event)"
     >
       <span x-html="t('footer.about.privacy-policy')"></span>
     </a>
@@ -36,10 +33,7 @@
     <a
       class="rdp-banner-about__outer-link"
       x-bind:href="contactHref ?? '/nous-contacter'"
-      x-on:click="if (onContactClick) {
-  $event.preventDefault();
-  onContactClick();
-}"
+      x-on:click="handleContactClick($event)"
     >
       <span x-html="t('footer.about.contact')"></span>
     </a>
@@ -47,10 +41,7 @@
     <a
       class="rdp-banner-about__outer-link"
       x-bind:href="supportHref ?? '/nous-soutenir'"
-      x-on:click="if (onSupportClick) {
-  $event.preventDefault();
-  onSupportClick();
-}"
+      x-on:click="handleSupportClick($event)"
     >
       <span x-html="t('footer.about.support')"></span>
     </a>
@@ -58,10 +49,7 @@
     <a
       class="rdp-banner-about__outer-link"
       x-bind:href="sourcesHref ?? '/sources'"
-      x-on:click="if (onSourcesClick) {
-  $event.preventDefault();
-  onSourcesClick();
-}"
+      x-on:click="handleSourcesClick($event)"
     >
       <span x-html="t('footer.about.sources')"></span>
     </a>
@@ -200,6 +188,30 @@
     Alpine.data("bannerAbout", () => ({
       get year() {
         return new Date().getFullYear();
+      },
+      handleLegalClick(event) {
+        if (props.onLegalNoticeClick) {
+          event.preventDefault();
+          props.onLegalNoticeClick();
+        }
+      },
+      handleContactClick(event) {
+        if (props.onContactClick) {
+          event.preventDefault();
+          props.onContactClick();
+        }
+      },
+      handleSupportClick(event) {
+        if (props.onSupportClick) {
+          event.preventDefault();
+          props.onSupportClick();
+        }
+      },
+      handleSourcesClick(event) {
+        if (props.onSourcesClick) {
+          event.preventDefault();
+          props.onSourcesClick();
+        }
       },
     }));
   });
