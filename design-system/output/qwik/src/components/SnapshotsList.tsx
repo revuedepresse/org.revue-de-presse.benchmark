@@ -38,8 +38,8 @@ export const SnapshotsList = component$((props: SnapshotsListProps) => {
           <p class="rdp-snapshots-list__empty">{t("snapshots-list.empty")}</p>
         ) : null}
         {props.items.length > 0 ? (
-          <ul class="rdp-snapshots-list__items" role="listbox">
-            {(props.items || []).map((item) => {
+          <ol class="rdp-snapshots-list__items" role="listbox">
+            {(props.items || []).map((item, index) => {
               return (
                 <li
                   role="option"
@@ -53,11 +53,16 @@ export const SnapshotsList = component$((props: SnapshotsListProps) => {
                   }`}
                   onClick$={$((event) => props.onSelect?.(item.id))}
                 >
-                  {item.label}
+                  <span class="rdp-snapshots-list__item-rank">
+                    {index + 1}.
+                  </span>
+                  <span class="rdp-snapshots-list__item-label">
+                    {item.label}
+                  </span>
                 </li>
               );
             })}
-          </ul>
+          </ol>
         ) : null}
       </div>
       <style>{`
@@ -74,7 +79,7 @@ export const SnapshotsList = component$((props: SnapshotsListProps) => {
           align-items: center;
           gap: var(--separation-1);
           padding: var(--separation-1) var(--separation-2);
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
           border-radius: var(--radius-default) var(--radius-default) 0 0;
           font-size: var(--font-size-content);
@@ -86,14 +91,25 @@ export const SnapshotsList = component$((props: SnapshotsListProps) => {
           font-size: var(--font-size-content);
         }
         .rdp-snapshots-list__item {
+          display: flex;
+          gap: var(--separation-1);
           padding: var(--separation-1) var(--separation-2);
           border-bottom: 1px solid var(--color-border);
           color: var(--color-content-text);
           cursor: pointer;
         }
+        .rdp-snapshots-list__item-rank {
+          color: var(--color-brand);
+          font-variant-numeric: tabular-nums;
+          flex-shrink: 0;
+        }
+        .rdp-snapshots-list__item--selected .rdp-snapshots-list__item-rank {
+          color: var(--color-white);
+        }
+        .rdp-snapshots-list__item-label { flex: 1; }
         .rdp-snapshots-list__item:last-child { border-bottom: none; }
         .rdp-snapshots-list__item--selected {
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
         }
         .rdp-snapshots-list__empty {

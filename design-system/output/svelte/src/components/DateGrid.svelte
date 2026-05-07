@@ -35,6 +35,12 @@ export let onSelect: DateGridProps['onSelect']= undefined;
 const sel = selectedDate;
 return !!sel && sel.getFullYear() === d.getFullYear() && sel.getMonth() === d.getMonth() && sel.getDate() === d.getDate();
 }
+function isFuture(d: Date) {
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+return cell.getTime() > today.getTime();
+}
     $: rows = () => {
 const first = new Date(year, month, 1);
 const offset = (first.getDay() + 6) % 7;
@@ -67,7 +73,9 @@ return [0, 1, 2, 3, 4, 5].map(row => all.slice(row * 7, row * 7 + 7));
 {#each rows() as row }
 <tr >
 {#each row as d }
-<td  role="gridcell"  aria-selected={isSelected(d) ? 'true' : 'false'}  data-other-month={d.getMonth() !== month ? 'true' : undefined}  class={`rdp-date-grid__cell${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  on:click="{(event) => {onSelect?.(d)}}" >{d.getDate()}</td>
+<td  role="gridcell"  aria-selected={isSelected(d) ? 'true' : 'false'}  aria-disabled={isFuture(d) ? 'true' : undefined}  data-other-month={d.getMonth() !== month ? 'true' : undefined}  data-future={isFuture(d) ? 'true' : undefined}  class={`rdp-date-grid__cell${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  on:click="{(event) => {
+if (!isFuture(d)) onSelect?.(d);
+}}" >{d.getDate()}</td>
 {/each}
 </tr>
 {/each}

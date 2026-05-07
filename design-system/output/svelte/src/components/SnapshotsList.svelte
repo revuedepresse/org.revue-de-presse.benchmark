@@ -65,11 +65,11 @@ export let onSelect: SnapshotsListProps['onSelect']= undefined;
 
 {/if}
 {#if items.length > 0 }
-<ul  class="rdp-snapshots-list__items"  role="listbox" >
-{#each items as item }
-<li  role="option"  aria-selected={item.id === selectedId ? 'true' : 'false'}  class={`rdp-snapshots-list__item${item.id === selectedId ? ' rdp-snapshots-list__item--selected' : ''}`}  on:click="{(event) => {onSelect?.(item.id)}}" >{item.label}</li>
+<ol  class="rdp-snapshots-list__items"  role="listbox" >
+{#each items as item, index }
+<li  role="option"  aria-selected={item.id === selectedId ? 'true' : 'false'}  class={`rdp-snapshots-list__item${item.id === selectedId ? ' rdp-snapshots-list__item--selected' : ''}`}  on:click="{(event) => {onSelect?.(item.id)}}" ><span  class="rdp-snapshots-list__item-rank" >{index + 1}.</span><span  class="rdp-snapshots-list__item-label" >{item.label}</span></li>
 {/each}
-</ul>
+</ol>
 
 
 {/if}</div></div>

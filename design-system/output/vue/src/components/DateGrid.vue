@@ -18,11 +18,17 @@
             <td
               role="gridcell"
               :aria-selected="isSelected(d) ? 'true' : 'false'"
+              :aria-disabled="isFuture(d) ? 'true' : undefined"
               :data-other-month="d.getMonth() !== month ? 'true' : undefined"
+              :data-future="isFuture(d) ? 'true' : undefined"
               :class="`rdp-date-grid__cell${
                 isSelected(d) ? ' rdp-date-grid__cell--selected' : ''
               }`"
-              @click="async (event) => onSelect?.(d)"
+              @click="
+                async (event) => {
+                  if (!isFuture(d)) onSelect?.(d);
+                }
+              "
             >
               {{ d.getDate() }}
             </td>
@@ -43,7 +49,7 @@
         .rdp-date-grid__weekday {
           font-weight: normal;
           font-size: var(--font-size-calendar-month-day);
-          color: var(--color-brand-active);
+          color: var(--color-brand);
           padding: 4px 0;
           text-align: center;
         }
@@ -60,10 +66,15 @@
           background: var(--color-background-other-month);
           color: var(--color-light-grey);
         }
+        .rdp-date-grid__cell[data-future="true"] {
+          color: var(--color-light-grey);
+          background: var(--color-background-other-month);
+          cursor: not-allowed;
+        }
         .rdp-date-grid__cell--selected {
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
-          border-color: var(--color-brand-active);
+          border-color: var(--color-brand);
         }
       `
     }}</component>
@@ -117,5 +128,11 @@ function isSelected(d: Date) {
     sel.getMonth() === d.getMonth() &&
     sel.getDate() === d.getDate()
   );
+}
+function isFuture(d: Date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  return cell.getTime() > today.getTime();
 }
 </script>

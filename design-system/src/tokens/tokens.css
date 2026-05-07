@@ -42,16 +42,17 @@
   --font-size-vanity-metric: 15px;
   --font-size-date-picker: 16px;
   --font-size-footer-paragraph: 16px;
-  --font-size-footer-title: 26px;
+  --font-size-footer-title: 20px;
   --font-size-footer-copyright: 12px;
   --font-size-footer-outer-link: 14px;
 
-  /* Component layer — Button. */
-  --button-bg-primary: var(--color-brand-active);
-  --button-bg-primary-hover: var(--color-brand);
+  /* Component layer — Button. Legacy uses --color-brand (deep green) for
+     active backgrounds and --color-brand-active (bright cyan) for hover. */
+  --button-bg-primary: var(--color-brand);
+  --button-bg-primary-hover: var(--color-brand-active);
   --button-fg-primary: var(--color-white);
   --button-bg-secondary: transparent;
-  --button-border-secondary: var(--color-brand-active);
+  --button-border-secondary: var(--color-brand);
   --button-bg-disabled: var(--color-background-other-month);
 
   /* Component layer — Input. */

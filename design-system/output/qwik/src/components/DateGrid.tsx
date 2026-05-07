@@ -25,6 +25,12 @@ export const isSelected = function isSelected(props, state, rows, d: Date) {
     sel.getDate() === d.getDate()
   );
 };
+export const isFuture = function isFuture(props, state, rows, d: Date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  return cell.getTime() > today.getTime();
+};
 export const DateGrid = component$((props: DateGridProps) => {
   const rows = useComputed$(() => {
     const first = new Date(props.year, props.month, 1);
@@ -79,15 +85,23 @@ export const DateGrid = component$((props: DateGridProps) => {
                     aria-selected={
                       isSelected(props, state, rows, d) ? "true" : "false"
                     }
+                    aria-disabled={
+                      isFuture(props, state, rows, d) ? "true" : undefined
+                    }
                     data-other-month={(() => {
                       d.getMonth() !== props.month ? "true" : undefined;
                     })()}
+                    data-future={
+                      isFuture(props, state, rows, d) ? "true" : undefined
+                    }
                     class={`rdp-date-grid__cell${
                       isSelected(props, state, rows, d)
                         ? " rdp-date-grid__cell--selected"
                         : ""
                     }`}
-                    onClick$={$((event) => props.onSelect?.(d))}
+                    onClick$={$((event) => {
+                      if (!isFuture(props, state, rows, d)) props.onSelect?.(d);
+                    })}
                   >
                     {d.getDate()}
                   </td>
@@ -109,7 +123,7 @@ export const DateGrid = component$((props: DateGridProps) => {
         .rdp-date-grid__weekday {
           font-weight: normal;
           font-size: var(--font-size-calendar-month-day);
-          color: var(--color-brand-active);
+          color: var(--color-brand);
           padding: 4px 0;
           text-align: center;
         }
@@ -126,10 +140,15 @@ export const DateGrid = component$((props: DateGridProps) => {
           background: var(--color-background-other-month);
           color: var(--color-light-grey);
         }
+        .rdp-date-grid__cell[data-future="true"] {
+          color: var(--color-light-grey);
+          background: var(--color-background-other-month);
+          cursor: not-allowed;
+        }
         .rdp-date-grid__cell--selected {
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
-          border-color: var(--color-brand-active);
+          border-color: var(--color-brand);
         }
       `}</style>
     </table>

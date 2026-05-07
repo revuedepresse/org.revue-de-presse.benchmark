@@ -32,6 +32,12 @@ export default function DateGrid(props: DateGridProps) {
         sel.getDate() === d.getDate()
       );
     },
+    isFuture(d: Date): boolean {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      return cell.getTime() > today.getTime();
+    },
   });
 
   return (
@@ -56,9 +62,13 @@ export default function DateGrid(props: DateGridProps) {
                   <td
                     role="gridcell"
                     aria-selected={state.isSelected(d) ? 'true' : 'false'}
+                    aria-disabled={state.isFuture(d) ? 'true' : undefined}
                     data-other-month={d.getMonth() !== props.month ? 'true' : undefined}
+                    data-future={state.isFuture(d) ? 'true' : undefined}
                     class={`rdp-date-grid__cell${state.isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}
-                    onClick={() => props.onSelect?.(d)}
+                    onClick={() => {
+                      if (!state.isFuture(d)) props.onSelect?.(d);
+                    }}
                   >
                     {d.getDate()}
                   </td>
@@ -80,7 +90,7 @@ export default function DateGrid(props: DateGridProps) {
         .rdp-date-grid__weekday {
           font-weight: normal;
           font-size: var(--font-size-calendar-month-day);
-          color: var(--color-brand-active);
+          color: var(--color-brand);
           padding: 4px 0;
           text-align: center;
         }
@@ -97,10 +107,15 @@ export default function DateGrid(props: DateGridProps) {
           background: var(--color-background-other-month);
           color: var(--color-light-grey);
         }
+        .rdp-date-grid__cell[data-future="true"] {
+          color: var(--color-light-grey);
+          background: var(--color-background-other-month);
+          cursor: not-allowed;
+        }
         .rdp-date-grid__cell--selected {
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
-          border-color: var(--color-brand-active);
+          border-color: var(--color-brand);
         }
       `}</style>
     </table>

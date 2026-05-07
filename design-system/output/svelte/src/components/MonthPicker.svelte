@@ -30,7 +30,14 @@ export let onSelect: MonthPickerProps['onSelect']= undefined;
 
 
 
-
+    function isFuture(monthIndex: number) {
+const today = new Date();
+const currentYear = today.getFullYear();
+const currentMonth = today.getMonth();
+if (year > currentYear) return true;
+if (year < currentYear) return false;
+return monthIndex > currentMonth;
+}
     $: months = () => {
 return Array.from({
   length: 12
@@ -55,6 +62,8 @@ return Array.from({
 year: year
 })} >
 {#each months() as name, index }
-<li  role="option"  aria-selected={index === selectedMonth ? 'true' : 'false'}  class={`rdp-month-picker__item${index === selectedMonth ? ' rdp-month-picker__item--selected' : ''}`}  on:click="{(event) => {onSelect?.(index)}}" >{name}</li>
+<li  role="option"  aria-selected={index === selectedMonth ? 'true' : 'false'}  aria-disabled={isFuture(index) ? 'true' : undefined}  data-future={isFuture(index) ? 'true' : undefined}  class={`rdp-month-picker__item${index === selectedMonth ? ' rdp-month-picker__item--selected' : ''}`}  on:click="{(event) => {
+if (!isFuture(index)) onSelect?.(index);
+}}" >{name}</li>
 {/each}
 </ul>

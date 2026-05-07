@@ -1,0 +1,112 @@
+<div class="rdp-calendar-month-bar" x-data="calendarMonthBar()">
+  <button
+    type="button"
+    class="rdp-calendar-month-bar__pill"
+    x-bind:aria-label="t(titleAriaKey, undefined, locale ?? 'fr-FR')"
+    x-on:click="onTitleClick?.()"
+  >
+    <Icon name="pick-item" x-bind:size="16" x-bind:decorative="true"></Icon>
+    <span class="rdp-calendar-month-bar__label">
+      <span x-html="title"></span>
+    </span>
+  </button>
+  <div class="rdp-calendar-month-bar__nav">
+    <button
+      type="button"
+      class="rdp-calendar-month-bar__btn rdp-calendar-month-bar__btn--prev"
+      x-bind:aria-label="t(prevAriaKey, undefined, locale ?? 'fr-FR')"
+      x-on:click="onPrev?.()"
+    >
+      <Icon
+        name="previous-item"
+        x-bind:size="20"
+        x-bind:decorative="true"
+      ></Icon>
+    </button>
+    <button
+      type="button"
+      class="rdp-calendar-month-bar__btn rdp-calendar-month-bar__btn--next"
+      x-bind:aria-label="t(nextAriaKey, undefined, locale ?? 'fr-FR')"
+      x-on:click="onNext?.()"
+    >
+      <Icon name="next-item" x-bind:size="20" x-bind:decorative="true"></Icon>
+    </button>
+  </div>
+  <style>
+    <span x-html="`
+            .rdp-calendar-month-bar {
+              display: flex;
+              gap: var(--separation-1);
+              align-items: center;
+              padding: var(--separation-1) 0;
+              font-family: 'Roboto', sans-serif;
+            }
+            .rdp-calendar-month-bar__pill {
+              flex: 0 0 auto;
+              display: inline-flex;
+              align-items: center;
+              gap: var(--separation-1);
+              width: auto;
+              background: var(--color-white);
+              color: var(--color-brand);
+              border: 1px solid var(--color-brand);
+              padding: var(--separation-1) var(--separation-2);
+              border-radius: var(--radius-default);
+              font-size: var(--font-size-date-picker);
+              cursor: pointer;
+              text-align: left;
+            }
+            .rdp-calendar-month-bar__label { display: inline-block; }
+            .rdp-calendar-month-bar__pill:hover { background: var(--color-brand); color: var(--color-white); border-color: var(--color-brand); }
+            .rdp-calendar-month-bar__nav {
+              margin-left: auto;
+              display: flex;
+              flex-direction: row;
+              gap: var(--separation-1);
+              align-items: center;
+            }
+            .rdp-calendar-month-bar__btn {
+              width: 32px;
+              height: 32px;
+              background: transparent;
+              color: var(--color-brand);
+              border: none;
+              cursor: pointer;
+              padding: 0;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .rdp-calendar-month-bar__btn:hover { color: var(--color-brand-active); }
+          `"></span>
+  </style>
+</div>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("calendarMonthBar", () => ({
+      get title() {
+        const m = props.viewMode ?? "day";
+        const loc = props.locale ?? "fr-FR";
+        const year = props.focusedYear ?? new Date().getFullYear();
+        if (m === "month") return String(year);
+        if (m === "year")
+          return t("calendar.year-picker.heading", undefined, loc);
+        return `${localizedMonthLong(props.focusedMonth ?? 0, loc)} ${year}`;
+      },
+      get titleAriaKey() {
+        const m = props.viewMode ?? "day";
+        if (m === "day") return "actions.pick-month.aria-label";
+        if (m === "month") return "actions.pick-year.aria-label";
+        return "calendar.year-picker.heading";
+      },
+      get prevAriaKey() {
+        const m = props.viewMode ?? "day";
+        return m === "year" ? "actions.prev-year" : "actions.prev-month";
+      },
+      get nextAriaKey() {
+        const m = props.viewMode ?? "day";
+        return m === "year" ? "actions.next-year" : "actions.next-month";
+      },
+    }));
+  });
+</script>

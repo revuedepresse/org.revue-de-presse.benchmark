@@ -41,18 +41,24 @@ import { t } from "../utils/i18n";
           </p></ng-container
         >
         <ng-container *ngIf="items.length > 0"
-          ><ul class="rdp-snapshots-list__items" role="listbox">
-            <ng-container *ngFor="let item of items"
+          ><ol class="rdp-snapshots-list__items" role="listbox">
+            <ng-container *ngFor="let item of items; index as index"
               ><li
                 role="option"
                 [attr.aria-selected]="item.id === selectedId ? 'true' : 'false'"
                 [class]="\`rdp-snapshots-list__item\${item.id === selectedId ? ' rdp-snapshots-list__item--selected' : ''}\`"
                 (click)="onSelect?.(item.id)"
               >
-                {{item.label}}
+                <span class="rdp-snapshots-list__item-rank"
+                  >{{index + 1}} .</span
+                >
+                <span
+                  class="rdp-snapshots-list__item-label"
+                  >{{item.label}}</span
+                >
               </li></ng-container
             >
-          </ul></ng-container
+          </ol></ng-container
         >
       </div>
       <style>
@@ -70,7 +76,7 @@ import { t } from "../utils/i18n";
                   align-items: center;
                   gap: var(--separation-1);
                   padding: var(--separation-1) var(--separation-2);
-                  background: var(--color-brand-active);
+                  background: var(--color-brand);
                   color: var(--color-white);
                   border-radius: var(--radius-default) var(--radius-default) 0 0;
                   font-size: var(--font-size-content);
@@ -82,14 +88,25 @@ import { t } from "../utils/i18n";
                   font-size: var(--font-size-content);
                 }
                 .rdp-snapshots-list__item {
+                  display: flex;
+                  gap: var(--separation-1);
                   padding: var(--separation-1) var(--separation-2);
                   border-bottom: 1px solid var(--color-border);
                   color: var(--color-content-text);
                   cursor: pointer;
                 }
+                .rdp-snapshots-list__item-rank {
+                  color: var(--color-brand);
+                  font-variant-numeric: tabular-nums;
+                  flex-shrink: 0;
+                }
+                .rdp-snapshots-list__item--selected .rdp-snapshots-list__item-rank {
+                  color: var(--color-white);
+                }
+                .rdp-snapshots-list__item-label { flex: 1; }
                 .rdp-snapshots-list__item:last-child { border-bottom: none; }
                 .rdp-snapshots-list__item--selected {
-                  background: var(--color-brand-active);
+                  background: var(--color-brand);
                   color: var(--color-white);
                 }
                 .rdp-snapshots-list__empty {

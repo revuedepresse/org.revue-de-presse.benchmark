@@ -1,8 +1,10 @@
 <script context='module' lang='ts'>
       type BannerAboutProps = {
-bodyKey?: string;
-dismissible?: boolean;
-onDismiss?: () => void;
+legalNoticeHref?: string;
+contactHref?: string;
+supportHref?: string;
+sourcesHref?: string;
+subscribeHref?: string;
 }
 
     </script>
@@ -21,21 +23,26 @@ import  Icon from './Icon.svelte';
 
 
 
-    export let onDismiss: BannerAboutProps['onDismiss']= undefined;
-export let bodyKey: BannerAboutProps['bodyKey']= undefined;
-export let dismissible: BannerAboutProps['dismissible']= undefined;
+    export let subscribeHref: BannerAboutProps['subscribeHref']= undefined;
+export let legalNoticeHref: BannerAboutProps['legalNoticeHref']= undefined;
+export let onLegalNoticeClick: BannerAboutProps['onLegalNoticeClick'];
+export let contactHref: BannerAboutProps['contactHref']= undefined;
+export let onContactClick: BannerAboutProps['onContactClick'];
+export let supportHref: BannerAboutProps['supportHref']= undefined;
+export let onSupportClick: BannerAboutProps['onSupportClick'];
+export let sourcesHref: BannerAboutProps['sourcesHref']= undefined;
+export let onSourcesClick: BannerAboutProps['onSourcesClick'];
 
 
 
-    function dismiss() {
-dismissed = true;
-onDismiss?.();
-}
+
+    $: year = () => {
+return new Date().getFullYear();
+};
 
 
 
 
-    let dismissed = false;
 
 
 
@@ -47,16 +54,34 @@ onDismiss?.();
 
   </script>
 
-
-{#if !dismissed }
-<aside  class="rdp-banner-about"  role="region" ><header  class="rdp-banner-about__heading" ><Icon  name="introducing"  size={24} ></Icon><span >{t('footer.about.heading')}</span></header><p  class="rdp-banner-about__body" >{t(bodyKey ?? 'footer.about.body')}</p>
-{#if !!dismissible }
-<button  type="button"  class="rdp-banner-about__close"  aria-label={t('actions.quit.label')}  on:click="{(event) => {dismiss()}}" >
-          ×
-        </button>
-
-
-{/if}</aside>
-
-
-{/if}
+  <footer  id="project"  class="rdp-banner-about" ><h2  class="rdp-banner-about__title rdp-banner-about__title--sharing" ><Icon  name="sharing"  size={24}  decorative={true} ></Icon><span >{t('footer.social.heading')}</span></h2><p  class="rdp-banner-about__paragraph rdp-banner-about__paragraph--sharing" >{t('footer.sharing.body')}<br  /><br  /><a  class="rdp-banner-about__subscribe-to"  rel="noreferrer nofollow noopener"  href={subscribeHref ?? 'https://bsky.app/profile/revue-de-presse.bsky.social'} ><span  class="rdp-banner-about__subscription-label" >{t('footer.subscribe-to.label')}</span></a></p><h2  class="rdp-banner-about__title rdp-banner-about__title--introducing" ><Icon  name="introducing"  size={24}  decorative={true} ></Icon><span >{t('footer.about.heading')}</span></h2><p  class="rdp-banner-about__paragraph" ><a  class="rdp-banner-about__outer-link"  href={legalNoticeHref ?? '/mentions-legales'}  on:click="{(event) => {
+if (onLegalNoticeClick) {
+  event.preventDefault();
+  onLegalNoticeClick();
+}
+}}" >{t('footer.about.privacy-policy')}</a><br  /><a  class="rdp-banner-about__outer-link"  href={contactHref ?? '/nous-contacter'}  on:click="{(event) => {
+if (onContactClick) {
+  event.preventDefault();
+  onContactClick();
+}
+}}" >{t('footer.about.contact')}</a><br  /><a  class="rdp-banner-about__outer-link"  href={supportHref ?? '/nous-soutenir'}  on:click="{(event) => {
+if (onSupportClick) {
+  event.preventDefault();
+  onSupportClick();
+}
+}}" >{t('footer.about.support')}</a><br  /><a  class="rdp-banner-about__outer-link"  href={sourcesHref ?? '/sources'}  on:click="{(event) => {
+if (onSourcesClick) {
+  event.preventDefault();
+  onSourcesClick();
+}
+}}" >{t('footer.about.sources')}</a><br  /></p><h2  class="rdp-banner-about__title rdp-banner-about__title--funding" ><Icon  name="funding"  size={24}  decorative={true} ></Icon><span >{t('footer.pro-bono.heading')}</span></h2><p  class="rdp-banner-about__paragraph" >{t('footer.pro-bono.body.before-author1')}<a  class="rdp-banner-about__outer-link"  href="https://bsky.app/profile/sylvainegarderet.bsky.social"  rel="noreferrer nofollow noopener" >
+        @sylvainegarderet.bsky.social
+      </a>{t('footer.pro-bono.body.between-authors')}<a  class="rdp-banner-about__outer-link"  href="https://bsky.app/profile/thierry.marianne.io"  rel="noreferrer nofollow noopener" >
+        @thierry.marianne.io
+      </a>{t('footer.pro-bono.body.after-author2')}<br  /><a  class="rdp-banner-about__outer-link"  href="https://netlify.com" >
+        Netlify
+      </a>{t('footer.pro-bono.body.netlify-suffix')}<a  class="rdp-banner-about__outer-link"  href="https://www.netlify.com/legal/open-source-policy/" >{t('footer.pro-bono.body.netlify-program')}</a>{t('footer.pro-bono.body.tail')}</p><div  class="rdp-banner-about__copyright-footer" ><div  class="rdp-banner-about__copyright" >{t('footer.copyright.prefix', {
+year: year()
+})}<a  class="rdp-banner-about__outer-link"  href="https://twitter.com/CcelestinC"  rel="noreferrer nofollow noopener" >
+          @CcelestinC
+        </a></div></div></footer>

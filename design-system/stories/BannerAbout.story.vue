@@ -4,7 +4,8 @@ import BannerAbout from '@design-system/components/BannerAbout.vue';
 
 <template>
   <Story title="Organisms/BannerAbout">
-    <Variant title="default"><BannerAbout /></Variant>
-    <Variant title="dismissible"><BannerAbout :dismissible="true" /></Variant>
+    <Variant title="default">
+      <BannerAbout />
+    </Variant>
   </Story>
 </template>
