@@ -4,10 +4,6 @@ import BannerAbout from "./BannerAbout.jsx";
 
 import Calendar from "./Calendar.jsx";
 
-import Footer from "./Footer.jsx";
-
-import SnapshotsList from "./SnapshotsList.jsx";
-
 import { $, Fragment, component$, h } from "@builder.io/qwik";
 
 type ListItem = {
@@ -15,7 +11,7 @@ type ListItem = {
   label: string;
 };
 type SidebarProps = {
-  lists: ListItem[];
+  lists?: ListItem[];
   selectedListId?: string;
   selectedDate: Date;
   yearRange: {
@@ -25,23 +21,26 @@ type SidebarProps = {
   locale?: Locale;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
+  onLegalNoticeClick?: () => void;
+  onContactClick?: () => void;
+  onSupportClick?: () => void;
+  onSourcesClick?: () => void;
 };
 export const Sidebar = component$((props: SidebarProps) => {
   return (
     <aside class="rdp-sidebar">
-      <SnapshotsList
-        items={props.lists}
-        selectedId={props.selectedListId}
-        onSelect$={$((event) => props.onListSelect?.(id))}
-      ></SnapshotsList>
       <Calendar
         selectedDate={props.selectedDate}
         locale={props.locale}
         yearRange={props.yearRange}
         onSelect$={$((event) => props.onDateSelect?.(d))}
       ></Calendar>
-      <BannerAbout></BannerAbout>
-      <Footer></Footer>
+      <BannerAbout
+        onLegalNoticeClick$={$((event) => props.onLegalNoticeClick())}
+        onContactClick$={$((event) => props.onContactClick())}
+        onSupportClick$={$((event) => props.onSupportClick())}
+        onSourcesClick$={$((event) => props.onSourcesClick())}
+      ></BannerAbout>
       <style>{`
         .rdp-sidebar {
           width: 336px;

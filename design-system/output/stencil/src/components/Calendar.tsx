@@ -2,12 +2,14 @@ import { DateGrid } from "./DateGrid";
 import { MonthPicker } from "./MonthPicker";
 import { YearPicker } from "./YearPicker";
 import { CalendarActionBar } from "./CalendarActionBar";
+import { CalendarMonthBar } from "./CalendarMonthBar";
 import type { Locale } from "../utils/i18n";
 
 import {
   Component,
   h,
   Fragment,
+  Watch,
   Event,
   EventEmitter,
   Prop,
@@ -20,26 +22,18 @@ import {
 export class Calendar {
   @Prop() selectedDate: any;
   @Event() select: any;
+  @Prop() yearRange: any;
   @Prop() presentation: any;
   @Event() dismiss: any;
   @Prop() locale: any;
-  @Prop() yearRange: any;
   @State() viewMode = "day";
+  @State() focusedDate = new Date();
   @State() focusedYear = 0;
   @State() focusedMonth = 0;
   @State() initialised = false;
 
-  ensureInit() {
-    if (!this.initialised) {
-      this.focusedYear = this.selectedDate.getFullYear();
-      this.focusedMonth = this.selectedDate.getMonth();
-      this.initialised = true;
-    }
-  }
-  setView(mode: "day" | "month" | "year") {
-    this.viewMode = mode;
-  }
   selectDay(d: Date) {
+    this.focusedDate = d;
     this.focusedYear = d.getFullYear();
     this.focusedMonth = d.getMonth();
     this.select?.(d);
@@ -52,26 +46,74 @@ export class Calendar {
     this.focusedYear = y;
     this.viewMode = "month";
   }
-  prev() {
-    if (this.viewMode === "day") {
-      const m = this.focusedMonth - 1;
-      if (m < 0) {
-        this.focusedMonth = 11;
-        this.focusedYear -= 1;
-      } else this.focusedMonth = m;
+  prevDay() {
+    const next = new Date(this.focusedDate);
+    next.setDate(next.getDate() - 1);
+    this.focusedDate = next;
+    this.focusedYear = next.getFullYear();
+    this.focusedMonth = next.getMonth();
+  }
+  nextDay() {
+    const next = new Date(this.focusedDate);
+    next.setDate(next.getDate() + 1);
+    this.focusedDate = next;
+    this.focusedYear = next.getFullYear();
+    this.focusedMonth = next.getMonth();
+  }
+  prevMonth() {
+    if (this.viewMode === "year") {
+      const next = this.focusedYear - 1;
+      if (next >= this.yearRange.min) this.focusedYear = next;
+      return;
+    }
+    const m = this.focusedMonth - 1;
+    if (m < 0) {
+      this.focusedMonth = 11;
+      this.focusedYear -= 1;
+    } else {
+      this.focusedMonth = m;
     }
   }
-  next() {
+  nextMonth() {
+    if (this.viewMode === "year") {
+      const next = this.focusedYear + 1;
+      if (next <= this.yearRange.max) this.focusedYear = next;
+      return;
+    }
+    const m = this.focusedMonth + 1;
+    if (m > 11) {
+      this.focusedMonth = 0;
+      this.focusedYear += 1;
+    } else {
+      this.focusedMonth = m;
+    }
+  }
+  titleClick() {
     if (this.viewMode === "day") {
-      const m = this.focusedMonth + 1;
-      if (m > 11) {
-        this.focusedMonth = 0;
-        this.focusedYear += 1;
-      } else this.focusedMonth = m;
+      this.viewMode = "month";
+    } else if (this.viewMode === "month") {
+      this.viewMode = "year";
     }
   }
 
-  componentDidLoad() {}
+  watch0Fn() {
+    this.focusedDate = this.selectedDate;
+    this.focusedYear = this.selectedDate.getFullYear();
+    this.focusedMonth = this.selectedDate.getMonth();
+  }
+
+  @Watch("selectedDate")
+  watch0() {
+    this.watch0Fn();
+  }
+
+  componentDidLoad() {
+    this.focusedDate = this.selectedDate;
+    this.focusedYear = this.selectedDate.getFullYear();
+    this.focusedMonth = this.selectedDate.getMonth();
+    this.initialised = true;
+    this.watch0Fn();
+  }
 
   render() {
     return (
@@ -90,17 +132,25 @@ export class Calendar {
         <div class="rdp-calendar__panel">
           <calendar-action-bar
             position="top"
-            date={this.selectedDate}
+            date={this.focusedDate}
             locale={this.locale}
-            onDateClick={() => this.setView("month")}
-            onPrev={() => this.prev()}
-            onNext={() => this.next()}
+            onPrev={() => this.prevDay()}
+            onNext={() => this.nextDay()}
           ></calendar-action-bar>
+          <calendar-month-bar
+            viewMode={this.viewMode}
+            focusedYear={this.focusedYear}
+            focusedMonth={this.focusedMonth}
+            locale={this.locale}
+            onTitleClick={() => this.titleClick()}
+            onPrev={() => this.prevMonth()}
+            onNext={() => this.nextMonth()}
+          ></calendar-month-bar>
           {this.viewMode === "day" ? (
             <date-grid
               year={this.focusedYear}
               month={this.focusedMonth}
-              selectedDate={this.selectedDate}
+              selectedDate={this.focusedDate}
               locale={this.locale}
               onSelect={(d) => this.selectDay(d)}
             ></date-grid>

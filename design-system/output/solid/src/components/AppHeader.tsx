@@ -3,6 +3,7 @@ import { Show } from "solid-js";
 type AppHeaderProps = {
   layout: "mobile" | "desktop";
   authenticated: boolean;
+  showAccountControls?: boolean;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
 };
@@ -19,7 +20,11 @@ function AppHeader(props: AppHeaderProps) {
           showWordmark={true}
           size={props.layout === "mobile" ? "sm" : "md"}
         ></Logo>
-        <Show when={props.layout === "desktop"}>
+        <Show
+          when={
+            props.showAccountControls === true && props.layout === "desktop"
+          }
+        >
           <a
             class="rdp-app-header__myspace"
             href="#"
@@ -35,14 +40,16 @@ function AppHeader(props: AppHeaderProps) {
             {t("header.my-space")}
           </a>
         </Show>
-        <button
-          class="rdp-app-header__account"
-          type="button"
-          aria-label={t("header.my-account.aria-label")}
-          onClick={(event) => props.onAccountClick?.()}
-        >
-          <Icon name="pick-item" size={32} decorative={true}></Icon>
-        </button>
+        <Show when={props.showAccountControls === true}>
+          <button
+            class="rdp-app-header__account"
+            type="button"
+            aria-label={t("header.my-account.aria-label")}
+            onClick={(event) => props.onAccountClick?.()}
+          >
+            <Icon name="pick-item" size={32} decorative={true}></Icon>
+          </button>
+        </Show>
         <style>{`
         .rdp-app-header {
           display: flex;

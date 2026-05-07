@@ -12,8 +12,119 @@
           font-size: var(--font-size-content);
           border-radius: var(--radius-default);
         }
-        .rdp-alert--info { background: var(--color-brand-active); color: var(--color-white); }
+        .rdp-alert--info { background: var(--color-brand); color: var(--color-white); }
         .rdp-alert--warning { background: var(--color-vanity-metric-like); color: var(--color-white); }
+
+/* App */
+.rdp-app {
+          background: var(--color-taupe-grey);
+          min-height: 100vh;
+          font-family: 'Roboto', sans-serif;
+          color: var(--color-content-text);
+        }
+        /* Both layouts cap at a max-width so the app stays centred on wider
+           viewports. Desktop tracks the legacy $width-extra-large-device
+           (1200px); mobile tracks a comfortable phone width (480px). */
+        .rdp-app--desktop {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        .rdp-app--mobile {
+          max-width: 480px;
+          margin: 0 auto;
+        }
+        .rdp-app__popular-news {
+          margin: 0;
+          padding: var(--separation-1) var(--separation-2);
+          font-family: 'Signika', sans-serif;
+          font-size: var(--font-size-content);
+          color: var(--color-brand);
+          background: var(--color-white);
+          border-bottom: 1px solid var(--color-border);
+          text-align: center;
+        }
+        .rdp-app__content {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: var(--separation-2);
+          padding: var(--separation-2);
+          margin: 0 auto;
+          box-sizing: border-box;
+        }
+        .rdp-app--desktop .rdp-app__content {
+          grid-template-columns: 336px 1fr;
+          align-items: start;
+        }
+        .rdp-app__main,
+        .rdp-app__mobile-main {
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          gap: var(--separation-2);
+        }
+        .rdp-app__mobile-main {
+          padding: var(--separation-2);
+          padding-bottom: calc(64px + var(--separation-2));
+        }
+        .rdp-app__post-list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          gap: var(--separation-2);
+        }
+        .rdp-app__post-item { margin: 0; }
+        .rdp-app__back {
+          align-self: flex-start;
+          background: var(--color-white);
+          border: 1px solid var(--color-brand);
+          border-radius: var(--radius-default);
+          color: var(--color-brand);
+          padding: var(--separation-1) var(--separation-2);
+          font-family: 'Roboto', sans-serif;
+          font-size: var(--font-size-content);
+          cursor: pointer;
+        }
+        .rdp-app__back:hover { background: var(--color-brand); color: var(--color-white); }
+        .rdp-app__column {
+          min-width: 0;
+        }
+        .rdp-app--mobile { --rdp-mobile-dock-height: 67px; }
+        /* Fixed dock + calendar sheet stay centred at the same max-width as
+           the mobile column so a desktop browser previewing the mobile
+           variant doesn't show full-viewport bottom UI. */
+        .rdp-app__mobile-dock {
+          position: fixed;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          bottom: 0;
+          height: var(--rdp-mobile-dock-height);
+          box-sizing: border-box;
+          background: var(--color-white);
+          border-top: 1px solid var(--color-border);
+          padding: var(--separation-1) var(--separation-2);
+          z-index: 20;
+          box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .rdp-app--mobile .rdp-calendar--sheet {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          padding-bottom: var(--rdp-mobile-dock-height);
+        }
+        .rdp-app--mobile .rdp-calendar__scrim {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          bottom: var(--rdp-mobile-dock-height);
+        }
 
 /* AppHeader */
 .rdp-app-header {
@@ -68,34 +179,77 @@
 
 /* BannerAbout */
 .rdp-banner-about {
-            background: var(--banner-about-bg);
-            color: var(--banner-about-fg);
-            padding: var(--separation-2);
-            border-radius: var(--radius-default);
-            font-family: 'Roboto', sans-serif;
-            font-size: var(--font-size-content);
-            position: relative;
-          }
-          .rdp-banner-about__heading {
-            display: flex;
-            align-items: center;
-            gap: var(--separation-1);
-            font-family: 'Signika', sans-serif;
-            font-size: var(--font-size-status-text);
-            color: var(--color-brand-active);
-            margin-bottom: var(--separation-1);
-          }
-          .rdp-banner-about__body { margin: 0; }
-          .rdp-banner-about__close {
-            position: absolute;
-            top: var(--separation-1);
-            right: var(--separation-1);
-            background: transparent;
-            border: none;
-            color: var(--color-content-font);
-            font-size: 24px;
-            cursor: pointer;
-          }
+          background: var(--color-content-background);
+          color: var(--color-content-font);
+          border: none;
+          border-radius: var(--radius-default);
+          padding: var(--separation-2);
+          padding-bottom: var(--separation-3);
+          width: 100%;
+          margin: 0;
+          box-sizing: border-box;
+          font-family: 'Roboto', sans-serif;
+          font-size: var(--font-size-footer-paragraph);
+          line-height: var(--line-height-base);
+          overflow: hidden;
+        }
+        .rdp-banner-about__title {
+          color: var(--color-white);
+          display: flex;
+          align-items: center;
+          gap: var(--separation-1);
+          font-family: 'Signika', sans-serif;
+          font-size: var(--font-size-footer-title);
+          line-height: 30px;
+          margin: calc(3 * var(--separation-1)) 0 var(--separation-1);
+          white-space: nowrap;
+          min-width: 0;
+        }
+        .rdp-banner-about__title > span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .rdp-banner-about__title:first-child { margin-top: 0; }
+        .rdp-banner-about__paragraph { font-size: 1em; margin: 0 0 var(--separation-1); }
+        .rdp-banner-about__paragraph--sharing { margin-bottom: 0; }
+        .rdp-banner-about a {
+          color: var(--color-white);
+          text-decoration: underline;
+        }
+        .rdp-banner-about__subscribe-to {
+          display: inline-flex;
+          background: var(--color-brand-bluesky);
+          border-radius: 4px;
+          padding: 5px var(--separation-0) 4px;
+          margin-top: var(--separation-0);
+          font-size: var(--font-size-footer-outer-link);
+          line-height: var(--line-height-base);
+          letter-spacing: 0;
+          text-decoration: none;
+          color: var(--color-white);
+          font-weight: bold;
+        }
+        .rdp-banner-about__subscription-label { padding-left: var(--separation-0); }
+        .rdp-banner-about__copyright-footer {
+          color: var(--color-white);
+          display: flex;
+          width: 100%;
+          font-size: var(--font-size-footer-copyright);
+          line-height: var(--line-height-base);
+          text-align: center;
+          margin-top: calc(3 * var(--separation-1));
+        }
+        .rdp-banner-about__copyright {
+          margin: auto;
+          margin-bottom: var(--separation-2);
+        }
+        .rdp-banner-about__copyright .rdp-banner-about__outer-link,
+        .rdp-banner-about__copyright-footer .rdp-banner-about__outer-link {
+          display: inline-flex;
+          margin: auto;
+          align-self: center;
+          color: var(--color-white);
+        }
 
 /* BlueskyPostCard */
 .rdp-bsky-post {
@@ -191,32 +345,94 @@
           display: flex;
           gap: var(--separation-1);
           align-items: center;
-          background: var(--color-brand-active);
-          padding: var(--separation-1) var(--separation-2);
-          border-radius: var(--radius-default);
+          padding: var(--separation-1) 0;
           font-family: 'Roboto', sans-serif;
+        }
+        .rdp-calendar-action-bar--bottom {
+          background: var(--color-brand);
+          padding: var(--separation-1) var(--separation-2);
+          border-radius: 0;
         }
         .rdp-calendar-action-bar__pill {
           flex: 1;
-          background: var(--color-content-background);
+          display: inline-flex;
+          align-items: center;
+          gap: var(--separation-1);
+          background: var(--color-brand);
           color: var(--color-white);
           padding: var(--separation-1) var(--separation-2);
           border: none;
           border-radius: var(--radius-default);
           font-size: var(--font-size-date-picker);
+          font-family: inherit;
+          text-align: left;
           cursor: pointer;
         }
+        .rdp-calendar-action-bar__pill:hover { filter: brightness(1.05); }
         .rdp-calendar-action-bar__nav {
+          display: flex;
+          gap: var(--separation-1);
+          flex-direction: row;
+        }
+        .rdp-calendar-action-bar__btn {
           width: 32px;
           height: 32px;
           border-radius: 50%;
           background: var(--color-white);
-          color: var(--color-brand-active);
+          color: var(--color-brand);
           border: none;
           cursor: pointer;
           font-size: 20px;
           line-height: 1;
+          flex-shrink: 0;
         }
+        .rdp-calendar-action-bar__btn:hover { background: var(--color-brand); color: var(--color-white); }
+
+/* CalendarMonthBar */
+.rdp-calendar-month-bar {
+          display: flex;
+          gap: var(--separation-1);
+          align-items: center;
+          padding: var(--separation-1) 0;
+          font-family: 'Roboto', sans-serif;
+        }
+        .rdp-calendar-month-bar__pill {
+          flex: 0 0 auto;
+          display: inline-flex;
+          align-items: center;
+          gap: var(--separation-1);
+          width: auto;
+          background: var(--color-white);
+          color: var(--color-brand);
+          border: 1px solid var(--color-brand);
+          padding: var(--separation-1) var(--separation-2);
+          border-radius: var(--radius-default);
+          font-size: var(--font-size-date-picker);
+          cursor: pointer;
+          text-align: left;
+        }
+        .rdp-calendar-month-bar__label { display: inline-block; }
+        .rdp-calendar-month-bar__pill:hover { background: var(--color-brand); color: var(--color-white); border-color: var(--color-brand); }
+        .rdp-calendar-month-bar__nav {
+          margin-left: auto;
+          display: flex;
+          flex-direction: row;
+          gap: var(--separation-1);
+          align-items: center;
+        }
+        .rdp-calendar-month-bar__btn {
+          width: 32px;
+          height: 32px;
+          background: transparent;
+          color: var(--color-brand);
+          border: none;
+          cursor: pointer;
+          padding: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .rdp-calendar-month-bar__btn:hover { color: var(--color-brand-active); }
 
 /* Checkbox */
 .rdp-checkbox {
@@ -232,6 +448,22 @@
         .rdp-checkbox input { accent-color: var(--color-brand-active); }
         .rdp-checkbox input:disabled + .rdp-checkbox__label { opacity: 0.5; }
 
+/* ContactPage */
+.rdp-contact-page {
+          background: var(--color-white);
+          border-radius: var(--radius-default);
+          padding: var(--separation-3);
+          font-family: 'Roboto', sans-serif;
+          color: var(--color-content-text);
+        }
+        .rdp-contact-page h1 {
+          font-family: 'Signika', sans-serif;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-contact-page p { margin: 0 0 var(--separation-1); }
+        .rdp-contact-page__email { color: var(--color-brand); }
+
 /* DateGrid */
 .rdp-date-grid {
           width: 100%;
@@ -244,7 +476,7 @@
         .rdp-date-grid__weekday {
           font-weight: normal;
           font-size: var(--font-size-calendar-month-day);
-          color: var(--color-brand-active);
+          color: var(--color-brand);
           padding: 4px 0;
           text-align: center;
         }
@@ -261,10 +493,15 @@
           background: var(--color-background-other-month);
           color: var(--color-light-grey);
         }
+        .rdp-date-grid__cell[data-future="true"] {
+          color: var(--color-light-grey);
+          background: var(--color-background-other-month);
+          cursor: not-allowed;
+        }
         .rdp-date-grid__cell--selected {
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
-          border-color: var(--color-brand-active);
+          border-color: var(--color-brand);
         }
 
 /* EmailField */
@@ -293,30 +530,6 @@
             font-family: 'Roboto', sans-serif;
           }
 
-/* Footer */
-.rdp-footer {
-          background: var(--banner-about-bg);
-          color: var(--banner-about-fg);
-          padding: var(--separation-2);
-          font-family: 'Roboto', sans-serif;
-          font-size: var(--font-size-footer-paragraph);
-          display: grid;
-          gap: var(--separation-2);
-        }
-        .rdp-footer__section h3 {
-          font-family: 'Signika', sans-serif;
-          font-size: var(--font-size-footer-title);
-          color: var(--color-brand-active);
-          margin: 0 0 var(--separation-1);
-        }
-        .rdp-footer__section p { margin: 0; }
-        .rdp-footer__copyright {
-          font-size: var(--font-size-footer-copyright);
-          text-align: center;
-          margin: 0;
-          color: var(--color-content-font);
-        }
-
 /* FormError */
 .rdp-form-error {
             color: var(--form-error-fg);
@@ -328,6 +541,28 @@
 
 /* Icon */
 .rdp-icon { display: inline-block; vertical-align: middle; color: currentColor; }
+
+/* LegalNoticePage */
+.rdp-legal-notice {
+          background: var(--color-white);
+          border-radius: var(--radius-default);
+          padding: var(--separation-3);
+          font-family: 'Roboto', sans-serif;
+          color: var(--color-content-text);
+          line-height: var(--line-height-base);
+        }
+        .rdp-legal-notice h1 {
+          font-family: 'Signika', sans-serif;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-legal-notice h2 {
+          font-family: 'Signika', sans-serif;
+          color: var(--color-brand);
+          font-size: var(--font-size-status-text);
+          margin: var(--separation-2) 0 var(--separation-1);
+        }
+        .rdp-legal-notice p { margin: 0 0 var(--separation-2); }
 
 /* Link */
 .rdp-link {
@@ -384,20 +619,25 @@
 .rdp-month-picker {
           list-style: none; margin: 0; padding: 0;
           background: var(--color-white);
-          border: 1px solid var(--color-border);
+          border: 1px solid var(--color-brand);
           border-radius: var(--radius-default);
           font-family: 'Roboto', sans-serif;
           font-size: var(--font-size-content);
         }
         .rdp-month-picker__item {
           padding: var(--separation-1) var(--separation-2);
-          color: var(--color-content-text);
+          color: var(--color-brand);
           cursor: pointer;
-          border-bottom: 1px solid var(--color-border);
+          border-bottom: 1px solid var(--color-brand);
         }
         .rdp-month-picker__item:last-child { border-bottom: none; }
+        .rdp-month-picker__item[data-future="true"] {
+          color: var(--color-light-grey);
+          background: var(--color-background-other-month);
+          cursor: not-allowed;
+        }
         .rdp-month-picker__item--selected {
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
         }
 
@@ -467,7 +707,7 @@
           align-items: center;
           gap: var(--separation-1);
           padding: var(--separation-1) var(--separation-2);
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
           border-radius: var(--radius-default) var(--radius-default) 0 0;
           font-size: var(--font-size-content);
@@ -479,14 +719,25 @@
           font-size: var(--font-size-content);
         }
         .rdp-snapshots-list__item {
+          display: flex;
+          gap: var(--separation-1);
           padding: var(--separation-1) var(--separation-2);
           border-bottom: 1px solid var(--color-border);
           color: var(--color-content-text);
           cursor: pointer;
         }
+        .rdp-snapshots-list__item-rank {
+          color: var(--color-brand);
+          font-variant-numeric: tabular-nums;
+          flex-shrink: 0;
+        }
+        .rdp-snapshots-list__item--selected .rdp-snapshots-list__item-rank {
+          color: var(--color-white);
+        }
+        .rdp-snapshots-list__item-label { flex: 1; }
         .rdp-snapshots-list__item:last-child { border-bottom: none; }
         .rdp-snapshots-list__item--selected {
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
         }
         .rdp-snapshots-list__empty {
@@ -495,6 +746,53 @@
           font-size: var(--font-size-content);
           margin: 0;
         }
+
+/* SourcesPage */
+.rdp-sources-page {
+          background: var(--color-white);
+          border-radius: var(--radius-default);
+          padding: var(--separation-3);
+          font-family: 'Roboto', sans-serif;
+          color: var(--color-content-text);
+        }
+        .rdp-sources-page h1 {
+          font-family: 'Signika', sans-serif;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-sources-page p { margin: 0 0 var(--separation-1); }
+        .rdp-sources-page__internal-link { color: var(--color-brand); }
+        .rdp-sources-page__footnote {
+          font-size: var(--font-size-publication-date);
+          color: var(--color-light-grey);
+          border-top: 1px solid var(--color-border);
+          padding-top: var(--separation-1);
+          margin-top: var(--separation-2);
+        }
+
+/* SupportPage */
+.rdp-support-page {
+          background: var(--color-white);
+          border-radius: var(--radius-default);
+          padding: var(--separation-3);
+          font-family: 'Roboto', sans-serif;
+          color: var(--color-content-text);
+        }
+        .rdp-support-page h1 {
+          font-family: 'Signika', sans-serif;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-support-page h2 {
+          font-family: 'Signika', sans-serif;
+          color: var(--color-brand);
+          font-size: var(--font-size-status-text);
+          margin: var(--separation-2) 0 var(--separation-1);
+        }
+        .rdp-support-page p { margin: 0 0 var(--separation-1); }
+        .rdp-support-page a { color: var(--color-brand); }
+        .rdp-support-page ul { padding-left: var(--separation-3); margin: var(--separation-1) 0; }
+        .rdp-support-page li { margin: 0 0 var(--separation-1); }
 
 /* TextField */
 .rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: 'Roboto', sans-serif; }
@@ -532,20 +830,20 @@
 .rdp-year-picker {
           list-style: none; margin: 0; padding: 0;
           background: var(--color-white);
-          border: 1px solid var(--color-border);
+          border: 1px solid var(--color-brand);
           border-radius: var(--radius-default);
           font-family: 'Roboto', sans-serif;
           font-size: var(--font-size-content);
         }
         .rdp-year-picker__item {
           padding: var(--separation-1) var(--separation-2);
-          color: var(--color-content-text);
+          color: var(--color-brand);
           cursor: pointer;
-          border-bottom: 1px solid var(--color-border);
+          border-bottom: 1px solid var(--color-brand);
           text-align: center;
         }
         .rdp-year-picker__item:last-child { border-bottom: none; }
         .rdp-year-picker__item--selected {
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
         }

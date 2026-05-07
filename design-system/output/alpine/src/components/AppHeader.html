@@ -6,7 +6,7 @@
     x-bind:showWordmark="true"
     x-bind:size="layout === 'mobile' ? 'sm' : 'md'"
   ></Logo>
-  <template x-if="layout === 'desktop'">
+  <template x-if="showAccountControls === true && layout === 'desktop'">
     <a
       href="#"
       class="rdp-app-header__myspace"
@@ -20,14 +20,16 @@ onMySpaceClick?.()"
       <span x-html="t('header.my-space')"></span>
     </a>
   </template>
-  <button
-    type="button"
-    class="rdp-app-header__account"
-    x-bind:aria-label="t('header.my-account.aria-label')"
-    x-on:click="onAccountClick?.()"
-  >
-    <Icon name="pick-item" x-bind:size="32" x-bind:decorative="true"></Icon>
-  </button>
+  <template x-if="showAccountControls === true">
+    <button
+      type="button"
+      class="rdp-app-header__account"
+      x-bind:aria-label="t('header.my-account.aria-label')"
+      x-on:click="onAccountClick?.()"
+    >
+      <Icon name="pick-item" x-bind:size="32" x-bind:decorative="true"></Icon>
+    </button>
+  </template>
   <style>
     <span x-html="`
             .rdp-app-header {

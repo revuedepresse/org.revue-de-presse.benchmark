@@ -5,6 +5,7 @@ import Icon from './Icon.lite';
 type AppHeaderProps = {
   layout: 'mobile' | 'desktop';
   authenticated: boolean;
+  showAccountControls?: boolean;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
 };
@@ -13,7 +14,7 @@ export default function AppHeader(props: AppHeaderProps) {
   return (
     <header class={`rdp-app-header rdp-app-header--${props.layout}`}>
       <Logo showWordmark={true} size={props.layout === 'mobile' ? 'sm' : 'md'} />
-      <Show when={props.layout === 'desktop'}>
+      <Show when={props.showAccountControls === true && props.layout === 'desktop'}>
         <a
           href="#"
           class="rdp-app-header__myspace"
@@ -29,14 +30,16 @@ export default function AppHeader(props: AppHeaderProps) {
           {t('header.my-space')}
         </a>
       </Show>
-      <button
-        type="button"
-        class="rdp-app-header__account"
-        aria-label={t('header.my-account.aria-label')}
-        onClick={() => props.onAccountClick?.()}
-      >
-        <Icon name="pick-item" size={32} decorative={true} />
-      </button>
+      <Show when={props.showAccountControls === true}>
+        <button
+          type="button"
+          class="rdp-app-header__account"
+          aria-label={t('header.my-account.aria-label')}
+          onClick={() => props.onAccountClick?.()}
+        >
+          <Icon name="pick-item" size={32} decorative={true} />
+        </button>
+      </Show>
       <style>{`
         .rdp-app-header {
           display: flex;

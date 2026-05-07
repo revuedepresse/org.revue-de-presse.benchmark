@@ -6,6 +6,7 @@ import { Component, Input } from "@angular/core";
 type AppHeaderProps = {
   layout: "mobile" | "desktop";
   authenticated: boolean;
+  showAccountControls?: boolean;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
 };
@@ -20,7 +21,7 @@ import { t } from "../utils/i18n";
         [showWordmark]="true"
         [size]="layout === 'mobile' ? 'sm' : 'md'"
       ></logo>
-      <ng-container *ngIf="layout === 'desktop'"
+      <ng-container *ngIf="showAccountControls === true && layout === 'desktop'"
         ><a
           href="#"
           class="rdp-app-header__myspace"
@@ -35,14 +36,15 @@ import { t } from "../utils/i18n";
           >{{t('header.my-space')}}</a
         ></ng-container
       >
-      <button
-        type="button"
-        class="rdp-app-header__account"
-        [attr.aria-label]="t('header.my-account.aria-label')"
-        (click)="onAccountClick?.()"
-      >
-        <icon name="pick-item" [size]="32" [decorative]="true"></icon>
-      </button>
+      <ng-container *ngIf="showAccountControls === true"
+        ><button
+          type="button"
+          class="rdp-app-header__account"
+          [attr.aria-label]="t('header.my-account.aria-label')"
+          (click)="onAccountClick?.()"
+        >
+          <icon name="pick-item" [size]="32" [decorative]="true"></icon></button
+      ></ng-container>
       <style>
         {{\`
                 .rdp-app-header {
@@ -93,6 +95,7 @@ export default class AppHeader {
   t = t;
 
   @Input() layout!: AppHeaderProps["layout"];
+  @Input() showAccountControls!: AppHeaderProps["showAccountControls"];
   @Input() authenticated!: AppHeaderProps["authenticated"];
   @Input() onMySpaceClick!: AppHeaderProps["onMySpaceClick"];
   @Input() onAccountClick!: AppHeaderProps["onAccountClick"];

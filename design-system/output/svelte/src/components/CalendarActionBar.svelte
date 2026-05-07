@@ -2,9 +2,9 @@
       type CalendarActionBarProps = {
 date: Date;
 locale?: Locale;
-onDateClick?: () => void;
 onPrev?: () => void;
 onNext?: () => void;
+onPillClick?: () => void;
 position?: 'top' | 'bottom';
 }
 
@@ -19,6 +19,7 @@ position?: 'top' | 'bottom';
 
 import  { t } from '../utils/i18n';
 import  { formatLegacyShortDay } from '../utils/intl';
+import  Icon from './Icon.svelte';
 import type { Locale } from '../utils/i18n';
 
 
@@ -26,9 +27,9 @@ import type { Locale } from '../utils/i18n';
 
 
   export let position: CalendarActionBarProps['position']= undefined;
-export let onDateClick: CalendarActionBarProps['onDateClick']= undefined;
-export let date: CalendarActionBarProps['date'];
 export let locale: CalendarActionBarProps['locale']= undefined;
+export let onPillClick: CalendarActionBarProps['onPillClick']= undefined;
+export let date: CalendarActionBarProps['date'];
 export let onPrev: CalendarActionBarProps['onPrev']= undefined;
 export let onNext: CalendarActionBarProps['onNext']= undefined;
 
@@ -51,8 +52,8 @@ export let onNext: CalendarActionBarProps['onNext']= undefined;
 
 </script>
 
-<div  class={`rdp-calendar-action-bar rdp-calendar-action-bar--${position ?? 'bottom'}`} ><button  type="button"  class="rdp-calendar-action-bar__pill"  on:click="{(event) => {onDateClick?.()}}" >{formatLegacyShortDay(date, locale ?? 'fr-FR')}</button><button  type="button"  class="rdp-calendar-action-bar__nav"  aria-label={t('actions.previous', undefined, locale ?? 'fr-FR')}  on:click="{(event) => {onPrev?.()}}" >
-    ‹
-  </button><button  type="button"  class="rdp-calendar-action-bar__nav"  aria-label={t('actions.next', undefined, locale ?? 'fr-FR')}  on:click="{(event) => {onNext?.()}}" >
-    ›
-  </button></div>
+<div  class={`rdp-calendar-action-bar rdp-calendar-action-bar--${position ?? 'top'}`} ><button  type="button"  class="rdp-calendar-action-bar__pill"  aria-label={t('actions.pick-month.aria-label', undefined, locale ?? 'fr-FR')}  on:click="{(event) => {onPillClick?.()}}" ><Icon  name="pick-day"  size={16}  decorative={true} ></Icon><span >{formatLegacyShortDay(date, locale ?? 'fr-FR')}</span></button><div  class="rdp-calendar-action-bar__nav" ><button  type="button"  class="rdp-calendar-action-bar__btn"  aria-label={t('actions.prev-day', undefined, locale ?? 'fr-FR')}  on:click="{(event) => {onPrev?.()}}" >
+      ‹
+    </button><button  type="button"  class="rdp-calendar-action-bar__btn"  aria-label={t('actions.next-day', undefined, locale ?? 'fr-FR')}  on:click="{(event) => {onNext?.()}}" >
+      ›
+    </button></div></div>

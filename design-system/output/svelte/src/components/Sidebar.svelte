@@ -5,7 +5,7 @@ label: string;
 }
 
 type SidebarProps = {
-lists: ListItem[];
+lists?: ListItem[];
 selectedListId?: string;
 selectedDate: Date;
 yearRange: {
@@ -15,6 +15,10 @@ yearRange: {
 locale?: Locale;
 onListSelect?: (id: string) => void;
 onDateSelect?: (date: Date) => void;
+onLegalNoticeClick?: () => void;
+onContactClick?: () => void;
+onSupportClick?: () => void;
+onSourcesClick?: () => void;
 }
 
     </script>
@@ -26,23 +30,22 @@ onDateSelect?: (date: Date) => void;
 
 
 
-import  SnapshotsList from './SnapshotsList.svelte';
 import  Calendar from './Calendar.svelte';
 import  BannerAbout from './BannerAbout.svelte';
-import  Footer from './Footer.svelte';
 import type { Locale } from '../utils/i18n';
 
 
 
 
 
-  export let lists: SidebarProps['lists'];
-export let selectedListId: SidebarProps['selectedListId']= undefined;
-export let onListSelect: SidebarProps['onListSelect']= undefined;
-export let selectedDate: SidebarProps['selectedDate'];
+  export let selectedDate: SidebarProps['selectedDate'];
 export let locale: SidebarProps['locale']= undefined;
 export let yearRange: SidebarProps['yearRange'];
 export let onDateSelect: SidebarProps['onDateSelect']= undefined;
+export let onLegalNoticeClick: SidebarProps['onLegalNoticeClick']= undefined;
+export let onContactClick: SidebarProps['onContactClick']= undefined;
+export let onSupportClick: SidebarProps['onSupportClick']= undefined;
+export let onSourcesClick: SidebarProps['onSourcesClick']= undefined;
 
 
 
@@ -63,4 +66,4 @@ export let onDateSelect: SidebarProps['onDateSelect']= undefined;
 
 </script>
 
-<aside  class="rdp-sidebar" ><SnapshotsList  items={lists}  selectedId={selectedListId}  onSelect={(id) => onListSelect?.(id)}></SnapshotsList><Calendar  selectedDate={selectedDate}  locale={locale}  yearRange={yearRange}  onSelect={(d) => onDateSelect?.(d)}></Calendar><BannerAbout ></BannerAbout><Footer ></Footer></aside>
+<aside  class="rdp-sidebar" ><Calendar  selectedDate={selectedDate}  locale={locale}  yearRange={yearRange}  onSelect={(d) => onDateSelect?.(d)}></Calendar><BannerAbout  onLegalNoticeClick={(event) => onLegalNoticeClick()} onContactClick={(event) => onContactClick()} onSupportClick={(event) => onSupportClick()} onSourcesClick={(event) => onSourcesClick()}></BannerAbout></aside>

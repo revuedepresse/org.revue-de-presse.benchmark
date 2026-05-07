@@ -52,6 +52,12 @@ export class DateGrid {
       sel.getDate() === d.getDate()
     );
   }
+  isFuture(d: Date) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return cell.getTime() > today.getTime();
+  }
 
   componentDidLoad() {}
 
@@ -81,10 +87,14 @@ export class DateGrid {
                   }`}
                   role="gridcell"
                   aria-selected={this.isSelected(d) ? "true" : "false"}
+                  aria-disabled={this.isFuture(d) ? "true" : undefined}
                   data-other-month={
                     d.getMonth() !== this.month ? "true" : undefined
                   }
-                  onClick={() => this.select?.(d)}
+                  data-future={this.isFuture(d) ? "true" : undefined}
+                  onClick={() => {
+                    if (!this.isFuture(d)) this.select?.(d);
+                  }}
                 >
                   {d.getDate()}
                 </td>
@@ -104,7 +114,7 @@ export class DateGrid {
         .rdp-date-grid__weekday {
           font-weight: normal;
           font-size: var(--font-size-calendar-month-day);
-          color: var(--color-brand-active);
+          color: var(--color-brand);
           padding: 4px 0;
           text-align: center;
         }
@@ -121,10 +131,15 @@ export class DateGrid {
           background: var(--color-background-other-month);
           color: var(--color-light-grey);
         }
+        .rdp-date-grid__cell[data-future="true"] {
+          color: var(--color-light-grey);
+          background: var(--color-background-other-month);
+          cursor: not-allowed;
+        }
         .rdp-date-grid__cell--selected {
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
-          border-color: var(--color-brand-active);
+          border-color: var(--color-brand);
         }
       `}</style>
       </table>

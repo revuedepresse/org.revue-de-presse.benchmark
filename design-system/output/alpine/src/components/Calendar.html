@@ -14,17 +14,25 @@
   <div class="rdp-calendar__panel">
     <CalendarActionBar
       position="top"
-      x-bind:date="selectedDate"
+      x-bind:date="focusedDate"
       x-bind:locale="locale"
-      x-on:date-click="setView('month')"
-      x-on:prev="prev()"
-      x-on:next="next()"
+      x-on:prev="prevDay()"
+      x-on:next="nextDay()"
     ></CalendarActionBar>
+    <CalendarMonthBar
+      x-bind:viewMode="viewMode"
+      x-bind:focusedYear="focusedYear"
+      x-bind:focusedMonth="focusedMonth"
+      x-bind:locale="locale"
+      x-on:title-click="titleClick()"
+      x-on:prev="prevMonth()"
+      x-on:next="nextMonth()"
+    ></CalendarMonthBar>
     <template x-if="viewMode === 'day'">
       <DateGrid
         x-bind:year="focusedYear"
         x-bind:month="focusedMonth"
-        x-bind:selectedDate="selectedDate"
+        x-bind:selectedDate="focusedDate"
         x-bind:locale="locale"
         x-on:select="selectDay(d)"
       ></DateGrid>
@@ -69,20 +77,12 @@
   document.addEventListener("alpine:init", () => {
     Alpine.data("calendar", () => ({
       viewMode: "day",
+      focusedDate: new Date(),
       focusedYear: 0,
       focusedMonth: 0,
       initialised: false,
-      ensureInit() {
-        if (!this.initialised) {
-          this.focusedYear = props.selectedDate.getFullYear();
-          this.focusedMonth = props.selectedDate.getMonth();
-          this.initialised = true;
-        }
-      },
-      setView(mode) {
-        this.viewMode = mode;
-      },
       selectDay(d) {
+        this.focusedDate = d;
         this.focusedYear = d.getFullYear();
         this.focusedMonth = d.getMonth();
         props.onSelect?.(d);
@@ -95,23 +95,60 @@
         this.focusedYear = y;
         this.viewMode = "month";
       },
-      prev() {
-        if (this.viewMode === "day") {
-          const m = this.focusedMonth - 1;
-          if (m < 0) {
-            this.focusedMonth = 11;
-            this.focusedYear -= 1;
-          } else this.focusedMonth = m;
+      prevDay() {
+        const next = new Date(this.focusedDate);
+        next.setDate(next.getDate() - 1);
+        this.focusedDate = next;
+        this.focusedYear = next.getFullYear();
+        this.focusedMonth = next.getMonth();
+      },
+      nextDay() {
+        const next = new Date(this.focusedDate);
+        next.setDate(next.getDate() + 1);
+        this.focusedDate = next;
+        this.focusedYear = next.getFullYear();
+        this.focusedMonth = next.getMonth();
+      },
+      prevMonth() {
+        if (this.viewMode === "year") {
+          const next = this.focusedYear - 1;
+          if (next >= props.yearRange.min) this.focusedYear = next;
+          return;
+        }
+        const m = this.focusedMonth - 1;
+        if (m < 0) {
+          this.focusedMonth = 11;
+          this.focusedYear -= 1;
+        } else {
+          this.focusedMonth = m;
         }
       },
-      next() {
-        if (this.viewMode === "day") {
-          const m = this.focusedMonth + 1;
-          if (m > 11) {
-            this.focusedMonth = 0;
-            this.focusedYear += 1;
-          } else this.focusedMonth = m;
+      nextMonth() {
+        if (this.viewMode === "year") {
+          const next = this.focusedYear + 1;
+          if (next <= props.yearRange.max) this.focusedYear = next;
+          return;
         }
+        const m = this.focusedMonth + 1;
+        if (m > 11) {
+          this.focusedMonth = 0;
+          this.focusedYear += 1;
+        } else {
+          this.focusedMonth = m;
+        }
+      },
+      titleClick() {
+        if (this.viewMode === "day") {
+          this.viewMode = "month";
+        } else if (this.viewMode === "month") {
+          this.viewMode = "year";
+        }
+      },
+      init() {
+        this.focusedDate = props.selectedDate;
+        this.focusedYear = props.selectedDate.getFullYear();
+        this.focusedMonth = props.selectedDate.getMonth();
+        this.initialised = true;
       },
     }));
   });

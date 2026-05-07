@@ -1,4 +1,11 @@
-import { Show, createSignal, createMemo } from "solid-js";
+import {
+  Show,
+  onMount,
+  on,
+  createEffect,
+  createMemo,
+  createSignal,
+} from "solid-js";
 
 type CalendarProps = {
   selectedDate: Date;
@@ -16,10 +23,13 @@ import DateGrid from "./DateGrid";
 import MonthPicker from "./MonthPicker";
 import YearPicker from "./YearPicker";
 import CalendarActionBar from "./CalendarActionBar";
+import CalendarMonthBar from "./CalendarMonthBar";
 import type { Locale } from "../utils/i18n";
 
 function Calendar(props: CalendarProps) {
   const [viewMode, setViewMode] = createSignal("day");
+
+  const [focusedDate, setFocusedDate] = createSignal(new Date());
 
   const [focusedYear, setFocusedYear] = createSignal(0);
 
@@ -27,19 +37,8 @@ function Calendar(props: CalendarProps) {
 
   const [initialised, setInitialised] = createSignal(false);
 
-  function ensureInit() {
-    if (!initialised()) {
-      setFocusedYear(props.selectedDate.getFullYear());
-      setFocusedMonth(props.selectedDate.getMonth());
-      setInitialised(true);
-    }
-  }
-
-  function setView(mode: "day" | "month" | "year") {
-    setViewMode(mode);
-  }
-
   function selectDay(d: Date) {
+    setFocusedDate(d);
     setFocusedYear(d.getFullYear());
     setFocusedMonth(d.getMonth());
     props.onSelect?.(d);
@@ -55,25 +54,74 @@ function Calendar(props: CalendarProps) {
     setViewMode("month");
   }
 
-  function prev() {
-    if (viewMode() === "day") {
-      const m = focusedMonth() - 1;
-      if (m < 0) {
-        setFocusedMonth(11);
-        setFocusedYear(1);
-      } else setFocusedMonth(m);
+  function prevDay() {
+    const next = new Date(focusedDate());
+    next.setDate(next.getDate() - 1);
+    setFocusedDate(next);
+    setFocusedYear(next.getFullYear());
+    setFocusedMonth(next.getMonth());
+  }
+
+  function nextDay() {
+    const next = new Date(focusedDate());
+    next.setDate(next.getDate() + 1);
+    setFocusedDate(next);
+    setFocusedYear(next.getFullYear());
+    setFocusedMonth(next.getMonth());
+  }
+
+  function prevMonth() {
+    if (viewMode() === "year") {
+      const next = focusedYear() - 1;
+      if (next >= props.yearRange.min) setFocusedYear(next);
+      return;
+    }
+    const m = focusedMonth() - 1;
+    if (m < 0) {
+      setFocusedMonth(11);
+      setFocusedYear(1);
+    } else {
+      setFocusedMonth(m);
     }
   }
 
-  function next() {
-    if (viewMode() === "day") {
-      const m = focusedMonth() + 1;
-      if (m > 11) {
-        setFocusedMonth(0);
-        setFocusedYear(1);
-      } else setFocusedMonth(m);
+  function nextMonth() {
+    if (viewMode() === "year") {
+      const next = focusedYear() + 1;
+      if (next <= props.yearRange.max) setFocusedYear(next);
+      return;
+    }
+    const m = focusedMonth() + 1;
+    if (m > 11) {
+      setFocusedMonth(0);
+      setFocusedYear(1);
+    } else {
+      setFocusedMonth(m);
     }
   }
+
+  function titleClick() {
+    if (viewMode() === "day") {
+      setViewMode("month");
+    } else if (viewMode() === "month") {
+      setViewMode("year");
+    }
+  }
+
+  onMount(() => {
+    setFocusedDate(props.selectedDate);
+    setFocusedYear(props.selectedDate.getFullYear());
+    setFocusedMonth(props.selectedDate.getMonth());
+    setInitialised(true);
+  });
+
+  const onUpdateFn_0_props_selectedDate = createMemo(() => props.selectedDate);
+  function onUpdateFn_0() {
+    setFocusedDate(props.selectedDate);
+    setFocusedYear(props.selectedDate.getFullYear());
+    setFocusedMonth(props.selectedDate.getMonth());
+  }
+  createEffect(on(() => [onUpdateFn_0_props_selectedDate()], onUpdateFn_0));
 
   return (
     <>
@@ -92,17 +140,25 @@ function Calendar(props: CalendarProps) {
         <div class="rdp-calendar__panel">
           <CalendarActionBar
             position="top"
-            date={props.selectedDate}
+            date={focusedDate()}
             locale={props.locale}
-            onDateClick={(event) => setView("month")}
-            onPrev={(event) => prev()}
-            onNext={(event) => next()}
+            onPrev={(event) => prevDay()}
+            onNext={(event) => nextDay()}
           ></CalendarActionBar>
+          <CalendarMonthBar
+            viewMode={viewMode()}
+            focusedYear={focusedYear()}
+            focusedMonth={focusedMonth()}
+            locale={props.locale}
+            onTitleClick={(event) => titleClick()}
+            onPrev={(event) => prevMonth()}
+            onNext={(event) => nextMonth()}
+          ></CalendarMonthBar>
           <Show when={viewMode() === "day"}>
             <DateGrid
               year={focusedYear()}
               month={focusedMonth()}
-              selectedDate={props.selectedDate}
+              selectedDate={focusedDate()}
               locale={props.locale}
               onSelect={(d) => selectDay(d)}
             ></DateGrid>

@@ -16,6 +16,7 @@ import {
 })
 export class AppHeader {
   @Prop() layout: any;
+  @Prop() showAccountControls: any;
   @Prop() authenticated: any;
   @Event() mySpaceClick: any;
   @Event() accountClick: any;
@@ -29,7 +30,7 @@ export class AppHeader {
           showWordmark={true}
           size={this.layout === "mobile" ? "sm" : "md"}
         ></logo>
-        {this.layout === "desktop" ? (
+        {this.showAccountControls === true && this.layout === "desktop" ? (
           <a
             class="rdp-app-header__myspace"
             href="#"
@@ -45,14 +46,16 @@ export class AppHeader {
             {t("header.my-space")}
           </a>
         ) : null}
-        <button
-          class="rdp-app-header__account"
-          type="button"
-          aria-label={t("header.my-account.aria-label")}
-          onClick={() => this.accountClick?.()}
-        >
-          <icon name="pick-item" size={32} decorative={true}></icon>
-        </button>
+        {this.showAccountControls === true ? (
+          <button
+            class="rdp-app-header__account"
+            type="button"
+            aria-label={t("header.my-account.aria-label")}
+            onClick={() => this.accountClick?.()}
+          >
+            <icon name="pick-item" size={32} decorative={true}></icon>
+          </button>
+        ) : null}
         <style>{`
         .rdp-app-header {
           display: flex;

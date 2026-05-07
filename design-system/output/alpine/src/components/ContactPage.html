@@ -1,0 +1,37 @@
+<article class="rdp-contact-page" x-data="contactPage()">
+  <h1>Nous contacter</h1>
+  <p>
+    Il est possible de prendre contact avec nous à l'adresse suivante :
+
+    <br />
+    <a
+      class="rdp-contact-page__email"
+      x-bind:href="`mailto:${email ?? 'contact@revue-de-presse.org'}`"
+    >
+      <span x-html="email ?? 'contact@revue-de-presse.org'"></span>
+    </a>
+  </p>
+  <style>
+    <span x-html="`
+            .rdp-contact-page {
+              background: var(--color-white);
+              border-radius: var(--radius-default);
+              padding: var(--separation-3);
+              font-family: 'Roboto', sans-serif;
+              color: var(--color-content-text);
+            }
+            .rdp-contact-page h1 {
+              font-family: 'Signika', sans-serif;
+              color: var(--color-brand);
+              margin: 0 0 var(--separation-2);
+            }
+            .rdp-contact-page p { margin: 0 0 var(--separation-1); }
+            .rdp-contact-page__email { color: var(--color-brand); }
+          `"></span>
+  </style>
+</article>
+<script>
+  document.addEventListener("alpine:init", () => {
+    Alpine.data("contactPage", () => ({}));
+  });
+</script>

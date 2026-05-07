@@ -1,17 +1,17 @@
 <template>
   <aside class="rdp-sidebar">
-    <SnapshotsList
-      :items="lists"
-      :selectedId="selectedListId"
-      :onSelect="(id) => onListSelect?.(id)"
-    ></SnapshotsList
-    ><Calendar
+    <Calendar
       :selectedDate="selectedDate"
       :locale="locale"
       :yearRange="yearRange"
       :onSelect="(d) => onDateSelect?.(d)"
     ></Calendar
-    ><BannerAbout></BannerAbout><Footer></Footer
+    ><BannerAbout
+      :onLegalNoticeClick="(event) => onLegalNoticeClick()"
+      :onContactClick="(event) => onContactClick()"
+      :onSupportClick="(event) => onSupportClick()"
+      :onSourcesClick="(event) => onSourcesClick()"
+    ></BannerAbout
     ><component :is="'style'">{{
       `
         .rdp-sidebar {
@@ -30,10 +30,8 @@
 </template>
 
 <script setup lang="ts">
-import SnapshotsList from "./SnapshotsList.vue";
 import Calendar from "./Calendar.vue";
 import BannerAbout from "./BannerAbout.vue";
-import Footer from "./Footer.vue";
 import type { Locale } from "../utils/i18n";
 
 type ListItem = {
@@ -41,7 +39,7 @@ type ListItem = {
   label: string;
 };
 type SidebarProps = {
-  lists: ListItem[];
+  lists?: ListItem[];
   selectedListId?: string;
   selectedDate: Date;
   yearRange: {
@@ -51,6 +49,10 @@ type SidebarProps = {
   locale?: Locale;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
+  onLegalNoticeClick?: () => void;
+  onContactClick?: () => void;
+  onSupportClick?: () => void;
+  onSourcesClick?: () => void;
 };
 
 const props = defineProps<SidebarProps>();

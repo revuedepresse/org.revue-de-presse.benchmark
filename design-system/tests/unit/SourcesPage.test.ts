@@ -7,10 +7,10 @@ import { TARGETS } from './_targets';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '../..');
 
-describe('Footer (post-Mitosis emit)', () => {
+describe('SourcesPage (post-Mitosis emit)', () => {
   for (const { name, ext } of TARGETS) {
     it(`emits a ${name} component`, () => {
-      const path = join(root, `output/${name}/src/components/Footer.${ext}`);
+      const path = join(root, `output/${name}/src/components/SourcesPage.${ext}`);
       expect(existsSync(path)).toBe(true);
     });
   }

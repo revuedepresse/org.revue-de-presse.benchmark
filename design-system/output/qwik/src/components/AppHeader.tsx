@@ -9,6 +9,7 @@ import { $, Fragment, component$, h } from "@builder.io/qwik";
 type AppHeaderProps = {
   layout: "mobile" | "desktop";
   authenticated: boolean;
+  showAccountControls?: boolean;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
 };
@@ -21,7 +22,7 @@ export const AppHeader = component$((props: AppHeaderProps) => {
           props.layout === "mobile" ? "sm" : "md";
         })()}
       ></Logo>
-      {props.layout === "desktop" ? (
+      {props.showAccountControls === true && props.layout === "desktop" ? (
         <a
           href="#"
           class="rdp-app-header__myspace"
@@ -39,14 +40,16 @@ export const AppHeader = component$((props: AppHeaderProps) => {
           {t("header.my-space")}
         </a>
       ) : null}
-      <button
-        type="button"
-        class="rdp-app-header__account"
-        aria-label={t("header.my-account.aria-label")}
-        onClick$={$((event) => props.onAccountClick?.())}
-      >
-        <Icon name="pick-item" size={32} decorative={true}></Icon>
-      </button>
+      {props.showAccountControls === true ? (
+        <button
+          type="button"
+          class="rdp-app-header__account"
+          aria-label={t("header.my-account.aria-label")}
+          onClick$={$((event) => props.onAccountClick?.())}
+        >
+          <Icon name="pick-item" size={32} decorative={true}></Icon>
+        </button>
+      ) : null}
       <style>{`
         .rdp-app-header {
           display: flex;

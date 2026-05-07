@@ -5,7 +5,7 @@ type ListItem = {
   label: string;
 };
 type SidebarProps = {
-  lists: ListItem[];
+  lists?: ListItem[];
   selectedListId?: string;
   selectedDate: Date;
   yearRange: {
@@ -15,29 +15,30 @@ type SidebarProps = {
   locale?: Locale;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
+  onLegalNoticeClick?: () => void;
+  onContactClick?: () => void;
+  onSupportClick?: () => void;
+  onSourcesClick?: () => void;
 };
-import SnapshotsList from "./SnapshotsList";
 import Calendar from "./Calendar";
 import BannerAbout from "./BannerAbout";
-import Footer from "./Footer";
 import type { Locale } from "../utils/i18n";
 
 function Sidebar(props: SidebarProps) {
   return (
     <aside className="rdp-sidebar">
-      <SnapshotsList
-        items={props.lists}
-        selectedId={props.selectedListId}
-        onSelect={(id) => props.onListSelect?.(id)}
-      />
       <Calendar
         selectedDate={props.selectedDate}
         locale={props.locale}
         yearRange={props.yearRange}
         onSelect={(d) => props.onDateSelect?.(d)}
       />
-      <BannerAbout />
-      <Footer />
+      <BannerAbout
+        onLegalNoticeClick={(event) => props.onLegalNoticeClick()}
+        onContactClick={(event) => props.onContactClick()}
+        onSupportClick={(event) => props.onSupportClick()}
+        onSourcesClick={(event) => props.onSourcesClick()}
+      />
       <style>{`
         .rdp-sidebar {
           width: 336px;

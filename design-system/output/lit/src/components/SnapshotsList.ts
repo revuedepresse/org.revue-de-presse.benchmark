@@ -57,9 +57,11 @@ onDismiss?: () => void;
               html`<p >${t('snapshots-list.empty')}</p>`
             : null}
         ${this.items.length > 0 ?
-              html`<ul  role="listbox" >${this.items?.map((item, index) => (
-            html`<li  class={`rdp-snapshots-list__item${item.id === props.selectedId ? ' rdp-snapshots-list__item--selected' : ''}`}  role="option"  aria-selected=${item.id === this.selectedId ? 'true' : 'false'}  @click=${(event) => this.onSelect?.(item.id)} >${item.label}</li>`
-          ))}</ul>`
+              html`<ol  role="listbox" >${this.items?.map((item, index) => (
+            html`<li  class={`rdp-snapshots-list__item${item.id === props.selectedId ? ' rdp-snapshots-list__item--selected' : ''}`}  role="option"  aria-selected=${item.id === this.selectedId ? 'true' : 'false'}  @click=${(event) => this.onSelect?.(item.id)} ><span >${index + 1}
+        .</span>
+        <span >${item.label}</span></li>`
+          ))}</ol>`
             : null}</div>
         <style >${`
               .rdp-snapshots-list {
@@ -75,7 +77,7 @@ onDismiss?: () => void;
                 align-items: center;
                 gap: var(--separation-1);
                 padding: var(--separation-1) var(--separation-2);
-                background: var(--color-brand-active);
+                background: var(--color-brand);
                 color: var(--color-white);
                 border-radius: var(--radius-default) var(--radius-default) 0 0;
                 font-size: var(--font-size-content);
@@ -87,14 +89,25 @@ onDismiss?: () => void;
                 font-size: var(--font-size-content);
               }
               .rdp-snapshots-list__item {
+                display: flex;
+                gap: var(--separation-1);
                 padding: var(--separation-1) var(--separation-2);
                 border-bottom: 1px solid var(--color-border);
                 color: var(--color-content-text);
                 cursor: pointer;
               }
+              .rdp-snapshots-list__item-rank {
+                color: var(--color-brand);
+                font-variant-numeric: tabular-nums;
+                flex-shrink: 0;
+              }
+              .rdp-snapshots-list__item--selected .rdp-snapshots-list__item-rank {
+                color: var(--color-white);
+              }
+              .rdp-snapshots-list__item-label { flex: 1; }
               .rdp-snapshots-list__item:last-child { border-bottom: none; }
               .rdp-snapshots-list__item--selected {
-                background: var(--color-brand-active);
+                background: var(--color-brand);
                 color: var(--color-white);
               }
               .rdp-snapshots-list__empty {

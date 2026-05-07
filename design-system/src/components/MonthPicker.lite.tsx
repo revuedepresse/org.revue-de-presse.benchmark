@@ -17,6 +17,14 @@ export default function MonthPicker(props: MonthPickerProps) {
         localizedMonthLong(i, props.locale ?? 'fr-FR')
       );
     },
+    isFuture(monthIndex: number): boolean {
+      const today = new Date();
+      const currentYear = today.getFullYear();
+      const currentMonth = today.getMonth();
+      if (props.year > currentYear) return true;
+      if (props.year < currentYear) return false;
+      return monthIndex > currentMonth;
+    },
   });
 
   return (
@@ -30,8 +38,12 @@ export default function MonthPicker(props: MonthPickerProps) {
           <li
             role="option"
             aria-selected={index === props.selectedMonth ? 'true' : 'false'}
+            aria-disabled={state.isFuture(index) ? 'true' : undefined}
+            data-future={state.isFuture(index) ? 'true' : undefined}
             class={`rdp-month-picker__item${index === props.selectedMonth ? ' rdp-month-picker__item--selected' : ''}`}
-            onClick={() => props.onSelect?.(index)}
+            onClick={() => {
+              if (!state.isFuture(index)) props.onSelect?.(index);
+            }}
           >
             {name}
           </li>
@@ -41,20 +53,25 @@ export default function MonthPicker(props: MonthPickerProps) {
         .rdp-month-picker {
           list-style: none; margin: 0; padding: 0;
           background: var(--color-white);
-          border: 1px solid var(--color-border);
+          border: 1px solid var(--color-brand);
           border-radius: var(--radius-default);
           font-family: 'Roboto', sans-serif;
           font-size: var(--font-size-content);
         }
         .rdp-month-picker__item {
           padding: var(--separation-1) var(--separation-2);
-          color: var(--color-content-text);
+          color: var(--color-brand);
           cursor: pointer;
-          border-bottom: 1px solid var(--color-border);
+          border-bottom: 1px solid var(--color-brand);
         }
         .rdp-month-picker__item:last-child { border-bottom: none; }
+        .rdp-month-picker__item[data-future="true"] {
+          color: var(--color-light-grey);
+          background: var(--color-background-other-month);
+          cursor: not-allowed;
+        }
         .rdp-month-picker__item--selected {
-          background: var(--color-brand-active);
+          background: var(--color-brand);
           color: var(--color-white);
         }
       `}</style>

@@ -4,6 +4,7 @@ import * as React from "react";
 type AppHeaderProps = {
   layout: "mobile" | "desktop";
   authenticated: boolean;
+  showAccountControls?: boolean;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
 };
@@ -15,7 +16,7 @@ function AppHeader(props: AppHeaderProps) {
   return (
     <header className={`rdp-app-header rdp-app-header--${props.layout}`}>
       <Logo showWordmark size={props.layout === "mobile" ? "sm" : "md"} />
-      {props.layout === "desktop" ? (
+      {props.showAccountControls === true && props.layout === "desktop" ? (
         <a
           href="#"
           className="rdp-app-header__myspace"
@@ -31,14 +32,16 @@ function AppHeader(props: AppHeaderProps) {
           {t("header.my-space")}
         </a>
       ) : null}
-      <button
-        type="button"
-        className="rdp-app-header__account"
-        aria-label={t("header.my-account.aria-label")}
-        onClick={(event) => props.onAccountClick?.()}
-      >
-        <Icon name="pick-item" size={32} decorative />
-      </button>
+      {props.showAccountControls === true ? (
+        <button
+          type="button"
+          className="rdp-app-header__account"
+          aria-label={t("header.my-account.aria-label")}
+          onClick={(event) => props.onAccountClick?.()}
+        >
+          <Icon name="pick-item" size={32} decorative />
+        </button>
+      ) : null}
       <style>{`
         .rdp-app-header {
           display: flex;

@@ -59,6 +59,20 @@ function parseSvg(svgText, iconId) {
     body = body.replace(classAttrRe, `class="${iconId}-${ch}"`);
   }
 
+  // Nav-arrow icons in the legacy library hardcode the chevron path fill to
+  // black/none. Inject `fill="currentColor"` on un-classed paths so consumers
+  // can recolour the chevron via the CSS `color` property. Circle backgrounds
+  // (carrying a class) are left at their original colour.
+  const RECOLOURABLE_CHEVRON = new Set([
+    'previous-item',
+    'next-item',
+    'previous-day',
+    'next-day',
+  ]);
+  if (RECOLOURABLE_CHEVRON.has(iconId)) {
+    body = body.replace(/<path\b(?![^>]*\bfill=)/g, '<path fill="currentColor"');
+  }
+
   return { viewBox, defs, body };
 }
 

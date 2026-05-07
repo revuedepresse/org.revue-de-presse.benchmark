@@ -10,6 +10,7 @@ import './Icon.ts';
   type AppHeaderProps = {
 layout: 'mobile' | 'desktop';
 authenticated: boolean;
+showAccountControls?: boolean;
 onAccountClick?: () => void;
 onMySpaceClick?: () => void;
 }
@@ -29,6 +30,7 @@ onMySpaceClick?: () => void;
 
 
     @property() layout: any
+@property() showAccountControls: any
 @property() authenticated: any
 @property() onMySpaceClick: any
 @property() onAccountClick: any
@@ -44,7 +46,7 @@ onMySpaceClick?: () => void;
       return html`
 
           <header  class={`rdp-app-header rdp-app-header--${props.layout}`} ><my-logo  .showWordmark=${true}  .size=${this.layout === 'mobile' ? 'sm' : 'md'} ></my-logo>
-        ${this.layout === 'desktop' ?
+        ${this.showAccountControls === true && this.layout === 'desktop' ?
               html`<a  href="#"  aria-disabled=${!this.authenticated ? 'true' : undefined}  @click=${(event) => {
         if (!this.authenticated) {
           event.preventDefault();
@@ -53,7 +55,9 @@ onMySpaceClick?: () => void;
         this.onMySpaceClick?.();
       }} >${t('header.my-space')}</a>`
             : null}
-        <button  type="button"  aria-label=${t('header.my-account.aria-label')}  @click=${(event) => this.onAccountClick?.()} ><my-icon  name="pick-item"  .size=${32}  .decorative=${true} ></my-icon></button>
+        ${this.showAccountControls === true ?
+              html`<button  type="button"  aria-label=${t('header.my-account.aria-label')}  @click=${(event) => this.onAccountClick?.()} ><my-icon  name="pick-item"  .size=${32}  .decorative=${true} ></my-icon></button>`
+            : null}
         <style >${`
               .rdp-app-header {
                 display: flex;

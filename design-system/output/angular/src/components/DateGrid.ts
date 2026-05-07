@@ -34,9 +34,13 @@ import type { Locale } from "../utils/i18n";
               ><td
                 role="gridcell"
                 [attr.aria-selected]="isSelected(d) ? 'true' : 'false'"
+                [attr.aria-disabled]="isFuture(d) ? 'true' : undefined"
                 [attr.data-other-month]="d.getMonth() !== month ? 'true' : undefined"
+                [attr.data-future]="isFuture(d) ? 'true' : undefined"
                 [class]="\`rdp-date-grid__cell\${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}\`"
-                (click)="onSelect?.(d)"
+                (click)="
+          if (!isFuture(d)) onSelect?.(d);
+        "
               >
                 {{d.getDate()}}
               </td></ng-container
@@ -57,7 +61,7 @@ import type { Locale } from "../utils/i18n";
                 .rdp-date-grid__weekday {
                   font-weight: normal;
                   font-size: var(--font-size-calendar-month-day);
-                  color: var(--color-brand-active);
+                  color: var(--color-brand);
                   padding: 4px 0;
                   text-align: center;
                 }
@@ -74,10 +78,15 @@ import type { Locale } from "../utils/i18n";
                   background: var(--color-background-other-month);
                   color: var(--color-light-grey);
                 }
+                .rdp-date-grid__cell[data-future=&quot;true&quot;] {
+                  color: var(--color-light-grey);
+                  background: var(--color-background-other-month);
+                  cursor: not-allowed;
+                }
                 .rdp-date-grid__cell--selected {
-                  background: var(--color-brand-active);
+                  background: var(--color-brand);
                   color: var(--color-white);
-                  border-color: var(--color-brand-active);
+                  border-color: var(--color-brand);
                 }
               \`}}
       </style>
@@ -130,6 +139,12 @@ export default class DateGrid {
       sel.getMonth() === d.getMonth() &&
       sel.getDate() === d.getDate()
     );
+  }
+  isFuture(d: Date) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return cell.getTime() > today.getTime();
   }
 }
 
