@@ -5,6 +5,10 @@ contactHref?: string;
 supportHref?: string;
 sourcesHref?: string;
 subscribeHref?: string;
+onLegalNoticeClick?: () => void;
+onContactClick?: () => void;
+onSupportClick?: () => void;
+onSourcesClick?: () => void;
 }
 
     </script>
@@ -23,19 +27,42 @@ import  Icon from './Icon.svelte';
 
 
 
-    export let subscribeHref: BannerAboutProps['subscribeHref']= undefined;
+    export let onLegalNoticeClick: BannerAboutProps['onLegalNoticeClick']= undefined;
+export let onContactClick: BannerAboutProps['onContactClick']= undefined;
+export let onSupportClick: BannerAboutProps['onSupportClick']= undefined;
+export let onSourcesClick: BannerAboutProps['onSourcesClick']= undefined;
+export let subscribeHref: BannerAboutProps['subscribeHref']= undefined;
 export let legalNoticeHref: BannerAboutProps['legalNoticeHref']= undefined;
-export let onLegalNoticeClick: BannerAboutProps['onLegalNoticeClick'];
 export let contactHref: BannerAboutProps['contactHref']= undefined;
-export let onContactClick: BannerAboutProps['onContactClick'];
 export let supportHref: BannerAboutProps['supportHref']= undefined;
-export let onSupportClick: BannerAboutProps['onSupportClick'];
 export let sourcesHref: BannerAboutProps['sourcesHref']= undefined;
-export let onSourcesClick: BannerAboutProps['onSourcesClick'];
 
 
 
-
+    function handleLegalClick(event: any) {
+if (onLegalNoticeClick) {
+  event.preventDefault();
+  onLegalNoticeClick();
+}
+}
+function handleContactClick(event: any) {
+if (onContactClick) {
+  event.preventDefault();
+  onContactClick();
+}
+}
+function handleSupportClick(event: any) {
+if (onSupportClick) {
+  event.preventDefault();
+  onSupportClick();
+}
+}
+function handleSourcesClick(event: any) {
+if (onSourcesClick) {
+  event.preventDefault();
+  onSourcesClick();
+}
+}
     $: year = () => {
 return new Date().getFullYear();
 };
@@ -54,27 +81,7 @@ return new Date().getFullYear();
 
   </script>
 
-  <footer  id="project"  class="rdp-banner-about" ><h2  class="rdp-banner-about__title rdp-banner-about__title--sharing" ><Icon  name="sharing"  size={24}  decorative={true} ></Icon><span >{t('footer.social.heading')}</span></h2><p  class="rdp-banner-about__paragraph rdp-banner-about__paragraph--sharing" >{t('footer.sharing.body')}<br  /><br  /><a  class="rdp-banner-about__subscribe-to"  rel="noreferrer nofollow noopener"  href={subscribeHref ?? 'https://bsky.app/profile/revue-de-presse.bsky.social'} ><span  class="rdp-banner-about__subscription-label" >{t('footer.subscribe-to.label')}</span></a></p><h2  class="rdp-banner-about__title rdp-banner-about__title--introducing" ><Icon  name="introducing"  size={24}  decorative={true} ></Icon><span >{t('footer.about.heading')}</span></h2><p  class="rdp-banner-about__paragraph" ><a  class="rdp-banner-about__outer-link"  href={legalNoticeHref ?? '/mentions-legales'}  on:click="{(event) => {
-if (onLegalNoticeClick) {
-  event.preventDefault();
-  onLegalNoticeClick();
-}
-}}" >{t('footer.about.privacy-policy')}</a><br  /><a  class="rdp-banner-about__outer-link"  href={contactHref ?? '/nous-contacter'}  on:click="{(event) => {
-if (onContactClick) {
-  event.preventDefault();
-  onContactClick();
-}
-}}" >{t('footer.about.contact')}</a><br  /><a  class="rdp-banner-about__outer-link"  href={supportHref ?? '/nous-soutenir'}  on:click="{(event) => {
-if (onSupportClick) {
-  event.preventDefault();
-  onSupportClick();
-}
-}}" >{t('footer.about.support')}</a><br  /><a  class="rdp-banner-about__outer-link"  href={sourcesHref ?? '/sources'}  on:click="{(event) => {
-if (onSourcesClick) {
-  event.preventDefault();
-  onSourcesClick();
-}
-}}" >{t('footer.about.sources')}</a><br  /></p><h2  class="rdp-banner-about__title rdp-banner-about__title--funding" ><Icon  name="funding"  size={24}  decorative={true} ></Icon><span >{t('footer.pro-bono.heading')}</span></h2><p  class="rdp-banner-about__paragraph" >{t('footer.pro-bono.body.before-author1')}<a  class="rdp-banner-about__outer-link"  href="https://bsky.app/profile/sylvainegarderet.bsky.social"  rel="noreferrer nofollow noopener" >
+  <footer  id="project"  class="rdp-banner-about" ><h2  class="rdp-banner-about__title rdp-banner-about__title--sharing" ><Icon  name="sharing"  size={24}  decorative={true} ></Icon><span >{t('footer.social.heading')}</span></h2><p  class="rdp-banner-about__paragraph rdp-banner-about__paragraph--sharing" >{t('footer.sharing.body')}<br  /><br  /><a  class="rdp-banner-about__subscribe-to"  rel="noreferrer nofollow noopener"  href={subscribeHref ?? 'https://bsky.app/profile/revue-de-presse.bsky.social'} ><span  class="rdp-banner-about__subscription-label" >{t('footer.subscribe-to.label')}</span></a></p><h2  class="rdp-banner-about__title rdp-banner-about__title--introducing" ><Icon  name="introducing"  size={24}  decorative={true} ></Icon><span >{t('footer.about.heading')}</span></h2><p  class="rdp-banner-about__paragraph" ><a  class="rdp-banner-about__outer-link"  href={legalNoticeHref ?? '/mentions-legales'}  on:click="{(event) => {handleLegalClick(event)}}" >{t('footer.about.privacy-policy')}</a><br  /><a  class="rdp-banner-about__outer-link"  href={contactHref ?? '/nous-contacter'}  on:click="{(event) => {handleContactClick(event)}}" >{t('footer.about.contact')}</a><br  /><a  class="rdp-banner-about__outer-link"  href={supportHref ?? '/nous-soutenir'}  on:click="{(event) => {handleSupportClick(event)}}" >{t('footer.about.support')}</a><br  /><a  class="rdp-banner-about__outer-link"  href={sourcesHref ?? '/sources'}  on:click="{(event) => {handleSourcesClick(event)}}" >{t('footer.about.sources')}</a><br  /></p><h2  class="rdp-banner-about__title rdp-banner-about__title--funding" ><Icon  name="funding"  size={24}  decorative={true} ></Icon><span >{t('footer.pro-bono.heading')}</span></h2><p  class="rdp-banner-about__paragraph" >{t('footer.pro-bono.body.before-author1')}<a  class="rdp-banner-about__outer-link"  href="https://bsky.app/profile/sylvainegarderet.bsky.social"  rel="noreferrer nofollow noopener" >
         @sylvainegarderet.bsky.social
       </a>{t('footer.pro-bono.body.between-authors')}<a  class="rdp-banner-about__outer-link"  href="https://bsky.app/profile/thierry.marianne.io"  rel="noreferrer nofollow noopener" >
         @thierry.marianne.io

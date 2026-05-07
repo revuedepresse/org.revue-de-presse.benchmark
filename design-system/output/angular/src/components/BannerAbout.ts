@@ -9,6 +9,10 @@ type BannerAboutProps = {
   supportHref?: string;
   sourcesHref?: string;
   subscribeHref?: string;
+  onLegalNoticeClick?: () => void;
+  onContactClick?: () => void;
+  onSupportClick?: () => void;
+  onSourcesClick?: () => void;
 };
 
 import { t } from "../utils/i18n";
@@ -45,48 +49,28 @@ import { t } from "../utils/i18n";
         <a
           class="rdp-banner-about__outer-link"
           [attr.href]="legalNoticeHref ?? '/mentions-legales'"
-          (click)="
-          if (onLegalNoticeClick) {
-            $event.preventDefault();
-            this.onLegalNoticeClick.emit();
-          }
-        "
+          (click)="handleLegalClick($event)"
           >{{t('footer.about.privacy-policy')}}</a
         >
         <br />
         <a
           class="rdp-banner-about__outer-link"
           [attr.href]="contactHref ?? '/nous-contacter'"
-          (click)="
-          if (onContactClick) {
-            $event.preventDefault();
-            this.onContactClick.emit();
-          }
-        "
+          (click)="handleContactClick($event)"
           >{{t('footer.about.contact')}}</a
         >
         <br />
         <a
           class="rdp-banner-about__outer-link"
           [attr.href]="supportHref ?? '/nous-soutenir'"
-          (click)="
-          if (onSupportClick) {
-            $event.preventDefault();
-            this.onSupportClick.emit();
-          }
-        "
+          (click)="handleSupportClick($event)"
           >{{t('footer.about.support')}}</a
         >
         <br />
         <a
           class="rdp-banner-about__outer-link"
           [attr.href]="sourcesHref ?? '/sources'"
-          (click)="
-          if (onSourcesClick) {
-            $event.preventDefault();
-            this.onSourcesClick.emit();
-          }
-        "
+          (click)="handleSourcesClick($event)"
           >{{t('footer.about.sources')}}</a
         >
         <br />
@@ -238,6 +222,30 @@ export default class BannerAbout {
 
   get year() {
     return new Date().getFullYear();
+  }
+  handleLegalClick(event: any) {
+    if (this.onLegalNoticeClick) {
+      event.preventDefault();
+      this.onLegalNoticeClick.emit();
+    }
+  }
+  handleContactClick(event: any) {
+    if (this.onContactClick) {
+      event.preventDefault();
+      this.onContactClick.emit();
+    }
+  }
+  handleSupportClick(event: any) {
+    if (this.onSupportClick) {
+      event.preventDefault();
+      this.onSupportClick.emit();
+    }
+  }
+  handleSourcesClick(event: any) {
+    if (this.onSourcesClick) {
+      event.preventDefault();
+      this.onSourcesClick.emit();
+    }
   }
 }
 

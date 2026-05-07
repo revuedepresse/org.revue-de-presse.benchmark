@@ -14,18 +14,42 @@ import {
   tag: "banner-about",
 })
 export class BannerAbout {
+  @Event() legalNoticeClick: any;
+  @Event() contactClick: any;
+  @Event() supportClick: any;
+  @Event() sourcesClick: any;
   @Prop() subscribeHref: any;
   @Prop() legalNoticeHref: any;
-  @Event() legalNoticeClick: any;
   @Prop() contactHref: any;
-  @Event() contactClick: any;
   @Prop() supportHref: any;
-  @Event() supportClick: any;
   @Prop() sourcesHref: any;
-  @Event() sourcesClick: any;
 
   get year() {
     return new Date().getFullYear();
+  }
+  handleLegalClick(event: any) {
+    if (this.legalNoticeClick) {
+      event.preventDefault();
+      this.legalNoticeClick.emit();
+    }
+  }
+  handleContactClick(event: any) {
+    if (this.contactClick) {
+      event.preventDefault();
+      this.contactClick.emit();
+    }
+  }
+  handleSupportClick(event: any) {
+    if (this.supportClick) {
+      event.preventDefault();
+      this.supportClick.emit();
+    }
+  }
+  handleSourcesClick(event: any) {
+    if (this.sourcesClick) {
+      event.preventDefault();
+      this.sourcesClick.emit();
+    }
   }
 
   componentDidLoad() {}
@@ -62,12 +86,7 @@ export class BannerAbout {
           <a
             class="rdp-banner-about__outer-link"
             href={this.legalNoticeHref ?? "/mentions-legales"}
-            onClick={(event) => {
-              if (this.legalNoticeClick) {
-                event.preventDefault();
-                this.legalNoticeClick.emit();
-              }
-            }}
+            onClick={(event) => this.handleLegalClick(event)}
           >
             {t("footer.about.privacy-policy")}
           </a>
@@ -75,12 +94,7 @@ export class BannerAbout {
           <a
             class="rdp-banner-about__outer-link"
             href={this.contactHref ?? "/nous-contacter"}
-            onClick={(event) => {
-              if (this.contactClick) {
-                event.preventDefault();
-                this.contactClick.emit();
-              }
-            }}
+            onClick={(event) => this.handleContactClick(event)}
           >
             {t("footer.about.contact")}
           </a>
@@ -88,12 +102,7 @@ export class BannerAbout {
           <a
             class="rdp-banner-about__outer-link"
             href={this.supportHref ?? "/nous-soutenir"}
-            onClick={(event) => {
-              if (this.supportClick) {
-                event.preventDefault();
-                this.supportClick.emit();
-              }
-            }}
+            onClick={(event) => this.handleSupportClick(event)}
           >
             {t("footer.about.support")}
           </a>
@@ -101,12 +110,7 @@ export class BannerAbout {
           <a
             class="rdp-banner-about__outer-link"
             href={this.sourcesHref ?? "/sources"}
-            onClick={(event) => {
-              if (this.sourcesClick) {
-                event.preventDefault();
-                this.sourcesClick.emit();
-              }
-            }}
+            onClick={(event) => this.handleSourcesClick(event)}
           >
             {t("footer.about.sources")}
           </a>

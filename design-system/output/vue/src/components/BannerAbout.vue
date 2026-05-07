@@ -25,50 +25,22 @@
       <a
         class="rdp-banner-about__outer-link"
         :href="legalNoticeHref ?? '/mentions-legales'"
-        @click="
-          async (event) => {
-            if (onLegalNoticeClick) {
-              event.preventDefault();
-              onLegalNoticeClick();
-            }
-          }
-        "
+        @click="async (event) => handleLegalClick(event)"
         >{{ t("footer.about.privacy-policy") }}</a
       ><br /><a
         class="rdp-banner-about__outer-link"
         :href="contactHref ?? '/nous-contacter'"
-        @click="
-          async (event) => {
-            if (onContactClick) {
-              event.preventDefault();
-              onContactClick();
-            }
-          }
-        "
+        @click="async (event) => handleContactClick(event)"
         >{{ t("footer.about.contact") }}</a
       ><br /><a
         class="rdp-banner-about__outer-link"
         :href="supportHref ?? '/nous-soutenir'"
-        @click="
-          async (event) => {
-            if (onSupportClick) {
-              event.preventDefault();
-              onSupportClick();
-            }
-          }
-        "
+        @click="async (event) => handleSupportClick(event)"
         >{{ t("footer.about.support") }}</a
       ><br /><a
         class="rdp-banner-about__outer-link"
         :href="sourcesHref ?? '/sources'"
-        @click="
-          async (event) => {
-            if (onSourcesClick) {
-              event.preventDefault();
-              onSourcesClick();
-            }
-          }
-        "
+        @click="async (event) => handleSourcesClick(event)"
         >{{ t("footer.about.sources") }}</a
       ><br />
     </p>
@@ -209,6 +181,10 @@ type BannerAboutProps = {
   supportHref?: string;
   sourcesHref?: string;
   subscribeHref?: string;
+  onLegalNoticeClick?: () => void;
+  onContactClick?: () => void;
+  onSupportClick?: () => void;
+  onSourcesClick?: () => void;
 };
 
 const props = defineProps<BannerAboutProps>();
@@ -216,4 +192,29 @@ const props = defineProps<BannerAboutProps>();
 const year = computed(() => {
   return new Date().getFullYear();
 });
+
+function handleLegalClick(event: any) {
+  if (props.onLegalNoticeClick) {
+    event.preventDefault();
+    props.onLegalNoticeClick();
+  }
+}
+function handleContactClick(event: any) {
+  if (props.onContactClick) {
+    event.preventDefault();
+    props.onContactClick();
+  }
+}
+function handleSupportClick(event: any) {
+  if (props.onSupportClick) {
+    event.preventDefault();
+    props.onSupportClick();
+  }
+}
+function handleSourcesClick(event: any) {
+  if (props.onSourcesClick) {
+    event.preventDefault();
+    props.onSourcesClick();
+  }
+}
 </script>
