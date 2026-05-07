@@ -1,7 +1,7 @@
 <template>
   <header :class="`rdp-app-header rdp-app-header--${layout}`">
     <Logo :showWordmark="true" :size="layout === 'mobile' ? 'sm' : 'md'"></Logo>
-    <template v-if="layout === 'desktop'">
+    <template v-if="showAccountControls === true && layout === 'desktop'">
       <a
         href="#"
         class="rdp-app-header__myspace"
@@ -19,14 +19,18 @@
       >
     </template>
 
-    <button
-      type="button"
-      class="rdp-app-header__account"
-      :aria-label="t('header.my-account.aria-label')"
-      @click="async (event) => onAccountClick?.()"
-    >
-      <Icon name="pick-item" :size="32" :decorative="true"></Icon></button
-    ><component :is="'style'">{{
+    <template v-if="showAccountControls === true">
+      <button
+        type="button"
+        class="rdp-app-header__account"
+        :aria-label="t('header.my-account.aria-label')"
+        @click="async (event) => onAccountClick?.()"
+      >
+        <Icon name="pick-item" :size="32" :decorative="true"></Icon>
+      </button>
+    </template>
+
+    <component :is="'style'">{{
       `
         .rdp-app-header {
           display: flex;
@@ -73,6 +77,7 @@ import Icon from "./Icon.vue";
 type AppHeaderProps = {
   layout: "mobile" | "desktop";
   authenticated: boolean;
+  showAccountControls?: boolean;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
 };

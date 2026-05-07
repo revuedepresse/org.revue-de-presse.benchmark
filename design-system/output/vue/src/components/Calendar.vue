@@ -15,17 +15,25 @@
     <div class="rdp-calendar__panel">
       <CalendarActionBar
         position="top"
-        :date="selectedDate"
+        :date="focusedDate"
         :locale="locale"
-        :onDateClick="(event) => setView('month')"
-        :onPrev="(event) => prev()"
-        :onNext="(event) => next()"
-      ></CalendarActionBar>
+        :onPrev="(event) => prevDay()"
+        :onNext="(event) => nextDay()"
+      ></CalendarActionBar
+      ><CalendarMonthBar
+        :viewMode="viewMode"
+        :focusedYear="focusedYear"
+        :focusedMonth="focusedMonth"
+        :locale="locale"
+        :onTitleClick="(event) => titleClick()"
+        :onPrev="(event) => prevMonth()"
+        :onNext="(event) => nextMonth()"
+      ></CalendarMonthBar>
       <template v-if="viewMode === 'day'">
         <DateGrid
           :year="focusedYear"
           :month="focusedMonth"
-          :selectedDate="selectedDate"
+          :selectedDate="focusedDate"
           :locale="locale"
           :onSelect="(d) => selectDay(d)"
         ></DateGrid>
@@ -71,12 +79,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 import DateGrid from "./DateGrid.vue";
 import MonthPicker from "./MonthPicker.vue";
 import YearPicker from "./YearPicker.vue";
 import CalendarActionBar from "./CalendarActionBar.vue";
+import CalendarMonthBar from "./CalendarMonthBar.vue";
 import type { Locale } from "../utils/i18n";
 
 type CalendarProps = {
@@ -93,21 +102,29 @@ type CalendarProps = {
 
 const props = defineProps<CalendarProps>();
 const viewMode = ref("day");
+const focusedDate = ref(new Date());
 const focusedYear = ref(0);
 const focusedMonth = ref(0);
 const initialised = ref(false);
 
-function ensureInit() {
-  if (!initialised.value) {
+onMounted(() => {
+  focusedDate.value = props.selectedDate;
+  focusedYear.value = props.selectedDate.getFullYear();
+  focusedMonth.value = props.selectedDate.getMonth();
+  initialised.value = true;
+});
+
+watch(
+  () => [props.selectedDate],
+  () => {
+    focusedDate.value = props.selectedDate;
     focusedYear.value = props.selectedDate.getFullYear();
     focusedMonth.value = props.selectedDate.getMonth();
-    initialised.value = true;
-  }
-}
-function setView(mode: "day" | "month" | "year") {
-  viewMode.value = mode;
-}
+  },
+  { immediate: true }
+);
 function selectDay(d: Date) {
+  focusedDate.value = d;
   focusedYear.value = d.getFullYear();
   focusedMonth.value = d.getMonth();
   props.onSelect?.(d);
@@ -120,22 +137,53 @@ function selectYear(y: number) {
   focusedYear.value = y;
   viewMode.value = "month";
 }
-function prev() {
-  if (viewMode.value === "day") {
-    const m = focusedMonth.value - 1;
-    if (m < 0) {
-      focusedMonth.value = 11;
-      focusedYear.value -= 1;
-    } else focusedMonth.value = m;
+function prevDay() {
+  const next = new Date(focusedDate.value);
+  next.setDate(next.getDate() - 1);
+  focusedDate.value = next;
+  focusedYear.value = next.getFullYear();
+  focusedMonth.value = next.getMonth();
+}
+function nextDay() {
+  const next = new Date(focusedDate.value);
+  next.setDate(next.getDate() + 1);
+  focusedDate.value = next;
+  focusedYear.value = next.getFullYear();
+  focusedMonth.value = next.getMonth();
+}
+function prevMonth() {
+  if (viewMode.value === "year") {
+    const next = focusedYear.value - 1;
+    if (next >= props.yearRange.min) focusedYear.value = next;
+    return;
+  }
+  const m = focusedMonth.value - 1;
+  if (m < 0) {
+    focusedMonth.value = 11;
+    focusedYear.value -= 1;
+  } else {
+    focusedMonth.value = m;
   }
 }
-function next() {
+function nextMonth() {
+  if (viewMode.value === "year") {
+    const next = focusedYear.value + 1;
+    if (next <= props.yearRange.max) focusedYear.value = next;
+    return;
+  }
+  const m = focusedMonth.value + 1;
+  if (m > 11) {
+    focusedMonth.value = 0;
+    focusedYear.value += 1;
+  } else {
+    focusedMonth.value = m;
+  }
+}
+function titleClick() {
   if (viewMode.value === "day") {
-    const m = focusedMonth.value + 1;
-    if (m > 11) {
-      focusedMonth.value = 0;
-      focusedYear.value += 1;
-    } else focusedMonth.value = m;
+    viewMode.value = "month";
+  } else if (viewMode.value === "month") {
+    viewMode.value = "year";
   }
 }
 </script>

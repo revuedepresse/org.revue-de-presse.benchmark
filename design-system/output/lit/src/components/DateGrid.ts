@@ -49,6 +49,12 @@ isSelected(d: Date) {
  const sel = this.selectedDate;
  return !!sel && sel.getFullYear() === d.getFullYear() && sel.getMonth() === d.getMonth() && sel.getDate() === d.getDate();
 }
+isFuture(d: Date) {
+ const today = new Date();
+ today.setHours(0, 0, 0, 0);
+ const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+ return cell.getTime() > today.getTime();
+}
 
 
 
@@ -63,7 +69,9 @@ isSelected(d: Date) {
             ))}</tr></thead>
         <tbody >${this.rows?.map((row, index) => (
               html`<tr >${row?.map((d, index) => (
-             html`<td  class={`rdp-date-grid__cell${state.isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  role="gridcell"  aria-selected=${this.isSelected(d) ? 'true' : 'false'}  data-other-month=${d.getMonth() !== this.month ? 'true' : undefined}  @click=${(event) => this.onSelect?.(d)} >${d.getDate()}</td>`
+             html`<td  class={`rdp-date-grid__cell${state.isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  role="gridcell"  aria-selected=${this.isSelected(d) ? 'true' : 'false'}  aria-disabled=${this.isFuture(d) ? 'true' : undefined}  data-other-month=${d.getMonth() !== this.month ? 'true' : undefined}  data-future=${this.isFuture(d) ? 'true' : undefined}  @click=${(event) => {
+          if (!this.isFuture(d)) this.onSelect?.(d);
+        }} >${d.getDate()}</td>`
            ))}</tr>`
             ))}</tbody>
         <style >${`
@@ -78,7 +86,7 @@ isSelected(d: Date) {
                .rdp-date-grid__weekday {
                  font-weight: normal;
                  font-size: var(--font-size-calendar-month-day);
-                 color: var(--color-brand-active);
+                 color: var(--color-brand);
                  padding: 4px 0;
                  text-align: center;
                }
@@ -95,10 +103,15 @@ isSelected(d: Date) {
                  background: var(--color-background-other-month);
                  color: var(--color-light-grey);
                }
+               .rdp-date-grid__cell[data-future="true"] {
+                 color: var(--color-light-grey);
+                 background: var(--color-background-other-month);
+                 cursor: not-allowed;
+               }
                .rdp-date-grid__cell--selected {
-                 background: var(--color-brand-active);
+                 background: var(--color-brand);
                  color: var(--color-white);
-                 border-color: var(--color-brand-active);
+                 border-color: var(--color-brand);
                }
              `}</style></table>
         `

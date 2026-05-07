@@ -53,7 +53,7 @@ vars?: Record<string, string | number>;
                 font-size: var(--font-size-content);
                 border-radius: var(--radius-default);
               }
-              .rdp-alert--info { background: var(--color-brand-active); color: var(--color-white); }
+              .rdp-alert--info { background: var(--color-brand); color: var(--color-white); }
               .rdp-alert--warning { background: var(--color-vanity-metric-like); color: var(--color-white); }
             `}</style></div>
         `

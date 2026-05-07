@@ -1,17 +1,16 @@
 <aside class="rdp-sidebar" x-data="sidebar()">
-  <SnapshotsList
-    x-bind:items="lists"
-    x-bind:selectedId="selectedListId"
-    x-on:select="onListSelect?.(id)"
-  ></SnapshotsList>
   <Calendar
     x-bind:selectedDate="selectedDate"
     x-bind:locale="locale"
     x-bind:yearRange="yearRange"
     x-on:select="onDateSelect?.(d)"
   ></Calendar>
-  <BannerAbout></BannerAbout>
-  <footer></footer>
+  <BannerAbout
+    x-on:legal-notice-click="onLegalNoticeClick()"
+    x-on:contact-click="onContactClick()"
+    x-on:support-click="onSupportClick()"
+    x-on:sources-click="onSourcesClick()"
+  ></BannerAbout>
   <style>
     <span x-html="`
             .rdp-sidebar {

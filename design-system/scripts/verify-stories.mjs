@@ -33,8 +33,7 @@ const STORIES = [
   { id: 'stories-notice-story-vue', variantCount: 2, name: 'Notice' },
   { id: 'stories-webintents-story-vue', variantCount: 1, name: 'WebIntents' },
   // M3 organisms
-  { id: 'stories-footer-story-vue', variantCount: 1, name: 'Footer' },
-  { id: 'stories-bannerabout-story-vue', variantCount: 2, name: 'BannerAbout' },
+  { id: 'stories-bannerabout-story-vue', variantCount: 1, name: 'BannerAbout' },
   { id: 'stories-appheader-story-vue', variantCount: 3, name: 'AppHeader' },
   { id: 'stories-snapshotslist-story-vue', variantCount: 2, name: 'SnapshotsList' },
   { id: 'stories-calendar-story-vue', variantCount: 1, name: 'Calendar' },
