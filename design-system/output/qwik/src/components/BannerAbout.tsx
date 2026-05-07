@@ -10,6 +10,54 @@ type BannerAboutProps = {
   supportHref?: string;
   sourcesHref?: string;
   subscribeHref?: string;
+  onLegalNoticeClick?: () => void;
+  onContactClick?: () => void;
+  onSupportClick?: () => void;
+  onSourcesClick?: () => void;
+};
+export const handleLegalClick = function handleLegalClick(
+  props,
+  state,
+  year,
+  event: any
+) {
+  if (props.onLegalNoticeClick) {
+    event.preventDefault();
+    props.onLegalNoticeClick();
+  }
+};
+export const handleContactClick = function handleContactClick(
+  props,
+  state,
+  year,
+  event: any
+) {
+  if (props.onContactClick) {
+    event.preventDefault();
+    props.onContactClick();
+  }
+};
+export const handleSupportClick = function handleSupportClick(
+  props,
+  state,
+  year,
+  event: any
+) {
+  if (props.onSupportClick) {
+    event.preventDefault();
+    props.onSupportClick();
+  }
+};
+export const handleSourcesClick = function handleSourcesClick(
+  props,
+  state,
+  year,
+  event: any
+) {
+  if (props.onSourcesClick) {
+    event.preventDefault();
+    props.onSourcesClick();
+  }
 };
 export const BannerAbout = component$((props: BannerAboutProps) => {
   const year = useComputed$(() => {
@@ -47,52 +95,32 @@ export const BannerAbout = component$((props: BannerAboutProps) => {
       <p class="rdp-banner-about__paragraph">
         <a
           class="rdp-banner-about__outer-link"
-          preventdefault:click
           href={props.legalNoticeHref ?? "/mentions-legales"}
-          onClick$={$((event) => {
-            if (props.onLegalNoticeClick) {
-              props.onLegalNoticeClick();
-            }
-          })}
+          onClick$={$((event) => handleLegalClick(props, state, year, event))}
         >
           {t("footer.about.privacy-policy")}
         </a>
         <br />
         <a
           class="rdp-banner-about__outer-link"
-          preventdefault:click
           href={props.contactHref ?? "/nous-contacter"}
-          onClick$={$((event) => {
-            if (props.onContactClick) {
-              props.onContactClick();
-            }
-          })}
+          onClick$={$((event) => handleContactClick(props, state, year, event))}
         >
           {t("footer.about.contact")}
         </a>
         <br />
         <a
           class="rdp-banner-about__outer-link"
-          preventdefault:click
           href={props.supportHref ?? "/nous-soutenir"}
-          onClick$={$((event) => {
-            if (props.onSupportClick) {
-              props.onSupportClick();
-            }
-          })}
+          onClick$={$((event) => handleSupportClick(props, state, year, event))}
         >
           {t("footer.about.support")}
         </a>
         <br />
         <a
           class="rdp-banner-about__outer-link"
-          preventdefault:click
           href={props.sourcesHref ?? "/sources"}
-          onClick$={$((event) => {
-            if (props.onSourcesClick) {
-              props.onSourcesClick();
-            }
-          })}
+          onClick$={$((event) => handleSourcesClick(props, state, year, event))}
         >
           {t("footer.about.sources")}
         </a>

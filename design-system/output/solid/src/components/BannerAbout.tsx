@@ -6,6 +6,10 @@ type BannerAboutProps = {
   supportHref?: string;
   sourcesHref?: string;
   subscribeHref?: string;
+  onLegalNoticeClick?: () => void;
+  onContactClick?: () => void;
+  onSupportClick?: () => void;
+  onSourcesClick?: () => void;
 };
 
 import { t } from "../utils/i18n";
@@ -15,6 +19,34 @@ function BannerAbout(props: BannerAboutProps) {
   const year = createMemo(() => {
     return new Date().getFullYear();
   });
+
+  function handleLegalClick(event: any) {
+    if (props.onLegalNoticeClick) {
+      event.preventDefault();
+      props.onLegalNoticeClick();
+    }
+  }
+
+  function handleContactClick(event: any) {
+    if (props.onContactClick) {
+      event.preventDefault();
+      props.onContactClick();
+    }
+  }
+
+  function handleSupportClick(event: any) {
+    if (props.onSupportClick) {
+      event.preventDefault();
+      props.onSupportClick();
+    }
+  }
+
+  function handleSourcesClick(event: any) {
+    if (props.onSourcesClick) {
+      event.preventDefault();
+      props.onSourcesClick();
+    }
+  }
 
   return (
     <>
@@ -48,12 +80,7 @@ function BannerAbout(props: BannerAboutProps) {
           <a
             class="rdp-banner-about__outer-link"
             href={props.legalNoticeHref ?? "/mentions-legales"}
-            onClick={(event) => {
-              if (props.onLegalNoticeClick) {
-                event.preventDefault();
-                props.onLegalNoticeClick();
-              }
-            }}
+            onClick={(event) => handleLegalClick(event)}
           >
             {t("footer.about.privacy-policy")}
           </a>
@@ -61,12 +88,7 @@ function BannerAbout(props: BannerAboutProps) {
           <a
             class="rdp-banner-about__outer-link"
             href={props.contactHref ?? "/nous-contacter"}
-            onClick={(event) => {
-              if (props.onContactClick) {
-                event.preventDefault();
-                props.onContactClick();
-              }
-            }}
+            onClick={(event) => handleContactClick(event)}
           >
             {t("footer.about.contact")}
           </a>
@@ -74,12 +96,7 @@ function BannerAbout(props: BannerAboutProps) {
           <a
             class="rdp-banner-about__outer-link"
             href={props.supportHref ?? "/nous-soutenir"}
-            onClick={(event) => {
-              if (props.onSupportClick) {
-                event.preventDefault();
-                props.onSupportClick();
-              }
-            }}
+            onClick={(event) => handleSupportClick(event)}
           >
             {t("footer.about.support")}
           </a>
@@ -87,12 +104,7 @@ function BannerAbout(props: BannerAboutProps) {
           <a
             class="rdp-banner-about__outer-link"
             href={props.sourcesHref ?? "/sources"}
-            onClick={(event) => {
-              if (props.onSourcesClick) {
-                event.preventDefault();
-                props.onSourcesClick();
-              }
-            }}
+            onClick={(event) => handleSourcesClick(event)}
           >
             {t("footer.about.sources")}
           </a>
