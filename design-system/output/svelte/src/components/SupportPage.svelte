@@ -46,7 +46,7 @@
       Contribuez directement au<a  href="https://revue-de-presse.org" >projet</a></strong>
     en nous offrant de la visibilité autour de vous lorsque vous :
   </p><ul ><li >
-      vous abonnez à <a  href="https://bsky.app/profile/revue-de-presse.bsky.social" >@revue-de-presse.bsky.social</a> sur Bluesky
+      vous abonnez à <a  href="https://bsky.app/profile/revue-de-presse.org"  rel="noreferrer nofollow noopener"  target="_blank" >@revue-de-presse.org</a> sur Bluesky
     </li><li >partagez les publications et la mission du projet sur les réseaux sociaux</li><li >
       nous suggérez de nouveaux médias de la presse française pas encore référencés
     </li></ul></article>

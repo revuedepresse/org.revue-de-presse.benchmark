@@ -35,8 +35,11 @@
     <ul>
       <li>
         vous abonnez à
-        <a href="https://bsky.app/profile/revue-de-presse.bsky.social"
-          >@revue-de-presse.bsky.social</a
+        <a
+          href="https://bsky.app/profile/revue-de-presse.org"
+          rel="noreferrer nofollow noopener"
+          target="_blank"
+          >@revue-de-presse.org</a
         >
         sur Bluesky
       </li>

@@ -1,0 +1,3 @@
+<template>
+  <AppShell />
+</template>

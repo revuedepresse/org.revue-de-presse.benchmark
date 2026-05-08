@@ -4,6 +4,7 @@ type SnapshotItem = {
   id: string;
   label: string;
 };
+type ViewKey = "main" | "legal" | "contact" | "support" | "sources";
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -20,11 +21,13 @@ type AppProps = {
   emptyMessageKey?: string;
   showPopularNews?: boolean;
   locale?: Locale;
+  initialView?: ViewKey;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
+  onViewChange?: (view: ViewKey) => void;
 };
 
 import { t } from "../utils/i18n";
@@ -68,6 +71,7 @@ function App(props: AppProps) {
     next.setDate(next.getDate() - 1);
     setFocusedDate(next);
     setCurrentView("main");
+    props.onViewChange?.("main");
     props.onDateSelect?.(next);
   }
 
@@ -76,6 +80,7 @@ function App(props: AppProps) {
     next.setDate(next.getDate() + 1);
     setFocusedDate(next);
     setCurrentView("main");
+    props.onViewChange?.("main");
     props.onDateSelect?.(next);
   }
 
@@ -91,20 +96,20 @@ function App(props: AppProps) {
     setFocusedDate(d);
     setIsCalendarOpen(false);
     setCurrentView("main");
+    props.onViewChange?.("main");
     props.onDateSelect?.(d);
   }
 
   function selectFromSidebar(d: Date) {
-    // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
-    // day clicks, and prev/next month clicks. Any of those should bring
-    // the publication list back into focus when the user is on a sub-page.
     setFocusedDate(d);
     setCurrentView("main");
+    props.onViewChange?.("main");
     props.onDateSelect?.(d);
   }
 
-  function goTo(view: "main" | "legal" | "contact" | "support" | "sources") {
+  function goTo(view: ViewKey) {
     setCurrentView(view);
+    props.onViewChange?.(view);
   }
 
   function goHome() {
@@ -113,6 +118,7 @@ function App(props: AppProps) {
     yesterday.setHours(0, 0, 0, 0);
     setFocusedDate(yesterday);
     setCurrentView("main");
+    props.onViewChange?.("main");
     props.onDateSelect?.(yesterday);
     props.onLogoClick?.();
   }
@@ -146,6 +152,9 @@ function App(props: AppProps) {
 
   onMount(() => {
     setFocusedDate(props.pickedDate);
+    if (props.initialView) {
+      setCurrentView(props.initialView);
+    }
     setInitialised(true);
   });
 

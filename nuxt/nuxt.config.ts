@@ -1,24 +1,22 @@
 import { fileURLToPath } from 'node:url';
 
-// The design-system ships pre-emitted Vue SFCs in
-// ../design-system/output/vue/src — we alias straight at that tree so any
-// regen of the design system flows into this app without a publish step.
+const baseURL = 'https://revue-de-presse.org';
+const description =
+  'Chaque jour, une revue de presse des 10 publications des médias les plus marquantes';
+const title = 'Revue de presse - revue-de-presse.org';
+const banner = `${baseURL}/revue-de-presse-banner.jpg`;
+const icon = '/logo-revue-de-presse.png';
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-01-01',
   devtools: { enabled: true },
   ssr: true,
 
-  // Server-only secrets. NUXT_API_BASE_URL + NUXT_API_AUTH_TOKEN come from
-  // .env (see .env.example) and stay on Nitro — the browser only ever talks
-  // to /api/highlights, which the proxy resolves with the auth-token attached.
   runtimeConfig: {
     apiBaseUrl: '',
     apiAuthToken: '',
   },
 
-  // Nuxt 3.21 + Vite 7 + pnpm sometimes fails to register the `#app-manifest`
-  // virtual when pnpm doesn't hoist Nuxt's runtime under the project's
-  // `node_modules/`. Disabling the manifest skips that virtual entirely.
   experimental: {
     appManifest: false,
   },
@@ -34,22 +32,70 @@ export default defineNuxtConfig({
   vite: {
     server: {
       fs: {
-        // Allow Vite to serve files from the parent design-system folder.
-        allow: [
-          fileURLToPath(new URL('..', import.meta.url)),
-        ],
+        allow: [fileURLToPath(new URL('..', import.meta.url))],
       },
+    },
+  },
+
+  router: {
+    options: {
+      strict: true,
     },
   },
 
   app: {
     head: {
-      title: 'Revue de presse',
-      htmlAttrs: { lang: 'fr-FR' },
+      title,
+      htmlAttrs: { lang: 'fr' },
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Revue de presse — actualités relayées sur Bluesky.' },
+        { name: 'description', content: description },
+        { name: 'author', content: '@revue_2_presse' },
+        { name: 'theme-color', content: '#006663' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: baseURL },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+        { property: 'og:image', content: banner },
+        { property: 'og:site_name', content: title },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:site', content: '@revue_2_presse' },
+        { name: 'twitter:creator', content: '@revue_2_presse' },
+        { name: 'twitter:title', content: title },
+        { name: 'twitter:description', content: description },
+        { name: 'twitter:image', content: banner },
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+        { name: 'apple-mobile-web-app-title', content: title },
+        { name: 'mobile-web-app-capable', content: 'yes' },
+        { name: 'application-name', content: title },
+        { name: 'msapplication-TileColor', content: '#006663' },
+      ],
+      link: [
+        { rel: 'icon', type: 'image/png', href: icon },
+        { rel: 'apple-touch-icon', href: '/revue-de-presse_512x512_006663.png' },
+        { rel: 'manifest', href: '/manifest.webmanifest' },
+        {
+          rel: 'preload',
+          href: '/fonts/signika-regular.woff2',
+          as: 'font',
+          type: 'font/woff2',
+          crossorigin: '',
+        },
+        {
+          rel: 'preload',
+          href: '/fonts/roboto-regular.woff2',
+          as: 'font',
+          type: 'font/woff2',
+          crossorigin: '',
+        },
+      ],
+      noscript: [
+        {
+          children:
+            'Revue de presse nécessite JavaScript pour son bon fonctionnement.',
+        },
       ],
     },
   },

@@ -7,6 +7,7 @@ type SnapshotItem = {
   id: string;
   label: string;
 };
+type ViewKey = "main" | "legal" | "contact" | "support" | "sources";
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -23,11 +24,13 @@ type AppProps = {
   emptyMessageKey?: string;
   showPopularNews?: boolean;
   locale?: Locale;
+  initialView?: ViewKey;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
+  onViewChange?: (view: ViewKey) => void;
 };
 
 import { t } from "../utils/i18n";
@@ -348,7 +351,9 @@ export default class App {
   t = t;
 
   @Input() pickedDate!: AppProps["pickedDate"];
+  @Input() initialView!: AppProps["initialView"];
   @Input() locale!: AppProps["locale"];
+  @Input() onViewChange!: AppProps["onViewChange"];
   @Input() onDateSelect!: AppProps["onDateSelect"];
   @Input() onLogoClick!: AppProps["onLogoClick"];
   @Input() minDate!: AppProps["minDate"];
@@ -383,6 +388,7 @@ export default class App {
     next.setDate(next.getDate() - 1);
     this.focusedDate = next;
     this.currentView = "main";
+    this.onViewChange?.("main");
     this.onDateSelect?.(next);
   }
   nextDay() {
@@ -390,6 +396,7 @@ export default class App {
     next.setDate(next.getDate() + 1);
     this.focusedDate = next;
     this.currentView = "main";
+    this.onViewChange?.("main");
     this.onDateSelect?.(next);
   }
   openCalendar() {
@@ -402,18 +409,18 @@ export default class App {
     this.focusedDate = d;
     this.isCalendarOpen = false;
     this.currentView = "main";
+    this.onViewChange?.("main");
     this.onDateSelect?.(d);
   }
   selectFromSidebar(d: Date) {
-    // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
-    // day clicks, and prev/next month clicks. Any of those should bring
-    // the publication list back into focus when the user is on a sub-page.
     this.focusedDate = d;
     this.currentView = "main";
+    this.onViewChange?.("main");
     this.onDateSelect?.(d);
   }
-  goTo(view: "main" | "legal" | "contact" | "support" | "sources") {
+  goTo(view: ViewKey) {
     this.currentView = view;
+    this.onViewChange?.(view);
   }
   goHome() {
     const yesterday = new Date();
@@ -421,6 +428,7 @@ export default class App {
     yesterday.setHours(0, 0, 0, 0);
     this.focusedDate = yesterday;
     this.currentView = "main";
+    this.onViewChange?.("main");
     this.onDateSelect?.(yesterday);
     this.onLogoClick?.();
   }
@@ -453,6 +461,9 @@ export default class App {
   ngOnInit() {
     if (typeof window !== "undefined") {
       this.focusedDate = this.pickedDate;
+      if (this.initialView) {
+        this.currentView = this.initialView;
+      }
       this.initialised = true;
     }
   }
