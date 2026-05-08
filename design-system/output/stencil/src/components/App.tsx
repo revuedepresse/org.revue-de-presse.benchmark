@@ -30,7 +30,9 @@ import {
 })
 export class App {
   @Prop() pickedDate: any;
+  @Prop() initialView: any;
   @Prop() locale: any;
+  @Event() viewChange: any;
   @Event() dateSelect: any;
   @Event() logoClick: any;
   @Prop() minDate: any;
@@ -65,6 +67,7 @@ export class App {
     next.setDate(next.getDate() - 1);
     this.focusedDate = next;
     this.currentView = "main";
+    this.viewChange?.("main");
     this.dateSelect?.(next);
   }
   nextDay() {
@@ -72,6 +75,7 @@ export class App {
     next.setDate(next.getDate() + 1);
     this.focusedDate = next;
     this.currentView = "main";
+    this.viewChange?.("main");
     this.dateSelect?.(next);
   }
   openCalendar() {
@@ -84,18 +88,18 @@ export class App {
     this.focusedDate = d;
     this.isCalendarOpen = false;
     this.currentView = "main";
+    this.viewChange?.("main");
     this.dateSelect?.(d);
   }
   selectFromSidebar(d: Date) {
-    // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
-    // day clicks, and prev/next month clicks. Any of those should bring
-    // the publication list back into focus when the user is on a sub-page.
     this.focusedDate = d;
     this.currentView = "main";
+    this.viewChange?.("main");
     this.dateSelect?.(d);
   }
-  goTo(view: "main" | "legal" | "contact" | "support" | "sources") {
+  goTo(view: ViewKey) {
     this.currentView = view;
+    this.viewChange?.(view);
   }
   goHome() {
     const yesterday = new Date();
@@ -103,6 +107,7 @@ export class App {
     yesterday.setHours(0, 0, 0, 0);
     this.focusedDate = yesterday;
     this.currentView = "main";
+    this.viewChange?.("main");
     this.dateSelect?.(yesterday);
     this.logoClick?.();
   }
@@ -134,6 +139,9 @@ export class App {
 
   componentDidLoad() {
     this.focusedDate = this.pickedDate;
+    if (this.initialView) {
+      this.currentView = this.initialView;
+    }
     this.initialised = true;
   }
 

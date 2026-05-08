@@ -40,6 +40,7 @@ type SnapshotItem = {
   id: string;
   label: string;
 };
+type ViewKey = "main" | "legal" | "contact" | "support" | "sources";
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -56,11 +57,13 @@ type AppProps = {
   emptyMessageKey?: string;
   showPopularNews?: boolean;
   locale?: Locale;
+  initialView?: ViewKey;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
+  onViewChange?: (view: ViewKey) => void;
 };
 export const prevDay = function prevDay(
   props,
@@ -73,6 +76,7 @@ export const prevDay = function prevDay(
   next.setDate(next.getDate() - 1);
   state.focusedDate = next;
   state.currentView = "main";
+  props.onViewChange?.("main");
   props.onDateSelect?.(next);
 };
 export const nextDay = function nextDay(
@@ -86,6 +90,7 @@ export const nextDay = function nextDay(
   next.setDate(next.getDate() + 1);
   state.focusedDate = next;
   state.currentView = "main";
+  props.onViewChange?.("main");
   props.onDateSelect?.(next);
 };
 export const openCalendar = function openCalendar(
@@ -117,6 +122,7 @@ export const pickFromCalendar = function pickFromCalendar(
   state.focusedDate = d;
   state.isCalendarOpen = false;
   state.currentView = "main";
+  props.onViewChange?.("main");
   props.onDateSelect?.(d);
 };
 export const selectFromSidebar = function selectFromSidebar(
@@ -127,11 +133,9 @@ export const selectFromSidebar = function selectFromSidebar(
   nextDayDisabled,
   d: Date
 ) {
-  // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
-  // day clicks, and prev/next month clicks. Any of those should bring
-  // the publication list back into focus when the user is on a sub-page.
   state.focusedDate = d;
   state.currentView = "main";
+  props.onViewChange?.("main");
   props.onDateSelect?.(d);
 };
 export const goTo = function goTo(
@@ -140,9 +144,10 @@ export const goTo = function goTo(
   popularNewsLine,
   prevDayDisabled,
   nextDayDisabled,
-  view: "main" | "legal" | "contact" | "support" | "sources"
+  view: ViewKey
 ) {
   state.currentView = view;
+  props.onViewChange?.(view);
 };
 export const goHome = function goHome(
   props,
@@ -156,6 +161,7 @@ export const goHome = function goHome(
   yesterday.setHours(0, 0, 0, 0);
   state.focusedDate = yesterday;
   state.currentView = "main";
+  props.onViewChange?.("main");
   props.onDateSelect?.(yesterday);
   props.onLogoClick?.();
 };
@@ -202,6 +208,9 @@ export const App = component$((props: AppProps) => {
   });
   useVisibleTask$(() => {
     state.focusedDate = props.pickedDate;
+    if (props.initialView) {
+      state.currentView = props.initialView;
+    }
     state.initialised = true;
   });
 

@@ -4,6 +4,8 @@ id: string;
 label: string;
 }
 
+type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources'
+
 type AppProps = {
 layout?: 'mobile' | 'desktop';
 authenticated?: boolean;
@@ -20,11 +22,13 @@ loading?: boolean;
 emptyMessageKey?: string;
 showPopularNews?: boolean;
 locale?: Locale;
+initialView?: ViewKey;
 onAccountClick?: () => void;
 onMySpaceClick?: () => void;
 onListSelect?: (id: string) => void;
 onDateSelect?: (date: Date) => void;
 onLogoClick?: () => void;
+onViewChange?: (view: ViewKey) => void;
 }
 
     </script>
@@ -58,7 +62,9 @@ import type { Locale } from '../utils/i18n';
 
 
     export let pickedDate: AppProps['pickedDate'];
+export let initialView: AppProps['initialView']= undefined;
 export let locale: AppProps['locale']= undefined;
+export let onViewChange: AppProps['onViewChange']= undefined;
 export let onDateSelect: AppProps['onDateSelect']= undefined;
 export let onLogoClick: AppProps['onLogoClick']= undefined;
 export let minDate: AppProps['minDate']= undefined;
@@ -82,6 +88,7 @@ const next = new Date(focusedDate);
 next.setDate(next.getDate() - 1);
 focusedDate = next;
 currentView = 'main';
+onViewChange?.('main');
 onDateSelect?.(next);
 }
 function nextDay() {
@@ -89,6 +96,7 @@ const next = new Date(focusedDate);
 next.setDate(next.getDate() + 1);
 focusedDate = next;
 currentView = 'main';
+onViewChange?.('main');
 onDateSelect?.(next);
 }
 function openCalendar() {
@@ -101,18 +109,18 @@ function pickFromCalendar(d: Date) {
 focusedDate = d;
 isCalendarOpen = false;
 currentView = 'main';
+onViewChange?.('main');
 onDateSelect?.(d);
 }
 function selectFromSidebar(d: Date) {
-// The sidebar calendar fires onDateSelect on day-cell taps, prev/next
-// day clicks, and prev/next month clicks. Any of those should bring
-// the publication list back into focus when the user is on a sub-page.
 focusedDate = d;
 currentView = 'main';
+onViewChange?.('main');
 onDateSelect?.(d);
 }
-function goTo(view: 'main' | 'legal' | 'contact' | 'support' | 'sources') {
+function goTo(view: ViewKey) {
 currentView = view;
+onViewChange?.(view);
 }
 function goHome() {
 const yesterday = new Date();
@@ -120,6 +128,7 @@ yesterday.setDate(yesterday.getDate() - 1);
 yesterday.setHours(0, 0, 0, 0);
 focusedDate = yesterday;
 currentView = 'main';
+onViewChange?.('main');
 onDateSelect?.(yesterday);
 onLogoClick?.();
 }
@@ -151,6 +160,9 @@ let initialised = false;
 
 
     onMount(() => { focusedDate = pickedDate;
+if (initialView) {
+currentView = initialView;
+}
 initialised = true; });
 
 
