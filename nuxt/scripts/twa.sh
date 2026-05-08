@@ -66,7 +66,14 @@ build_twa() {
     printf 'Set BUBBLEWRAP_KEYSTORE_PASSWORD and BUBBLEWRAP_KEY_PASSWORD to sign non-interactively, or run `bubblewrap build` directly.\n' >&2
     return 1
   fi
-  _with_local_manifest bubblewrap build --skipPwaValidation
+  # Run update + build inside one local-manifest session so neither call
+  # re-fetches the unreachable production webManifestUrl.
+  _with_local_manifest bash -c '
+    set -e
+    bubblewrap update
+    # Decline the "twa-manifest.json changed" prompt — update just synced.
+    printf "n\n" | bubblewrap build --skipPwaValidation
+  '
 }
 
 if [ "${1-}" = "install" ]; then install_bubblewrap; fi
