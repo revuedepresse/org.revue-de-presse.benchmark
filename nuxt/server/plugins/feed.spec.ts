@@ -69,4 +69,70 @@ describe('mapStatusToFeedItem', () => {
     // Should be approximately now — within the last 5 seconds.
     expect(Date.now() - item.date.getTime()).toBeLessThan(5000);
   });
+
+  it('flattens line feeds in content into single spaces', () => {
+    const raw: RawStatus = {
+      screen_name: 'x.fr',
+      publication_id: 'pub-5',
+      url: 'https://bsky.app/x/5',
+      text: 'first line\nsecond line\r\nthird line',
+    };
+
+    const item = mapStatusToFeedItem(raw);
+
+    expect(item.content).not.toMatch(/[\r\n]/);
+    expect(item.content).toBe('first line second line third line');
+  });
+
+  it('strips upstream encoding artefacts via the cleanText pipeline', () => {
+    const raw: RawStatus = {
+      screen_name: 'x.fr',
+      publication_id: 'pub-6',
+      url: 'https://bsky.app/x/6',
+      // - leading/trailing literal `"` (step 1)
+      // - literal `\n` (step 2 → \n, then flattened to space)
+      // - escaped `\'` (step 3)
+      // - hex escape `\xa0` (step 4 → space)
+      // - stray backslash (step 8)
+      text: '"L\\\'Espagne\\xa0\\fait \\nune annonce\\"',
+    };
+
+    const item = mapStatusToFeedItem(raw);
+
+    expect(item.content).not.toContain('\\');
+    expect(item.content).not.toContain('"L\'');
+    expect(item.content).toContain("L'Espagne");
+    expect(item.content).toContain('fait');
+    expect(item.content).toContain('une annonce');
+  });
+
+  it('preserves UTF-8 (accents, emoji) — RSS is UTF-8', () => {
+    const raw: RawStatus = {
+      screen_name: 'x.fr',
+      publication_id: 'pub-7',
+      url: 'https://bsky.app/x/7',
+      text: 'café — 1er mai 🌷',
+    };
+
+    const item = mapStatusToFeedItem(raw);
+
+    expect(item.content).toContain('café');
+    expect(item.content).toContain('1er mai');
+    expect(item.content).toContain('🌷');
+  });
+
+  it('applies cleanup to title and description, not just content', () => {
+    const raw: RawStatus = {
+      screen_name: '  weird\nhandle  ',
+      publication_id: 'pub-8',
+      url: 'https://bsky.app/x/8',
+      avatar_url: 'https://cdn/avatar.jpg\n',
+      text: 'body',
+    };
+
+    const item = mapStatusToFeedItem(raw);
+
+    expect(item.title).toBe('weird handle');
+    expect(item.description).toBe('https://cdn/avatar.jpg');
+  });
 });
