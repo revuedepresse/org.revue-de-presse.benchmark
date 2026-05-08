@@ -44,7 +44,17 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxtjs/sitemap'],
+  modules: ['nuxt-module-feed', '@nuxtjs/sitemap'],
+
+  feed: {
+    sources: [
+      {
+        path: '/feed.xml',
+        type: 'rss2',
+        cacheTime: 60 * 15, // 15 min, parity with legacy 1000 * 60 * 15
+      },
+    ],
+  },
 
   site: {
     url: baseURL,
