@@ -109,6 +109,7 @@
         this.focusedDate = next;
         this.focusedYear = next.getFullYear();
         this.focusedMonth = next.getMonth();
+        props.onSelect?.(next);
       },
       nextDay() {
         const next = new Date(this.focusedDate);
@@ -116,6 +117,7 @@
         this.focusedDate = next;
         this.focusedYear = next.getFullYear();
         this.focusedMonth = next.getMonth();
+        props.onSelect?.(next);
       },
       prevMonth() {
         if (this.viewMode === "year") {

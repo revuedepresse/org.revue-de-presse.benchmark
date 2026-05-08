@@ -146,6 +146,7 @@ export default class Calendar {
     this.focusedDate = next;
     this.focusedYear = next.getFullYear();
     this.focusedMonth = next.getMonth();
+    this.onSelect?.(next);
   }
   nextDay() {
     const next = new Date(this.focusedDate);
@@ -153,6 +154,7 @@ export default class Calendar {
     this.focusedDate = next;
     this.focusedYear = next.getFullYear();
     this.focusedMonth = next.getMonth();
+    this.onSelect?.(next);
   }
   prevMonth() {
     if (this.viewMode === "year") {

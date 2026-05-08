@@ -62,6 +62,7 @@ next.setDate(next.getDate() - 1);
 focusedDate = next;
 focusedYear = next.getFullYear();
 focusedMonth = next.getMonth();
+onSelect?.(next);
 }
 function nextDay() {
 const next = new Date(focusedDate);
@@ -69,6 +70,7 @@ next.setDate(next.getDate() + 1);
 focusedDate = next;
 focusedYear = next.getFullYear();
 focusedMonth = next.getMonth();
+onSelect?.(next);
 }
 function prevMonth() {
 if (viewMode === 'year') {

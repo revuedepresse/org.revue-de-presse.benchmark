@@ -71,6 +71,7 @@ prevDay() {
  this.focusedDate = next;
  this.focusedYear = next.getFullYear();
  this.focusedMonth = next.getMonth();
+ this.onSelect?.(next);
 }
 nextDay() {
  const next = new Date(this.focusedDate);
@@ -78,6 +79,7 @@ nextDay() {
  this.focusedDate = next;
  this.focusedYear = next.getFullYear();
  this.focusedMonth = next.getMonth();
+ this.onSelect?.(next);
 }
 prevMonth() {
  if (this.viewMode === 'year') {

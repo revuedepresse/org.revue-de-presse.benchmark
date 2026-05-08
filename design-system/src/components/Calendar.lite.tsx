@@ -43,6 +43,7 @@ export default function Calendar(props: CalendarProps) {
       state.focusedDate = next;
       state.focusedYear = next.getFullYear();
       state.focusedMonth = next.getMonth();
+      props.onSelect?.(next);
     },
     nextDay() {
       const next = new Date(state.focusedDate);
@@ -50,6 +51,7 @@ export default function Calendar(props: CalendarProps) {
       state.focusedDate = next;
       state.focusedYear = next.getFullYear();
       state.focusedMonth = next.getMonth();
+      props.onSelect?.(next);
     },
     prevMonth() {
       if (state.viewMode === 'year') {

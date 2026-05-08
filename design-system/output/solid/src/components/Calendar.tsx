@@ -61,6 +61,7 @@ function Calendar(props: CalendarProps) {
     setFocusedDate(next);
     setFocusedYear(next.getFullYear());
     setFocusedMonth(next.getMonth());
+    props.onSelect?.(next);
   }
 
   function nextDay() {
@@ -69,6 +70,7 @@ function Calendar(props: CalendarProps) {
     setFocusedDate(next);
     setFocusedYear(next.getFullYear());
     setFocusedMonth(next.getMonth());
+    props.onSelect?.(next);
   }
 
   function prevMonth() {

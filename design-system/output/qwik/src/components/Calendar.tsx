@@ -84,6 +84,7 @@ export const prevDay = function prevDay(
   state.focusedDate = next;
   state.focusedYear = next.getFullYear();
   state.focusedMonth = next.getMonth();
+  props.onSelect?.(next);
 };
 export const nextDay = function nextDay(
   props,
@@ -98,6 +99,7 @@ export const nextDay = function nextDay(
   state.focusedDate = next;
   state.focusedYear = next.getFullYear();
   state.focusedMonth = next.getMonth();
+  props.onSelect?.(next);
 };
 export const prevMonth = function prevMonth(
   props,
