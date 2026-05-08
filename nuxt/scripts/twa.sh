@@ -16,6 +16,13 @@ install_bubblewrap() {
   npm install -g @bubblewrap/cli
 }
 
+# Bubblewrap (and the gradle build it spawns) refuses to run when both
+# ANDROID_HOME and ANDROID_SDK_ROOT are set to different paths. Bubblewrap
+# pins ANDROID_HOME to ~/.bubblewrap/android_sdk; if the user also has
+# Homebrew's android-commandlinetools on PATH, ANDROID_SDK_ROOT collides
+# and gradle aborts. Clear the legacy variable for any TWA invocation.
+unset ANDROID_SDK_ROOT
+
 # Bubblewrap (`update` and `build`) always fetches webManifestUrl. When the
 # production deploy lags behind the next TWA we want to ship, swap the URL
 # to a local server hosting public/manifest.webmanifest + icons for the
