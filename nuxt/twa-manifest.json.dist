@@ -1,5 +1,5 @@
 {
-  "packageId": "org.revue_de_presse",
+  "packageId": "org.revue_2_presse",
   "host": "revue-de-presse.org",
   "name": "Revue de presse",
   "launcherName": "revue2presse",
@@ -20,8 +20,8 @@
     "path": "./android.keystore",
     "alias": "org.revue-de-presse"
   },
-  "appVersionName": "11",
-  "appVersionCode": 11,
+  "appVersionName": "15",
+  "appVersionCode": 15,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://revue-de-presse.org/manifest.webmanifest",
@@ -39,5 +39,5 @@
   "fingerprints": [],
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
-  "appVersion": "11"
+  "appVersion": "15"
 }
