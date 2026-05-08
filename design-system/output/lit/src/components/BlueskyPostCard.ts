@@ -1,7 +1,6 @@
 import { t } from "../utils/i18n";
-import { formatDate } from "../utils/intl";
+import { formatDate, formatTime } from "../utils/intl";
 import "./MetricsBar.ts";
-import "./WebIntents.ts";
 import "./MediaPlaceholder.ts";
 import type { Locale } from "../utils/i18n";
 
@@ -21,10 +20,16 @@ export type BlueskyPost = {
     likes: number;
   };
   hasMedia?: boolean;
+  publicationUrl?: string;
 };
 type BlueskyPostCardProps = {
   post: BlueskyPost;
   locale?: Locale;
+};
+type Segment = {
+  kind: "text" | "mention" | "url";
+  value: string;
+  href: string;
 };
 
 @customElement("bluesky-post-card")
@@ -36,99 +41,283 @@ export default class BlueskyPostCard extends LitElement {
   @property() post: any;
   @property() locale: any;
 
+  get profileUrl() {
+    return `https://bsky.app/profile/${this.post.authorHandle}`;
+  }
+  get publicationUrl() {
+    return (
+      this.post.publicationUrl ??
+      `https://bsky.app/profile/${this.post.authorHandle}`
+    );
+  }
+  get bodySegments() {
+    const text = this.post.body ?? "";
+    const out: Segment[] = [];
+    const re =
+      /(https?:\/\/[^\s]+|@[A-Za-z0-9._-]+(?:\.[A-Za-z]{2,})?|[A-Za-z0-9.-]+\.[A-Za-z]{2,}\/[^\s]*)/g;
+    let last = 0;
+    let m: RegExpExecArray | null = re.exec(text);
+    while (m !== null) {
+      if (m.index > last) {
+        out.push({
+          kind: "text",
+          value: text.slice(last, m.index),
+          href: "",
+        });
+      }
+      const matched = m[0];
+      if (matched.charAt(0) === "@") {
+        const handle = matched.slice(1).replace(/[.,;:!?)]+$/, "");
+        out.push({
+          kind: "mention",
+          value: `@${handle}`,
+          href: `https://bsky.app/profile/${handle}`,
+        });
+        const trailing = matched.length - 1 - handle.length;
+        if (trailing > 0) {
+          out.push({
+            kind: "text",
+            value: matched.slice(matched.length - trailing),
+            href: "",
+          });
+        }
+      } else if (matched.charAt(0) === "h") {
+        const trimmed = matched.replace(/[.,;:!?)]+$/, "");
+        const trailing = matched.length - trimmed.length;
+        out.push({
+          kind: "url",
+          value: trimmed,
+          href: trimmed,
+        });
+        if (trailing > 0) {
+          out.push({
+            kind: "text",
+            value: matched.slice(matched.length - trailing),
+            href: "",
+          });
+        }
+      } else {
+        const trimmed = matched.replace(/[.,;:!?)]+$/, "");
+        const trailing = matched.length - trimmed.length;
+        out.push({
+          kind: "url",
+          value: trimmed,
+          href: `https://${trimmed}`,
+        });
+        if (trailing > 0) {
+          out.push({
+            kind: "text",
+            value: matched.slice(matched.length - trailing),
+            href: "",
+          });
+        }
+      }
+      last = m.index + matched.length;
+      m = re.exec(text);
+    }
+    if (last < text.length) {
+      out.push({
+        kind: "text",
+        value: text.slice(last),
+        href: "",
+      });
+    }
+    return out;
+  }
+
   render() {
     return html`
 
+          <div>
+          <div aria-hidden="false">
+            <metrics-bar
+              .replies="${this.post.metrics.replies}"
+              .reposts="${this.post.metrics.reposts}"
+              .likes="${this.post.metrics.likes}"
+              .locale="${this.locale}"
+            ></metrics-bar>
+          </div>
           <article>
-          <metrics-bar
-            .replies="${this.post.metrics.replies}"
-            .reposts="${this.post.metrics.reposts}"
-            .likes="${this.post.metrics.likes}"
-            .locale="${this.locale}"
-          ></metrics-bar>
-          <header>
-            <span aria-hidden="true"
-              >${
-                !!this.post.authorAvatarUrl
-                  ? html`<img
-              alt=""
-              .src="${this.post.authorAvatarUrl}"
-            />`
-                  : null
-              }</span
-            >
-            <span
-              ><strong>${this.post.authorName}</strong>
-              <span>${t("bluesky.handle.prefix")} ${
+            <a
+              aria-label="Bluesky"
+              rel="noreferrer nofollow noopener"
+              target="_blank"
+              .href="${this.publicationUrl}"
+              ><svg
+                viewBox="0 0 600 530"
+                width="20"
+                height="20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M135.72 44.03C202.216 93.951 273.74 195.17 300 249.49c26.262-54.316 97.782-155.54 164.28-205.46C512.26 8.009 590-19.862 590 68.825c0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.38-3.69-10.832-3.708-7.896-.017-2.936-1.193.516-3.707 7.896-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.45-163.25-81.433C20.158 217.613 10 86.535 10 68.825c0-88.687 77.742-60.816 125.72-24.795z"
+                ></path></svg
+            ></a>
+            <header>
+              <a
+                rel="noreferrer nofollow noopener"
+                target="_blank"
+                aria-label="${this.post.authorName}"
+                .href="${this.profileUrl}"
+                >${
+                  !!this.post.authorAvatarUrl
+                    ? html`<img
+                 alt=""
+                 .src="${this.post.authorAvatarUrl}"
+               />`
+                    : null
+                }</a
+              >
+              <a
+                rel="noreferrer nofollow noopener"
+                target="_blank"
+                .href="${this.profileUrl}"
+                ><strong>${this.post.authorName}</strong>
+                <span>${t("bluesky.handle.prefix")} ${
       this.post.authorHandle
-    }</span></span
-            >
-          </header>
-          <p>${this.post.body}</p>
-          ${
-            !!this.post.hasMedia
-              ? html`<media-placeholder
-          .width="${270}"
-          .height="${160}"
-        ></media-placeholder
-        >`
-              : null
-          }
-          <footer>
-            <time
-              >${formatDate(
-                this.post.publishedAt,
-                "longDay",
-                this.locale ?? "fr-FR"
-              )}</time
-            >
-            <web-intents .postId="${this.post.id}"></web-intents>
-          </footer>
+    }</span></a
+              >
+            </header>
+            <p>
+              ${this.bodySegments?.map(
+                (seg, index) => html`<my-fragment
+               >${seg.kind === "text" ? html`${seg.value}` : null} ${
+                  seg.kind === "mention"
+                    ? html`<a
+                  rel="noreferrer nofollow noopener"
+                  target="_blank"
+                  .href="${seg.href}"
+                  >${seg.value}</a
+                >`
+                    : null
+                } ${
+                  seg.kind === "url"
+                    ? html`<a
+                  rel="noreferrer nofollow noopener"
+                  target="_blank"
+                  .href="${seg.href}"
+                  >${seg.value}</a
+                >`
+                    : null
+                }</my-fragment
+             >`
+              )}
+            </p>
+            ${
+              !!this.post.hasMedia
+                ? html`<media-placeholder
+             .width="${270}"
+             .height="${160}"
+           ></media-placeholder
+           >`
+                : null
+            }
+            <footer>
+              <a
+                rel="noreferrer nofollow noopener"
+                target="_blank"
+                .href="${this.publicationUrl}"
+                ><time
+                  >${formatTime(
+                    this.post.publishedAt,
+                    this.locale ?? "fr-FR"
+                  )} ·
+                  ${formatDate(
+                    this.post.publishedAt,
+                    "longDay",
+                    this.locale ?? "fr-FR"
+                  )}</time
+                ></a
+              >
+            </footer>
+          </article>
           <style>
             ${`
-                  .rdp-bsky-post {
-                    background: var(--color-white);
-                    border: 1px solid var(--color-border);
-                    border-radius: var(--radius-default);
-                    padding: var(--separation-2);
-                    font-family: 'Roboto', sans-serif;
-                    color: var(--color-content-text);
-                    display: flex;
-                    flex-direction: column;
-                    gap: var(--separation-1);
-                    font-size: var(--font-size-status-text);
-                  }
-                  .rdp-bsky-post__header {
-                    display: flex;
-                    gap: var(--separation-1);
-                    align-items: center;
-                    font-size: var(--font-size-content);
-                  }
-                  .rdp-bsky-post__avatar {
-                    width: 48px;
-                    height: 48px;
-                    border-radius: 50%;
-                    background: var(--color-light-grey);
-                    overflow: hidden;
-                    flex-shrink: 0;
-                  }
-                  .rdp-bsky-post__avatar img { width: 100%; height: 100%; object-fit: cover; }
-                  .rdp-bsky-post__author { display: flex; flex-direction: column; }
-                  .rdp-bsky-post__handle {
-                    color: var(--color-light-grey);
-                    font-size: var(--font-size-publication-date);
-                  }
-                  .rdp-bsky-post__body { margin: 0; }
-                  .rdp-bsky-post__footer {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    font-size: var(--font-size-publication-date);
-                    color: var(--color-light-grey);
-                  }
-                `}
+                   .rdp-bsky-post-frame {
+                     display: flex;
+                     flex-direction: column;
+                     gap: var(--separation-1);
+                   }
+                   .rdp-bsky-post__metrics {
+                     display: flex;
+                     justify-content: flex-end;
+                     padding-right: var(--separation-2);
+                   }
+                   .rdp-bsky-post {
+                     position: relative;
+                     background: var(--color-white);
+                     border: 1px solid var(--color-border);
+                     border-radius: var(--radius-default);
+                     padding: var(--separation-2);
+                     font-family: 'Roboto', sans-serif;
+                     color: var(--color-content-text);
+                     display: flex;
+                     flex-direction: column;
+                     gap: var(--separation-1);
+                     font-size: var(--font-size-status-text);
+                   }
+                   .rdp-bsky-post__bluesky {
+                     position: absolute;
+                     top: var(--separation-2);
+                     right: var(--separation-2);
+                     color: var(--color-brand-bluesky);
+                     line-height: 0;
+                     text-decoration: none;
+                   }
+                   .rdp-bsky-post__header {
+                     display: flex;
+                     gap: var(--separation-1);
+                     align-items: center;
+                     font-size: var(--font-size-content);
+                     padding-right: 32px;
+                   }
+                   .rdp-bsky-post__avatar {
+                     width: 48px;
+                     height: 48px;
+                     border-radius: 50%;
+                     background: var(--color-light-grey);
+                     overflow: hidden;
+                     flex-shrink: 0;
+                     display: inline-block;
+                     text-decoration: none;
+                   }
+                   .rdp-bsky-post__avatar img { width: 100%; height: 100%; object-fit: cover; }
+                   .rdp-bsky-post__author {
+                     display: flex;
+                     flex-direction: column;
+                     color: inherit;
+                     text-decoration: none;
+                   }
+                   .rdp-bsky-post__author:hover strong { text-decoration: underline; }
+                   .rdp-bsky-post__handle {
+                     color: var(--color-light-grey);
+                     font-size: var(--font-size-publication-date);
+                   }
+                   .rdp-bsky-post__body { margin: 0; white-space: pre-line; }
+                   .rdp-bsky-post__body-link,
+                   .rdp-bsky-post__body-link:link,
+                   .rdp-bsky-post__body-link:visited,
+                   .rdp-bsky-post__body-link:hover,
+                   .rdp-bsky-post__body-link:active {
+                     color: var(--color-content-text);
+                     text-decoration: underline;
+                   }
+                   .rdp-bsky-post__footer {
+                     display: flex;
+                     justify-content: space-between;
+                     align-items: center;
+                     font-size: var(--font-size-publication-date);
+                     color: var(--color-light-grey);
+                   }
+                   .rdp-bsky-post__timestamp-link {
+                     color: inherit;
+                     text-decoration: none;
+                   }
+                   .rdp-bsky-post__timestamp-link:hover .rdp-bsky-post__timestamp { text-decoration: underline; }
+                 `}
           </style>
-        </article>
+        </div>
 
         `;
   }

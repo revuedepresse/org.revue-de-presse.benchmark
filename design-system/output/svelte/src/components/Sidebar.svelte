@@ -12,6 +12,7 @@ yearRange: {
   min: number;
   max: number;
 };
+minDate?: Date;
 locale?: Locale;
 onListSelect?: (id: string) => void;
 onDateSelect?: (date: Date) => void;
@@ -41,6 +42,7 @@ import type { Locale } from '../utils/i18n';
   export let selectedDate: SidebarProps['selectedDate'];
 export let locale: SidebarProps['locale']= undefined;
 export let yearRange: SidebarProps['yearRange'];
+export let minDate: SidebarProps['minDate']= undefined;
 export let onDateSelect: SidebarProps['onDateSelect']= undefined;
 export let onLegalNoticeClick: SidebarProps['onLegalNoticeClick']= undefined;
 export let onContactClick: SidebarProps['onContactClick']= undefined;
@@ -66,4 +68,4 @@ export let onSourcesClick: SidebarProps['onSourcesClick']= undefined;
 
 </script>
 
-<aside  class="rdp-sidebar" ><Calendar  selectedDate={selectedDate}  locale={locale}  yearRange={yearRange}  onSelect={(d) => onDateSelect?.(d)}></Calendar><BannerAbout  onLegalNoticeClick={(event) => onLegalNoticeClick()} onContactClick={(event) => onContactClick()} onSupportClick={(event) => onSupportClick()} onSourcesClick={(event) => onSourcesClick()}></BannerAbout></aside>
+<aside  class="rdp-sidebar" ><Calendar  selectedDate={selectedDate}  locale={locale}  yearRange={yearRange}  minDate={minDate}  onSelect={(d) => onDateSelect?.(d)}></Calendar><BannerAbout  onLegalNoticeClick={(event) => onLegalNoticeClick()} onContactClick={(event) => onContactClick()} onSupportClick={(event) => onSupportClick()} onSourcesClick={(event) => onSourcesClick()}></BannerAbout></aside>

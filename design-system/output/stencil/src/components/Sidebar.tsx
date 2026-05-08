@@ -18,6 +18,7 @@ export class Sidebar {
   @Prop() selectedDate: any;
   @Prop() locale: any;
   @Prop() yearRange: any;
+  @Prop() minDate: any;
   @Event() dateSelect: any;
   @Event() legalNoticeClick: any;
   @Event() contactClick: any;
@@ -33,6 +34,7 @@ export class Sidebar {
           selectedDate={this.selectedDate}
           locale={this.locale}
           yearRange={this.yearRange}
+          minDate={this.minDate}
           onSelect={(d) => this.dateSelect?.(d)}
         ></calendar>
         <banner-about

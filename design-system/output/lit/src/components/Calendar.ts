@@ -17,6 +17,7 @@ import type { Locale } from '../utils/i18n';
    min: number;
    max: number;
  };
+ minDate?: Date;
  presentation?: 'inline' | 'sheet';
  onSelect?: (date: Date) => void;
  onDismiss?: () => void;
@@ -39,6 +40,7 @@ import type { Locale } from '../utils/i18n';
      @property() selectedDate: any
 @property() onSelect: any
 @property() yearRange: any
+@property() minDate: any
 @property() presentation: any
 @property() onDismiss: any
 @property() locale: any
@@ -112,6 +114,43 @@ titleClick() {
    this.viewMode = 'year';
  }
 }
+get prevDayDisabled() {
+ if (!this.minDate) return false;
+ const cur = new Date(this.focusedDate.getFullYear(), this.focusedDate.getMonth(), this.focusedDate.getDate());
+ const min = new Date(this.minDate.getFullYear(), this.minDate.getMonth(), this.minDate.getDate());
+ return cur.getTime() <= min.getTime();
+}
+get nextDayDisabled() {
+ const yesterday = new Date();
+ yesterday.setDate(yesterday.getDate() - 1);
+ yesterday.setHours(0, 0, 0, 0);
+ const cur = new Date(this.focusedDate.getFullYear(), this.focusedDate.getMonth(), this.focusedDate.getDate());
+ return cur.getTime() >= yesterday.getTime();
+}
+get prevMonthDisabled() {
+ if (this.viewMode === 'year') {
+   if (!this.yearRange) return false;
+   return this.focusedYear <= this.yearRange.min;
+ }
+ if (!this.minDate) return false;
+ const minY = this.minDate.getFullYear();
+ const minM = this.minDate.getMonth();
+ if (this.focusedYear < minY) return true;
+ if (this.focusedYear > minY) return false;
+ return this.focusedMonth <= minM;
+}
+get nextMonthDisabled() {
+ const today = new Date();
+ const curY = today.getFullYear();
+ const curM = today.getMonth();
+ if (this.viewMode === 'year') {
+   if (!this.yearRange) return false;
+   return this.focusedYear >= this.yearRange.max;
+ }
+ if (this.focusedYear > curY) return true;
+ if (this.focusedYear < curY) return false;
+ return this.focusedMonth >= curM;
+}
 
 
        connectedCallback() { this.focusedDate = this.selectedDate;
@@ -131,13 +170,15 @@ this.focusedMonth = this.selectedDate.getMonth()
           <div  class={`rdp-calendar rdp-calendar--${props.presentation ?? 'inline'}`}  role="dialog"  aria-modal=${this.presentation === 'sheet' ? 'true' : 'false'} >${this.presentation === 'sheet' ?
               html`<div  aria-hidden="true"  @click=${(event) => this.onDismiss?.()} ></div>`
             : null}
-        <div ><calendar-action-bar  position="top"  .date=${this.focusedDate}  .locale=${this.locale}  @prev=${(event) => this.prevDay()}  @next=${(event) => this.nextDay()} ></calendar-action-bar>
-        <calendar-month-bar  .viewMode=${this.viewMode}  .focusedYear=${this.focusedYear}  .focusedMonth=${this.focusedMonth}  .locale=${this.locale}  @titleclick=${(event) => this.titleClick()}  @prev=${(event) => this.prevMonth()}  @next=${(event) => this.nextMonth()} ></calendar-month-bar>
+        <div >${this.presentation !== 'sheet' ?
+              html`<calendar-action-bar  position="top"  .date=${this.focusedDate}  .locale=${this.locale}  @prev=${(event) => this.prevDay()}  @next=${(event) => this.nextDay()}  .prevDisabled=${this.prevDayDisabled}  .nextDisabled=${this.nextDayDisabled} ></calendar-action-bar>`
+            : null}
+        <calendar-month-bar  .viewMode=${this.viewMode}  .focusedYear=${this.focusedYear}  .focusedMonth=${this.focusedMonth}  .locale=${this.locale}  @titleclick=${(event) => this.titleClick()}  @prev=${(event) => this.prevMonth()}  @next=${(event) => this.nextMonth()}  .prevDisabled=${this.prevMonthDisabled}  .nextDisabled=${this.nextMonthDisabled} ></calendar-month-bar>
         ${this.viewMode === 'day' ?
-              html`<date-grid  .year=${this.focusedYear}  .month=${this.focusedMonth}  .selectedDate=${this.focusedDate}  .locale=${this.locale}  @select=${(d) => this.selectDay(d)} ></date-grid>`
+              html`<date-grid  .year=${this.focusedYear}  .month=${this.focusedMonth}  .selectedDate=${this.focusedDate}  .minDate=${this.minDate}  .locale=${this.locale}  @select=${(d) => this.selectDay(d)} ></date-grid>`
             : null}
         ${this.viewMode === 'month' ?
-              html`<month-picker  .year=${this.focusedYear}  .selectedMonth=${this.focusedMonth}  .locale=${this.locale}  @select=${(idx) => this.selectMonth(idx)} ></month-picker>`
+              html`<month-picker  .year=${this.focusedYear}  .selectedMonth=${this.focusedMonth}  .minDate=${this.minDate}  .locale=${this.locale}  @select=${(idx) => this.selectMonth(idx)} ></month-picker>`
             : null}
         ${this.viewMode === 'year' ?
               html`<year-picker  .yearRange=${this.yearRange}  .selectedYear=${this.focusedYear}  @select=${(y) => this.selectYear(y)} ></year-picker>`
@@ -148,7 +189,7 @@ this.focusedMonth = this.selectedDate.getMonth()
                  background: var(--color-white);
                  border: 1px solid var(--color-border);
                  border-radius: var(--radius-default);
-                 padding: var(--separation-2);
+                 padding: 0;
                }
                .rdp-calendar--sheet { position: fixed; inset: 0; display: grid; align-items: end; }
                .rdp-calendar__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }

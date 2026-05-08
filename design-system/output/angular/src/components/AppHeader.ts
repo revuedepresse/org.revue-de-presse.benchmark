@@ -9,6 +9,7 @@ type AppHeaderProps = {
   showAccountControls?: boolean;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
+  onLogoClick?: () => void;
 };
 
 import { t } from "../utils/i18n";
@@ -17,10 +18,17 @@ import { t } from "../utils/i18n";
   selector: "app-header",
   template: `
     <header [class]="\`rdp-app-header rdp-app-header--\${layout}\`">
-      <logo
-        [showWordmark]="true"
-        [size]="layout === 'mobile' ? 'sm' : 'md'"
-      ></logo>
+      <button
+        type="button"
+        class="rdp-app-header__home"
+        aria-label="Revue de presse"
+        (click)="onLogoClick?.()"
+      >
+        <logo
+          [showWordmark]="true"
+          [size]="layout === 'mobile' ? 'sm' : 'md'"
+        ></logo>
+      </button>
       <ng-container *ngIf="showAccountControls === true && layout === 'desktop'"
         ><a
           href="#"
@@ -57,6 +65,16 @@ import { t } from "../utils/i18n";
                   font-family: 'Signika', sans-serif;
                 }
                 .rdp-app-header--desktop { padding: var(--separation-1) var(--separation-3); }
+                .rdp-app-header__home {
+                  background: transparent;
+                  border: none;
+                  padding: 0;
+                  cursor: pointer;
+                  font: inherit;
+                  color: inherit;
+                  display: inline-flex;
+                  align-items: center;
+                }
                 .rdp-app-header__myspace {
                   margin-left: auto;
                   color: var(--color-brand-active);
@@ -95,6 +113,7 @@ export default class AppHeader {
   t = t;
 
   @Input() layout!: AppHeaderProps["layout"];
+  @Input() onLogoClick!: AppHeaderProps["onLogoClick"];
   @Input() showAccountControls!: AppHeaderProps["showAccountControls"];
   @Input() authenticated!: AppHeaderProps["authenticated"];
   @Input() onMySpaceClick!: AppHeaderProps["onMySpaceClick"];

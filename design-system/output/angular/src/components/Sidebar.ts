@@ -15,6 +15,7 @@ type SidebarProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   locale?: Locale;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
@@ -34,6 +35,7 @@ import type { Locale } from "../utils/i18n";
         [selectedDate]="selectedDate"
         [locale]="locale"
         [yearRange]="yearRange"
+        [minDate]="minDate"
         (select)="onDateSelect?.($event)"
       ></calendar>
       <banner-about
@@ -70,6 +72,7 @@ export default class Sidebar {
   @Input() selectedDate!: SidebarProps["selectedDate"];
   @Input() locale!: SidebarProps["locale"];
   @Input() yearRange!: SidebarProps["yearRange"];
+  @Input() minDate!: SidebarProps["minDate"];
   @Input() onDateSelect!: SidebarProps["onDateSelect"];
   @Output() onLegalNoticeClick = new EventEmitter<any>();
   @Output() onContactClick = new EventEmitter<any>();

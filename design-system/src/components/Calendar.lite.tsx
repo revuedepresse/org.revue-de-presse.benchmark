@@ -10,6 +10,7 @@ type CalendarProps = {
   selectedDate: Date;
   locale?: Locale;
   yearRange: { min: number; max: number };
+  minDate?: Date;
   presentation?: 'inline' | 'sheet';
   onSelect?: (date: Date) => void;
   onDismiss?: () => void;
@@ -85,6 +86,55 @@ export default function Calendar(props: CalendarProps) {
         state.viewMode = 'year';
       }
     },
+    get prevDayDisabled(): boolean {
+      if (!props.minDate) return false;
+      const cur = new Date(
+        state.focusedDate.getFullYear(),
+        state.focusedDate.getMonth(),
+        state.focusedDate.getDate(),
+      );
+      const min = new Date(
+        props.minDate.getFullYear(),
+        props.minDate.getMonth(),
+        props.minDate.getDate(),
+      );
+      return cur.getTime() <= min.getTime();
+    },
+    get nextDayDisabled(): boolean {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(0, 0, 0, 0);
+      const cur = new Date(
+        state.focusedDate.getFullYear(),
+        state.focusedDate.getMonth(),
+        state.focusedDate.getDate(),
+      );
+      return cur.getTime() >= yesterday.getTime();
+    },
+    get prevMonthDisabled(): boolean {
+      if (state.viewMode === 'year') {
+        if (!props.yearRange) return false;
+        return state.focusedYear <= props.yearRange.min;
+      }
+      if (!props.minDate) return false;
+      const minY = props.minDate.getFullYear();
+      const minM = props.minDate.getMonth();
+      if (state.focusedYear < minY) return true;
+      if (state.focusedYear > minY) return false;
+      return state.focusedMonth <= minM;
+    },
+    get nextMonthDisabled(): boolean {
+      const today = new Date();
+      const curY = today.getFullYear();
+      const curM = today.getMonth();
+      if (state.viewMode === 'year') {
+        if (!props.yearRange) return false;
+        return state.focusedYear >= props.yearRange.max;
+      }
+      if (state.focusedYear > curY) return true;
+      if (state.focusedYear < curY) return false;
+      return state.focusedMonth >= curM;
+    },
   });
 
   onMount(() => {
@@ -117,13 +167,17 @@ export default function Calendar(props: CalendarProps) {
         />
       </Show>
       <div class="rdp-calendar__panel">
-        <CalendarActionBar
-          date={state.focusedDate}
-          locale={props.locale}
-          position="top"
-          onPrev={() => state.prevDay()}
-          onNext={() => state.nextDay()}
-        />
+        <Show when={props.presentation !== 'sheet'}>
+          <CalendarActionBar
+            date={state.focusedDate}
+            locale={props.locale}
+            position="top"
+            onPrev={() => state.prevDay()}
+            onNext={() => state.nextDay()}
+            prevDisabled={state.prevDayDisabled}
+            nextDisabled={state.nextDayDisabled}
+          />
+        </Show>
         <CalendarMonthBar
           viewMode={state.viewMode}
           focusedYear={state.focusedYear}
@@ -132,12 +186,15 @@ export default function Calendar(props: CalendarProps) {
           onTitleClick={() => state.titleClick()}
           onPrev={() => state.prevMonth()}
           onNext={() => state.nextMonth()}
+          prevDisabled={state.prevMonthDisabled}
+          nextDisabled={state.nextMonthDisabled}
         />
         <Show when={state.viewMode === 'day'}>
           <DateGrid
             year={state.focusedYear}
             month={state.focusedMonth}
             selectedDate={state.focusedDate}
+            minDate={props.minDate}
             locale={props.locale}
             onSelect={(d: Date) => state.selectDay(d)}
           />
@@ -146,6 +203,7 @@ export default function Calendar(props: CalendarProps) {
           <MonthPicker
             year={state.focusedYear}
             selectedMonth={state.focusedMonth}
+            minDate={props.minDate}
             locale={props.locale}
             onSelect={(idx: number) => state.selectMonth(idx)}
           />
@@ -164,7 +222,7 @@ export default function Calendar(props: CalendarProps) {
           background: var(--color-white);
           border: 1px solid var(--color-border);
           border-radius: var(--radius-default);
-          padding: var(--separation-2);
+          padding: 0;
         }
         .rdp-calendar--sheet { position: fixed; inset: 0; display: grid; align-items: end; }
         .rdp-calendar__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }

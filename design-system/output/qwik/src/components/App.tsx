@@ -16,6 +16,8 @@ import CalendarActionBar from "./CalendarActionBar.jsx";
 
 import ContactPage from "./ContactPage.jsx";
 
+import IntroCard from "./IntroCard.jsx";
+
 import LegalNoticePage from "./LegalNoticePage.jsx";
 
 import Sidebar from "./Sidebar.jsx";
@@ -49,6 +51,7 @@ type AppProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   loading?: boolean;
   emptyMessageKey?: string;
   showPopularNews?: boolean;
@@ -57,30 +60,49 @@ type AppProps = {
   onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
+  onLogoClick?: () => void;
 };
-export const prevDay = function prevDay(props, state, popularNewsLine) {
+export const prevDay = function prevDay(
+  props,
+  state,
+  popularNewsLine,
+  prevDayDisabled,
+  nextDayDisabled
+) {
   const next = new Date(state.focusedDate);
   next.setDate(next.getDate() - 1);
   state.focusedDate = next;
+  state.currentView = "main";
   props.onDateSelect?.(next);
 };
-export const nextDay = function nextDay(props, state, popularNewsLine) {
+export const nextDay = function nextDay(
+  props,
+  state,
+  popularNewsLine,
+  prevDayDisabled,
+  nextDayDisabled
+) {
   const next = new Date(state.focusedDate);
   next.setDate(next.getDate() + 1);
   state.focusedDate = next;
+  state.currentView = "main";
   props.onDateSelect?.(next);
 };
 export const openCalendar = function openCalendar(
   props,
   state,
-  popularNewsLine
+  popularNewsLine,
+  prevDayDisabled,
+  nextDayDisabled
 ) {
   state.isCalendarOpen = true;
 };
 export const closeCalendar = function closeCalendar(
   props,
   state,
-  popularNewsLine
+  popularNewsLine,
+  prevDayDisabled,
+  nextDayDisabled
 ) {
   state.isCalendarOpen = false;
 };
@@ -88,19 +110,54 @@ export const pickFromCalendar = function pickFromCalendar(
   props,
   state,
   popularNewsLine,
+  prevDayDisabled,
+  nextDayDisabled,
   d: Date
 ) {
   state.focusedDate = d;
   state.isCalendarOpen = false;
+  state.currentView = "main";
+  props.onDateSelect?.(d);
+};
+export const selectFromSidebar = function selectFromSidebar(
+  props,
+  state,
+  popularNewsLine,
+  prevDayDisabled,
+  nextDayDisabled,
+  d: Date
+) {
+  // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
+  // day clicks, and prev/next month clicks. Any of those should bring
+  // the publication list back into focus when the user is on a sub-page.
+  state.focusedDate = d;
+  state.currentView = "main";
   props.onDateSelect?.(d);
 };
 export const goTo = function goTo(
   props,
   state,
   popularNewsLine,
+  prevDayDisabled,
+  nextDayDisabled,
   view: "main" | "legal" | "contact" | "support" | "sources"
 ) {
   state.currentView = view;
+};
+export const goHome = function goHome(
+  props,
+  state,
+  popularNewsLine,
+  prevDayDisabled,
+  nextDayDisabled
+) {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setHours(0, 0, 0, 0);
+  state.focusedDate = yesterday;
+  state.currentView = "main";
+  props.onDateSelect?.(yesterday);
+  props.onLogoClick?.();
 };
 export const App = component$((props: AppProps) => {
   const popularNewsLine = useComputed$(() => {
@@ -111,6 +168,31 @@ export const App = component$((props: AppProps) => {
       },
       props.locale ?? "fr-FR"
     );
+  });
+  const prevDayDisabled = useComputed$(() => {
+    if (!props.minDate) return false;
+    const cur = new Date(
+      state.focusedDate.getFullYear(),
+      state.focusedDate.getMonth(),
+      state.focusedDate.getDate()
+    );
+    const min = new Date(
+      props.minDate.getFullYear(),
+      props.minDate.getMonth(),
+      props.minDate.getDate()
+    );
+    return cur.getTime() <= min.getTime();
+  });
+  const nextDayDisabled = useComputed$(() => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const cur = new Date(
+      state.focusedDate.getFullYear(),
+      state.focusedDate.getMonth(),
+      state.focusedDate.getDate()
+    );
+    return cur.getTime() >= yesterday.getTime();
   });
   const state = useStore<any>({
     currentView: "main",
@@ -125,12 +207,25 @@ export const App = component$((props: AppProps) => {
 
   return (
     <div class={`rdp-app rdp-app--${props.layout ?? "desktop"}`}>
-      <AppHeader
-        layout={props.layout ?? "desktop"}
-        authenticated={props.authenticated ?? false}
-        onAccountClick$={$((event) => props.onAccountClick?.())}
-        onMySpaceClick$={$((event) => props.onMySpaceClick?.())}
-      ></AppHeader>
+      <div class="rdp-app__header-ribbon">
+        <div class="rdp-app__header-inner">
+          <AppHeader
+            layout={props.layout ?? "desktop"}
+            authenticated={props.authenticated ?? false}
+            onAccountClick$={$((event) => props.onAccountClick?.())}
+            onMySpaceClick$={$((event) => props.onMySpaceClick?.())}
+            onLogoClick$={$((event) =>
+              goHome(
+                props,
+                state,
+                popularNewsLine,
+                prevDayDisabled,
+                nextDayDisabled
+              )
+            )}
+          ></AppHeader>
+        </div>
+      </div>
       {props.showPopularNews === true ? (
         <p class="rdp-app__popular-news">{popularNewsLine.value}</p>
       ) : null}
@@ -142,20 +237,58 @@ export const App = component$((props: AppProps) => {
               selectedListId={props.selectedListId}
               selectedDate={props.pickedDate}
               yearRange={props.yearRange}
+              minDate={props.minDate}
               locale={props.locale}
               onListSelect$={$((event) => props.onListSelect?.(id))}
-              onDateSelect$={$((event) => props.onDateSelect?.(d))}
+              onDateSelect$={$((event) =>
+                selectFromSidebar(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled,
+                  d
+                )
+              )}
               onLegalNoticeClick$={$((event) =>
-                goTo(props, state, popularNewsLine, "legal")
+                goTo(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled,
+                  "legal"
+                )
               )}
               onContactClick$={$((event) =>
-                goTo(props, state, popularNewsLine, "contact")
+                goTo(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled,
+                  "contact"
+                )
               )}
               onSupportClick$={$((event) =>
-                goTo(props, state, popularNewsLine, "support")
+                goTo(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled,
+                  "support"
+                )
               )}
               onSourcesClick$={$((event) =>
-                goTo(props, state, popularNewsLine, "sources")
+                goTo(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled,
+                  "sources"
+                )
               )}
             ></Sidebar>
           </aside>
@@ -168,12 +301,20 @@ export const App = component$((props: AppProps) => {
                 type="button"
                 class="rdp-app__back"
                 onClick$={$((event) =>
-                  goTo(props, state, popularNewsLine, "main")
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "main"
+                  )
                 )}
               >
                 ← Retour aux publications
               </button>
             ) : null}
+            {state.currentView === "main" ? <IntroCard></IntroCard> : null}
             {state.currentView === "main" &&
             !props.loading &&
             props.posts.length === 0 ? (
@@ -224,12 +365,20 @@ export const App = component$((props: AppProps) => {
                 type="button"
                 class="rdp-app__back"
                 onClick$={$((event) =>
-                  goTo(props, state, popularNewsLine, "main")
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "main"
+                  )
                 )}
               >
                 ← Retour aux publications
               </button>
             ) : null}
+            {state.currentView === "main" ? <IntroCard></IntroCard> : null}
             {state.currentView === "main" &&
             !props.loading &&
             props.posts.length === 0 ? (
@@ -268,16 +417,44 @@ export const App = component$((props: AppProps) => {
             ) : null}
             <BannerAbout
               onLegalNoticeClick$={$((event) =>
-                goTo(props, state, popularNewsLine, "legal")
+                goTo(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled,
+                  "legal"
+                )
               )}
               onContactClick$={$((event) =>
-                goTo(props, state, popularNewsLine, "contact")
+                goTo(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled,
+                  "contact"
+                )
               )}
               onSupportClick$={$((event) =>
-                goTo(props, state, popularNewsLine, "support")
+                goTo(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled,
+                  "support"
+                )
               )}
               onSourcesClick$={$((event) =>
-                goTo(props, state, popularNewsLine, "sources")
+                goTo(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled,
+                  "sources"
+                )
               )}
             ></BannerAbout>
           </main>
@@ -287,11 +464,25 @@ export const App = component$((props: AppProps) => {
               selectedDate={state.focusedDate}
               locale={props.locale}
               yearRange={props.yearRange}
+              minDate={props.minDate}
               onSelect$={$((event) =>
-                pickFromCalendar(props, state, popularNewsLine, d)
+                pickFromCalendar(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled,
+                  d
+                )
               )}
               onDismiss$={$((event) =>
-                closeCalendar(props, state, popularNewsLine)
+                closeCalendar(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled
+                )
               )}
             ></Calendar>
           ) : null}
@@ -301,10 +492,34 @@ export const App = component$((props: AppProps) => {
               date={state.focusedDate}
               locale={props.locale}
               onPillClick$={$((event) =>
-                openCalendar(props, state, popularNewsLine)
+                openCalendar(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled
+                )
               )}
-              onPrev$={$((event) => prevDay(props, state, popularNewsLine))}
-              onNext$={$((event) => nextDay(props, state, popularNewsLine))}
+              onPrev$={$((event) =>
+                prevDay(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled
+                )
+              )}
+              onNext$={$((event) =>
+                nextDay(
+                  props,
+                  state,
+                  popularNewsLine,
+                  prevDayDisabled,
+                  nextDayDisabled
+                )
+              )}
+              prevDisabled={prevDayDisabled.value}
+              nextDisabled={nextDayDisabled.value}
             ></CalendarActionBar>
           </div>
         </>
@@ -316,14 +531,30 @@ export const App = component$((props: AppProps) => {
           font-family: 'Roboto', sans-serif;
           color: var(--color-content-text);
         }
-        /* Both layouts cap at a max-width so the app stays centred on wider
-           viewports. Desktop tracks the legacy $width-extra-large-device
-           (1200px); mobile tracks a comfortable phone width (480px). */
-        .rdp-app--desktop {
-          max-width: 1200px;
+        /* The header ribbon stays full-viewport-wide so the white band
+           reaches both edges of the page; only the inner row + the content
+           grid honour the legacy max-width. Mobile mirrors the same pattern
+           around a tighter phone width. */
+        .rdp-app__header-ribbon {
+          background: var(--color-white);
+          border-bottom: 1px solid var(--color-border);
+        }
+        .rdp-app__header-inner {
+          max-width: 952px;
           margin: 0 auto;
         }
-        .rdp-app--mobile {
+        .rdp-app--mobile .rdp-app__header-inner {
+          max-width: 480px;
+        }
+        /* Drop AppHeader's own white bg + border so the ribbon's full-width
+           band shows through on both sides of the inner row. */
+        .rdp-app__header-ribbon .rdp-app-header {
+          background: transparent;
+          border-bottom: none;
+        }
+        /* Mobile: keep the ribbon full-viewport-wide, constrain the post
+           list + dock to a phone-sized column instead. */
+        .rdp-app--mobile .rdp-app__mobile-main {
           max-width: 480px;
           margin: 0 auto;
         }
@@ -345,9 +576,18 @@ export const App = component$((props: AppProps) => {
           margin: 0 auto;
           box-sizing: border-box;
         }
+        /* Match the legacy combined sidebar (336px) + right column (600px)
+           plus a 16px gap = $width-desktop = 952px. The header ribbon stays
+           full-viewport-wide; everything below caps here. */
         .rdp-app--desktop .rdp-app__content {
           grid-template-columns: 336px 1fr;
           align-items: start;
+          max-width: 952px;
+        }
+        .rdp-app--desktop .rdp-app__popular-news {
+          max-width: 952px;
+          margin-left: auto;
+          margin-right: auto;
         }
         .rdp-app__main,
         .rdp-app__mobile-main {
@@ -399,9 +639,16 @@ export const App = component$((props: AppProps) => {
           box-sizing: border-box;
           background: var(--color-white);
           border-top: 1px solid var(--color-border);
-          padding: var(--separation-1) var(--separation-2);
+          padding: 0 var(--separation-2) 0 0;
           z-index: 20;
           box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .rdp-app--mobile .rdp-calendar-action-bar--bottom {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0 var(--separation-2) 0 0;
+          border-radius: 0;
         }
         .rdp-app--mobile .rdp-calendar--sheet {
           left: 50%;

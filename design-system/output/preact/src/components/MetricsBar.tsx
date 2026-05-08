@@ -16,19 +16,6 @@ function MetricsBar(props: MetricsBarProps) {
   return (
     <div className="rdp-metrics-bar">
       <span
-        className="rdp-metrics-bar__pill rdp-metrics-bar__pill--reply"
-        aria-label={t(
-          "metrics.replies.aria-label",
-          {
-            count: props.replies,
-          },
-          props.locale ?? "fr-FR"
-        )}
-      >
-        <Icon name="reply" size={16} decorative />
-        {formatCount(props.replies, props.locale ?? "fr-FR")}
-      </span>
-      <span
         className="rdp-metrics-bar__pill rdp-metrics-bar__pill--repost"
         aria-label={t(
           "metrics.reposts.aria-label",
@@ -38,8 +25,12 @@ function MetricsBar(props: MetricsBarProps) {
           props.locale ?? "fr-FR"
         )}
       >
-        <Icon name="retweet" size={16} decorative />
-        {formatCount(props.reposts, props.locale ?? "fr-FR")}
+        <span className="rdp-metrics-bar__icon rdp-metrics-bar__icon--repost">
+          <Icon name="retweet" size={16} decorative />
+        </span>
+        <span className="rdp-metrics-bar__count rdp-metrics-bar__count--repost">
+          {formatCount(props.reposts, props.locale ?? "fr-FR")}
+        </span>
       </span>
       <span
         className="rdp-metrics-bar__pill rdp-metrics-bar__pill--like"
@@ -51,27 +42,47 @@ function MetricsBar(props: MetricsBarProps) {
           props.locale ?? "fr-FR"
         )}
       >
-        <Icon name="like-metric" size={16} decorative />
-        {formatCount(props.likes, props.locale ?? "fr-FR")}
+        <span className="rdp-metrics-bar__icon rdp-metrics-bar__icon--like">
+          <Icon name="like-metric" size={16} decorative />
+        </span>
+        <span className="rdp-metrics-bar__count rdp-metrics-bar__count--like">
+          {formatCount(props.likes, props.locale ?? "fr-FR")}
+        </span>
       </span>
       <style>{`
+        /* Legacy vanity-metric pattern: a 24px tinted circle hosting the
+           glyph, followed by a count rendered in the matching dark colour.
+           No solid pill background — the post-card body shows through. */
         .rdp-metrics-bar {
           display: inline-flex;
-          gap: var(--separation-1);
-          font-size: var(--font-size-vanity-metric);
+          gap: var(--separation-2);
           font-family: 'Roboto', sans-serif;
+          font-size: var(--font-size-vanity-metric);
+          line-height: var(--line-spacing-vanity-metric, 25px);
         }
         .rdp-metrics-bar__pill {
           display: inline-flex;
           align-items: center;
-          gap: 4px;
-          padding: 2px var(--separation-1);
-          border-radius: 999px;
-          color: var(--color-white);
+          gap: 5px;
         }
-        .rdp-metrics-bar__pill--reply { background: var(--color-vanity-metric-reply); }
-        .rdp-metrics-bar__pill--repost { background: var(--color-vanity-metric-retweet); }
-        .rdp-metrics-bar__pill--like { background: var(--color-vanity-metric-like); }
+        .rdp-metrics-bar__icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+        }
+        .rdp-metrics-bar__icon--repost {
+          background: var(--color-vanity-metric-retweet-bg);
+          color: var(--color-vanity-metric-retweet);
+        }
+        .rdp-metrics-bar__icon--like {
+          background: var(--color-vanity-metric-like-bg);
+          color: var(--color-vanity-metric-like);
+        }
+        .rdp-metrics-bar__count--repost { color: var(--color-vanity-metric-retweet); }
+        .rdp-metrics-bar__count--like { color: var(--color-vanity-metric-like); }
       `}</style>
     </div>
   );

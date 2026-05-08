@@ -10,6 +10,7 @@ import type { Locale } from '../utils/i18n';
  year: number;
  month: number; // 0..11
  selectedDate?: Date;
+ minDate?: Date;
  locale?: Locale;
  onSelect?: (date: Date) => void;
 }
@@ -31,6 +32,7 @@ import type { Locale } from '../utils/i18n';
      @property() year: any
 @property() month: any
 @property() selectedDate: any
+@property() minDate: any
 @property() locale: any
 @property() onSelect: any
 
@@ -53,7 +55,16 @@ isFuture(d: Date) {
  const today = new Date();
  today.setHours(0, 0, 0, 0);
  const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
- return cell.getTime() > today.getTime();
+ return cell.getTime() >= today.getTime();
+}
+isBeforeMin(d: Date) {
+ if (!this.minDate) return false;
+ const min = new Date(this.minDate.getFullYear(), this.minDate.getMonth(), this.minDate.getDate());
+ const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+ return cell.getTime() < min.getTime();
+}
+isDisabled(d: Date) {
+ return this.isFuture(d) || this.isBeforeMin(d);
 }
 
 
@@ -69,14 +80,17 @@ isFuture(d: Date) {
             ))}</tr></thead>
         <tbody >${this.rows?.map((row, index) => (
               html`<tr >${row?.map((d, index) => (
-             html`<td  class={`rdp-date-grid__cell${state.isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  role="gridcell"  aria-selected=${this.isSelected(d) ? 'true' : 'false'}  aria-disabled=${this.isFuture(d) ? 'true' : undefined}  data-other-month=${d.getMonth() !== this.month ? 'true' : undefined}  data-future=${this.isFuture(d) ? 'true' : undefined}  @click=${(event) => {
-          if (!this.isFuture(d)) this.onSelect?.(d);
-        }} >${d.getDate()}</td>`
+             html`<td  class={`rdp-date-grid__cell${state.isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  role="gridcell"  aria-selected=${this.isSelected(d) ? 'true' : 'false'}  aria-disabled=${this.isDisabled(d) ? 'true' : undefined}  data-other-month=${d.getMonth() !== this.month ? 'true' : undefined}  data-future=${this.isDisabled(d) ? 'true' : undefined}  @click=${(event) => {
+          if (!this.isDisabled(d)) this.onSelect?.(d);
+        }} >${!this.isDisabled(d) ?
+              html`${d.getDate()}`
+            : null}</td>`
            ))}</tr>`
             ))}</tbody>
         <style >${`
                .rdp-date-grid {
-                 width: 100%;
+                 width: calc(100% - 2 * var(--separation-2));
+                 margin: 0 var(--separation-2) var(--separation-2);
                  table-layout: fixed;
                  border-collapse: separate;
                  border-spacing: 2px;
@@ -92,12 +106,14 @@ isFuture(d: Date) {
                }
                .rdp-date-grid__cell {
                  padding: 6px 0;
+                 height: 32px;
                  border: 1px solid var(--color-border);
                  border-radius: var(--radius-selectable);
                  color: var(--color-content-text);
                  background: var(--color-background-future-date);
                  cursor: pointer;
                  text-align: center;
+                 box-sizing: border-box;
                }
                .rdp-date-grid__cell[data-other-month="true"] {
                  background: var(--color-background-other-month);
@@ -105,7 +121,7 @@ isFuture(d: Date) {
                }
                .rdp-date-grid__cell[data-future="true"] {
                  color: var(--color-light-grey);
-                 background: var(--color-background-other-month);
+                 background: var(--color-background-future-date);
                  cursor: not-allowed;
                }
                .rdp-date-grid__cell--selected {

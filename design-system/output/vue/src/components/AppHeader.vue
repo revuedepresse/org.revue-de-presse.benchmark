@@ -1,6 +1,16 @@
 <template>
   <header :class="`rdp-app-header rdp-app-header--${layout}`">
-    <Logo :showWordmark="true" :size="layout === 'mobile' ? 'sm' : 'md'"></Logo>
+    <button
+      type="button"
+      class="rdp-app-header__home"
+      aria-label="Revue de presse"
+      @click="async (event) => onLogoClick?.()"
+    >
+      <Logo
+        :showWordmark="true"
+        :size="layout === 'mobile' ? 'sm' : 'md'"
+      ></Logo>
+    </button>
     <template v-if="showAccountControls === true && layout === 'desktop'">
       <a
         href="#"
@@ -42,6 +52,16 @@
           font-family: 'Signika', sans-serif;
         }
         .rdp-app-header--desktop { padding: var(--separation-1) var(--separation-3); }
+        .rdp-app-header__home {
+          background: transparent;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          font: inherit;
+          color: inherit;
+          display: inline-flex;
+          align-items: center;
+        }
         .rdp-app-header__myspace {
           margin-left: auto;
           color: var(--color-brand-active);
@@ -80,6 +100,7 @@ type AppHeaderProps = {
   showAccountControls?: boolean;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
+  onLogoClick?: () => void;
 };
 
 const props = defineProps<AppHeaderProps>();

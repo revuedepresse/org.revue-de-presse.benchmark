@@ -16,19 +16,27 @@
   <div class="rdp-calendar-action-bar__nav">
     <button
       type="button"
-      class="rdp-calendar-action-bar__btn"
+      class="rdp-calendar-action-bar__btn rdp-calendar-action-bar__btn--prev"
       x-bind:aria-label="t('actions.prev-day', undefined, locale ?? 'fr-FR')"
-      x-on:click="onPrev?.()"
+      x-bind:aria-disabled="prevDisabled === true ? 'true' : undefined"
+      x-bind:disabled="prevDisabled === true"
+      x-on:click="if (prevDisabled !== true) onPrev?.()"
     >
-      ‹
+      <Icon
+        name="previous-item"
+        x-bind:size="32"
+        x-bind:decorative="true"
+      ></Icon>
     </button>
     <button
       type="button"
-      class="rdp-calendar-action-bar__btn"
+      class="rdp-calendar-action-bar__btn rdp-calendar-action-bar__btn--next"
       x-bind:aria-label="t('actions.next-day', undefined, locale ?? 'fr-FR')"
-      x-on:click="onNext?.()"
+      x-bind:aria-disabled="nextDisabled === true ? 'true' : undefined"
+      x-bind:disabled="nextDisabled === true"
+      x-on:click="if (nextDisabled !== true) onNext?.()"
     >
-      ›
+      <Icon name="next-item" x-bind:size="32" x-bind:decorative="true"></Icon>
     </button>
   </div>
   <style>
@@ -37,22 +45,25 @@
               display: flex;
               gap: var(--separation-1);
               align-items: center;
-              padding: var(--separation-1) 0;
+              background: var(--color-brand);
+              padding: var(--separation-1) var(--separation-2);
+              /* Square bottom corners so the band visually merges with the
+                 month bar / day grid below it. */
+              border-radius: var(--radius-default) var(--radius-default) 0 0;
               font-family: 'Roboto', sans-serif;
             }
             .rdp-calendar-action-bar--bottom {
-              background: var(--color-brand);
-              padding: var(--separation-1) var(--separation-2);
               border-radius: 0;
             }
+            .rdp-calendar-action-bar__pill > svg:first-child { flex-shrink: 0; }
             .rdp-calendar-action-bar__pill {
               flex: 1;
               display: inline-flex;
               align-items: center;
               gap: var(--separation-1);
-              background: var(--color-brand);
+              background: transparent;
               color: var(--color-white);
-              padding: var(--separation-1) var(--separation-2);
+              padding: 0 0 0 var(--separation-2);
               border: none;
               border-radius: var(--radius-default);
               font-size: var(--font-size-date-picker);
@@ -60,7 +71,6 @@
               text-align: left;
               cursor: pointer;
             }
-            .rdp-calendar-action-bar__pill:hover { filter: brightness(1.05); }
             .rdp-calendar-action-bar__nav {
               display: flex;
               gap: var(--separation-1);
@@ -69,16 +79,26 @@
             .rdp-calendar-action-bar__btn {
               width: 32px;
               height: 32px;
-              border-radius: 50%;
-              background: var(--color-white);
+              padding: 0;
+              background: transparent;
               color: var(--color-brand);
               border: none;
               cursor: pointer;
-              font-size: 20px;
-              line-height: 1;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
               flex-shrink: 0;
+              line-height: 0;
             }
-            .rdp-calendar-action-bar__btn:hover { background: var(--color-brand); color: var(--color-white); }
+            /* Day-nav uses the legacy previous-item / next-item icons (which carry
+               a built-in white-fill circle) rotated 90° so the chevrons point
+               left/right instead of up/down. */
+            .rdp-calendar-action-bar__btn--prev svg { transform: rotate(-90deg); }
+            .rdp-calendar-action-bar__btn--next svg { transform: rotate(-90deg); }
+            .rdp-calendar-action-bar__btn[aria-disabled="true"] {
+              cursor: not-allowed;
+              opacity: 0.5;
+            }
           `"></span>
   </style>
 </div>

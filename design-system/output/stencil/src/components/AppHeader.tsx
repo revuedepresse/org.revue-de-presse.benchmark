@@ -16,6 +16,7 @@ import {
 })
 export class AppHeader {
   @Prop() layout: any;
+  @Event() logoClick: any;
   @Prop() showAccountControls: any;
   @Prop() authenticated: any;
   @Event() mySpaceClick: any;
@@ -26,10 +27,17 @@ export class AppHeader {
   render() {
     return (
       <header class={`rdp-app-header rdp-app-header--${this.layout}`}>
-        <logo
-          showWordmark={true}
-          size={this.layout === "mobile" ? "sm" : "md"}
-        ></logo>
+        <button
+          class="rdp-app-header__home"
+          type="button"
+          aria-label="Revue de presse"
+          onClick={() => this.logoClick?.()}
+        >
+          <logo
+            showWordmark={true}
+            size={this.layout === "mobile" ? "sm" : "md"}
+          ></logo>
+        </button>
         {this.showAccountControls === true && this.layout === "desktop" ? (
           <a
             class="rdp-app-header__myspace"
@@ -67,6 +75,16 @@ export class AppHeader {
           font-family: 'Signika', sans-serif;
         }
         .rdp-app-header--desktop { padding: var(--separation-1) var(--separation-3); }
+        .rdp-app-header__home {
+          background: transparent;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          font: inherit;
+          color: inherit;
+          display: inline-flex;
+          align-items: center;
+        }
         .rdp-app-header__myspace {
           margin-left: auto;
           color: var(--color-brand-active);

@@ -13,6 +13,7 @@ type SidebarProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   locale?: Locale;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
@@ -32,6 +33,7 @@ function Sidebar(props: SidebarProps) {
         selectedDate={props.selectedDate}
         locale={props.locale}
         yearRange={props.yearRange}
+        minDate={props.minDate}
         onSelect={(d) => props.onDateSelect?.(d)}
       />
       <BannerAbout
