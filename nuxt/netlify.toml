@@ -2,6 +2,9 @@
   publish = ".output/public"
   command = "make build"
 
+[build.environment]
+  NODE_VERSION = "22"
+
 [[redirects]]
   from = "/.well-known/assetlinks.json"
   to = "/well-known/assetlinks.json"
