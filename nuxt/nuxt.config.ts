@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url';
+import { buildLegacySitemapUrls } from './sitemap/build-urls';
 
 const baseURL = 'https://revue-de-presse.org';
 const description =
@@ -41,6 +42,20 @@ export default defineNuxtConfig({
     options: {
       strict: true,
     },
+  },
+
+  modules: ['@nuxtjs/sitemap'],
+
+  site: {
+    url: 'https://revue-de-presse.org',
+  },
+
+  sitemap: {
+    // Suppress raw ':day' / ':twitterId' placeholders from auto-discovery and
+    // the 404 page; concrete dated URLs come from urls() below.
+    exclude: ['/contenu-introuvable', '/source/**', '/[day]', '/[day]/**'],
+    defaults: { changefreq: 'monthly', priority: 0.7 },
+    urls: () => buildLegacySitemapUrls(),
   },
 
   app: {
