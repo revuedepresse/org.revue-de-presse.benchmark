@@ -28,6 +28,17 @@ const yearRange = { min: minDate.getFullYear(), max: new Date().getFullYear() };
 const pickedDate = ref<Date>(props.initialDate ?? yesterday());
 const { posts, loading } = useHighlights(pickedDate);
 
+// Sync pickedDate when the dynamic-route page reuses this component and
+// only swaps the initialDate prop (e.g. /2025-05-08 → /2025-05-09).
+watch(
+  () => props.initialDate?.getTime(),
+  (next) => {
+    if (next != null && next !== pickedDate.value.getTime()) {
+      pickedDate.value = new Date(next);
+    }
+  },
+);
+
 const FRENCH_MONTHS = [
   'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
   'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',

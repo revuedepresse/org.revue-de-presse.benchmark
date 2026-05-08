@@ -13,6 +13,7 @@ import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
 import IntroCard from './IntroCard.lite';
+import Spinner from './Spinner.lite';
 import type { BlueskyPost } from './BlueskyPostCard.lite';
 import type { Locale } from '../utils/i18n';
 
@@ -188,13 +189,16 @@ export default function App(props: AppProps) {
             <Show when={state.currentView === 'main'}>
               <IntroCard />
             </Show>
+            <Show when={state.currentView === 'main' && props.loading === true}>
+              <Spinner />
+            </Show>
             <Show when={state.currentView === 'main' && !props.loading && props.posts.length === 0}>
               <Alert
                 variant="empty"
                 messageKey={props.emptyMessageKey ?? 'alert.empty.no-content-for-date'}
               />
             </Show>
-            <Show when={state.currentView === 'main' && props.posts.length > 0}>
+            <Show when={state.currentView === 'main' && !props.loading && props.posts.length > 0}>
               <ol class="rdp-app__post-list">
                 <For each={props.posts}>
                   {(post) => (
@@ -235,13 +239,16 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'main'}>
             <IntroCard />
           </Show>
+          <Show when={state.currentView === 'main' && props.loading === true}>
+            <Spinner />
+          </Show>
           <Show when={state.currentView === 'main' && !props.loading && props.posts.length === 0}>
             <Alert
               variant="empty"
               messageKey={props.emptyMessageKey ?? 'alert.empty.no-content-for-date'}
             />
           </Show>
-          <Show when={state.currentView === 'main' && props.posts.length > 0}>
+          <Show when={state.currentView === 'main' && !props.loading && props.posts.length > 0}>
             <ol class="rdp-app__post-list">
               <For each={props.posts}>
                 {(post) => (

@@ -48,6 +48,10 @@
             <IntroCard></IntroCard>
           </template>
 
+          <template v-if="currentView === 'main' && loading === true">
+            <Spinner></Spinner>
+          </template>
+
           <template
             v-if="currentView === 'main' && !loading && posts.length === 0"
           >
@@ -57,7 +61,9 @@
             ></Alert>
           </template>
 
-          <template v-if="currentView === 'main' && posts.length > 0">
+          <template
+            v-if="currentView === 'main' && !loading && posts.length > 0"
+          >
             <ol class="rdp-app__post-list">
               <template :key="index" v-for="(post, index) in posts">
                 <li class="rdp-app__post-item">
@@ -108,6 +114,10 @@
           <IntroCard></IntroCard>
         </template>
 
+        <template v-if="currentView === 'main' && loading === true">
+          <Spinner></Spinner>
+        </template>
+
         <template
           v-if="currentView === 'main' && !loading && posts.length === 0"
         >
@@ -117,7 +127,7 @@
           ></Alert>
         </template>
 
-        <template v-if="currentView === 'main' && posts.length > 0">
+        <template v-if="currentView === 'main' && !loading && posts.length > 0">
           <ol class="rdp-app__post-list">
             <template :key="index" v-for="(post, index) in posts">
               <li class="rdp-app__post-item">
@@ -345,6 +355,7 @@ import ContactPage from "./ContactPage.vue";
 import SupportPage from "./SupportPage.vue";
 import SourcesPage from "./SourcesPage.vue";
 import IntroCard from "./IntroCard.vue";
+import Spinner from "./Spinner.vue";
 import type { BlueskyPost } from "./BlueskyPostCard.vue";
 import type { Locale } from "../utils/i18n";
 
