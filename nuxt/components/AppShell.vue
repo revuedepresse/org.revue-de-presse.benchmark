@@ -111,8 +111,8 @@ function onLogoClick() {
     :initial-view="props.initialView ?? 'main'"
     :empty-message-key="props.emptyMessageKey"
     locale="fr-FR"
-    @date-select="onDateSelect"
-    @view-change="onViewChange"
-    @logo-click="onLogoClick"
+    :on-date-select="onDateSelect"
+    :on-view-change="onViewChange"
+    :on-logo-click="onLogoClick"
   />
 </template>
