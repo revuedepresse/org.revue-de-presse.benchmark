@@ -120,4 +120,17 @@ describe('buildLegacySitemapUrls', () => {
     );
     expect(matchingYesterday.length).toBe(1);
   });
+
+  it("does not include today (today's content is not yet published)", async () => {
+    const urls = await buildLegacySitemapUrls();
+    const todayIso = (() => {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    })();
+    const matchingToday = urls.filter((u) => u.loc.startsWith(`/${todayIso}/`));
+    expect(matchingToday.length).toBe(0);
+  });
 });

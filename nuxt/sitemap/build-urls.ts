@@ -55,20 +55,18 @@ export const localizeDate = (date: string): string => {
 };
 
 export const days = (until: Date | undefined = undefined): string[] => {
-  const out: Date[] = [setTimezone(new Date(Date.parse(SITEMAP_MIN_DATE)))];
-  let next = out[out.length - 1];
-
-  const upTo = yesterday();
-  if (typeof until !== 'undefined') {
-    upTo.setTime(until.getTime());
-  }
-
-  do {
-    out.push(
-      setTimezone(new Date(next.getFullYear(), next.getMonth(), next.getDate() + 1)),
+  // Inclusive walk from SITEMAP_MIN_DATE up to and including upTo. The
+  // legacy do-while overshot by one (pushed upTo+1 before checking),
+  // which leaked today into the sitemap. Pre-check stops at upTo exactly.
+  const upTo = until ?? yesterday();
+  const out: Date[] = [];
+  let cursor = setTimezone(new Date(Date.parse(SITEMAP_MIN_DATE)));
+  while (cursor <= upTo) {
+    out.push(cursor);
+    cursor = setTimezone(
+      new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + 1),
     );
-    next = out[out.length - 1];
-  } while (next <= upTo);
+  }
 
   return out.map((d) => `/${formatDate(d)}`);
 };
