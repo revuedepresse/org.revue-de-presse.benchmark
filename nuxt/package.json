@@ -19,6 +19,6 @@
   "devDependencies": {
     "@nuxtjs/sitemap": "^8.0.15",
     "nuxt-module-feed": "^1.1.4",
-    "vitest": "^1.6.1"
+    "vitest": "^1.6.0"
   }
 }
