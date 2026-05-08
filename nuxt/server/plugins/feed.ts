@@ -13,6 +13,7 @@
 
 import { defineNitroPlugin } from 'nitropack/runtime/plugin';
 import type { NitroCtx } from 'nuxt-module-feed';
+import { cleanForFeed } from '../../utils/clean-text';
 
 export type RawStatus = {
   screen_name?: string;
@@ -36,11 +37,11 @@ export type FeedItem = {
 export const mapStatusToFeedItem = (raw: RawStatus): FeedItem => {
   const s = raw.status ?? raw;
   return {
-    title: s.screen_name ?? '',
+    title: cleanForFeed(s.screen_name ?? ''),
     id: s.publication_id ?? s.url ?? '',
     link: s.url ?? '',
-    description: s.avatar_url ?? '',
-    content: s.text ?? '',
+    description: cleanForFeed(s.avatar_url ?? ''),
+    content: cleanForFeed(s.text ?? ''),
     date: s.date ? new Date(s.date) : new Date(),
   };
 };
