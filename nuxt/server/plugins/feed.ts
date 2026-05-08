@@ -60,6 +60,18 @@ const yesterdayYmd = (): string => {
 };
 
 export default defineNitroPlugin((nitroApp) => {
+  // nuxt-module-feed serves /feed.xml as `application/rss+xml` without a
+  // charset; some readers default to Latin-1 and mojibake every accent
+  // (`é` -> `Ã©`). Pin charset=utf-8 just before the response flushes.
+  nitroApp.hooks.hook('beforeResponse', (event) => {
+    if (event.path === '/feed.xml') {
+      event.node.res.setHeader(
+        'content-type',
+        'application/rss+xml; charset=utf-8',
+      );
+    }
+  });
+
   nitroApp.hooks.hook('feed:generate', async (ctx: NitroCtx) => {
     if (ctx.options.path !== '/feed.xml') return;
 

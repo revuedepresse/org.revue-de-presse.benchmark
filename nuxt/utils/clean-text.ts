@@ -1,3 +1,26 @@
+// Repairs mojibake: a string whose characters are UTF-8 bytes that have been
+// mistakenly decoded as Latin-1, so `é` (UTF-8 `0xC3 0xA9`) appears as `Ã©`
+// (Latin-1 `Ã` + `©`). Detects the pattern and roundtrips through Latin-1
+// bytes -> UTF-8. Aborts if any character is outside the Latin-1 range
+// (e.g. emoji), since that means the string is already valid UTF-8.
+export function repairMojibake(text: string): string {
+  if (!text) return '';
+  // Quick sniff: `Ã` (0xC3) or `Â` (0xC2) followed by a UTF-8
+  // continuation byte decoded as Latin-1 (U+0080..U+00BF) is the
+  // signature of mojibake.
+  if (!/[ÂÃ][-¿]/.test(text)) return text;
+  for (let i = 0; i < text.length; i++) {
+    if (text.charCodeAt(i) > 0xff) return text;
+  }
+  const bytes = new Uint8Array(text.length);
+  for (let i = 0; i < text.length; i++) bytes[i] = text.charCodeAt(i);
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch {
+    return text;
+  }
+}
+
 // Strips upstream encoding artefacts from raw status text:
 //   - literal `\n` produced by the JSON layer (converted to real LF)
 //   - escaped `\'` and `\"` quotes
@@ -10,7 +33,9 @@
 // Used by both the website (composables/useHighlights) and the RSS feed plugin.
 export function cleanText(text: string): string {
   if (!text) return '';
-  let out = text;
+  // 0. Repair `Ã©`/`Ã¨`/etc. mojibake before any other transform so later
+  //    steps see real codepoints, not Latin-1-decoded UTF-8 bytes.
+  let out = repairMojibake(text);
   // 1. Strip the literal straight quotes the upstream wraps every status in.
   if (out.startsWith('"') && out.endsWith('"')) {
     out = out.slice(1, -1);
