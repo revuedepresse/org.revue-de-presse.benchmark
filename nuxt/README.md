@@ -98,8 +98,8 @@ the chosen site ID to `nuxt/.netlify/state.json`; subsequent
    `nuxt/netlify.toml` automatically — leave the build command and
    publish directory blank.
 3. Set the runtime env vars under **Site settings → Environment**:
-   - `NUXT_API_BASE_URL=https://local.api.revue-de-presse.org` (or
-     your production host)
+   - `NUXT_API_BASE_URL=https://api.revue-de-presse.org` (your upstream
+     highlights API host)
    - `NUXT_API_AUTH_TOKEN=…` (the upstream `x-auth-token`)
 4. Trigger the first build with **Deploys → Trigger deploy**. Every
    subsequent push to `main` (or the branch you select) auto-rebuilds.

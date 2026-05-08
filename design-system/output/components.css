@@ -271,6 +271,16 @@
           font-weight: bold;
         }
         .rdp-banner-about__subscription-label { padding-left: var(--separation-0); }
+        .rdp-banner-about__play-store {
+          display: inline-block;
+          margin-top: var(--separation-1);
+          line-height: 0;
+        }
+        .rdp-banner-about__play-store-badge {
+          display: block;
+          height: auto;
+          max-width: 193px;
+        }
         .rdp-banner-about__netlify-mark {
           display: inline-block;
           vertical-align: middle;
