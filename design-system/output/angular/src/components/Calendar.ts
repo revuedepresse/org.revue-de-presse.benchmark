@@ -10,6 +10,7 @@ type CalendarProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   presentation?: "inline" | "sheet";
   onSelect?: (date: Date) => void;
   onDismiss?: () => void;
@@ -33,13 +34,17 @@ import type { Locale } from "../utils/i18n";
         ></div
       ></ng-container>
       <div class="rdp-calendar__panel">
-        <calendar-action-bar
-          position="top"
-          [date]="focusedDate"
-          [locale]="locale"
-          (prev)="prevDay()"
-          (next)="nextDay()"
-        ></calendar-action-bar>
+        <ng-container *ngIf="presentation !== 'sheet'"
+          ><calendar-action-bar
+            position="top"
+            [date]="focusedDate"
+            [locale]="locale"
+            (prev)="prevDay()"
+            (next)="nextDay()"
+            [prevDisabled]="prevDayDisabled"
+            [nextDisabled]="nextDayDisabled"
+          ></calendar-action-bar
+        ></ng-container>
         <calendar-month-bar
           [viewMode]="viewMode"
           [focusedYear]="focusedYear"
@@ -48,12 +53,15 @@ import type { Locale } from "../utils/i18n";
           (titleClick)="titleClick()"
           (prev)="prevMonth()"
           (next)="nextMonth()"
+          [prevDisabled]="prevMonthDisabled"
+          [nextDisabled]="nextMonthDisabled"
         ></calendar-month-bar>
         <ng-container *ngIf="viewMode === 'day'"
           ><date-grid
             [year]="focusedYear"
             [month]="focusedMonth"
             [selectedDate]="focusedDate"
+            [minDate]="minDate"
             [locale]="locale"
             (select)="selectDay($event)"
           ></date-grid
@@ -62,6 +70,7 @@ import type { Locale } from "../utils/i18n";
           ><month-picker
             [year]="focusedYear"
             [selectedMonth]="focusedMonth"
+            [minDate]="minDate"
             [locale]="locale"
             (select)="selectMonth($event)"
           ></month-picker
@@ -81,7 +90,7 @@ import type { Locale } from "../utils/i18n";
                   background: var(--color-white);
                   border: 1px solid var(--color-border);
                   border-radius: var(--radius-default);
-                  padding: var(--separation-2);
+                  padding: 0;
                 }
                 .rdp-calendar--sheet { position: fixed; inset: 0; display: grid; align-items: end; }
                 .rdp-calendar__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }
@@ -107,6 +116,7 @@ export default class Calendar {
   @Input() selectedDate!: CalendarProps["selectedDate"];
   @Input() onSelect!: CalendarProps["onSelect"];
   @Input() yearRange!: CalendarProps["yearRange"];
+  @Input() minDate!: CalendarProps["minDate"];
   @Input() presentation!: CalendarProps["presentation"];
   @Input() onDismiss!: CalendarProps["onDismiss"];
   @Input() locale!: CalendarProps["locale"];
@@ -178,6 +188,55 @@ export default class Calendar {
     } else if (this.viewMode === "month") {
       this.viewMode = "year";
     }
+  }
+  get prevDayDisabled() {
+    if (!this.minDate) return false;
+    const cur = new Date(
+      this.focusedDate.getFullYear(),
+      this.focusedDate.getMonth(),
+      this.focusedDate.getDate()
+    );
+    const min = new Date(
+      this.minDate.getFullYear(),
+      this.minDate.getMonth(),
+      this.minDate.getDate()
+    );
+    return cur.getTime() <= min.getTime();
+  }
+  get nextDayDisabled() {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const cur = new Date(
+      this.focusedDate.getFullYear(),
+      this.focusedDate.getMonth(),
+      this.focusedDate.getDate()
+    );
+    return cur.getTime() >= yesterday.getTime();
+  }
+  get prevMonthDisabled() {
+    if (this.viewMode === "year") {
+      if (!this.yearRange) return false;
+      return this.focusedYear <= this.yearRange.min;
+    }
+    if (!this.minDate) return false;
+    const minY = this.minDate.getFullYear();
+    const minM = this.minDate.getMonth();
+    if (this.focusedYear < minY) return true;
+    if (this.focusedYear > minY) return false;
+    return this.focusedMonth <= minM;
+  }
+  get nextMonthDisabled() {
+    const today = new Date();
+    const curY = today.getFullYear();
+    const curM = today.getMonth();
+    if (this.viewMode === "year") {
+      if (!this.yearRange) return false;
+      return this.focusedYear >= this.yearRange.max;
+    }
+    if (this.focusedYear > curY) return true;
+    if (this.focusedYear < curY) return false;
+    return this.focusedMonth >= curM;
   }
 
   ngOnInit() {

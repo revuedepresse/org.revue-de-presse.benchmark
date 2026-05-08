@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "org.revue_2_presse",
+      "sha256_cert_fingerprints": [
+        "C4:4B:91:EA:05:9D:64:8A:B2:ED:96:8C:9D:1E:32:AC:BA:35:17:4A:3E:0F:D4:E1:A0:36:80:8E:E1:81:C6:06"
+      ]
+    }
+  }
+]

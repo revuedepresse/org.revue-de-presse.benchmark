@@ -18,6 +18,7 @@ type AppProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   loading?: boolean;
   emptyMessageKey?: string;
   showPopularNews?: boolean;
@@ -26,6 +27,7 @@ type AppProps = {
   onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
+  onLogoClick?: () => void;
 };
 
 import { t } from "../utils/i18n";
@@ -36,12 +38,17 @@ import type { Locale } from "../utils/i18n";
   selector: "app",
   template: `
     <div [class]="\`rdp-app rdp-app--\${layout ?? 'desktop'}\`">
-      <app-header
-        [layout]="layout ?? 'desktop'"
-        [authenticated]="authenticated ?? false"
-        (accountClick)="onAccountClick?.()"
-        (mySpaceClick)="onMySpaceClick?.()"
-      ></app-header>
+      <div class="rdp-app__header-ribbon">
+        <div class="rdp-app__header-inner">
+          <app-header
+            [layout]="layout ?? 'desktop'"
+            [authenticated]="authenticated ?? false"
+            (accountClick)="onAccountClick?.()"
+            (mySpaceClick)="onMySpaceClick?.()"
+            (logoClick)="goHome()"
+          ></app-header>
+        </div>
+      </div>
       <ng-container *ngIf="showPopularNews === true"
         ><p class="rdp-app__popular-news">{{popularNewsLine}}</p></ng-container
       >
@@ -53,9 +60,10 @@ import type { Locale } from "../utils/i18n";
               [selectedListId]="selectedListId"
               [selectedDate]="pickedDate"
               [yearRange]="yearRange"
+              [minDate]="minDate"
               [locale]="locale"
               (listSelect)="onListSelect?.($event)"
-              (dateSelect)="onDateSelect?.($event)"
+              (dateSelect)="selectFromSidebar($event)"
               (legalNoticeClick)="goTo('legal')"
               (contactClick)="goTo('contact')"
               (supportClick)="goTo('support')"
@@ -75,6 +83,9 @@ import type { Locale } from "../utils/i18n";
                 ← Retour aux publications
               </button></ng-container
             >
+            <ng-container *ngIf="currentView === 'main'"
+              ><intro-card></intro-card
+            ></ng-container>
             <ng-container
               *ngIf="currentView === 'main' && !loading && posts.length === 0"
               ><alert
@@ -116,6 +127,9 @@ import type { Locale } from "../utils/i18n";
               ← Retour aux publications
             </button></ng-container
           >
+          <ng-container *ngIf="currentView === 'main'"
+            ><intro-card></intro-card
+          ></ng-container>
           <ng-container
             *ngIf="currentView === 'main' && !loading && posts.length === 0"
             ><alert
@@ -158,6 +172,7 @@ import type { Locale } from "../utils/i18n";
             [selectedDate]="focusedDate"
             [locale]="locale"
             [yearRange]="yearRange"
+            [minDate]="minDate"
             (select)="pickFromCalendar($event)"
             (dismiss)="closeCalendar()"
           ></calendar
@@ -170,6 +185,8 @@ import type { Locale } from "../utils/i18n";
             (pillClick)="openCalendar()"
             (prev)="prevDay()"
             (next)="nextDay()"
+            [prevDisabled]="prevDayDisabled"
+            [nextDisabled]="nextDayDisabled"
           ></calendar-action-bar></div
       ></ng-container>
       <style>
@@ -180,14 +197,30 @@ import type { Locale } from "../utils/i18n";
                   font-family: 'Roboto', sans-serif;
                   color: var(--color-content-text);
                 }
-                /* Both layouts cap at a max-width so the app stays centred on wider
-                   viewports. Desktop tracks the legacy $width-extra-large-device
-                   (1200px); mobile tracks a comfortable phone width (480px). */
-                .rdp-app--desktop {
-                  max-width: 1200px;
+                /* The header ribbon stays full-viewport-wide so the white band
+                   reaches both edges of the page; only the inner row + the content
+                   grid honour the legacy max-width. Mobile mirrors the same pattern
+                   around a tighter phone width. */
+                .rdp-app__header-ribbon {
+                  background: var(--color-white);
+                  border-bottom: 1px solid var(--color-border);
+                }
+                .rdp-app__header-inner {
+                  max-width: 952px;
                   margin: 0 auto;
                 }
-                .rdp-app--mobile {
+                .rdp-app--mobile .rdp-app__header-inner {
+                  max-width: 480px;
+                }
+                /* Drop AppHeader's own white bg + border so the ribbon's full-width
+                   band shows through on both sides of the inner row. */
+                .rdp-app__header-ribbon .rdp-app-header {
+                  background: transparent;
+                  border-bottom: none;
+                }
+                /* Mobile: keep the ribbon full-viewport-wide, constrain the post
+                   list + dock to a phone-sized column instead. */
+                .rdp-app--mobile .rdp-app__mobile-main {
                   max-width: 480px;
                   margin: 0 auto;
                 }
@@ -209,9 +242,18 @@ import type { Locale } from "../utils/i18n";
                   margin: 0 auto;
                   box-sizing: border-box;
                 }
+                /* Match the legacy combined sidebar (336px) + right column (600px)
+                   plus a 16px gap = $width-desktop = 952px. The header ribbon stays
+                   full-viewport-wide; everything below caps here. */
                 .rdp-app--desktop .rdp-app__content {
                   grid-template-columns: 336px 1fr;
                   align-items: start;
+                  max-width: 952px;
+                }
+                .rdp-app--desktop .rdp-app__popular-news {
+                  max-width: 952px;
+                  margin-left: auto;
+                  margin-right: auto;
                 }
                 .rdp-app__main,
                 .rdp-app__mobile-main {
@@ -263,9 +305,16 @@ import type { Locale } from "../utils/i18n";
                   box-sizing: border-box;
                   background: var(--color-white);
                   border-top: 1px solid var(--color-border);
-                  padding: var(--separation-1) var(--separation-2);
+                  padding: 0 var(--separation-2) 0 0;
                   z-index: 20;
                   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+                }
+                .rdp-app--mobile .rdp-calendar-action-bar--bottom {
+                  width: 100%;
+                  height: 100%;
+                  margin: 0;
+                  padding: 0 var(--separation-2) 0 0;
+                  border-radius: 0;
                 }
                 .rdp-app--mobile .rdp-calendar--sheet {
                   left: 50%;
@@ -301,6 +350,8 @@ export default class App {
   @Input() pickedDate!: AppProps["pickedDate"];
   @Input() locale!: AppProps["locale"];
   @Input() onDateSelect!: AppProps["onDateSelect"];
+  @Input() onLogoClick!: AppProps["onLogoClick"];
+  @Input() minDate!: AppProps["minDate"];
   @Input() layout!: AppProps["layout"];
   @Input() authenticated!: AppProps["authenticated"];
   @Input() onAccountClick!: AppProps["onAccountClick"];
@@ -331,12 +382,14 @@ export default class App {
     const next = new Date(this.focusedDate);
     next.setDate(next.getDate() - 1);
     this.focusedDate = next;
+    this.currentView = "main";
     this.onDateSelect?.(next);
   }
   nextDay() {
     const next = new Date(this.focusedDate);
     next.setDate(next.getDate() + 1);
     this.focusedDate = next;
+    this.currentView = "main";
     this.onDateSelect?.(next);
   }
   openCalendar() {
@@ -348,10 +401,53 @@ export default class App {
   pickFromCalendar(d: Date) {
     this.focusedDate = d;
     this.isCalendarOpen = false;
+    this.currentView = "main";
+    this.onDateSelect?.(d);
+  }
+  selectFromSidebar(d: Date) {
+    // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
+    // day clicks, and prev/next month clicks. Any of those should bring
+    // the publication list back into focus when the user is on a sub-page.
+    this.focusedDate = d;
+    this.currentView = "main";
     this.onDateSelect?.(d);
   }
   goTo(view: "main" | "legal" | "contact" | "support" | "sources") {
     this.currentView = view;
+  }
+  goHome() {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    this.focusedDate = yesterday;
+    this.currentView = "main";
+    this.onDateSelect?.(yesterday);
+    this.onLogoClick?.();
+  }
+  get prevDayDisabled() {
+    if (!this.minDate) return false;
+    const cur = new Date(
+      this.focusedDate.getFullYear(),
+      this.focusedDate.getMonth(),
+      this.focusedDate.getDate()
+    );
+    const min = new Date(
+      this.minDate.getFullYear(),
+      this.minDate.getMonth(),
+      this.minDate.getDate()
+    );
+    return cur.getTime() <= min.getTime();
+  }
+  get nextDayDisabled() {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const cur = new Date(
+      this.focusedDate.getFullYear(),
+      this.focusedDate.getMonth(),
+      this.focusedDate.getDate()
+    );
+    return cur.getTime() >= yesterday.getTime();
   }
 
   ngOnInit() {
@@ -368,6 +464,7 @@ export default class App {
     CommonModule,
     AppHeaderModule,
     SidebarModule,
+    IntroCardModule,
     AlertModule,
     BlueskyPostCardModule,
     LegalNoticePageModule,

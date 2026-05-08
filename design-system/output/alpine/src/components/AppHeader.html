@@ -2,10 +2,17 @@
   x-data="appHeader()"
   x-bind:class="`rdp-app-header rdp-app-header--${layout}`"
 >
-  <Logo
-    x-bind:showWordmark="true"
-    x-bind:size="layout === 'mobile' ? 'sm' : 'md'"
-  ></Logo>
+  <button
+    type="button"
+    class="rdp-app-header__home"
+    aria-label="Revue de presse"
+    x-on:click="onLogoClick?.()"
+  >
+    <Logo
+      x-bind:showWordmark="true"
+      x-bind:size="layout === 'mobile' ? 'sm' : 'md'"
+    ></Logo>
+  </button>
   <template x-if="showAccountControls === true && layout === 'desktop'">
     <a
       href="#"
@@ -42,6 +49,16 @@ onMySpaceClick?.()"
               font-family: 'Signika', sans-serif;
             }
             .rdp-app-header--desktop { padding: var(--separation-1) var(--separation-3); }
+            .rdp-app-header__home {
+              background: transparent;
+              border: none;
+              padding: 0;
+              cursor: pointer;
+              font: inherit;
+              color: inherit;
+              display: inline-flex;
+              align-items: center;
+            }
             .rdp-app-header__myspace {
               margin-left: auto;
               color: var(--color-brand-active);

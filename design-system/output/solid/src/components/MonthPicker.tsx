@@ -3,6 +3,7 @@ import { For, createSignal, createMemo } from "solid-js";
 type MonthPickerProps = {
   year: number;
   selectedMonth: number; // 0..11
+  minDate?: Date;
   locale?: Locale;
   onSelect?: (monthIndex: number) => void;
 };
@@ -30,6 +31,19 @@ function MonthPicker(props: MonthPickerProps) {
     return monthIndex > currentMonth;
   }
 
+  function isBeforeMin(monthIndex: number) {
+    if (!props.minDate) return false;
+    const minYear = props.minDate.getFullYear();
+    const minMonth = props.minDate.getMonth();
+    if (props.year < minYear) return true;
+    if (props.year > minYear) return false;
+    return monthIndex < minMonth;
+  }
+
+  function isDisabled(monthIndex: number) {
+    return isFuture(monthIndex) || isBeforeMin(monthIndex);
+  }
+
   return (
     <>
       <ul
@@ -51,10 +65,10 @@ function MonthPicker(props: MonthPickerProps) {
                 }`}
                 role="option"
                 aria-selected={index === props.selectedMonth ? "true" : "false"}
-                aria-disabled={isFuture(index) ? "true" : undefined}
-                data-future={isFuture(index) ? "true" : undefined}
+                aria-disabled={isDisabled(index) ? "true" : undefined}
+                data-future={isDisabled(index) ? "true" : undefined}
                 onClick={(event) => {
-                  if (!isFuture(index)) props.onSelect?.(index);
+                  if (!isDisabled(index)) props.onSelect?.(index);
                 }}
               >
                 {name}
@@ -64,7 +78,10 @@ function MonthPicker(props: MonthPickerProps) {
         </For>
         <style>{`
         .rdp-month-picker {
-          list-style: none; margin: 0; padding: 0;
+          list-style: none;
+          margin: 0 var(--separation-2) var(--separation-2);
+          margin-left: calc(2 * var(--separation-2));
+          padding: 0;
           background: var(--color-white);
           border: 1px solid var(--color-brand);
           border-radius: var(--radius-default);

@@ -1,0 +1,15 @@
+[build]
+  publish = ".output/public"
+  command = "make build"
+
+[[redirects]]
+  from = "/.well-known/assetlinks.json"
+  to = "/well-known/assetlinks.json"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.well-known/atproto-did"
+  to = "/well-known/atproto-did"
+  status = 200
+  force = true

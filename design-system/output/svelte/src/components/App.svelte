@@ -15,6 +15,7 @@ yearRange: {
   min: number;
   max: number;
 };
+minDate?: Date;
 loading?: boolean;
 emptyMessageKey?: string;
 showPopularNews?: boolean;
@@ -23,6 +24,7 @@ onAccountClick?: () => void;
 onMySpaceClick?: () => void;
 onListSelect?: (id: string) => void;
 onDateSelect?: (date: Date) => void;
+onLogoClick?: () => void;
 }
 
     </script>
@@ -47,6 +49,7 @@ import  LegalNoticePage from './LegalNoticePage.svelte';
 import  ContactPage from './ContactPage.svelte';
 import  SupportPage from './SupportPage.svelte';
 import  SourcesPage from './SourcesPage.svelte';
+import  IntroCard from './IntroCard.svelte';
 import type { BlueskyPost } from './BlueskyPostCard.svelte';
 import type { Locale } from '../utils/i18n';
 
@@ -57,6 +60,8 @@ import type { Locale } from '../utils/i18n';
     export let pickedDate: AppProps['pickedDate'];
 export let locale: AppProps['locale']= undefined;
 export let onDateSelect: AppProps['onDateSelect']= undefined;
+export let onLogoClick: AppProps['onLogoClick']= undefined;
+export let minDate: AppProps['minDate']= undefined;
 export let layout: AppProps['layout']= undefined;
 export let authenticated: AppProps['authenticated']= undefined;
 export let onAccountClick: AppProps['onAccountClick']= undefined;
@@ -76,12 +81,14 @@ export let emptyMessageKey: AppProps['emptyMessageKey']= undefined;
 const next = new Date(focusedDate);
 next.setDate(next.getDate() - 1);
 focusedDate = next;
+currentView = 'main';
 onDateSelect?.(next);
 }
 function nextDay() {
 const next = new Date(focusedDate);
 next.setDate(next.getDate() + 1);
 focusedDate = next;
+currentView = 'main';
 onDateSelect?.(next);
 }
 function openCalendar() {
@@ -93,15 +100,46 @@ isCalendarOpen = false;
 function pickFromCalendar(d: Date) {
 focusedDate = d;
 isCalendarOpen = false;
+currentView = 'main';
+onDateSelect?.(d);
+}
+function selectFromSidebar(d: Date) {
+// The sidebar calendar fires onDateSelect on day-cell taps, prev/next
+// day clicks, and prev/next month clicks. Any of those should bring
+// the publication list back into focus when the user is on a sub-page.
+focusedDate = d;
+currentView = 'main';
 onDateSelect?.(d);
 }
 function goTo(view: 'main' | 'legal' | 'contact' | 'support' | 'sources') {
 currentView = view;
 }
+function goHome() {
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+yesterday.setHours(0, 0, 0, 0);
+focusedDate = yesterday;
+currentView = 'main';
+onDateSelect?.(yesterday);
+onLogoClick?.();
+}
     $: popularNewsLine = () => {
 return t('header.popular-news', {
   date: formatLegacyShortDay(pickedDate, locale ?? 'fr-FR')
 }, locale ?? 'fr-FR');
+};
+$: prevDayDisabled = () => {
+if (!minDate) return false;
+const cur = new Date(focusedDate.getFullYear(), focusedDate.getMonth(), focusedDate.getDate());
+const min = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
+return cur.getTime() <= min.getTime();
+};
+$: nextDayDisabled = () => {
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+yesterday.setHours(0, 0, 0, 0);
+const cur = new Date(focusedDate.getFullYear(), focusedDate.getMonth(), focusedDate.getDate());
+return cur.getTime() >= yesterday.getTime();
 };
 
 
@@ -122,18 +160,23 @@ initialised = true; });
 
   </script>
 
-  <div  class={`rdp-app rdp-app--${layout ?? 'desktop'}`} ><AppHeader  layout={layout ?? 'desktop'}  authenticated={authenticated ?? false}  onAccountClick={(event) => onAccountClick?.()} onMySpaceClick={(event) => onMySpaceClick?.()}></AppHeader>
+  <div  class={`rdp-app rdp-app--${layout ?? 'desktop'}`} ><div  class="rdp-app__header-ribbon" ><div  class="rdp-app__header-inner" ><AppHeader  layout={layout ?? 'desktop'}  authenticated={authenticated ?? false}  onAccountClick={(event) => onAccountClick?.()} onMySpaceClick={(event) => onMySpaceClick?.()} onLogoClick={(event) => goHome()}></AppHeader></div></div>
 {#if showPopularNews === true }
 <p  class="rdp-app__popular-news" >{popularNewsLine()}</p>
 
 
 {/if}
 {#if (layout ?? 'desktop') === 'desktop' }
-<div  class="rdp-app__content" ><aside  class="rdp-app__column" ><Sidebar  lists={lists}  selectedListId={selectedListId}  selectedDate={pickedDate}  yearRange={yearRange}  locale={locale}  onListSelect={(id) => onListSelect?.(id)} onDateSelect={(d) => onDateSelect?.(d)} onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></Sidebar></aside><main  class="rdp-app__main"  aria-busy={loading ? 'true' : undefined} >
+<div  class="rdp-app__content" ><aside  class="rdp-app__column" ><Sidebar  lists={lists}  selectedListId={selectedListId}  selectedDate={pickedDate}  yearRange={yearRange}  minDate={minDate}  locale={locale}  onListSelect={(id) => onListSelect?.(id)} onDateSelect={(d) => selectFromSidebar(d)} onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></Sidebar></aside><main  class="rdp-app__main"  aria-busy={loading ? 'true' : undefined} >
 {#if currentView !== 'main' }
 <button  type="button"  class="rdp-app__back"  on:click="{(event) => {goTo('main')}}" >
               ← Retour aux publications
             </button>
+
+
+{/if}
+{#if currentView === 'main' }
+<IntroCard ></IntroCard>
 
 
 {/if}
@@ -183,6 +226,11 @@ initialised = true; });
 
 
 {/if}
+{#if currentView === 'main' }
+<IntroCard ></IntroCard>
+
+
+{/if}
 {#if currentView === 'main' && !loading && posts.length === 0 }
 <Alert  variant="empty"  messageKey={emptyMessageKey ?? 'alert.empty.no-content-for-date'} ></Alert>
 
@@ -219,11 +267,11 @@ initialised = true; });
 {/if}<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></BannerAbout></main>
 
 {#if isCalendarOpen }
-<Calendar  presentation="sheet"  selectedDate={focusedDate}  locale={locale}  yearRange={yearRange}  onSelect={(d) => pickFromCalendar(d)} onDismiss={(event) => closeCalendar()}></Calendar>
+<Calendar  presentation="sheet"  selectedDate={focusedDate}  locale={locale}  yearRange={yearRange}  minDate={minDate}  onSelect={(d) => pickFromCalendar(d)} onDismiss={(event) => closeCalendar()}></Calendar>
 
 
 {/if}
-<div  class="rdp-app__mobile-dock" ><CalendarActionBar  position="bottom"  date={focusedDate}  locale={locale}  onPillClick={(event) => openCalendar()} onPrev={(event) => prevDay()} onNext={(event) => nextDay()}></CalendarActionBar></div>
+<div  class="rdp-app__mobile-dock" ><CalendarActionBar  position="bottom"  date={focusedDate}  locale={locale}  onPillClick={(event) => openCalendar()} onPrev={(event) => prevDay()} onNext={(event) => nextDay()} prevDisabled={prevDayDisabled()}  nextDisabled={nextDayDisabled()} ></CalendarActionBar></div>
 
 
 {/if}</div>

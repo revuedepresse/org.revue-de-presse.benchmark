@@ -10,10 +10,10 @@
     <li
       role="option"
       x-bind:aria-selected="index === selectedMonth ? 'true' : 'false'"
-      x-bind:aria-disabled="isFuture(index) ? 'true' : undefined"
-      x-bind:data-future="isFuture(index) ? 'true' : undefined"
+      x-bind:aria-disabled="isDisabled(index) ? 'true' : undefined"
+      x-bind:data-future="isDisabled(index) ? 'true' : undefined"
       x-bind:class="`rdp-month-picker__item${index === selectedMonth ? ' rdp-month-picker__item--selected' : ''}`"
-      x-on:click="if (!isFuture(index)) onSelect?.(index)"
+      x-on:click="if (!isDisabled(index)) onSelect?.(index)"
     >
       <span x-html="name"></span>
     </li>
@@ -21,7 +21,10 @@
   <style>
     <span x-html="`
             .rdp-month-picker {
-              list-style: none; margin: 0; padding: 0;
+              list-style: none;
+              margin: 0 var(--separation-2) var(--separation-2);
+              margin-left: calc(2 * var(--separation-2));
+              padding: 0;
               background: var(--color-white);
               border: 1px solid var(--color-brand);
               border-radius: var(--radius-default);
@@ -65,6 +68,17 @@
         if (props.year > currentYear) return true;
         if (props.year < currentYear) return false;
         return monthIndex > currentMonth;
+      },
+      isBeforeMin(monthIndex) {
+        if (!props.minDate) return false;
+        const minYear = props.minDate.getFullYear();
+        const minMonth = props.minDate.getMonth();
+        if (props.year < minYear) return true;
+        if (props.year > minYear) return false;
+        return monthIndex < minMonth;
+      },
+      isDisabled(monthIndex) {
+        return this.isFuture(monthIndex) || this.isBeforeMin(monthIndex);
       },
     }));
   });

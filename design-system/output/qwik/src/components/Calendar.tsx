@@ -15,6 +15,7 @@ import {
   Fragment,
   component$,
   h,
+  useComputed$,
   useStore,
   useTask$,
   useVisibleTask$,
@@ -27,39 +28,85 @@ type CalendarProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   presentation?: "inline" | "sheet";
   onSelect?: (date: Date) => void;
   onDismiss?: () => void;
 };
-export const selectDay = function selectDay(props, state, d: Date) {
+export const selectDay = function selectDay(
+  props,
+  state,
+  prevDayDisabled,
+  nextDayDisabled,
+  prevMonthDisabled,
+  nextMonthDisabled,
+  d: Date
+) {
   state.focusedDate = d;
   state.focusedYear = d.getFullYear();
   state.focusedMonth = d.getMonth();
   props.onSelect?.(d);
 };
-export const selectMonth = function selectMonth(props, state, idx: number) {
+export const selectMonth = function selectMonth(
+  props,
+  state,
+  prevDayDisabled,
+  nextDayDisabled,
+  prevMonthDisabled,
+  nextMonthDisabled,
+  idx: number
+) {
   state.focusedMonth = idx;
   state.viewMode = "day";
 };
-export const selectYear = function selectYear(props, state, y: number) {
+export const selectYear = function selectYear(
+  props,
+  state,
+  prevDayDisabled,
+  nextDayDisabled,
+  prevMonthDisabled,
+  nextMonthDisabled,
+  y: number
+) {
   state.focusedYear = y;
   state.viewMode = "month";
 };
-export const prevDay = function prevDay(props, state) {
+export const prevDay = function prevDay(
+  props,
+  state,
+  prevDayDisabled,
+  nextDayDisabled,
+  prevMonthDisabled,
+  nextMonthDisabled
+) {
   const next = new Date(state.focusedDate);
   next.setDate(next.getDate() - 1);
   state.focusedDate = next;
   state.focusedYear = next.getFullYear();
   state.focusedMonth = next.getMonth();
 };
-export const nextDay = function nextDay(props, state) {
+export const nextDay = function nextDay(
+  props,
+  state,
+  prevDayDisabled,
+  nextDayDisabled,
+  prevMonthDisabled,
+  nextMonthDisabled
+) {
   const next = new Date(state.focusedDate);
   next.setDate(next.getDate() + 1);
   state.focusedDate = next;
   state.focusedYear = next.getFullYear();
   state.focusedMonth = next.getMonth();
 };
-export const prevMonth = function prevMonth(props, state) {
+export const prevMonth = function prevMonth(
+  props,
+  state,
+  prevDayDisabled,
+  nextDayDisabled,
+  prevMonthDisabled,
+  nextMonthDisabled
+) {
   if (state.viewMode === "year") {
     const next = state.focusedYear - 1;
     if (next >= props.yearRange.min) state.focusedYear = next;
@@ -73,7 +120,14 @@ export const prevMonth = function prevMonth(props, state) {
     state.focusedMonth = m;
   }
 };
-export const nextMonth = function nextMonth(props, state) {
+export const nextMonth = function nextMonth(
+  props,
+  state,
+  prevDayDisabled,
+  nextDayDisabled,
+  prevMonthDisabled,
+  nextMonthDisabled
+) {
   if (state.viewMode === "year") {
     const next = state.focusedYear + 1;
     if (next <= props.yearRange.max) state.focusedYear = next;
@@ -87,7 +141,14 @@ export const nextMonth = function nextMonth(props, state) {
     state.focusedMonth = m;
   }
 };
-export const titleClick = function titleClick(props, state) {
+export const titleClick = function titleClick(
+  props,
+  state,
+  prevDayDisabled,
+  nextDayDisabled,
+  prevMonthDisabled,
+  nextMonthDisabled
+) {
   if (state.viewMode === "day") {
     state.viewMode = "month";
   } else if (state.viewMode === "month") {
@@ -95,6 +156,55 @@ export const titleClick = function titleClick(props, state) {
   }
 };
 export const Calendar = component$((props: CalendarProps) => {
+  const prevDayDisabled = useComputed$(() => {
+    if (!props.minDate) return false;
+    const cur = new Date(
+      state.focusedDate.getFullYear(),
+      state.focusedDate.getMonth(),
+      state.focusedDate.getDate()
+    );
+    const min = new Date(
+      props.minDate.getFullYear(),
+      props.minDate.getMonth(),
+      props.minDate.getDate()
+    );
+    return cur.getTime() <= min.getTime();
+  });
+  const nextDayDisabled = useComputed$(() => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const cur = new Date(
+      state.focusedDate.getFullYear(),
+      state.focusedDate.getMonth(),
+      state.focusedDate.getDate()
+    );
+    return cur.getTime() >= yesterday.getTime();
+  });
+  const prevMonthDisabled = useComputed$(() => {
+    if (state.viewMode === "year") {
+      if (!props.yearRange) return false;
+      return state.focusedYear <= props.yearRange.min;
+    }
+    if (!props.minDate) return false;
+    const minY = props.minDate.getFullYear();
+    const minM = props.minDate.getMonth();
+    if (state.focusedYear < minY) return true;
+    if (state.focusedYear > minY) return false;
+    return state.focusedMonth <= minM;
+  });
+  const nextMonthDisabled = useComputed$(() => {
+    const today = new Date();
+    const curY = today.getFullYear();
+    const curM = today.getMonth();
+    if (state.viewMode === "year") {
+      if (!props.yearRange) return false;
+      return state.focusedYear >= props.yearRange.max;
+    }
+    if (state.focusedYear > curY) return true;
+    if (state.focusedYear < curY) return false;
+    return state.focusedMonth >= curM;
+  });
   const state = useStore<any>({
     focusedDate: new Date(),
     focusedMonth: 0,
@@ -131,44 +241,127 @@ export const Calendar = component$((props: CalendarProps) => {
         ></div>
       ) : null}
       <div class="rdp-calendar__panel">
-        <CalendarActionBar
-          position="top"
-          date={state.focusedDate}
-          locale={props.locale}
-          onPrev$={$((event) => prevDay(props, state))}
-          onNext$={$((event) => nextDay(props, state))}
-        ></CalendarActionBar>
+        {props.presentation !== "sheet" ? (
+          <CalendarActionBar
+            position="top"
+            date={state.focusedDate}
+            locale={props.locale}
+            onPrev$={$((event) =>
+              prevDay(
+                props,
+                state,
+                prevDayDisabled,
+                nextDayDisabled,
+                prevMonthDisabled,
+                nextMonthDisabled
+              )
+            )}
+            onNext$={$((event) =>
+              nextDay(
+                props,
+                state,
+                prevDayDisabled,
+                nextDayDisabled,
+                prevMonthDisabled,
+                nextMonthDisabled
+              )
+            )}
+            prevDisabled={prevDayDisabled.value}
+            nextDisabled={nextDayDisabled.value}
+          ></CalendarActionBar>
+        ) : null}
         <CalendarMonthBar
           viewMode={state.viewMode}
           focusedYear={state.focusedYear}
           focusedMonth={state.focusedMonth}
           locale={props.locale}
-          onTitleClick$={$((event) => titleClick(props, state))}
-          onPrev$={$((event) => prevMonth(props, state))}
-          onNext$={$((event) => nextMonth(props, state))}
+          onTitleClick$={$((event) =>
+            titleClick(
+              props,
+              state,
+              prevDayDisabled,
+              nextDayDisabled,
+              prevMonthDisabled,
+              nextMonthDisabled
+            )
+          )}
+          onPrev$={$((event) =>
+            prevMonth(
+              props,
+              state,
+              prevDayDisabled,
+              nextDayDisabled,
+              prevMonthDisabled,
+              nextMonthDisabled
+            )
+          )}
+          onNext$={$((event) =>
+            nextMonth(
+              props,
+              state,
+              prevDayDisabled,
+              nextDayDisabled,
+              prevMonthDisabled,
+              nextMonthDisabled
+            )
+          )}
+          prevDisabled={prevMonthDisabled.value}
+          nextDisabled={nextMonthDisabled.value}
         ></CalendarMonthBar>
         {state.viewMode === "day" ? (
           <DateGrid
             year={state.focusedYear}
             month={state.focusedMonth}
             selectedDate={state.focusedDate}
+            minDate={props.minDate}
             locale={props.locale}
-            onSelect$={$((event) => selectDay(props, state, d))}
+            onSelect$={$((event) =>
+              selectDay(
+                props,
+                state,
+                prevDayDisabled,
+                nextDayDisabled,
+                prevMonthDisabled,
+                nextMonthDisabled,
+                d
+              )
+            )}
           ></DateGrid>
         ) : null}
         {state.viewMode === "month" ? (
           <MonthPicker
             year={state.focusedYear}
             selectedMonth={state.focusedMonth}
+            minDate={props.minDate}
             locale={props.locale}
-            onSelect$={$((event) => selectMonth(props, state, idx))}
+            onSelect$={$((event) =>
+              selectMonth(
+                props,
+                state,
+                prevDayDisabled,
+                nextDayDisabled,
+                prevMonthDisabled,
+                nextMonthDisabled,
+                idx
+              )
+            )}
           ></MonthPicker>
         ) : null}
         {state.viewMode === "year" ? (
           <YearPicker
             yearRange={props.yearRange}
             selectedYear={state.focusedYear}
-            onSelect$={$((event) => selectYear(props, state, y))}
+            onSelect$={$((event) =>
+              selectYear(
+                props,
+                state,
+                prevDayDisabled,
+                nextDayDisabled,
+                prevMonthDisabled,
+                nextMonthDisabled,
+                y
+              )
+            )}
           ></YearPicker>
         ) : null}
       </div>
@@ -178,7 +371,7 @@ export const Calendar = component$((props: CalendarProps) => {
           background: var(--color-white);
           border: 1px solid var(--color-border);
           border-radius: var(--radius-default);
-          padding: var(--separation-2);
+          padding: 0;
         }
         .rdp-calendar--sheet { position: fixed; inset: 0; display: grid; align-items: end; }
         .rdp-calendar__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }

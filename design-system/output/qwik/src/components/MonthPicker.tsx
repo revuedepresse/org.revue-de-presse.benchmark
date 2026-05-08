@@ -7,6 +7,7 @@ import { $, Fragment, component$, h, useComputed$ } from "@builder.io/qwik";
 type MonthPickerProps = {
   year: number;
   selectedMonth: number; // 0..11
+  minDate?: Date;
   locale?: Locale;
   onSelect?: (monthIndex: number) => void;
 };
@@ -22,6 +23,30 @@ export const isFuture = function isFuture(
   if (props.year > currentYear) return true;
   if (props.year < currentYear) return false;
   return monthIndex > currentMonth;
+};
+export const isBeforeMin = function isBeforeMin(
+  props,
+  state,
+  months,
+  monthIndex: number
+) {
+  if (!props.minDate) return false;
+  const minYear = props.minDate.getFullYear();
+  const minMonth = props.minDate.getMonth();
+  if (props.year < minYear) return true;
+  if (props.year > minYear) return false;
+  return monthIndex < minMonth;
+};
+export const isDisabled = function isDisabled(
+  props,
+  state,
+  months,
+  monthIndex: number
+) {
+  return (
+    isFuture(props, state, months, monthIndex) ||
+    isBeforeMin(props, state, months, monthIndex)
+  );
 };
 export const MonthPicker = component$((props: MonthPickerProps) => {
   const months = useComputed$(() => {
@@ -50,10 +75,10 @@ export const MonthPicker = component$((props: MonthPickerProps) => {
               index === props.selectedMonth ? "true" : "false";
             })()}
             aria-disabled={
-              isFuture(props, state, months, index) ? "true" : undefined
+              isDisabled(props, state, months, index) ? "true" : undefined
             }
             data-future={
-              isFuture(props, state, months, index) ? "true" : undefined
+              isDisabled(props, state, months, index) ? "true" : undefined
             }
             class={`rdp-month-picker__item${
               index === props.selectedMonth
@@ -61,7 +86,7 @@ export const MonthPicker = component$((props: MonthPickerProps) => {
                 : ""
             }`}
             onClick$={$((event) => {
-              if (!isFuture(props, state, months, index))
+              if (!isDisabled(props, state, months, index))
                 props.onSelect?.(index);
             })}
           >
@@ -71,7 +96,10 @@ export const MonthPicker = component$((props: MonthPickerProps) => {
       })}
       <style>{`
         .rdp-month-picker {
-          list-style: none; margin: 0; padding: 0;
+          list-style: none;
+          margin: 0 var(--separation-2) var(--separation-2);
+          margin-left: calc(2 * var(--separation-2));
+          padding: 0;
           background: var(--color-white);
           border: 1px solid var(--color-brand);
           border-radius: var(--radius-default);

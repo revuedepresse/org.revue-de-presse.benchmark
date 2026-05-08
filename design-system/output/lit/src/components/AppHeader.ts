@@ -13,6 +13,7 @@ authenticated: boolean;
 showAccountControls?: boolean;
 onAccountClick?: () => void;
 onMySpaceClick?: () => void;
+onLogoClick?: () => void;
 }
 
 
@@ -30,6 +31,7 @@ onMySpaceClick?: () => void;
 
 
     @property() layout: any
+@property() onLogoClick: any
 @property() showAccountControls: any
 @property() authenticated: any
 @property() onMySpaceClick: any
@@ -45,7 +47,7 @@ onMySpaceClick?: () => void;
     render() {
       return html`
 
-          <header  class={`rdp-app-header rdp-app-header--${props.layout}`} ><my-logo  .showWordmark=${true}  .size=${this.layout === 'mobile' ? 'sm' : 'md'} ></my-logo>
+          <header  class={`rdp-app-header rdp-app-header--${props.layout}`} ><button  type="button"  aria-label="Revue de presse"  @click=${(event) => this.onLogoClick?.()} ><my-logo  .showWordmark=${true}  .size=${this.layout === 'mobile' ? 'sm' : 'md'} ></my-logo></button>
         ${this.showAccountControls === true && this.layout === 'desktop' ?
               html`<a  href="#"  aria-disabled=${!this.authenticated ? 'true' : undefined}  @click=${(event) => {
         if (!this.authenticated) {
@@ -69,6 +71,16 @@ onMySpaceClick?: () => void;
                 font-family: 'Signika', sans-serif;
               }
               .rdp-app-header--desktop { padding: var(--separation-1) var(--separation-3); }
+              .rdp-app-header__home {
+                background: transparent;
+                border: none;
+                padding: 0;
+                cursor: pointer;
+                font: inherit;
+                color: inherit;
+                display: inline-flex;
+                align-items: center;
+              }
               .rdp-app-header__myspace {
                 margin-left: auto;
                 color: var(--color-brand-active);

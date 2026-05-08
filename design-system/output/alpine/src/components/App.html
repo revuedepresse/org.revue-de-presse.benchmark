@@ -1,10 +1,15 @@
 <div x-data="app()" x-bind:class="`rdp-app rdp-app--${layout ?? 'desktop'}`">
-  <AppHeader
-    x-bind:layout="layout ?? 'desktop'"
-    x-bind:authenticated="authenticated ?? false"
-    x-on:account-click="onAccountClick?.()"
-    x-on:my-space-click="onMySpaceClick?.()"
-  ></AppHeader>
+  <div class="rdp-app__header-ribbon">
+    <div class="rdp-app__header-inner">
+      <AppHeader
+        x-bind:layout="layout ?? 'desktop'"
+        x-bind:authenticated="authenticated ?? false"
+        x-on:account-click="onAccountClick?.()"
+        x-on:my-space-click="onMySpaceClick?.()"
+        x-on:logo-click="goHome()"
+      ></AppHeader>
+    </div>
+  </div>
   <template x-if="showPopularNews === true">
     <p class="rdp-app__popular-news"><span x-html="popularNewsLine"></span></p>
   </template>
@@ -16,9 +21,10 @@
           x-bind:selectedListId="selectedListId"
           x-bind:selectedDate="pickedDate"
           x-bind:yearRange="yearRange"
+          x-bind:minDate="minDate"
           x-bind:locale="locale"
           x-on:list-select="onListSelect?.(id)"
-          x-on:date-select="onDateSelect?.(d)"
+          x-on:date-select="selectFromSidebar(d)"
           x-on:legal-notice-click="goTo('legal')"
           x-on:contact-click="goTo('contact')"
           x-on:support-click="goTo('support')"
@@ -33,6 +39,9 @@
           <button type="button" class="rdp-app__back" x-on:click="goTo('main')">
             ← Retour aux publications
           </button>
+        </template>
+        <template x-if="currentView === 'main'">
+          <IntroCard></IntroCard>
         </template>
         <template
           x-if="currentView === 'main' && !loading && posts.length === 0"
@@ -79,6 +88,9 @@
           ← Retour aux publications
         </button>
       </template>
+      <template x-if="currentView === 'main'">
+        <IntroCard></IntroCard>
+      </template>
       <template x-if="currentView === 'main' && !loading && posts.length === 0">
         <Alert
           variant="empty"
@@ -122,6 +134,7 @@
         x-bind:selectedDate="focusedDate"
         x-bind:locale="locale"
         x-bind:yearRange="yearRange"
+        x-bind:minDate="minDate"
         x-on:select="pickFromCalendar(d)"
         x-on:dismiss="closeCalendar()"
       ></Calendar>
@@ -134,6 +147,8 @@
         x-on:pill-click="openCalendar()"
         x-on:prev="prevDay()"
         x-on:next="nextDay()"
+        x-bind:prevDisabled="prevDayDisabled"
+        x-bind:nextDisabled="nextDayDisabled"
       ></CalendarActionBar>
     </div>
   </template>
@@ -145,14 +160,30 @@
               font-family: 'Roboto', sans-serif;
               color: var(--color-content-text);
             }
-            /* Both layouts cap at a max-width so the app stays centred on wider
-               viewports. Desktop tracks the legacy $width-extra-large-device
-               (1200px); mobile tracks a comfortable phone width (480px). */
-            .rdp-app--desktop {
-              max-width: 1200px;
+            /* The header ribbon stays full-viewport-wide so the white band
+               reaches both edges of the page; only the inner row + the content
+               grid honour the legacy max-width. Mobile mirrors the same pattern
+               around a tighter phone width. */
+            .rdp-app__header-ribbon {
+              background: var(--color-white);
+              border-bottom: 1px solid var(--color-border);
+            }
+            .rdp-app__header-inner {
+              max-width: 952px;
               margin: 0 auto;
             }
-            .rdp-app--mobile {
+            .rdp-app--mobile .rdp-app__header-inner {
+              max-width: 480px;
+            }
+            /* Drop AppHeader's own white bg + border so the ribbon's full-width
+               band shows through on both sides of the inner row. */
+            .rdp-app__header-ribbon .rdp-app-header {
+              background: transparent;
+              border-bottom: none;
+            }
+            /* Mobile: keep the ribbon full-viewport-wide, constrain the post
+               list + dock to a phone-sized column instead. */
+            .rdp-app--mobile .rdp-app__mobile-main {
               max-width: 480px;
               margin: 0 auto;
             }
@@ -174,9 +205,18 @@
               margin: 0 auto;
               box-sizing: border-box;
             }
+            /* Match the legacy combined sidebar (336px) + right column (600px)
+               plus a 16px gap = $width-desktop = 952px. The header ribbon stays
+               full-viewport-wide; everything below caps here. */
             .rdp-app--desktop .rdp-app__content {
               grid-template-columns: 336px 1fr;
               align-items: start;
+              max-width: 952px;
+            }
+            .rdp-app--desktop .rdp-app__popular-news {
+              max-width: 952px;
+              margin-left: auto;
+              margin-right: auto;
             }
             .rdp-app__main,
             .rdp-app__mobile-main {
@@ -228,9 +268,16 @@
               box-sizing: border-box;
               background: var(--color-white);
               border-top: 1px solid var(--color-border);
-              padding: var(--separation-1) var(--separation-2);
+              padding: 0 var(--separation-2) 0 0;
               z-index: 20;
               box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+            }
+            .rdp-app--mobile .rdp-calendar-action-bar--bottom {
+              width: 100%;
+              height: 100%;
+              margin: 0;
+              padding: 0 var(--separation-2) 0 0;
+              border-radius: 0;
             }
             .rdp-app--mobile .rdp-calendar--sheet {
               left: 50%;
@@ -274,12 +321,14 @@
         const next = new Date(this.focusedDate);
         next.setDate(next.getDate() - 1);
         this.focusedDate = next;
+        this.currentView = "main";
         props.onDateSelect?.(next);
       },
       nextDay() {
         const next = new Date(this.focusedDate);
         next.setDate(next.getDate() + 1);
         this.focusedDate = next;
+        this.currentView = "main";
         props.onDateSelect?.(next);
       },
       openCalendar() {
@@ -291,10 +340,53 @@
       pickFromCalendar(d) {
         this.focusedDate = d;
         this.isCalendarOpen = false;
+        this.currentView = "main";
+        props.onDateSelect?.(d);
+      },
+      selectFromSidebar(d) {
+        // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
+        // day clicks, and prev/next month clicks. Any of those should bring
+        // the publication list back into focus when the user is on a sub-page.
+        this.focusedDate = d;
+        this.currentView = "main";
         props.onDateSelect?.(d);
       },
       goTo(view) {
         this.currentView = view;
+      },
+      goHome() {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        yesterday.setHours(0, 0, 0, 0);
+        this.focusedDate = yesterday;
+        this.currentView = "main";
+        props.onDateSelect?.(yesterday);
+        props.onLogoClick?.();
+      },
+      get prevDayDisabled() {
+        if (!props.minDate) return false;
+        const cur = new Date(
+          this.focusedDate.getFullYear(),
+          this.focusedDate.getMonth(),
+          this.focusedDate.getDate()
+        );
+        const min = new Date(
+          props.minDate.getFullYear(),
+          props.minDate.getMonth(),
+          props.minDate.getDate()
+        );
+        return cur.getTime() <= min.getTime();
+      },
+      get nextDayDisabled() {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        yesterday.setHours(0, 0, 0, 0);
+        const cur = new Date(
+          this.focusedDate.getFullYear(),
+          this.focusedDate.getMonth(),
+          this.focusedDate.getDate()
+        );
+        return cur.getTime() >= yesterday.getTime();
       },
       init() {
         this.focusedDate = props.pickedDate;

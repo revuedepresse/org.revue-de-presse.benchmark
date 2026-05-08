@@ -3,6 +3,7 @@
 year: number;
 month: number; // 0..11
 selectedDate?: Date;
+minDate?: Date;
 locale?: Locale;
 onSelect?: (date: Date) => void;
 }
@@ -26,6 +27,7 @@ import type { Locale } from '../utils/i18n';
     export let year: DateGridProps['year'];
 export let month: DateGridProps['month'];
 export let selectedDate: DateGridProps['selectedDate']= undefined;
+export let minDate: DateGridProps['minDate']= undefined;
 export let locale: DateGridProps['locale']= undefined;
 export let onSelect: DateGridProps['onSelect']= undefined;
 
@@ -39,7 +41,16 @@ function isFuture(d: Date) {
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-return cell.getTime() > today.getTime();
+return cell.getTime() >= today.getTime();
+}
+function isBeforeMin(d: Date) {
+if (!minDate) return false;
+const min = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
+const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+return cell.getTime() < min.getTime();
+}
+function isDisabled(d: Date) {
+return isFuture(d) || isBeforeMin(d);
 }
     $: rows = () => {
 const first = new Date(year, month, 1);
@@ -73,9 +84,14 @@ return [0, 1, 2, 3, 4, 5].map(row => all.slice(row * 7, row * 7 + 7));
 {#each rows() as row }
 <tr >
 {#each row as d }
-<td  role="gridcell"  aria-selected={isSelected(d) ? 'true' : 'false'}  aria-disabled={isFuture(d) ? 'true' : undefined}  data-other-month={d.getMonth() !== month ? 'true' : undefined}  data-future={isFuture(d) ? 'true' : undefined}  class={`rdp-date-grid__cell${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  on:click="{(event) => {
-if (!isFuture(d)) onSelect?.(d);
-}}" >{d.getDate()}</td>
+<td  role="gridcell"  aria-selected={isSelected(d) ? 'true' : 'false'}  aria-disabled={isDisabled(d) ? 'true' : undefined}  data-other-month={d.getMonth() !== month ? 'true' : undefined}  data-future={isDisabled(d) ? 'true' : undefined}  class={`rdp-date-grid__cell${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  on:click="{(event) => {
+if (!isDisabled(d)) onSelect?.(d);
+}}" >
+{#if !isDisabled(d) }
+{d.getDate()}
+
+
+{/if}</td>
 {/each}
 </tr>
 {/each}

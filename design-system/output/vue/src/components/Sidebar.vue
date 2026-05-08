@@ -4,6 +4,7 @@
       :selectedDate="selectedDate"
       :locale="locale"
       :yearRange="yearRange"
+      :minDate="minDate"
       :onSelect="(d) => onDateSelect?.(d)"
     ></Calendar
     ><BannerAbout
@@ -46,6 +47,7 @@ type SidebarProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   locale?: Locale;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;

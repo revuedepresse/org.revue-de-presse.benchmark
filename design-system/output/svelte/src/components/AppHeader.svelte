@@ -5,6 +5,7 @@ authenticated: boolean;
 showAccountControls?: boolean;
 onAccountClick?: () => void;
 onMySpaceClick?: () => void;
+onLogoClick?: () => void;
 }
 
     </script>
@@ -25,6 +26,7 @@ import  Icon from './Icon.svelte';
 
 
     export let layout: AppHeaderProps['layout'];
+export let onLogoClick: AppHeaderProps['onLogoClick']= undefined;
 export let showAccountControls: AppHeaderProps['showAccountControls']= undefined;
 export let authenticated: AppHeaderProps['authenticated'];
 export let onMySpaceClick: AppHeaderProps['onMySpaceClick']= undefined;
@@ -49,7 +51,7 @@ export let onAccountClick: AppHeaderProps['onAccountClick']= undefined;
 
   </script>
 
-  <header  class={`rdp-app-header rdp-app-header--${layout}`} ><Logo  showWordmark={true}  size={layout === 'mobile' ? 'sm' : 'md'} ></Logo>
+  <header  class={`rdp-app-header rdp-app-header--${layout}`} ><button  type="button"  class="rdp-app-header__home"  aria-label="Revue de presse"  on:click="{(event) => {onLogoClick?.()}}" ><Logo  showWordmark={true}  size={layout === 'mobile' ? 'sm' : 'md'} ></Logo></button>
 {#if showAccountControls === true && layout === 'desktop' }
 <a  href="#"  class="rdp-app-header__myspace"  aria-disabled={!authenticated ? 'true' : undefined}  on:click="{(event) => {
 if (!authenticated) {

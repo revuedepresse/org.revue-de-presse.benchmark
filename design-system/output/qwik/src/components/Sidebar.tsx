@@ -18,6 +18,7 @@ type SidebarProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   locale?: Locale;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
@@ -33,6 +34,7 @@ export const Sidebar = component$((props: SidebarProps) => {
         selectedDate={props.selectedDate}
         locale={props.locale}
         yearRange={props.yearRange}
+        minDate={props.minDate}
         onSelect$={$((event) => props.onDateSelect?.(d))}
       ></Calendar>
       <BannerAbout

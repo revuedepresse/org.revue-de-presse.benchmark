@@ -21,6 +21,17 @@ export function formatCount(n: number, locale: Locale): string {
   }).format(n);
 }
 
+// Mirrors the legacy publication-date component: a 2-digit hour-minute
+// stamp (24h locale, no seconds), used as the left half of the post-card
+// timestamp ("HH:MM · vendredi 1 mai 2026").
+export function formatTime(date: Date, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(date);
+}
+
 const WEEKDAY_KEYS = [
   'sunday',
   'monday',
