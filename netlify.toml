@@ -1,0 +1,20 @@
+[build]
+  base = "nuxt"
+  publish = "nuxt/.output/public"
+  command = "make build"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NITRO_PRESET = "netlify"
+
+[[redirects]]
+  from = "/.well-known/assetlinks.json"
+  to = "/well-known/assetlinks.json"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.well-known/atproto-did"
+  to = "/well-known/atproto-did"
+  status = 200
+  force = true
