@@ -73,7 +73,9 @@ export default defineNuxtConfig({
         { name: 'msapplication-TileColor', content: '#006663' },
       ],
       link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/logo-revue-de-presse.svg' },
         { rel: 'icon', type: 'image/png', href: icon },
+        { rel: 'shortcut icon', href: icon },
         { rel: 'apple-touch-icon', href: '/revue-de-presse_512x512_006663.png' },
         { rel: 'manifest', href: '/manifest.webmanifest' },
         {
