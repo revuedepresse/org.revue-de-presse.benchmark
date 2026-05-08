@@ -14,16 +14,52 @@
         type="button"
         class="rdp-calendar-month-bar__btn rdp-calendar-month-bar__btn--prev"
         :aria-label="t(prevAriaKey, undefined, locale ?? 'fr-FR')"
-        @click="async (event) => onPrev?.()"
+        :aria-disabled="prevDisabled === true ? 'true' : undefined"
+        :disabled="prevDisabled === true"
+        @click="
+          async (event) => {
+            if (prevDisabled !== true) onPrev?.();
+          }
+        "
       >
-        <Icon name="previous-item" :size="20" :decorative="true"></Icon></button
+        <svg
+          viewBox="0 0 24 14"
+          width="22"
+          height="14"
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 11 12 3l9 8"></path>
+        </svg></button
       ><button
         type="button"
         class="rdp-calendar-month-bar__btn rdp-calendar-month-bar__btn--next"
         :aria-label="t(nextAriaKey, undefined, locale ?? 'fr-FR')"
-        @click="async (event) => onNext?.()"
+        :aria-disabled="nextDisabled === true ? 'true' : undefined"
+        :disabled="nextDisabled === true"
+        @click="
+          async (event) => {
+            if (nextDisabled !== true) onNext?.();
+          }
+        "
       >
-        <Icon name="next-item" :size="20" :decorative="true"></Icon>
+        <svg
+          viewBox="0 0 24 14"
+          width="22"
+          height="14"
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 3 12 11l9-8"></path>
+        </svg>
       </button>
     </div>
     <component :is="'style'">{{
@@ -32,7 +68,7 @@
           display: flex;
           gap: var(--separation-1);
           align-items: center;
-          padding: var(--separation-1) 0;
+          padding: var(--separation-1) var(--separation-2);
           font-family: 'Roboto', sans-serif;
         }
         .rdp-calendar-month-bar__pill {
@@ -41,6 +77,11 @@
           align-items: center;
           gap: var(--separation-1);
           width: auto;
+          /* Negative margin compensates for the pill's 1px outline so the
+             pill's left edge aligns with the bar-content edge; combined with
+             the pill's own internal padding the icon ends up matching the
+             action-bar icon above (both at +var(--separation-2) inside). */
+          margin-left: -1px;
           background: var(--color-white);
           color: var(--color-brand);
           border: 1px solid var(--color-brand);
@@ -72,6 +113,11 @@
           justify-content: center;
         }
         .rdp-calendar-month-bar__btn:hover { color: var(--color-brand-active); }
+        .rdp-calendar-month-bar__btn[aria-disabled="true"] {
+          color: var(--color-light-grey);
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
       `
     }}</component>
   </div>
@@ -94,6 +140,8 @@ type CalendarMonthBarProps = {
   onTitleClick?: () => void;
   onPrev?: () => void;
   onNext?: () => void;
+  prevDisabled?: boolean;
+  nextDisabled?: boolean;
 };
 
 const props = defineProps<CalendarMonthBarProps>();

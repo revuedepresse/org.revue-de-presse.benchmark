@@ -57,7 +57,6 @@ export default function LegalNoticePage(props: LegalNoticePageProps) {
           padding: var(--separation-3);
           font-family: 'Roboto', sans-serif;
           color: var(--color-content-text);
-          line-height: var(--line-height-base);
         }
         .rdp-legal-notice h1 {
           font-family: 'Signika', sans-serif;
@@ -70,7 +69,10 @@ export default function LegalNoticePage(props: LegalNoticePageProps) {
           font-size: var(--font-size-status-text);
           margin: var(--separation-2) 0 var(--separation-1);
         }
-        .rdp-legal-notice p { margin: 0 0 var(--separation-2); }
+        .rdp-legal-notice p {
+          margin: 0 0 var(--separation-2);
+          line-height: var(--line-height-base);
+        }
       `}</style>
     </article>
   );

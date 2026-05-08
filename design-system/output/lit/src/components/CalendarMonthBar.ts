@@ -15,6 +15,8 @@ type CalendarMonthBarProps = {
   onTitleClick?: () => void;
   onPrev?: () => void;
   onNext?: () => void;
+  prevDisabled?: boolean;
+  nextDisabled?: boolean;
 };
 
 @customElement("calendar-month-bar")
@@ -28,7 +30,9 @@ export default class CalendarMonthBar extends LitElement {
   @property() focusedYear: any;
   @property() focusedMonth: any;
   @property() onTitleClick: any;
+  @property() prevDisabled: any;
   @property() onPrev: any;
+  @property() nextDisabled: any;
   @property() onNext: any;
 
   get title() {
@@ -68,20 +72,26 @@ export default class CalendarMonthBar extends LitElement {
           this.prevAriaKey,
           undefined,
           this.locale ?? "fr-FR"
-        )}  @click=${(event) =>
-      this.onPrev?.()} ><my-icon  name="previous-item"  .size=${20}  .decorative=${true} ></my-icon></button>
+        )}  aria-disabled=${
+      this.prevDisabled === true ? "true" : undefined
+    }  .disabled=${this.prevDisabled === true}  @click=${(event) => {
+      if (this.prevDisabled !== true) this.onPrev?.();
+    }} ><svg  viewBox="0 0 24 14"  width="22"  height="14"  aria-hidden="true"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round" ><path  d="M3 11 12 3l9 8" ></path></svg></button>
         <button  type="button"  aria-label=${t(
           this.nextAriaKey,
           undefined,
           this.locale ?? "fr-FR"
-        )}  @click=${(event) =>
-      this.onNext?.()} ><my-icon  name="next-item"  .size=${20}  .decorative=${true} ></my-icon></button></div>
+        )}  aria-disabled=${
+      this.nextDisabled === true ? "true" : undefined
+    }  .disabled=${this.nextDisabled === true}  @click=${(event) => {
+      if (this.nextDisabled !== true) this.onNext?.();
+    }} ><svg  viewBox="0 0 24 14"  width="22"  height="14"  aria-hidden="true"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round" ><path  d="M3 3 12 11l9-8" ></path></svg></button></div>
         <style >${`
                .rdp-calendar-month-bar {
                  display: flex;
                  gap: var(--separation-1);
                  align-items: center;
-                 padding: var(--separation-1) 0;
+                 padding: var(--separation-1) var(--separation-2);
                  font-family: 'Roboto', sans-serif;
                }
                .rdp-calendar-month-bar__pill {
@@ -90,6 +100,11 @@ export default class CalendarMonthBar extends LitElement {
                  align-items: center;
                  gap: var(--separation-1);
                  width: auto;
+                 /* Negative margin compensates for the pill's 1px outline so the
+                    pill's left edge aligns with the bar-content edge; combined with
+                    the pill's own internal padding the icon ends up matching the
+                    action-bar icon above (both at +var(--separation-2) inside). */
+                 margin-left: -1px;
                  background: var(--color-white);
                  color: var(--color-brand);
                  border: 1px solid var(--color-brand);
@@ -121,6 +136,11 @@ export default class CalendarMonthBar extends LitElement {
                  justify-content: center;
                }
                .rdp-calendar-month-bar__btn:hover { color: var(--color-brand-active); }
+               .rdp-calendar-month-bar__btn[aria-disabled="true"] {
+                 color: var(--color-light-grey);
+                 cursor: not-allowed;
+                 opacity: 0.5;
+               }
              `}</style></div>
         `;
   }

@@ -13,6 +13,7 @@ type DateGridProps = {
   year: number;
   month: number; // 0..11
   selectedDate?: Date;
+  minDate?: Date;
   locale?: Locale;
   onSelect?: (date: Date) => void;
 };
@@ -29,7 +30,20 @@ export const isFuture = function isFuture(props, state, rows, d: Date) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  return cell.getTime() > today.getTime();
+  return cell.getTime() >= today.getTime();
+};
+export const isBeforeMin = function isBeforeMin(props, state, rows, d: Date) {
+  if (!props.minDate) return false;
+  const min = new Date(
+    props.minDate.getFullYear(),
+    props.minDate.getMonth(),
+    props.minDate.getDate()
+  );
+  const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  return cell.getTime() < min.getTime();
+};
+export const isDisabled = function isDisabled(props, state, rows, d: Date) {
+  return isFuture(props, state, rows, d) || isBeforeMin(props, state, rows, d);
 };
 export const DateGrid = component$((props: DateGridProps) => {
   const rows = useComputed$(() => {
@@ -86,13 +100,13 @@ export const DateGrid = component$((props: DateGridProps) => {
                       isSelected(props, state, rows, d) ? "true" : "false"
                     }
                     aria-disabled={
-                      isFuture(props, state, rows, d) ? "true" : undefined
+                      isDisabled(props, state, rows, d) ? "true" : undefined
                     }
                     data-other-month={(() => {
                       d.getMonth() !== props.month ? "true" : undefined;
                     })()}
                     data-future={
-                      isFuture(props, state, rows, d) ? "true" : undefined
+                      isDisabled(props, state, rows, d) ? "true" : undefined
                     }
                     class={`rdp-date-grid__cell${
                       isSelected(props, state, rows, d)
@@ -100,10 +114,13 @@ export const DateGrid = component$((props: DateGridProps) => {
                         : ""
                     }`}
                     onClick$={$((event) => {
-                      if (!isFuture(props, state, rows, d)) props.onSelect?.(d);
+                      if (!isDisabled(props, state, rows, d))
+                        props.onSelect?.(d);
                     })}
                   >
-                    {d.getDate()}
+                    {!isDisabled(props, state, rows, d) ? (
+                      <>{d.getDate()}</>
+                    ) : null}
                   </td>
                 );
               })}
@@ -113,7 +130,8 @@ export const DateGrid = component$((props: DateGridProps) => {
       </tbody>
       <style>{`
         .rdp-date-grid {
-          width: 100%;
+          width: calc(100% - 2 * var(--separation-2));
+          margin: 0 var(--separation-2) var(--separation-2);
           table-layout: fixed;
           border-collapse: separate;
           border-spacing: 2px;
@@ -129,12 +147,14 @@ export const DateGrid = component$((props: DateGridProps) => {
         }
         .rdp-date-grid__cell {
           padding: 6px 0;
+          height: 32px;
           border: 1px solid var(--color-border);
           border-radius: var(--radius-selectable);
           color: var(--color-content-text);
           background: var(--color-background-future-date);
           cursor: pointer;
           text-align: center;
+          box-sizing: border-box;
         }
         .rdp-date-grid__cell[data-other-month="true"] {
           background: var(--color-background-other-month);
@@ -142,7 +162,7 @@ export const DateGrid = component$((props: DateGridProps) => {
         }
         .rdp-date-grid__cell[data-future="true"] {
           color: var(--color-light-grey);
-          background: var(--color-background-other-month);
+          background: var(--color-background-future-date);
           cursor: not-allowed;
         }
         .rdp-date-grid__cell--selected {

@@ -17,6 +17,7 @@ type SidebarProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   locale?: Locale;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
@@ -35,6 +36,7 @@ export default class Sidebar extends LitElement {
   @property() selectedDate: any;
   @property() locale: any;
   @property() yearRange: any;
+  @property() minDate: any;
   @property() onDateSelect: any;
   @property() onLegalNoticeClick: any;
   @property() onContactClick: any;
@@ -46,7 +48,7 @@ export default class Sidebar extends LitElement {
 
           <aside ><my-calendar  .selectedDate=${this.selectedDate}  .locale=${
       this.locale
-    }  .yearRange=${this.yearRange}  @select=${(d) =>
+    }  .yearRange=${this.yearRange}  .minDate=${this.minDate}  @select=${(d) =>
       this.onDateSelect?.(d)} ></my-calendar>
         <banner-about  @legalnoticeclick=${(event) =>
           this.onLegalNoticeClick()}  @contactclick=${(event) =>

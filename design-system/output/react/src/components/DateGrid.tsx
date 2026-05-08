@@ -6,6 +6,7 @@ type DateGridProps = {
   year: number;
   month: number; // 0..11
   selectedDate?: Date;
+  minDate?: Date;
   locale?: Locale;
   onSelect?: (date: Date) => void;
 };
@@ -51,7 +52,22 @@ function DateGrid(props: DateGridProps) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-    return cell.getTime() > today.getTime();
+    return cell.getTime() >= today.getTime();
+  }
+
+  function isBeforeMin(d: Date) {
+    if (!props.minDate) return false;
+    const min = new Date(
+      props.minDate.getFullYear(),
+      props.minDate.getMonth(),
+      props.minDate.getDate()
+    );
+    const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return cell.getTime() < min.getTime();
+  }
+
+  function isDisabled(d: Date) {
+    return isFuture(d) || isBeforeMin(d);
   }
 
   return (
@@ -76,19 +92,19 @@ function DateGrid(props: DateGridProps) {
               <td
                 role="gridcell"
                 aria-selected={isSelected(d) ? "true" : "false"}
-                aria-disabled={isFuture(d) ? "true" : undefined}
+                aria-disabled={isDisabled(d) ? "true" : undefined}
                 data-other-month={
                   d.getMonth() !== props.month ? "true" : undefined
                 }
-                data-future={isFuture(d) ? "true" : undefined}
+                data-future={isDisabled(d) ? "true" : undefined}
                 className={`rdp-date-grid__cell${
                   isSelected(d) ? " rdp-date-grid__cell--selected" : ""
                 }`}
                 onClick={(event) => {
-                  if (!isFuture(d)) props.onSelect?.(d);
+                  if (!isDisabled(d)) props.onSelect?.(d);
                 }}
               >
-                {d.getDate()}
+                {!isDisabled(d) ? <>{d.getDate()}</> : null}
               </td>
             ))}
           </tr>
@@ -96,7 +112,8 @@ function DateGrid(props: DateGridProps) {
       </tbody>
       <style>{`
         .rdp-date-grid {
-          width: 100%;
+          width: calc(100% - 2 * var(--separation-2));
+          margin: 0 var(--separation-2) var(--separation-2);
           table-layout: fixed;
           border-collapse: separate;
           border-spacing: 2px;
@@ -112,12 +129,14 @@ function DateGrid(props: DateGridProps) {
         }
         .rdp-date-grid__cell {
           padding: 6px 0;
+          height: 32px;
           border: 1px solid var(--color-border);
           border-radius: var(--radius-selectable);
           color: var(--color-content-text);
           background: var(--color-background-future-date);
           cursor: pointer;
           text-align: center;
+          box-sizing: border-box;
         }
         .rdp-date-grid__cell[data-other-month="true"] {
           background: var(--color-background-other-month);
@@ -125,7 +144,7 @@ function DateGrid(props: DateGridProps) {
         }
         .rdp-date-grid__cell[data-future="true"] {
           color: var(--color-light-grey);
-          background: var(--color-background-other-month);
+          background: var(--color-background-future-date);
           cursor: not-allowed;
         }
         .rdp-date-grid__cell--selected {

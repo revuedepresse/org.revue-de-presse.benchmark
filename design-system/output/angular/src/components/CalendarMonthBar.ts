@@ -12,6 +12,8 @@ type CalendarMonthBarProps = {
   onTitleClick?: () => void;
   onPrev?: () => void;
   onNext?: () => void;
+  prevDisabled?: boolean;
+  nextDisabled?: boolean;
 };
 
 import { t } from "../utils/i18n";
@@ -36,17 +38,49 @@ import type { Locale } from "../utils/i18n";
           type="button"
           class="rdp-calendar-month-bar__btn rdp-calendar-month-bar__btn--prev"
           [attr.aria-label]="t(prevAriaKey, undefined, locale ?? 'fr-FR')"
-          (click)="onPrev?.()"
+          [attr.aria-disabled]="prevDisabled === true ? 'true' : undefined"
+          [attr.disabled]="prevDisabled === true"
+          (click)="
+          if (prevDisabled !== true) onPrev?.();
+        "
         >
-          <icon name="previous-item" [size]="20" [decorative]="true"></icon>
+          <svg
+            viewBox="0 0 24 14"
+            width="22"
+            height="14"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 11 12 3l9 8"></path>
+          </svg>
         </button>
         <button
           type="button"
           class="rdp-calendar-month-bar__btn rdp-calendar-month-bar__btn--next"
           [attr.aria-label]="t(nextAriaKey, undefined, locale ?? 'fr-FR')"
-          (click)="onNext?.()"
+          [attr.aria-disabled]="nextDisabled === true ? 'true' : undefined"
+          [attr.disabled]="nextDisabled === true"
+          (click)="
+          if (nextDisabled !== true) onNext?.();
+        "
         >
-          <icon name="next-item" [size]="20" [decorative]="true"></icon>
+          <svg
+            viewBox="0 0 24 14"
+            width="22"
+            height="14"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 3 12 11l9-8"></path>
+          </svg>
         </button>
       </div>
       <style>
@@ -55,7 +89,7 @@ import type { Locale } from "../utils/i18n";
                   display: flex;
                   gap: var(--separation-1);
                   align-items: center;
-                  padding: var(--separation-1) 0;
+                  padding: var(--separation-1) var(--separation-2);
                   font-family: 'Roboto', sans-serif;
                 }
                 .rdp-calendar-month-bar__pill {
@@ -64,6 +98,11 @@ import type { Locale } from "../utils/i18n";
                   align-items: center;
                   gap: var(--separation-1);
                   width: auto;
+                  /* Negative margin compensates for the pill's 1px outline so the
+                     pill's left edge aligns with the bar-content edge; combined with
+                     the pill's own internal padding the icon ends up matching the
+                     action-bar icon above (both at +var(--separation-2) inside). */
+                  margin-left: -1px;
                   background: var(--color-white);
                   color: var(--color-brand);
                   border: 1px solid var(--color-brand);
@@ -95,6 +134,11 @@ import type { Locale } from "../utils/i18n";
                   justify-content: center;
                 }
                 .rdp-calendar-month-bar__btn:hover { color: var(--color-brand-active); }
+                .rdp-calendar-month-bar__btn[aria-disabled=&quot;true&quot;] {
+                  color: var(--color-light-grey);
+                  cursor: not-allowed;
+                  opacity: 0.5;
+                }
               \`}}
       </style>
     </div>
@@ -115,7 +159,9 @@ export default class CalendarMonthBar {
   @Input() focusedYear!: CalendarMonthBarProps["focusedYear"];
   @Input() focusedMonth!: CalendarMonthBarProps["focusedMonth"];
   @Input() onTitleClick!: CalendarMonthBarProps["onTitleClick"];
+  @Input() prevDisabled!: CalendarMonthBarProps["prevDisabled"];
   @Input() onPrev!: CalendarMonthBarProps["onPrev"];
+  @Input() nextDisabled!: CalendarMonthBarProps["nextDisabled"];
   @Input() onNext!: CalendarMonthBarProps["onNext"];
 
   get title() {

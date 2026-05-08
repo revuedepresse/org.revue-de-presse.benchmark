@@ -7,6 +7,7 @@ type DateGridProps = {
   year: number;
   month: number; // 0..11
   selectedDate?: Date;
+  minDate?: Date;
   locale?: Locale;
   onSelect?: (date: Date) => void;
 };
@@ -34,15 +35,18 @@ import type { Locale } from "../utils/i18n";
               ><td
                 role="gridcell"
                 [attr.aria-selected]="isSelected(d) ? 'true' : 'false'"
-                [attr.aria-disabled]="isFuture(d) ? 'true' : undefined"
+                [attr.aria-disabled]="isDisabled(d) ? 'true' : undefined"
                 [attr.data-other-month]="d.getMonth() !== month ? 'true' : undefined"
-                [attr.data-future]="isFuture(d) ? 'true' : undefined"
+                [attr.data-future]="isDisabled(d) ? 'true' : undefined"
                 [class]="\`rdp-date-grid__cell\${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}\`"
                 (click)="
-          if (!isFuture(d)) onSelect?.(d);
+          if (!isDisabled(d)) onSelect?.(d);
         "
               >
-                {{d.getDate()}}
+                <ng-container
+                  *ngIf="!isDisabled(d)"
+                  >{{d.getDate()}}</ng-container
+                >
               </td></ng-container
             >
           </tr></ng-container
@@ -51,7 +55,8 @@ import type { Locale } from "../utils/i18n";
       <style>
         {{\`
                 .rdp-date-grid {
-                  width: 100%;
+                  width: calc(100% - 2 * var(--separation-2));
+                  margin: 0 var(--separation-2) var(--separation-2);
                   table-layout: fixed;
                   border-collapse: separate;
                   border-spacing: 2px;
@@ -67,12 +72,14 @@ import type { Locale } from "../utils/i18n";
                 }
                 .rdp-date-grid__cell {
                   padding: 6px 0;
+                  height: 32px;
                   border: 1px solid var(--color-border);
                   border-radius: var(--radius-selectable);
                   color: var(--color-content-text);
                   background: var(--color-background-future-date);
                   cursor: pointer;
                   text-align: center;
+                  box-sizing: border-box;
                 }
                 .rdp-date-grid__cell[data-other-month=&quot;true&quot;] {
                   background: var(--color-background-other-month);
@@ -80,7 +87,7 @@ import type { Locale } from "../utils/i18n";
                 }
                 .rdp-date-grid__cell[data-future=&quot;true&quot;] {
                   color: var(--color-light-grey);
-                  background: var(--color-background-other-month);
+                  background: var(--color-background-future-date);
                   cursor: not-allowed;
                 }
                 .rdp-date-grid__cell--selected {
@@ -106,6 +113,7 @@ export default class DateGrid {
   @Input() year!: DateGridProps["year"];
   @Input() month!: DateGridProps["month"];
   @Input() selectedDate!: DateGridProps["selectedDate"];
+  @Input() minDate!: DateGridProps["minDate"];
   @Input() locale!: DateGridProps["locale"];
   @Input() onSelect!: DateGridProps["onSelect"];
 
@@ -144,7 +152,20 @@ export default class DateGrid {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-    return cell.getTime() > today.getTime();
+    return cell.getTime() >= today.getTime();
+  }
+  isBeforeMin(d: Date) {
+    if (!this.minDate) return false;
+    const min = new Date(
+      this.minDate.getFullYear(),
+      this.minDate.getMonth(),
+      this.minDate.getDate()
+    );
+    const cell = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return cell.getTime() < min.getTime();
+  }
+  isDisabled(d: Date) {
+    return this.isFuture(d) || this.isBeforeMin(d);
   }
 }
 

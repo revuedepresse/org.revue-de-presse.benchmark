@@ -17,6 +17,7 @@ import {
 export class MonthPicker {
   @Prop() locale: any;
   @Prop() year: any;
+  @Prop() minDate: any;
   @Prop() selectedMonth: any;
   @Event() select: any;
 
@@ -35,6 +36,17 @@ export class MonthPicker {
     if (this.year > currentYear) return true;
     if (this.year < currentYear) return false;
     return monthIndex > currentMonth;
+  }
+  isBeforeMin(monthIndex: number) {
+    if (!this.minDate) return false;
+    const minYear = this.minDate.getFullYear();
+    const minMonth = this.minDate.getMonth();
+    if (this.year < minYear) return true;
+    if (this.year > minYear) return false;
+    return monthIndex < minMonth;
+  }
+  isDisabled(monthIndex: number) {
+    return this.isFuture(monthIndex) || this.isBeforeMin(monthIndex);
   }
 
   componentDidLoad() {}
@@ -57,10 +69,10 @@ export class MonthPicker {
             }`}
             role="option"
             aria-selected={index === this.selectedMonth ? "true" : "false"}
-            aria-disabled={this.isFuture(index) ? "true" : undefined}
-            data-future={this.isFuture(index) ? "true" : undefined}
+            aria-disabled={this.isDisabled(index) ? "true" : undefined}
+            data-future={this.isDisabled(index) ? "true" : undefined}
             onClick={() => {
-              if (!this.isFuture(index)) this.select?.(index);
+              if (!this.isDisabled(index)) this.select?.(index);
             }}
           >
             {name}
@@ -68,7 +80,10 @@ export class MonthPicker {
         ))}
         <style>{`
         .rdp-month-picker {
-          list-style: none; margin: 0; padding: 0;
+          list-style: none;
+          margin: 0 var(--separation-2) var(--separation-2);
+          margin-left: calc(2 * var(--separation-2));
+          padding: 0;
           background: var(--color-white);
           border: 1px solid var(--color-brand);
           border-radius: var(--radius-default);

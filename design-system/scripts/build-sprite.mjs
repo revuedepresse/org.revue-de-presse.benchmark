@@ -68,9 +68,44 @@ function parseSvg(svgText, iconId) {
     'next-item',
     'previous-day',
     'next-day',
+    'pick-day',
+    'pick-item',
+    'pick-list',
   ]);
   if (RECOLOURABLE_CHEVRON.has(iconId)) {
     body = body.replace(/<path\b(?![^>]*\bfill=)/g, '<path fill="currentColor"');
+  }
+
+  // Vanity-metric icons (retweet glyph + like-metric heart). The legacy SVGs
+  // ship a hard white circle background plus a black/styled glyph; in the
+  // app we render them inside a tinted container, so the inner white circle
+  // would obscure the tint. Strip those classed circles, then make the
+  // active path follow `currentColor` and bump its stroke for legibility.
+  const VANITY_METRIC = new Set([
+    'retweet',
+    'like-metric',
+    'like-clicked',
+    'like-intent',
+    'reply',
+    'share',
+    'sharing',
+  ]);
+  if (VANITY_METRIC.has(iconId)) {
+    // 1. Knock the inner white circle group out of the body so the parent
+    //    container colour shows through unobstructed.
+    body = body.replace(/<g[^>]*class="[^"]*"[^>]*>(?:<circle[^/]*\/?>(?:<\/circle>)?)+<\/g>/g, '');
+    // 2. Drop classed strokes/fills so they don't override our CSS hooks.
+    defs = defs.replace(/fill\s*:\s*#fff(?:fff)?/gi, 'fill:none');
+    defs = defs.replace(/stroke\s*:\s*#fff(?:fff)?/gi, 'stroke:none');
+    defs = defs.replace(/stroke\s*:\s*rgba\(0,0,0,0\)/gi, 'stroke:currentColor');
+    // 3. Inject currentColor on the un-classed glyph path.
+    body = body.replace(/<path\b(?![^>]*\bfill=)/g, '<path fill="currentColor"');
+    // 4. Add a stroke-width hook on every path so CSS can crank up the
+    //    glyph weight (`stroke-width: var(--rdp-icon-weight)` etc).
+    body = body.replace(
+      /<path\b/g,
+      '<path stroke="currentColor" stroke-width="0.4"',
+    );
   }
 
   return { viewBox, defs, body };

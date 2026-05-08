@@ -23,6 +23,7 @@ export class Calendar {
   @Prop() selectedDate: any;
   @Event() select: any;
   @Prop() yearRange: any;
+  @Prop() minDate: any;
   @Prop() presentation: any;
   @Event() dismiss: any;
   @Prop() locale: any;
@@ -95,6 +96,55 @@ export class Calendar {
       this.viewMode = "year";
     }
   }
+  get prevDayDisabled() {
+    if (!this.minDate) return false;
+    const cur = new Date(
+      this.focusedDate.getFullYear(),
+      this.focusedDate.getMonth(),
+      this.focusedDate.getDate()
+    );
+    const min = new Date(
+      this.minDate.getFullYear(),
+      this.minDate.getMonth(),
+      this.minDate.getDate()
+    );
+    return cur.getTime() <= min.getTime();
+  }
+  get nextDayDisabled() {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const cur = new Date(
+      this.focusedDate.getFullYear(),
+      this.focusedDate.getMonth(),
+      this.focusedDate.getDate()
+    );
+    return cur.getTime() >= yesterday.getTime();
+  }
+  get prevMonthDisabled() {
+    if (this.viewMode === "year") {
+      if (!this.yearRange) return false;
+      return this.focusedYear <= this.yearRange.min;
+    }
+    if (!this.minDate) return false;
+    const minY = this.minDate.getFullYear();
+    const minM = this.minDate.getMonth();
+    if (this.focusedYear < minY) return true;
+    if (this.focusedYear > minY) return false;
+    return this.focusedMonth <= minM;
+  }
+  get nextMonthDisabled() {
+    const today = new Date();
+    const curY = today.getFullYear();
+    const curM = today.getMonth();
+    if (this.viewMode === "year") {
+      if (!this.yearRange) return false;
+      return this.focusedYear >= this.yearRange.max;
+    }
+    if (this.focusedYear > curY) return true;
+    if (this.focusedYear < curY) return false;
+    return this.focusedMonth >= curM;
+  }
 
   watch0Fn() {
     this.focusedDate = this.selectedDate;
@@ -130,13 +180,17 @@ export class Calendar {
           ></div>
         ) : null}
         <div class="rdp-calendar__panel">
-          <calendar-action-bar
-            position="top"
-            date={this.focusedDate}
-            locale={this.locale}
-            onPrev={() => this.prevDay()}
-            onNext={() => this.nextDay()}
-          ></calendar-action-bar>
+          {this.presentation !== "sheet" ? (
+            <calendar-action-bar
+              position="top"
+              date={this.focusedDate}
+              locale={this.locale}
+              onPrev={() => this.prevDay()}
+              onNext={() => this.nextDay()}
+              prevDisabled={this.prevDayDisabled}
+              nextDisabled={this.nextDayDisabled}
+            ></calendar-action-bar>
+          ) : null}
           <calendar-month-bar
             viewMode={this.viewMode}
             focusedYear={this.focusedYear}
@@ -145,12 +199,15 @@ export class Calendar {
             onTitleClick={() => this.titleClick()}
             onPrev={() => this.prevMonth()}
             onNext={() => this.nextMonth()}
+            prevDisabled={this.prevMonthDisabled}
+            nextDisabled={this.nextMonthDisabled}
           ></calendar-month-bar>
           {this.viewMode === "day" ? (
             <date-grid
               year={this.focusedYear}
               month={this.focusedMonth}
               selectedDate={this.focusedDate}
+              minDate={this.minDate}
               locale={this.locale}
               onSelect={(d) => this.selectDay(d)}
             ></date-grid>
@@ -159,6 +216,7 @@ export class Calendar {
             <month-picker
               year={this.focusedYear}
               selectedMonth={this.focusedMonth}
+              minDate={this.minDate}
               locale={this.locale}
               onSelect={(idx) => this.selectMonth(idx)}
             ></month-picker>
@@ -177,7 +235,7 @@ export class Calendar {
           background: var(--color-white);
           border: 1px solid var(--color-border);
           border-radius: var(--radius-default);
-          padding: var(--separation-2);
+          padding: 0;
         }
         .rdp-calendar--sheet { position: fixed; inset: 0; display: grid; align-items: end; }
         .rdp-calendar__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }

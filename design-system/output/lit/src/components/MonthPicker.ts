@@ -10,6 +10,7 @@ import type { Locale } from '../utils/i18n';
    type MonthPickerProps = {
  year: number;
  selectedMonth: number; // 0..11
+ minDate?: Date;
  locale?: Locale;
  onSelect?: (monthIndex: number) => void;
 }
@@ -30,6 +31,7 @@ import type { Locale } from '../utils/i18n';
 
      @property() locale: any
 @property() year: any
+@property() minDate: any
 @property() selectedMonth: any
 @property() onSelect: any
 
@@ -47,6 +49,17 @@ isFuture(monthIndex: number) {
  if (this.year < currentYear) return false;
  return monthIndex > currentMonth;
 }
+isBeforeMin(monthIndex: number) {
+ if (!this.minDate) return false;
+ const minYear = this.minDate.getFullYear();
+ const minMonth = this.minDate.getMonth();
+ if (this.year < minYear) return true;
+ if (this.year > minYear) return false;
+ return monthIndex < minMonth;
+}
+isDisabled(monthIndex: number) {
+ return this.isFuture(monthIndex) || this.isBeforeMin(monthIndex);
+}
 
 
 
@@ -59,13 +72,16 @@ isFuture(monthIndex: number) {
           <ul  role="listbox"  aria-label=${t('calendar.heading.year', {
           year: this.year
         })} >${this.months?.map((name, index) => (
-              html`<li  class={`rdp-month-picker__item${index === props.selectedMonth ? ' rdp-month-picker__item--selected' : ''}`}  role="option"  aria-selected=${index === this.selectedMonth ? 'true' : 'false'}  aria-disabled=${this.isFuture(index) ? 'true' : undefined}  data-future=${this.isFuture(index) ? 'true' : undefined}  @click=${(event) => {
-         if (!this.isFuture(index)) this.onSelect?.(index);
+              html`<li  class={`rdp-month-picker__item${index === props.selectedMonth ? ' rdp-month-picker__item--selected' : ''}`}  role="option"  aria-selected=${index === this.selectedMonth ? 'true' : 'false'}  aria-disabled=${this.isDisabled(index) ? 'true' : undefined}  data-future=${this.isDisabled(index) ? 'true' : undefined}  @click=${(event) => {
+         if (!this.isDisabled(index)) this.onSelect?.(index);
        }} >${name}</li>`
             ))}
         <style >${`
                .rdp-month-picker {
-                 list-style: none; margin: 0; padding: 0;
+                 list-style: none;
+                 margin: 0 var(--separation-2) var(--separation-2);
+                 margin-left: calc(2 * var(--separation-2));
+                 padding: 0;
                  background: var(--color-white);
                  border: 1px solid var(--color-brand);
                  border-radius: var(--radius-default);

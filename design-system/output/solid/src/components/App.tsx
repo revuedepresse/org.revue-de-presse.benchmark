@@ -15,6 +15,7 @@ type AppProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   loading?: boolean;
   emptyMessageKey?: string;
   showPopularNews?: boolean;
@@ -23,6 +24,7 @@ type AppProps = {
   onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
+  onLogoClick?: () => void;
 };
 
 import { t } from "../utils/i18n";
@@ -38,6 +40,7 @@ import LegalNoticePage from "./LegalNoticePage";
 import ContactPage from "./ContactPage";
 import SupportPage from "./SupportPage";
 import SourcesPage from "./SourcesPage";
+import IntroCard from "./IntroCard";
 import type { BlueskyPost } from "./BlueskyPostCard";
 import type { Locale } from "../utils/i18n";
 
@@ -64,6 +67,7 @@ function App(props: AppProps) {
     const next = new Date(focusedDate());
     next.setDate(next.getDate() - 1);
     setFocusedDate(next);
+    setCurrentView("main");
     props.onDateSelect?.(next);
   }
 
@@ -71,6 +75,7 @@ function App(props: AppProps) {
     const next = new Date(focusedDate());
     next.setDate(next.getDate() + 1);
     setFocusedDate(next);
+    setCurrentView("main");
     props.onDateSelect?.(next);
   }
 
@@ -85,12 +90,59 @@ function App(props: AppProps) {
   function pickFromCalendar(d: Date) {
     setFocusedDate(d);
     setIsCalendarOpen(false);
+    setCurrentView("main");
+    props.onDateSelect?.(d);
+  }
+
+  function selectFromSidebar(d: Date) {
+    // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
+    // day clicks, and prev/next month clicks. Any of those should bring
+    // the publication list back into focus when the user is on a sub-page.
+    setFocusedDate(d);
+    setCurrentView("main");
     props.onDateSelect?.(d);
   }
 
   function goTo(view: "main" | "legal" | "contact" | "support" | "sources") {
     setCurrentView(view);
   }
+
+  function goHome() {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    setFocusedDate(yesterday);
+    setCurrentView("main");
+    props.onDateSelect?.(yesterday);
+    props.onLogoClick?.();
+  }
+
+  const prevDayDisabled = createMemo(() => {
+    if (!props.minDate) return false;
+    const cur = new Date(
+      focusedDate().getFullYear(),
+      focusedDate().getMonth(),
+      focusedDate().getDate()
+    );
+    const min = new Date(
+      props.minDate.getFullYear(),
+      props.minDate.getMonth(),
+      props.minDate.getDate()
+    );
+    return cur.getTime() <= min.getTime();
+  });
+
+  const nextDayDisabled = createMemo(() => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const cur = new Date(
+      focusedDate().getFullYear(),
+      focusedDate().getMonth(),
+      focusedDate().getDate()
+    );
+    return cur.getTime() >= yesterday.getTime();
+  });
 
   onMount(() => {
     setFocusedDate(props.pickedDate);
@@ -100,12 +152,17 @@ function App(props: AppProps) {
   return (
     <>
       <div class={`rdp-app rdp-app--${props.layout ?? "desktop"}`}>
-        <AppHeader
-          layout={props.layout ?? "desktop"}
-          authenticated={props.authenticated ?? false}
-          onAccountClick={(event) => props.onAccountClick?.()}
-          onMySpaceClick={(event) => props.onMySpaceClick?.()}
-        ></AppHeader>
+        <div class="rdp-app__header-ribbon">
+          <div class="rdp-app__header-inner">
+            <AppHeader
+              layout={props.layout ?? "desktop"}
+              authenticated={props.authenticated ?? false}
+              onAccountClick={(event) => props.onAccountClick?.()}
+              onMySpaceClick={(event) => props.onMySpaceClick?.()}
+              onLogoClick={(event) => goHome()}
+            ></AppHeader>
+          </div>
+        </div>
         <Show when={props.showPopularNews === true}>
           <p class="rdp-app__popular-news">{popularNewsLine()}</p>
         </Show>
@@ -117,9 +174,10 @@ function App(props: AppProps) {
                 selectedListId={props.selectedListId}
                 selectedDate={props.pickedDate}
                 yearRange={props.yearRange}
+                minDate={props.minDate}
                 locale={props.locale}
                 onListSelect={(id) => props.onListSelect?.(id)}
-                onDateSelect={(d) => props.onDateSelect?.(d)}
+                onDateSelect={(d) => selectFromSidebar(d)}
                 onLegalNoticeClick={(event) => goTo("legal")}
                 onContactClick={(event) => goTo("contact")}
                 onSupportClick={(event) => goTo("support")}
@@ -138,6 +196,9 @@ function App(props: AppProps) {
                 >
                   ← Retour aux publications
                 </button>
+              </Show>
+              <Show when={currentView() === "main"}>
+                <IntroCard></IntroCard>
               </Show>
               <Show
                 when={
@@ -199,6 +260,9 @@ function App(props: AppProps) {
                 ← Retour aux publications
               </button>
             </Show>
+            <Show when={currentView() === "main"}>
+              <IntroCard></IntroCard>
+            </Show>
             <Show
               when={
                 currentView() === "main" &&
@@ -255,6 +319,7 @@ function App(props: AppProps) {
               selectedDate={focusedDate()}
               locale={props.locale}
               yearRange={props.yearRange}
+              minDate={props.minDate}
               onSelect={(d) => pickFromCalendar(d)}
               onDismiss={(event) => closeCalendar()}
             ></Calendar>
@@ -267,6 +332,8 @@ function App(props: AppProps) {
               onPillClick={(event) => openCalendar()}
               onPrev={(event) => prevDay()}
               onNext={(event) => nextDay()}
+              prevDisabled={prevDayDisabled()}
+              nextDisabled={nextDayDisabled()}
             ></CalendarActionBar>
           </div>
         </Show>
@@ -277,14 +344,30 @@ function App(props: AppProps) {
           font-family: 'Roboto', sans-serif;
           color: var(--color-content-text);
         }
-        /* Both layouts cap at a max-width so the app stays centred on wider
-           viewports. Desktop tracks the legacy $width-extra-large-device
-           (1200px); mobile tracks a comfortable phone width (480px). */
-        .rdp-app--desktop {
-          max-width: 1200px;
+        /* The header ribbon stays full-viewport-wide so the white band
+           reaches both edges of the page; only the inner row + the content
+           grid honour the legacy max-width. Mobile mirrors the same pattern
+           around a tighter phone width. */
+        .rdp-app__header-ribbon {
+          background: var(--color-white);
+          border-bottom: 1px solid var(--color-border);
+        }
+        .rdp-app__header-inner {
+          max-width: 952px;
           margin: 0 auto;
         }
-        .rdp-app--mobile {
+        .rdp-app--mobile .rdp-app__header-inner {
+          max-width: 480px;
+        }
+        /* Drop AppHeader's own white bg + border so the ribbon's full-width
+           band shows through on both sides of the inner row. */
+        .rdp-app__header-ribbon .rdp-app-header {
+          background: transparent;
+          border-bottom: none;
+        }
+        /* Mobile: keep the ribbon full-viewport-wide, constrain the post
+           list + dock to a phone-sized column instead. */
+        .rdp-app--mobile .rdp-app__mobile-main {
           max-width: 480px;
           margin: 0 auto;
         }
@@ -306,9 +389,18 @@ function App(props: AppProps) {
           margin: 0 auto;
           box-sizing: border-box;
         }
+        /* Match the legacy combined sidebar (336px) + right column (600px)
+           plus a 16px gap = $width-desktop = 952px. The header ribbon stays
+           full-viewport-wide; everything below caps here. */
         .rdp-app--desktop .rdp-app__content {
           grid-template-columns: 336px 1fr;
           align-items: start;
+          max-width: 952px;
+        }
+        .rdp-app--desktop .rdp-app__popular-news {
+          max-width: 952px;
+          margin-left: auto;
+          margin-right: auto;
         }
         .rdp-app__main,
         .rdp-app__mobile-main {
@@ -360,9 +452,16 @@ function App(props: AppProps) {
           box-sizing: border-box;
           background: var(--color-white);
           border-top: 1px solid var(--color-border);
-          padding: var(--separation-1) var(--separation-2);
+          padding: 0 var(--separation-2) 0 0;
           z-index: 20;
           box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .rdp-app--mobile .rdp-calendar-action-bar--bottom {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0 var(--separation-2) 0 0;
+          border-radius: 0;
         }
         .rdp-app--mobile .rdp-calendar--sheet {
           left: 50%;

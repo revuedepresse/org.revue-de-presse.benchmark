@@ -1,11 +1,16 @@
 <template>
   <div :class="`rdp-app rdp-app--${layout ?? 'desktop'}`">
-    <AppHeader
-      :layout="layout ?? 'desktop'"
-      :authenticated="authenticated ?? false"
-      :onAccountClick="(event) => onAccountClick?.()"
-      :onMySpaceClick="(event) => onMySpaceClick?.()"
-    ></AppHeader>
+    <div class="rdp-app__header-ribbon">
+      <div class="rdp-app__header-inner">
+        <AppHeader
+          :layout="layout ?? 'desktop'"
+          :authenticated="authenticated ?? false"
+          :onAccountClick="(event) => onAccountClick?.()"
+          :onMySpaceClick="(event) => onMySpaceClick?.()"
+          :onLogoClick="(event) => goHome()"
+        ></AppHeader>
+      </div>
+    </div>
     <template v-if="showPopularNews === true">
       <p class="rdp-app__popular-news">{{ popularNewsLine }}</p>
     </template>
@@ -18,9 +23,10 @@
             :selectedListId="selectedListId"
             :selectedDate="pickedDate"
             :yearRange="yearRange"
+            :minDate="minDate"
             :locale="locale"
             :onListSelect="(id) => onListSelect?.(id)"
-            :onDateSelect="(d) => onDateSelect?.(d)"
+            :onDateSelect="(d) => selectFromSidebar(d)"
             :onLegalNoticeClick="(event) => goTo('legal')"
             :onContactClick="(event) => goTo('contact')"
             :onSupportClick="(event) => goTo('support')"
@@ -36,6 +42,10 @@
             >
               ← Retour aux publications
             </button>
+          </template>
+
+          <template v-if="currentView === 'main'">
+            <IntroCard></IntroCard>
           </template>
 
           <template
@@ -94,6 +104,10 @@
           </button>
         </template>
 
+        <template v-if="currentView === 'main'">
+          <IntroCard></IntroCard>
+        </template>
+
         <template
           v-if="currentView === 'main' && !loading && posts.length === 0"
         >
@@ -146,6 +160,7 @@
           :selectedDate="focusedDate"
           :locale="locale"
           :yearRange="yearRange"
+          :minDate="minDate"
           :onSelect="(d) => pickFromCalendar(d)"
           :onDismiss="(event) => closeCalendar()"
         ></Calendar>
@@ -159,6 +174,8 @@
           :onPillClick="(event) => openCalendar()"
           :onPrev="(event) => prevDay()"
           :onNext="(event) => nextDay()"
+          :prevDisabled="prevDayDisabled"
+          :nextDisabled="nextDayDisabled"
         ></CalendarActionBar>
       </div>
     </template>
@@ -171,14 +188,30 @@
           font-family: 'Roboto', sans-serif;
           color: var(--color-content-text);
         }
-        /* Both layouts cap at a max-width so the app stays centred on wider
-           viewports. Desktop tracks the legacy $width-extra-large-device
-           (1200px); mobile tracks a comfortable phone width (480px). */
-        .rdp-app--desktop {
-          max-width: 1200px;
+        /* The header ribbon stays full-viewport-wide so the white band
+           reaches both edges of the page; only the inner row + the content
+           grid honour the legacy max-width. Mobile mirrors the same pattern
+           around a tighter phone width. */
+        .rdp-app__header-ribbon {
+          background: var(--color-white);
+          border-bottom: 1px solid var(--color-border);
+        }
+        .rdp-app__header-inner {
+          max-width: 952px;
           margin: 0 auto;
         }
-        .rdp-app--mobile {
+        .rdp-app--mobile .rdp-app__header-inner {
+          max-width: 480px;
+        }
+        /* Drop AppHeader's own white bg + border so the ribbon's full-width
+           band shows through on both sides of the inner row. */
+        .rdp-app__header-ribbon .rdp-app-header {
+          background: transparent;
+          border-bottom: none;
+        }
+        /* Mobile: keep the ribbon full-viewport-wide, constrain the post
+           list + dock to a phone-sized column instead. */
+        .rdp-app--mobile .rdp-app__mobile-main {
           max-width: 480px;
           margin: 0 auto;
         }
@@ -200,9 +233,18 @@
           margin: 0 auto;
           box-sizing: border-box;
         }
+        /* Match the legacy combined sidebar (336px) + right column (600px)
+           plus a 16px gap = $width-desktop = 952px. The header ribbon stays
+           full-viewport-wide; everything below caps here. */
         .rdp-app--desktop .rdp-app__content {
           grid-template-columns: 336px 1fr;
           align-items: start;
+          max-width: 952px;
+        }
+        .rdp-app--desktop .rdp-app__popular-news {
+          max-width: 952px;
+          margin-left: auto;
+          margin-right: auto;
         }
         .rdp-app__main,
         .rdp-app__mobile-main {
@@ -254,9 +296,16 @@
           box-sizing: border-box;
           background: var(--color-white);
           border-top: 1px solid var(--color-border);
-          padding: var(--separation-1) var(--separation-2);
+          padding: 0 var(--separation-2) 0 0;
           z-index: 20;
           box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .rdp-app--mobile .rdp-calendar-action-bar--bottom {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0 var(--separation-2) 0 0;
+          border-radius: 0;
         }
         .rdp-app--mobile .rdp-calendar--sheet {
           left: 50%;
@@ -295,6 +344,7 @@ import LegalNoticePage from "./LegalNoticePage.vue";
 import ContactPage from "./ContactPage.vue";
 import SupportPage from "./SupportPage.vue";
 import SourcesPage from "./SourcesPage.vue";
+import IntroCard from "./IntroCard.vue";
 import type { BlueskyPost } from "./BlueskyPostCard.vue";
 import type { Locale } from "../utils/i18n";
 
@@ -313,6 +363,7 @@ type AppProps = {
     min: number;
     max: number;
   };
+  minDate?: Date;
   loading?: boolean;
   emptyMessageKey?: string;
   showPopularNews?: boolean;
@@ -321,6 +372,7 @@ type AppProps = {
   onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
+  onLogoClick?: () => void;
 };
 
 const props = defineProps<AppProps>();
@@ -343,17 +395,44 @@ const popularNewsLine = computed(() => {
     props.locale ?? "fr-FR"
   );
 });
+const prevDayDisabled = computed(() => {
+  if (!props.minDate) return false;
+  const cur = new Date(
+    focusedDate.value.getFullYear(),
+    focusedDate.value.getMonth(),
+    focusedDate.value.getDate()
+  );
+  const min = new Date(
+    props.minDate.getFullYear(),
+    props.minDate.getMonth(),
+    props.minDate.getDate()
+  );
+  return cur.getTime() <= min.getTime();
+});
+const nextDayDisabled = computed(() => {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setHours(0, 0, 0, 0);
+  const cur = new Date(
+    focusedDate.value.getFullYear(),
+    focusedDate.value.getMonth(),
+    focusedDate.value.getDate()
+  );
+  return cur.getTime() >= yesterday.getTime();
+});
 
 function prevDay() {
   const next = new Date(focusedDate.value);
   next.setDate(next.getDate() - 1);
   focusedDate.value = next;
+  currentView.value = "main";
   props.onDateSelect?.(next);
 }
 function nextDay() {
   const next = new Date(focusedDate.value);
   next.setDate(next.getDate() + 1);
   focusedDate.value = next;
+  currentView.value = "main";
   props.onDateSelect?.(next);
 }
 function openCalendar() {
@@ -365,9 +444,27 @@ function closeCalendar() {
 function pickFromCalendar(d: Date) {
   focusedDate.value = d;
   isCalendarOpen.value = false;
+  currentView.value = "main";
+  props.onDateSelect?.(d);
+}
+function selectFromSidebar(d: Date) {
+  // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
+  // day clicks, and prev/next month clicks. Any of those should bring
+  // the publication list back into focus when the user is on a sub-page.
+  focusedDate.value = d;
+  currentView.value = "main";
   props.onDateSelect?.(d);
 }
 function goTo(view: "main" | "legal" | "contact" | "support" | "sources") {
   currentView.value = view;
+}
+function goHome() {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setHours(0, 0, 0, 0);
+  focusedDate.value = yesterday;
+  currentView.value = "main";
+  props.onDateSelect?.(yesterday);
+  props.onLogoClick?.();
 }
 </script>

@@ -48,7 +48,10 @@ return Array.from({
             ))}
         <style >${`
               .rdp-year-picker {
-                list-style: none; margin: 0; padding: 0;
+                list-style: none;
+                margin: 0 var(--separation-2) var(--separation-2);
+                margin-left: calc(2 * var(--separation-2));
+                padding: 0;
                 background: var(--color-white);
                 border: 1px solid var(--color-brand);
                 border-radius: var(--radius-default);

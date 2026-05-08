@@ -17,6 +17,11 @@
   --color-vanity-metric-like: #851430;
   --color-vanity-metric-retweet: #09442c;
   --color-vanity-metric-reply: #1d9bf0;
+  /* Light tints behind the vanity-metric icons (legacy lightens its dark
+     fg by 45% — these are sampled from production). Counts render in the
+     dark colour above on top of these light backgrounds. */
+  --color-vanity-metric-like-bg: #fac5d2;
+  --color-vanity-metric-retweet-bg: #c5e9d5;
 
   /* Foundation — spacing. */
   --separation-0: 6px;

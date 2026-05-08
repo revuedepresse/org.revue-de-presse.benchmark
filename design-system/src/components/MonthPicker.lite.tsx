@@ -6,6 +6,7 @@ import type { Locale } from '../utils/i18n';
 type MonthPickerProps = {
   year: number;
   selectedMonth: number; // 0..11
+  minDate?: Date;
   locale?: Locale;
   onSelect?: (monthIndex: number) => void;
 };
@@ -25,6 +26,17 @@ export default function MonthPicker(props: MonthPickerProps) {
       if (props.year < currentYear) return false;
       return monthIndex > currentMonth;
     },
+    isBeforeMin(monthIndex: number): boolean {
+      if (!props.minDate) return false;
+      const minYear = props.minDate.getFullYear();
+      const minMonth = props.minDate.getMonth();
+      if (props.year < minYear) return true;
+      if (props.year > minYear) return false;
+      return monthIndex < minMonth;
+    },
+    isDisabled(monthIndex: number): boolean {
+      return state.isFuture(monthIndex) || state.isBeforeMin(monthIndex);
+    },
   });
 
   return (
@@ -38,11 +50,11 @@ export default function MonthPicker(props: MonthPickerProps) {
           <li
             role="option"
             aria-selected={index === props.selectedMonth ? 'true' : 'false'}
-            aria-disabled={state.isFuture(index) ? 'true' : undefined}
-            data-future={state.isFuture(index) ? 'true' : undefined}
+            aria-disabled={state.isDisabled(index) ? 'true' : undefined}
+            data-future={state.isDisabled(index) ? 'true' : undefined}
             class={`rdp-month-picker__item${index === props.selectedMonth ? ' rdp-month-picker__item--selected' : ''}`}
             onClick={() => {
-              if (!state.isFuture(index)) props.onSelect?.(index);
+              if (!state.isDisabled(index)) props.onSelect?.(index);
             }}
           >
             {name}
@@ -51,7 +63,10 @@ export default function MonthPicker(props: MonthPickerProps) {
       </For>
       <style>{`
         .rdp-month-picker {
-          list-style: none; margin: 0; padding: 0;
+          list-style: none;
+          margin: 0 var(--separation-2) var(--separation-2);
+          margin-left: calc(2 * var(--separation-2));
+          padding: 0;
           background: var(--color-white);
           border: 1px solid var(--color-brand);
           border-radius: var(--radius-default);

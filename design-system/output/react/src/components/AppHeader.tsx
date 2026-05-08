@@ -7,6 +7,7 @@ type AppHeaderProps = {
   showAccountControls?: boolean;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
+  onLogoClick?: () => void;
 };
 import { t } from "../utils/i18n";
 import Logo from "./Logo";
@@ -15,7 +16,14 @@ import Icon from "./Icon";
 function AppHeader(props: AppHeaderProps) {
   return (
     <header className={`rdp-app-header rdp-app-header--${props.layout}`}>
-      <Logo showWordmark size={props.layout === "mobile" ? "sm" : "md"} />
+      <button
+        type="button"
+        className="rdp-app-header__home"
+        aria-label="Revue de presse"
+        onClick={(event) => props.onLogoClick?.()}
+      >
+        <Logo showWordmark size={props.layout === "mobile" ? "sm" : "md"} />
+      </button>
       {props.showAccountControls === true && props.layout === "desktop" ? (
         <a
           href="#"
@@ -53,6 +61,16 @@ function AppHeader(props: AppHeaderProps) {
           font-family: 'Signika', sans-serif;
         }
         .rdp-app-header--desktop { padding: var(--separation-1) var(--separation-3); }
+        .rdp-app-header__home {
+          background: transparent;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          font: inherit;
+          color: inherit;
+          display: inline-flex;
+          align-items: center;
+        }
         .rdp-app-header__myspace {
           margin-left: auto;
           color: var(--color-brand-active);

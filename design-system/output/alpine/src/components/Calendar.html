@@ -12,13 +12,17 @@
     ></div>
   </template>
   <div class="rdp-calendar__panel">
-    <CalendarActionBar
-      position="top"
-      x-bind:date="focusedDate"
-      x-bind:locale="locale"
-      x-on:prev="prevDay()"
-      x-on:next="nextDay()"
-    ></CalendarActionBar>
+    <template x-if="presentation !== 'sheet'">
+      <CalendarActionBar
+        position="top"
+        x-bind:date="focusedDate"
+        x-bind:locale="locale"
+        x-on:prev="prevDay()"
+        x-on:next="nextDay()"
+        x-bind:prevDisabled="prevDayDisabled"
+        x-bind:nextDisabled="nextDayDisabled"
+      ></CalendarActionBar>
+    </template>
     <CalendarMonthBar
       x-bind:viewMode="viewMode"
       x-bind:focusedYear="focusedYear"
@@ -27,12 +31,15 @@
       x-on:title-click="titleClick()"
       x-on:prev="prevMonth()"
       x-on:next="nextMonth()"
+      x-bind:prevDisabled="prevMonthDisabled"
+      x-bind:nextDisabled="nextMonthDisabled"
     ></CalendarMonthBar>
     <template x-if="viewMode === 'day'">
       <DateGrid
         x-bind:year="focusedYear"
         x-bind:month="focusedMonth"
         x-bind:selectedDate="focusedDate"
+        x-bind:minDate="minDate"
         x-bind:locale="locale"
         x-on:select="selectDay(d)"
       ></DateGrid>
@@ -41,6 +48,7 @@
       <MonthPicker
         x-bind:year="focusedYear"
         x-bind:selectedMonth="focusedMonth"
+        x-bind:minDate="minDate"
         x-bind:locale="locale"
         x-on:select="selectMonth(idx)"
       ></MonthPicker>
@@ -60,7 +68,7 @@
               background: var(--color-white);
               border: 1px solid var(--color-border);
               border-radius: var(--radius-default);
-              padding: var(--separation-2);
+              padding: 0;
             }
             .rdp-calendar--sheet { position: fixed; inset: 0; display: grid; align-items: end; }
             .rdp-calendar__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }
@@ -143,6 +151,55 @@
         } else if (this.viewMode === "month") {
           this.viewMode = "year";
         }
+      },
+      get prevDayDisabled() {
+        if (!props.minDate) return false;
+        const cur = new Date(
+          this.focusedDate.getFullYear(),
+          this.focusedDate.getMonth(),
+          this.focusedDate.getDate()
+        );
+        const min = new Date(
+          props.minDate.getFullYear(),
+          props.minDate.getMonth(),
+          props.minDate.getDate()
+        );
+        return cur.getTime() <= min.getTime();
+      },
+      get nextDayDisabled() {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        yesterday.setHours(0, 0, 0, 0);
+        const cur = new Date(
+          this.focusedDate.getFullYear(),
+          this.focusedDate.getMonth(),
+          this.focusedDate.getDate()
+        );
+        return cur.getTime() >= yesterday.getTime();
+      },
+      get prevMonthDisabled() {
+        if (this.viewMode === "year") {
+          if (!props.yearRange) return false;
+          return this.focusedYear <= props.yearRange.min;
+        }
+        if (!props.minDate) return false;
+        const minY = props.minDate.getFullYear();
+        const minM = props.minDate.getMonth();
+        if (this.focusedYear < minY) return true;
+        if (this.focusedYear > minY) return false;
+        return this.focusedMonth <= minM;
+      },
+      get nextMonthDisabled() {
+        const today = new Date();
+        const curY = today.getFullYear();
+        const curM = today.getMonth();
+        if (this.viewMode === "year") {
+          if (!props.yearRange) return false;
+          return this.focusedYear >= props.yearRange.max;
+        }
+        if (this.focusedYear > curY) return true;
+        if (this.focusedYear < curY) return false;
+        return this.focusedMonth >= curM;
       },
       init() {
         this.focusedDate = props.selectedDate;

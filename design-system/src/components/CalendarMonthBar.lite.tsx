@@ -14,6 +14,8 @@ type CalendarMonthBarProps = {
   onTitleClick?: () => void;
   onPrev?: () => void;
   onNext?: () => void;
+  prevDisabled?: boolean;
+  nextDisabled?: boolean;
 };
 
 export default function CalendarMonthBar(props: CalendarMonthBarProps) {
@@ -60,17 +62,49 @@ export default function CalendarMonthBar(props: CalendarMonthBarProps) {
           type="button"
           class="rdp-calendar-month-bar__btn rdp-calendar-month-bar__btn--prev"
           aria-label={t(state.prevAriaKey, undefined, props.locale ?? 'fr-FR')}
-          onClick={() => props.onPrev?.()}
+          aria-disabled={props.prevDisabled === true ? 'true' : undefined}
+          disabled={props.prevDisabled === true}
+          onClick={() => {
+            if (props.prevDisabled !== true) props.onPrev?.();
+          }}
         >
-          <Icon name="previous-item" size={20} decorative={true} />
+          <svg
+            viewBox="0 0 24 14"
+            width="22"
+            height="14"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 11 12 3l9 8" />
+          </svg>
         </button>
         <button
           type="button"
           class="rdp-calendar-month-bar__btn rdp-calendar-month-bar__btn--next"
           aria-label={t(state.nextAriaKey, undefined, props.locale ?? 'fr-FR')}
-          onClick={() => props.onNext?.()}
+          aria-disabled={props.nextDisabled === true ? 'true' : undefined}
+          disabled={props.nextDisabled === true}
+          onClick={() => {
+            if (props.nextDisabled !== true) props.onNext?.();
+          }}
         >
-          <Icon name="next-item" size={20} decorative={true} />
+          <svg
+            viewBox="0 0 24 14"
+            width="22"
+            height="14"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 3 12 11l9-8" />
+          </svg>
         </button>
       </div>
       <style>{`
@@ -78,7 +112,7 @@ export default function CalendarMonthBar(props: CalendarMonthBarProps) {
           display: flex;
           gap: var(--separation-1);
           align-items: center;
-          padding: var(--separation-1) 0;
+          padding: var(--separation-1) var(--separation-2);
           font-family: 'Roboto', sans-serif;
         }
         .rdp-calendar-month-bar__pill {
@@ -87,6 +121,11 @@ export default function CalendarMonthBar(props: CalendarMonthBarProps) {
           align-items: center;
           gap: var(--separation-1);
           width: auto;
+          /* Negative margin compensates for the pill's 1px outline so the
+             pill's left edge aligns with the bar-content edge; combined with
+             the pill's own internal padding the icon ends up matching the
+             action-bar icon above (both at +var(--separation-2) inside). */
+          margin-left: -1px;
           background: var(--color-white);
           color: var(--color-brand);
           border: 1px solid var(--color-brand);
@@ -118,6 +157,11 @@ export default function CalendarMonthBar(props: CalendarMonthBarProps) {
           justify-content: center;
         }
         .rdp-calendar-month-bar__btn:hover { color: var(--color-brand-active); }
+        .rdp-calendar-month-bar__btn[aria-disabled="true"] {
+          color: var(--color-light-grey);
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
       `}</style>
     </div>
   );
