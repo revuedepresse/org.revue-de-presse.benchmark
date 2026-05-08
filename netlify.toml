@@ -1,6 +1,6 @@
 [build]
   base = "nuxt"
-  publish = "nuxt/.output/public"
+  publish = "nuxt/dist"
   command = "make build"
 
 [build.environment]
