@@ -44,6 +44,7 @@ import ContactPage from "./ContactPage";
 import SupportPage from "./SupportPage";
 import SourcesPage from "./SourcesPage";
 import IntroCard from "./IntroCard";
+import Spinner from "./Spinner";
 import type { BlueskyPost } from "./BlueskyPostCard";
 import type { Locale } from "../utils/i18n";
 
@@ -209,6 +210,9 @@ function App(props: AppProps) {
               <Show when={currentView() === "main"}>
                 <IntroCard></IntroCard>
               </Show>
+              <Show when={currentView() === "main" && props.loading === true}>
+                <Spinner></Spinner>
+              </Show>
               <Show
                 when={
                   currentView() === "main" &&
@@ -223,7 +227,13 @@ function App(props: AppProps) {
                   }
                 ></Alert>
               </Show>
-              <Show when={currentView() === "main" && props.posts.length > 0}>
+              <Show
+                when={
+                  currentView() === "main" &&
+                  !props.loading &&
+                  props.posts.length > 0
+                }
+              >
                 <ol class="rdp-app__post-list">
                   <For each={props.posts}>
                     {(post, _index) => {
@@ -272,6 +282,9 @@ function App(props: AppProps) {
             <Show when={currentView() === "main"}>
               <IntroCard></IntroCard>
             </Show>
+            <Show when={currentView() === "main" && props.loading === true}>
+              <Spinner></Spinner>
+            </Show>
             <Show
               when={
                 currentView() === "main" &&
@@ -286,7 +299,13 @@ function App(props: AppProps) {
                 }
               ></Alert>
             </Show>
-            <Show when={currentView() === "main" && props.posts.length > 0}>
+            <Show
+              when={
+                currentView() === "main" &&
+                !props.loading &&
+                props.posts.length > 0
+              }
+            >
               <ol class="rdp-app__post-list">
                 <For each={props.posts}>
                   {(post, _index) => {

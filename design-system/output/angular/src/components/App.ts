@@ -89,6 +89,9 @@ import type { Locale } from "../utils/i18n";
             <ng-container *ngIf="currentView === 'main'"
               ><intro-card></intro-card
             ></ng-container>
+            <ng-container *ngIf="currentView === 'main' && loading === true"
+              ><spinner></spinner
+            ></ng-container>
             <ng-container
               *ngIf="currentView === 'main' && !loading && posts.length === 0"
               ><alert
@@ -96,7 +99,8 @@ import type { Locale } from "../utils/i18n";
                 [messageKey]="emptyMessageKey ?? 'alert.empty.no-content-for-date'"
               ></alert
             ></ng-container>
-            <ng-container *ngIf="currentView === 'main' && posts.length > 0"
+            <ng-container
+              *ngIf="currentView === 'main' && !loading && posts.length > 0"
               ><ol class="rdp-app__post-list">
                 <ng-container *ngFor="let post of posts"
                   ><li class="rdp-app__post-item">
@@ -133,6 +137,9 @@ import type { Locale } from "../utils/i18n";
           <ng-container *ngIf="currentView === 'main'"
             ><intro-card></intro-card
           ></ng-container>
+          <ng-container *ngIf="currentView === 'main' && loading === true"
+            ><spinner></spinner
+          ></ng-container>
           <ng-container
             *ngIf="currentView === 'main' && !loading && posts.length === 0"
             ><alert
@@ -140,7 +147,8 @@ import type { Locale } from "../utils/i18n";
               [messageKey]="emptyMessageKey ?? 'alert.empty.no-content-for-date'"
             ></alert
           ></ng-container>
-          <ng-container *ngIf="currentView === 'main' && posts.length > 0"
+          <ng-container
+            *ngIf="currentView === 'main' && !loading && posts.length > 0"
             ><ol class="rdp-app__post-list">
               <ng-container *ngFor="let post of posts"
                 ><li class="rdp-app__post-item">
@@ -476,6 +484,7 @@ export default class App {
     AppHeaderModule,
     SidebarModule,
     IntroCardModule,
+    SpinnerModule,
     AlertModule,
     BlueskyPostCardModule,
     LegalNoticePageModule,

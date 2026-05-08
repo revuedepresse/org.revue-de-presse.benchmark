@@ -43,6 +43,9 @@
         <template x-if="currentView === 'main'">
           <IntroCard></IntroCard>
         </template>
+        <template x-if="currentView === 'main' && loading === true">
+          <Spinner></Spinner>
+        </template>
         <template
           x-if="currentView === 'main' && !loading && posts.length === 0"
         >
@@ -51,7 +54,7 @@
             x-bind:messageKey="emptyMessageKey ?? 'alert.empty.no-content-for-date'"
           ></Alert>
         </template>
-        <template x-if="currentView === 'main' && posts.length > 0">
+        <template x-if="currentView === 'main' && !loading && posts.length > 0">
           <ol class="rdp-app__post-list">
             <template x-for="post in posts">
               <li class="rdp-app__post-item">
@@ -91,13 +94,16 @@
       <template x-if="currentView === 'main'">
         <IntroCard></IntroCard>
       </template>
+      <template x-if="currentView === 'main' && loading === true">
+        <Spinner></Spinner>
+      </template>
       <template x-if="currentView === 'main' && !loading && posts.length === 0">
         <Alert
           variant="empty"
           x-bind:messageKey="emptyMessageKey ?? 'alert.empty.no-content-for-date'"
         ></Alert>
       </template>
-      <template x-if="currentView === 'main' && posts.length > 0">
+      <template x-if="currentView === 'main' && !loading && posts.length > 0">
         <ol class="rdp-app__post-list">
           <template x-for="post in posts">
             <li class="rdp-app__post-item">

@@ -12,6 +12,7 @@ import './ContactPage.ts';
 import './SupportPage.ts';
 import './SourcesPage.ts';
 import './IntroCard.ts';
+import './Spinner.ts';
 import './BlueskyPostCard.ts';
 import type { Locale } from '../utils/i18n';
 
@@ -183,10 +184,13 @@ this.initialised = true }
        ${this.currentView === 'main' ?
              html`<intro-card ></intro-card>`
            : null}
+       ${this.currentView === 'main' && this.loading === true ?
+             html`<my-spinner ></my-spinner>`
+           : null}
        ${this.currentView === 'main' && !this.loading && this.posts.length === 0 ?
              html`<my-alert  variant="empty"  .messageKey=${this.emptyMessageKey ?? 'alert.empty.no-content-for-date'} ></my-alert>`
            : null}
-       ${this.currentView === 'main' && this.posts.length > 0 ?
+       ${this.currentView === 'main' && !this.loading && this.posts.length > 0 ?
              html`<ol >${this.posts?.map((post, index) => (
               html`<li ><bluesky-post-card  .post=${post}  .locale=${this.locale} ></bluesky-post-card></li>`
             ))}</ol>`
@@ -213,10 +217,13 @@ this.initialised = true }
        ${this.currentView === 'main' ?
              html`<intro-card ></intro-card>`
            : null}
+       ${this.currentView === 'main' && this.loading === true ?
+             html`<my-spinner ></my-spinner>`
+           : null}
        ${this.currentView === 'main' && !this.loading && this.posts.length === 0 ?
              html`<my-alert  variant="empty"  .messageKey=${this.emptyMessageKey ?? 'alert.empty.no-content-for-date'} ></my-alert>`
            : null}
-       ${this.currentView === 'main' && this.posts.length > 0 ?
+       ${this.currentView === 'main' && !this.loading && this.posts.length > 0 ?
              html`<ol >${this.posts?.map((post, index) => (
               html`<li ><bluesky-post-card  .post=${post}  .locale=${this.locale} ></bluesky-post-card></li>`
             ))}</ol>`

@@ -54,6 +54,7 @@ import  ContactPage from './ContactPage.svelte';
 import  SupportPage from './SupportPage.svelte';
 import  SourcesPage from './SourcesPage.svelte';
 import  IntroCard from './IntroCard.svelte';
+import  Spinner from './Spinner.svelte';
 import type { BlueskyPost } from './BlueskyPostCard.svelte';
 import type { Locale } from '../utils/i18n';
 
@@ -192,12 +193,17 @@ initialised = true; });
 
 
 {/if}
+{#if currentView === 'main' && loading === true }
+<Spinner ></Spinner>
+
+
+{/if}
 {#if currentView === 'main' && !loading && posts.length === 0 }
 <Alert  variant="empty"  messageKey={emptyMessageKey ?? 'alert.empty.no-content-for-date'} ></Alert>
 
 
 {/if}
-{#if currentView === 'main' && posts.length > 0 }
+{#if currentView === 'main' && !loading && posts.length > 0 }
 <ol  class="rdp-app__post-list" >
 {#each posts as post }
 <li  class="rdp-app__post-item" ><BlueskyPostCard  post={post}  locale={locale} ></BlueskyPostCard></li>
@@ -243,12 +249,17 @@ initialised = true; });
 
 
 {/if}
+{#if currentView === 'main' && loading === true }
+<Spinner ></Spinner>
+
+
+{/if}
 {#if currentView === 'main' && !loading && posts.length === 0 }
 <Alert  variant="empty"  messageKey={emptyMessageKey ?? 'alert.empty.no-content-for-date'} ></Alert>
 
 
 {/if}
-{#if currentView === 'main' && posts.length > 0 }
+{#if currentView === 'main' && !loading && posts.length > 0 }
 <ol  class="rdp-app__post-list" >
 {#each posts as post }
 <li  class="rdp-app__post-item" ><BlueskyPostCard  post={post}  locale={locale} ></BlueskyPostCard></li>

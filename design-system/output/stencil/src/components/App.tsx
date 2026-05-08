@@ -12,6 +12,7 @@ import { ContactPage } from "./ContactPage";
 import { SupportPage } from "./SupportPage";
 import { SourcesPage } from "./SourcesPage";
 import { IntroCard } from "./IntroCard";
+import { Spinner } from "./Spinner";
 import type { BlueskyPost } from "./BlueskyPostCard";
 import type { Locale } from "../utils/i18n";
 
@@ -194,6 +195,9 @@ export class App {
                 </button>
               ) : null}
               {this.currentView === "main" ? <intro-card></intro-card> : null}
+              {this.currentView === "main" && this.loading === true ? (
+                <spinner></spinner>
+              ) : null}
               {this.currentView === "main" &&
               !this.loading &&
               this.posts.length === 0 ? (
@@ -204,7 +208,9 @@ export class App {
                   }
                 ></alert>
               ) : null}
-              {this.currentView === "main" && this.posts.length > 0 ? (
+              {this.currentView === "main" &&
+              !this.loading &&
+              this.posts.length > 0 ? (
                 <ol class="rdp-app__post-list">
                   {this.posts?.map((post) => (
                     <li class="rdp-app__post-item">
@@ -247,6 +253,9 @@ export class App {
                 </button>
               ) : null}
               {this.currentView === "main" ? <intro-card></intro-card> : null}
+              {this.currentView === "main" && this.loading === true ? (
+                <spinner></spinner>
+              ) : null}
               {this.currentView === "main" &&
               !this.loading &&
               this.posts.length === 0 ? (
@@ -257,7 +266,9 @@ export class App {
                   }
                 ></alert>
               ) : null}
-              {this.currentView === "main" && this.posts.length > 0 ? (
+              {this.currentView === "main" &&
+              !this.loading &&
+              this.posts.length > 0 ? (
                 <ol class="rdp-app__post-list">
                   {this.posts?.map((post) => (
                     <li class="rdp-app__post-item">

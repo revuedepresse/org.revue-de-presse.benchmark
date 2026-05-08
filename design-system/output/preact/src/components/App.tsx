@@ -45,6 +45,7 @@ import ContactPage from "./ContactPage";
 import SupportPage from "./SupportPage";
 import SourcesPage from "./SourcesPage";
 import IntroCard from "./IntroCard";
+import Spinner from "./Spinner";
 import type { BlueskyPost } from "./BlueskyPostCard";
 import type { Locale } from "../utils/i18n";
 
@@ -207,6 +208,9 @@ function App(props: AppProps) {
               </button>
             ) : null}
             {currentView === "main" ? <IntroCard /> : null}
+            {currentView === "main" && props.loading === true ? (
+              <Spinner />
+            ) : null}
             {currentView === "main" &&
             !props.loading &&
             props.posts.length === 0 ? (
@@ -217,7 +221,9 @@ function App(props: AppProps) {
                 }
               />
             ) : null}
-            {currentView === "main" && props.posts.length > 0 ? (
+            {currentView === "main" &&
+            !props.loading &&
+            props.posts.length > 0 ? (
               <ol className="rdp-app__post-list">
                 {props.posts?.map((post) => (
                   <li className="rdp-app__post-item">
@@ -249,6 +255,9 @@ function App(props: AppProps) {
               </button>
             ) : null}
             {currentView === "main" ? <IntroCard /> : null}
+            {currentView === "main" && props.loading === true ? (
+              <Spinner />
+            ) : null}
             {currentView === "main" &&
             !props.loading &&
             props.posts.length === 0 ? (
@@ -259,7 +268,9 @@ function App(props: AppProps) {
                 }
               />
             ) : null}
-            {currentView === "main" && props.posts.length > 0 ? (
+            {currentView === "main" &&
+            !props.loading &&
+            props.posts.length > 0 ? (
               <ol className="rdp-app__post-list">
                 {props.posts?.map((post) => (
                   <li className="rdp-app__post-item">
