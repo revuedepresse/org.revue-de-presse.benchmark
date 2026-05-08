@@ -23,6 +23,23 @@ install_bubblewrap() {
 # and gradle aborts. Clear the legacy variable for any TWA invocation.
 unset ANDROID_SDK_ROOT
 
+# Bubblewrap 1.24.x still hard-codes androidbrowserhelper:2.6.2 in
+# FeatureManager.js, so every `bubblewrap update` rewrites app/build.gradle
+# back to that line. We need >=2.7.0 to clear the Play Console findings on
+# edge-to-edge handling and the deprecated setStatusBarColor /
+# setNavigationBarColor / getStatusBarColor APIs. Re-pin after every update.
+ABH_VERSION="2.7.1"
+
+_pin_abh_version() {
+  local gradle="app/build.gradle"
+  [ -f "$gradle" ] || return 0
+  if grep -qE "androidbrowserhelper:[0-9]+\\.[0-9]+\\.[0-9]+" "$gradle"; then
+    sed -i.tmp -E "s|(androidbrowserhelper:)[0-9]+\\.[0-9]+\\.[0-9]+|\\1${ABH_VERSION}|" "$gradle"
+    rm -f "${gradle}.tmp"
+    printf '✓ pinned androidbrowserhelper to %s in %s\n' "${ABH_VERSION}" "$gradle"
+  fi
+}
+
 # Bubblewrap (`update` and `build`) always fetches webManifestUrl. When the
 # production deploy lags behind the next TWA we want to ship, swap the URL
 # to a local server hosting public/manifest.webmanifest + icons for the
@@ -70,6 +87,7 @@ update_twa() {
     printf 'Copied twa-manifest.json.dist → twa-manifest.json. Edit signingKey.path before signing.\n'
   fi
   _with_local_manifest bubblewrap update
+  _pin_abh_version
 }
 
 build_twa() {
@@ -83,12 +101,14 @@ build_twa() {
   fi
   # Run update + build inside one local-manifest session so neither call
   # re-fetches the unreachable production webManifestUrl.
-  _with_local_manifest bash -c '
+  _with_local_manifest bash -c "
     set -e
     bubblewrap update
-    # Decline the "twa-manifest.json changed" prompt — update just synced.
-    printf "n\n" | bubblewrap build --skipPwaValidation
-  '
+    $(declare -f _pin_abh_version)
+    ABH_VERSION='${ABH_VERSION}' _pin_abh_version
+    # Decline the 'twa-manifest.json changed' prompt — update just synced.
+    printf 'n\n' | bubblewrap build --skipPwaValidation
+  "
 }
 
 if [ "${1-}" = "install" ]; then install_bubblewrap; fi
