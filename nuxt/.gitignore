@@ -16,3 +16,12 @@ twa-manifest.json
 manifest-checksum.txt
 app/
 android.keystore
+.gradle/
+build/
+build.gradle
+gradle/
+gradle.properties
+gradlew
+gradlew.bat
+settings.gradle
+local.properties
