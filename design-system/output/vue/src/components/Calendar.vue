@@ -203,6 +203,7 @@ function prevDay() {
   focusedDate.value = next;
   focusedYear.value = next.getFullYear();
   focusedMonth.value = next.getMonth();
+  props.onSelect?.(next);
 }
 function nextDay() {
   const next = new Date(focusedDate.value);
@@ -210,6 +211,7 @@ function nextDay() {
   focusedDate.value = next;
   focusedYear.value = next.getFullYear();
   focusedMonth.value = next.getMonth();
+  props.onSelect?.(next);
 }
 function prevMonth() {
   if (viewMode.value === "year") {
