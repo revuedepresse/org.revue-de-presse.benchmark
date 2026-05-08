@@ -352,6 +352,7 @@ type SnapshotItem = {
   id: string;
   label: string;
 };
+type ViewKey = "main" | "legal" | "contact" | "support" | "sources";
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -368,11 +369,13 @@ type AppProps = {
   emptyMessageKey?: string;
   showPopularNews?: boolean;
   locale?: Locale;
+  initialView?: ViewKey;
   onAccountClick?: () => void;
   onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
+  onViewChange?: (view: ViewKey) => void;
 };
 
 const props = defineProps<AppProps>();
@@ -383,6 +386,9 @@ const initialised = ref(false);
 
 onMounted(() => {
   focusedDate.value = props.pickedDate;
+  if (props.initialView) {
+    currentView.value = props.initialView;
+  }
   initialised.value = true;
 });
 
@@ -426,6 +432,7 @@ function prevDay() {
   next.setDate(next.getDate() - 1);
   focusedDate.value = next;
   currentView.value = "main";
+  props.onViewChange?.("main");
   props.onDateSelect?.(next);
 }
 function nextDay() {
@@ -433,6 +440,7 @@ function nextDay() {
   next.setDate(next.getDate() + 1);
   focusedDate.value = next;
   currentView.value = "main";
+  props.onViewChange?.("main");
   props.onDateSelect?.(next);
 }
 function openCalendar() {
@@ -445,18 +453,18 @@ function pickFromCalendar(d: Date) {
   focusedDate.value = d;
   isCalendarOpen.value = false;
   currentView.value = "main";
+  props.onViewChange?.("main");
   props.onDateSelect?.(d);
 }
 function selectFromSidebar(d: Date) {
-  // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
-  // day clicks, and prev/next month clicks. Any of those should bring
-  // the publication list back into focus when the user is on a sub-page.
   focusedDate.value = d;
   currentView.value = "main";
+  props.onViewChange?.("main");
   props.onDateSelect?.(d);
 }
-function goTo(view: "main" | "legal" | "contact" | "support" | "sources") {
+function goTo(view: ViewKey) {
   currentView.value = view;
+  props.onViewChange?.(view);
 }
 function goHome() {
   const yesterday = new Date();
@@ -464,6 +472,7 @@ function goHome() {
   yesterday.setHours(0, 0, 0, 0);
   focusedDate.value = yesterday;
   currentView.value = "main";
+  props.onViewChange?.("main");
   props.onDateSelect?.(yesterday);
   props.onLogoClick?.();
 }

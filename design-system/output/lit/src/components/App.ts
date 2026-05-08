@@ -24,6 +24,7 @@ import type { Locale } from '../utils/i18n';
  id: string;
  label: string;
 }
+type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources'
 type AppProps = {
  layout?: 'mobile' | 'desktop';
  authenticated?: boolean;
@@ -40,11 +41,13 @@ type AppProps = {
  emptyMessageKey?: string;
  showPopularNews?: boolean;
  locale?: Locale;
+ initialView?: ViewKey;
  onAccountClick?: () => void;
  onMySpaceClick?: () => void;
  onListSelect?: (id: string) => void;
  onDateSelect?: (date: Date) => void;
  onLogoClick?: () => void;
+ onViewChange?: (view: ViewKey) => void;
 }
 
 
@@ -62,7 +65,9 @@ type AppProps = {
 
 
      @property() pickedDate: any
+@property() initialView: any
 @property() locale: any
+@property() onViewChange: any
 @property() onDateSelect: any
 @property() onLogoClick: any
 @property() minDate: any
@@ -94,6 +99,7 @@ prevDay() {
  next.setDate(next.getDate() - 1);
  this.focusedDate = next;
  this.currentView = 'main';
+ this.onViewChange?.('main');
  this.onDateSelect?.(next);
 }
 nextDay() {
@@ -101,6 +107,7 @@ nextDay() {
  next.setDate(next.getDate() + 1);
  this.focusedDate = next;
  this.currentView = 'main';
+ this.onViewChange?.('main');
  this.onDateSelect?.(next);
 }
 openCalendar() {
@@ -113,18 +120,18 @@ pickFromCalendar(d: Date) {
  this.focusedDate = d;
  this.isCalendarOpen = false;
  this.currentView = 'main';
+ this.onViewChange?.('main');
  this.onDateSelect?.(d);
 }
 selectFromSidebar(d: Date) {
- // The sidebar calendar fires onDateSelect on day-cell taps, prev/next
- // day clicks, and prev/next month clicks. Any of those should bring
- // the publication list back into focus when the user is on a sub-page.
  this.focusedDate = d;
  this.currentView = 'main';
+ this.onViewChange?.('main');
  this.onDateSelect?.(d);
 }
-goTo(view: 'main' | 'legal' | 'contact' | 'support' | 'sources') {
+goTo(view: ViewKey) {
  this.currentView = view;
+ this.onViewChange?.(view);
 }
 goHome() {
  const yesterday = new Date();
@@ -132,6 +139,7 @@ goHome() {
  yesterday.setHours(0, 0, 0, 0);
  this.focusedDate = yesterday;
  this.currentView = 'main';
+ this.onViewChange?.('main');
  this.onDateSelect?.(yesterday);
  this.onLogoClick?.();
 }
@@ -151,6 +159,9 @@ get nextDayDisabled() {
 
 
        connectedCallback() { this.focusedDate = this.pickedDate;
+if (this.initialView) {
+ this.currentView = this.initialView;
+}
 this.initialised = true }
 
 

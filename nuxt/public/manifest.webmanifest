@@ -1,0 +1,29 @@
+{
+  "name": "Revue de presse - revue-de-presse.org",
+  "short_name": "Revue de presse - revue-de-presse.org",
+  "lang": "fr",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#006663",
+  "theme_color": "#006663",
+  "icons": [
+    {
+      "src": "/revue-de-presse_512x512_006663.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/revue-de-presse_512x512_monochrome.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/revue-de-presse_48x48_monochrome.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "monochrome"
+    }
+  ]
+}
