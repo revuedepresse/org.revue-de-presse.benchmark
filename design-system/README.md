@@ -1,8 +1,6 @@
 # @revue-de-presse/design-system
 
-Framework-agnostic design system for [revue-de-presse.org](https://revue-de-presse.org), authored once in [Mitosis](https://github.com/BuilderIO/mitosis) and compiled to React, Vue, Svelte, Solid, Qwik, Preact, Lit, Stencil, and Alpine.
-
-> **M1 status:** foundation tokens + 11 atoms compiled to React and Vue. M2 (molecules + 3 more generators), M3 (organisms + auth with OWASP password rules), M4 (remaining 5 generators), and M5 (publish v1.0.0) are tracked in `../docs/superpowers/plans/`.
+Framework-agnostic design system for [revue-de-presse.org](https://revue-de-presse.org), authored once in [Mitosis](https://github.com/BuilderIO/mitosis) and compiled to React, Vue, Svelte, Solid, Qwik, Preact, Lit, Stencil, Alpine, and Angular.
 
 ## Quick start (local dev)
 
@@ -26,14 +24,6 @@ pnpm demo            # Vite + Vue showcase app (port 5173)
 - `stories/` — Histoire stories.
 - `tests/unit/` — Vitest unit suite.
 
-## Specs and design
-
-- `components.md` — component catalogue with states, props, i18n keys, and artboard cross-reference.
-- `../docs/superpowers/specs/2026-05-06-mitosis-design-system-design.md` — full spec.
-- `../docs/superpowers/plans/` — M1 through M5 implementation plans.
-- `research/` — XD deck atlas (59 PNGs), live-site CSS-custom-property snapshot, per-screen catalogue.
-- `assets/` — extracted brand logo SVG and the live site's Bluesky logo PNG.
-
 ## License
 
-MIT.
+[GNU General Public License v3.0](../LICENSE).
