@@ -24,7 +24,7 @@
   "appVersionCode": 11,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://revue-de-presse.org/_nuxt/manifest.f894fda0.json",
+  "webManifestUrl": "https://revue-de-presse.org/manifest.webmanifest",
   "fallbackType": "customtabs",
   "features": {},
   "alphaDependencies": {
@@ -33,7 +33,7 @@
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
-  "fullScopeUrl": "https://revue-de-presse.org/_nuxt/",
+  "fullScopeUrl": "https://revue-de-presse.org/",
   "minSdkVersion": 21,
   "orientation": "portrait",
   "fingerprints": [],
