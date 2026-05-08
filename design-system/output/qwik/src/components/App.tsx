@@ -24,6 +24,8 @@ import Sidebar from "./Sidebar.jsx";
 
 import SourcesPage from "./SourcesPage.jsx";
 
+import Spinner from "./Spinner.jsx";
+
 import SupportPage from "./SupportPage.jsx";
 
 import {
@@ -324,6 +326,9 @@ export const App = component$((props: AppProps) => {
               </button>
             ) : null}
             {state.currentView === "main" ? <IntroCard></IntroCard> : null}
+            {state.currentView === "main" && props.loading === true ? (
+              <Spinner></Spinner>
+            ) : null}
             {state.currentView === "main" &&
             !props.loading &&
             props.posts.length === 0 ? (
@@ -334,7 +339,9 @@ export const App = component$((props: AppProps) => {
                 }
               ></Alert>
             ) : null}
-            {state.currentView === "main" && props.posts.length > 0 ? (
+            {state.currentView === "main" &&
+            !props.loading &&
+            props.posts.length > 0 ? (
               <ol class="rdp-app__post-list">
                 {(props.posts || []).map((post) => {
                   return (
@@ -388,6 +395,9 @@ export const App = component$((props: AppProps) => {
               </button>
             ) : null}
             {state.currentView === "main" ? <IntroCard></IntroCard> : null}
+            {state.currentView === "main" && props.loading === true ? (
+              <Spinner></Spinner>
+            ) : null}
             {state.currentView === "main" &&
             !props.loading &&
             props.posts.length === 0 ? (
@@ -398,7 +408,9 @@ export const App = component$((props: AppProps) => {
                 }
               ></Alert>
             ) : null}
-            {state.currentView === "main" && props.posts.length > 0 ? (
+            {state.currentView === "main" &&
+            !props.loading &&
+            props.posts.length > 0 ? (
               <ol class="rdp-app__post-list">
                 {(props.posts || []).map((post) => {
                   return (
