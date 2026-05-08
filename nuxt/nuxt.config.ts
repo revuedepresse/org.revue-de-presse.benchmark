@@ -47,7 +47,7 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/sitemap'],
 
   site: {
-    url: 'https://revue-de-presse.org',
+    url: baseURL,
   },
 
   sitemap: {
@@ -55,7 +55,7 @@ export default defineNuxtConfig({
     // the 404 page; concrete dated URLs come from urls() below.
     exclude: ['/contenu-introuvable', '/source/**', '/[day]', '/[day]/**'],
     defaults: { changefreq: 'monthly', priority: 0.7 },
-    urls: () => buildLegacySitemapUrls(),
+    urls: buildLegacySitemapUrls,
   },
 
   app: {
