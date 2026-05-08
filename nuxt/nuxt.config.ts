@@ -58,6 +58,7 @@ export default defineNuxtConfig({
 
   site: {
     url: baseURL,
+    name: 'revue-de-presse.org',
   },
 
   sitemap: {
