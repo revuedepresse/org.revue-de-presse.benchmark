@@ -6,7 +6,7 @@
 // (UTC) the human-readable suffix renders in UTC, matching legacy build-time
 // behaviour. Pin to 'Europe/Paris' here if drift is observed in production.
 
-const clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const serverTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export const HIGHLIGHTS_PATH_PREFIX = '/actualites-du-';
 export const SITEMAP_MIN_DATE = '04 Mar 2025 00:00:00 GMT';
@@ -18,15 +18,15 @@ export type SitemapUrl = {
   priority?: number;
 };
 
-export const setTimezone = (date: Date, timezone = clientTimezone): Date => {
+export const setTimezone = (date: Date, timezone = serverTimezone): Date => {
   return new Date(date.toLocaleString('en-US', { timeZone: timezone }));
 };
 
-export const now = (timezone = clientTimezone): Date => {
+export const now = (timezone = serverTimezone): Date => {
   return setTimezone(new Date(), timezone);
 };
 
-export const yesterday = (timezone = clientTimezone): Date => {
+export const yesterday = (timezone = serverTimezone): Date => {
   const d = now(timezone);
   d.setDate(d.getDate() - 1);
   return d;
@@ -64,10 +64,9 @@ export const days = (until: Date | undefined = undefined): string[] => {
   }
 
   do {
-    const nextDate = new Date();
-    nextDate.setMonth(next.getMonth());
-    nextDate.setFullYear(next.getFullYear());
-    out.push(setTimezone(new Date(nextDate.setDate(next.getDate() + 1))));
+    out.push(
+      setTimezone(new Date(next.getFullYear(), next.getMonth(), next.getDate() + 1)),
+    );
     next = out[out.length - 1];
   } while (next <= upTo);
 
