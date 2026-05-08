@@ -9,7 +9,7 @@ describe('mapStatusToFeedItem', () => {
       url: 'https://bsky.app/profile/franceculture.fr/post/123',
       avatar_url: 'https://cdn.bsky.app/avatar.jpg',
       text: 'Lorem ipsum.',
-      date: '2026-05-07T08:00:00',
+      date: '2026-05-07T08:00:00Z',
     };
 
     const item = mapStatusToFeedItem(raw);
@@ -21,7 +21,7 @@ describe('mapStatusToFeedItem', () => {
     expect(item.description).toBe('https://cdn.bsky.app/avatar.jpg');
     expect(item.content).toBe('Lorem ipsum.');
     expect(item.date).toBeInstanceOf(Date);
-    expect(item.date?.toISOString().startsWith('2026-05-07')).toBe(true);
+    expect(item.date.toISOString().startsWith('2026-05-07')).toBe(true);
   });
 
   it('flattens nested .status (upstream shape)', () => {
@@ -55,7 +55,7 @@ describe('mapStatusToFeedItem', () => {
     expect(item.id).toBe('https://bsky.app/x/3');
   });
 
-  it('returns date=undefined when upstream date is missing', () => {
+  it('returns the current date when upstream date is missing', () => {
     const raw: RawStatus = {
       screen_name: 'x.fr',
       publication_id: 'pub-4',
@@ -65,6 +65,8 @@ describe('mapStatusToFeedItem', () => {
 
     const item = mapStatusToFeedItem(raw);
 
-    expect(item.date).toBeUndefined();
+    expect(item.date).toBeInstanceOf(Date);
+    // Should be approximately now — within the last 5 seconds.
+    expect(Date.now() - item.date.getTime()).toBeLessThan(5000);
   });
 });
