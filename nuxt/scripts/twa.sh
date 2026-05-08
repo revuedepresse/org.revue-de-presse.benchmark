@@ -45,6 +45,14 @@ _with_local_manifest() {
   if [ "$needs_local_serve" = "1" ]; then
     mv twa-manifest.json.bak twa-manifest.json
     [ -n "$srv_pid" ] && kill "$srv_pid" 2>/dev/null || true
+    # Resync manifest-checksum.txt to the restored manifest so a subsequent
+    # plain `bubblewrap build` doesn't detect a change and try to re-fetch
+    # the still-unreachable production webManifestUrl. (Bubblewrap stores
+    # SHA-1 of twa-manifest.json contents in manifest-checksum.txt and
+    # triggers an update if the hash differs.)
+    if [ -f manifest-checksum.txt ]; then
+      printf '%s' "$(shasum -a 1 twa-manifest.json | awk '{print $1}')" > manifest-checksum.txt
+    fi
   fi
   return $rc
 }
