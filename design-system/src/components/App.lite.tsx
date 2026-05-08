@@ -417,7 +417,6 @@ export default function App(props: AppProps) {
           height: var(--rdp-mobile-dock-height);
           box-sizing: border-box;
           background: var(--color-white);
-          border-top: 1px solid var(--color-border);
           padding: 0 var(--separation-2) 0 0;
           z-index: 20;
           box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
