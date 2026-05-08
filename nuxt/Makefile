@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 .ONESHELL:
-.PHONY: install dev build preview install-bubblewrap update-twa help
+.PHONY: install dev build preview install-bubblewrap update-twa build-twa help
 
 install: ## Install Node dependencies (delegates to pnpm)
 	@pnpm install
@@ -28,8 +28,11 @@ preview: ## Preview the production build locally
 install-bubblewrap: ## Install bubblewrap CLI globally (Trusted Web Activity tooling)
 	@/bin/bash -c 'source ./scripts/twa.sh && install_bubblewrap'
 
-update-twa: install-bubblewrap ## Build the Android TWA from the current twa-manifest.json
+update-twa: install-bubblewrap ## Regenerate the Android project from the current twa-manifest.json
 	@/bin/bash -c 'source ./scripts/twa.sh && update_twa'
+
+build-twa: ## Compile and sign the Android TWA (set BUBBLEWRAP_KEYSTORE_PASSWORD/BUBBLEWRAP_KEY_PASSWORD)
+	@/bin/bash -c 'source ./scripts/twa.sh && build_twa'
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
