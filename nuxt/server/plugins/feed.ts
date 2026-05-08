@@ -12,6 +12,7 @@
 // feed still renders with channel metadata and zero items rather than 5xx.
 
 import { defineNitroPlugin } from 'nitropack/runtime/plugin';
+import type { NitroCtx } from 'nuxt-module-feed';
 
 export type RawStatus = {
   screen_name?: string;
@@ -29,7 +30,7 @@ export type FeedItem = {
   link: string;
   description: string;
   content: string;
-  date?: Date;
+  date: Date;
 };
 
 export const mapStatusToFeedItem = (raw: RawStatus): FeedItem => {
@@ -40,7 +41,7 @@ export const mapStatusToFeedItem = (raw: RawStatus): FeedItem => {
     link: s.url ?? '',
     description: s.avatar_url ?? '',
     content: s.text ?? '',
-    date: s.date ? new Date(s.date) : undefined,
+    date: s.date ? new Date(s.date) : new Date(),
   };
 };
 
@@ -57,16 +58,8 @@ const yesterdayYmd = (): string => {
   return formatYmd(d);
 };
 
-type FeedHookCtx = {
-  feed: {
-    options: Record<string, unknown>;
-    addItem: (item: FeedItem) => void;
-  };
-  options: { path: string };
-};
-
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('feed:generate', async (ctx: FeedHookCtx) => {
+  nitroApp.hooks.hook('feed:generate', async (ctx: NitroCtx) => {
     if (ctx.options.path !== '/feed.xml') return;
 
     const { feed } = ctx;
@@ -77,6 +70,7 @@ export default defineNitroPlugin((nitroApp) => {
       title: 'Revue de presse',
       description:
         'Retrouver chaque jour les 10 publications médias ayant été les plus relayés au cours de la journée.',
+      copyright: '',
     };
 
     const config = useRuntimeConfig();
