@@ -8,19 +8,24 @@ install: ## Install Node dependencies (delegates to pnpm)
 dev: ## Start the Nuxt dev server (http://localhost:3000)
 	@pnpm dev
 
+# Nitro's `netlify` preset writes the publish dir to `{rootDir}/dist/`,
+# not `.output/public/` — so the well-known assets must be copied there
+# for Netlify to serve them.
+PUBLISH_DIR := dist
+
 build: ## Build the Nuxt app for production (and copy /.well-known assets)
-	@pnpm build
+	@NITRO_PRESET=netlify pnpm build
 	@$(MAKE) publish-asset-links publish-atproto-did
 
 publish-asset-links: ## Copy assetlinks.json into the build output (TWA digital asset links)
-	@mkdir -p .output/public/well-known
-	@cp public/well-known/assetlinks.json .output/public/well-known/assetlinks.json
-	@printf '✓ assetlinks.json → .output/public/well-known/assetlinks.json\n'
+	@mkdir -p $(PUBLISH_DIR)/well-known
+	@cp public/well-known/assetlinks.json $(PUBLISH_DIR)/well-known/assetlinks.json
+	@printf '✓ assetlinks.json → %s/well-known/assetlinks.json\n' '$(PUBLISH_DIR)'
 
 publish-atproto-did: ## Copy atproto-did into the build output
-	@mkdir -p .output/public/well-known
-	@cp public/well-known/atproto-did .output/public/well-known/atproto-did
-	@printf '✓ atproto-did → .output/public/well-known/atproto-did\n'
+	@mkdir -p $(PUBLISH_DIR)/well-known
+	@cp public/well-known/atproto-did $(PUBLISH_DIR)/well-known/atproto-did
+	@printf '✓ atproto-did → %s/well-known/atproto-did\n' '$(PUBLISH_DIR)'
 
 preview: ## Preview the production build locally
 	@pnpm preview
