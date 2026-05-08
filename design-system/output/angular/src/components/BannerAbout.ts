@@ -193,10 +193,10 @@ import { t } from "../utils/i18n";
                 }
                 .rdp-banner-about__subscribe-to {
                   display: inline-flex;
-                  background: var(--color-brand-bluesky);
+                  background: transparent;
                   border-radius: 4px;
-                  padding: 5px var(--separation-0) 4px;
-                  margin-top: var(--separation-0);
+                  padding: 5px var(--separation-0) 4px 0;
+                  margin: var(--separation-0) 0 0 0;
                   font-size: var(--font-size-footer-outer-link);
                   line-height: var(--line-height-base);
                   letter-spacing: 0;
@@ -204,7 +204,7 @@ import { t } from "../utils/i18n";
                   color: var(--color-white);
                   font-weight: bold;
                 }
-                .rdp-banner-about__subscription-label { padding-left: var(--separation-0); }
+                .rdp-banner-about__subscription-label { padding-left: 0; }
                 .rdp-banner-about__play-store {
                   display: inline-block;
                   margin-top: var(--separation-1);
