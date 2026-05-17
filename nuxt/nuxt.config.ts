@@ -15,7 +15,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     apiBaseUrl: '',
-    apiAuthToken: '',
+    apiClientSecret: '',
   },
 
   experimental: {
