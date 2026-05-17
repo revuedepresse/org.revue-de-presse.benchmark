@@ -68,7 +68,8 @@ function mapStatus(raw: RawStatus, fallbackDate: string): BlueskyPost {
 
 export function useHighlights(date: Ref<Date>) {
   // Hits the Nitro proxy at /api/highlights — it forwards to
-  // `${NUXT_API_BASE_URL}/api/twitter/highlights` with x-auth-token attached.
+  // `${NUXT_API_BASE_URL}/api/highlights` with a short-lived Bearer token
+  // minted server-side from NUXT_API_CLIENT_SECRET. Browser never sees the secret.
   const { data, pending, error, refresh } = useFetch<unknown>('/api/highlights', {
     query: computed(() => {
       const day = formatYmd(date.value);
