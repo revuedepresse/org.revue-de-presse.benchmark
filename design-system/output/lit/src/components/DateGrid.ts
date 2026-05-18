@@ -1,6 +1,11 @@
 import  { t } from '../utils/i18n';
 import type { Locale } from '../utils/i18n';
-
+   const ymd = (d: Date): string => {
+ const y = d.getFullYear();
+ const m = String(d.getMonth() + 1).padStart(2, '0');
+ const day = String(d.getDate()).padStart(2, '0');
+ return `${y}-${m}-${day}`;
+};
 
 
    import { LitElement, html, css } from 'lit';
@@ -80,7 +85,7 @@ isDisabled(d: Date) {
             ))}</tr></thead>
         <tbody >${this.rows?.map((row, index) => (
               html`<tr >${row?.map((d, index) => (
-             html`<td  class={`rdp-date-grid__cell${state.isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  role="gridcell"  aria-selected=${this.isSelected(d) ? 'true' : 'false'}  aria-disabled=${this.isDisabled(d) ? 'true' : undefined}  data-other-month=${d.getMonth() !== this.month ? 'true' : undefined}  data-future=${this.isDisabled(d) ? 'true' : undefined}  @click=${(event) => {
+             html`<td  class={`rdp-date-grid__cell${state.isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  role="gridcell"  data-testid="calendar-date"  aria-selected=${this.isSelected(d) ? 'true' : 'false'}  aria-disabled=${this.isDisabled(d) ? 'true' : undefined}  data-other-month=${d.getMonth() !== this.month ? 'true' : undefined}  data-future=${this.isDisabled(d) ? 'true' : undefined}  data-date=${ymd(d)}  @click=${(event) => {
           if (!this.isDisabled(d)) this.onSelect?.(d);
         }} >${!this.isDisabled(d) ?
               html`${d.getDate()}`

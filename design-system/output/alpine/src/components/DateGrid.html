@@ -16,10 +16,12 @@
         <template x-for="d in row">
           <td
             role="gridcell"
+            data-testid="calendar-date"
             x-bind:aria-selected="isSelected(d) ? 'true' : 'false'"
             x-bind:aria-disabled="isDisabled(d) ? 'true' : undefined"
             x-bind:data-other-month="d.getMonth() !== month ? 'true' : undefined"
             x-bind:data-future="isDisabled(d) ? 'true' : undefined"
+            x-bind:data-date="ymd(d)"
             x-bind:class="`rdp-date-grid__cell${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`"
             x-on:click="if (!isDisabled(d)) onSelect?.(d)"
           >

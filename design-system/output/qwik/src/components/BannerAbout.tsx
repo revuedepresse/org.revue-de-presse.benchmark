@@ -110,6 +110,8 @@ export const BannerAbout = component$((props: BannerAboutProps) => {
       <p class="rdp-banner-about__paragraph">
         <a
           class="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="legal"
           href={props.legalNoticeHref ?? "/mentions-legales"}
           onClick$={$((event) => handleLegalClick(props, state, year, event))}
         >
@@ -118,6 +120,8 @@ export const BannerAbout = component$((props: BannerAboutProps) => {
         <br />
         <a
           class="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="contact"
           href={props.contactHref ?? "/nous-contacter"}
           onClick$={$((event) => handleContactClick(props, state, year, event))}
         >
@@ -126,6 +130,8 @@ export const BannerAbout = component$((props: BannerAboutProps) => {
         <br />
         <a
           class="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="support"
           href={props.supportHref ?? "/nous-soutenir"}
           onClick$={$((event) => handleSupportClick(props, state, year, event))}
         >
@@ -134,6 +140,8 @@ export const BannerAbout = component$((props: BannerAboutProps) => {
         <br />
         <a
           class="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="sources"
           href={props.sourcesHref ?? "/sources"}
           onClick$={$((event) => handleSourcesClick(props, state, year, event))}
         >

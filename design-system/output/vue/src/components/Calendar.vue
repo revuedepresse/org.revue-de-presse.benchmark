@@ -1,6 +1,7 @@
 <template>
   <div
     role="dialog"
+    data-testid="calendar"
     :class="`rdp-calendar rdp-calendar--${presentation ?? 'inline'}`"
     :aria-modal="presentation === 'sheet' ? 'true' : 'false'"
   >

@@ -161,7 +161,10 @@ function App(props: AppProps) {
   }, []);
 
   return (
-    <div className={`rdp-app rdp-app--${props.layout ?? "desktop"}`}>
+    <div
+      data-testid="app-shell"
+      className={`rdp-app rdp-app--${props.layout ?? "desktop"}`}
+    >
       <div className="rdp-app__header-ribbon">
         <div className="rdp-app__header-inner">
           <AppHeader

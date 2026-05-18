@@ -184,6 +184,7 @@ function Calendar(props: CalendarProps) {
       <div
         class={`rdp-calendar rdp-calendar--${props.presentation ?? "inline"}`}
         role="dialog"
+        data-testid="calendar"
         aria-modal={props.presentation === "sheet" ? "true" : "false"}
       >
         <Show when={props.presentation === "sheet"}>
