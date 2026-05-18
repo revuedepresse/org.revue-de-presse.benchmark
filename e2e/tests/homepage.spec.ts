@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { mockHighlights } from '../support/mockApi';
 import { appShell, postCards } from '../support/selectors';
 
+// /api/highlights is mocked at the upstream level via global-setup.ts so
+// both SSR (Nuxt) and CSR (Next) fetches see the same fixture data.
+
 test('home renders shell with a synth-fixture-shaped post list', async ({ page }) => {
-  await mockHighlights(page);
   await page.goto('/');
   await expect(appShell(page)).toBeVisible();
   // The homepage fetches "yesterday" relative to host time. We don't pin Date

@@ -15,6 +15,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
+  globalSetup: './global-setup.ts',
+  globalTeardown: './global-teardown.ts',
   reporter: [
     ['list'],
     ['html', { open: 'never' }],
@@ -78,8 +80,8 @@ export default defineConfig({
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
       env: {
-        API_BASE_URL: 'http://unused.test',
-        API_CLIENT_SECRET: 'unused',
+        API_BASE_URL: 'http://localhost:4000',
+        API_CLIENT_SECRET: 'mock-client-secret',
       },
     },
     {
@@ -89,8 +91,8 @@ export default defineConfig({
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
       env: {
-        API_BASE_URL: 'http://unused.test',
-        API_CLIENT_SECRET: 'unused',
+        API_BASE_URL: 'http://localhost:4000',
+        API_CLIENT_SECRET: 'mock-client-secret',
       },
     },
   ],
