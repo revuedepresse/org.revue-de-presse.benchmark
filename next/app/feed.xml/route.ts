@@ -3,40 +3,13 @@
 // description<-avatar_url, content<-text), same yesterday-only window,
 // same swallow-on-error behaviour (emit channel metadata with zero items
 // rather than 5xx).
+//
+// Pure mapping helpers live in ./mapStatusToFeedItem.ts because Next App
+// Router route files cannot export non-HTTP-method names (build fails
+// otherwise).
 
-import { cleanForFeed } from '@/lib/cleanText';
 import { getApiToken, refreshApiToken } from '@/lib/apiToken';
-
-export type RawStatus = {
-  screen_name?: string;
-  publication_id?: string;
-  url?: string;
-  avatar_url?: string;
-  text?: string;
-  date?: string;
-  status?: RawStatus;
-};
-
-export type FeedItem = {
-  title: string;
-  id: string;
-  link: string;
-  description: string;
-  content: string;
-  date: Date;
-};
-
-export const mapStatusToFeedItem = (raw: RawStatus): FeedItem => {
-  const s = raw.status ?? raw;
-  return {
-    title: cleanForFeed(s.screen_name ?? ''),
-    id: s.publication_id ?? s.url ?? '',
-    link: s.url ?? '',
-    description: cleanForFeed(s.avatar_url ?? ''),
-    content: cleanForFeed(s.text ?? ''),
-    date: s.date ? new Date(s.date) : new Date(),
-  };
-};
+import { mapStatusToFeedItem, type FeedItem, type RawStatus } from './mapStatusToFeedItem';
 
 const formatYmd = (d: Date): string => {
   const y = d.getFullYear();
