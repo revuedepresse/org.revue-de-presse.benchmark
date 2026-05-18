@@ -23,6 +23,7 @@ import type { Locale } from "../utils/i18n";
   template: `
     <div
       role="dialog"
+      data-testid="calendar"
       [class]="\`rdp-calendar rdp-calendar--\${presentation ?? 'inline'}\`"
       [attr.aria-modal]="presentation === 'sheet' ? 'true' : 'false'"
     >

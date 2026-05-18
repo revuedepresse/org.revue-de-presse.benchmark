@@ -88,6 +88,8 @@ export default function BannerAbout(props: BannerAboutProps) {
           class="rdp-banner-about__outer-link"
           href={props.legalNoticeHref ?? '/mentions-legales'}
           onClick={(event: any) => state.handleLegalClick(event)}
+          data-testid="view-button"
+          data-view="legal"
         >
           {t('footer.about.privacy-policy')}
         </a>
@@ -96,6 +98,8 @@ export default function BannerAbout(props: BannerAboutProps) {
           class="rdp-banner-about__outer-link"
           href={props.contactHref ?? '/nous-contacter'}
           onClick={(event: any) => state.handleContactClick(event)}
+          data-testid="view-button"
+          data-view="contact"
         >
           {t('footer.about.contact')}
         </a>
@@ -104,6 +108,8 @@ export default function BannerAbout(props: BannerAboutProps) {
           class="rdp-banner-about__outer-link"
           href={props.supportHref ?? '/nous-soutenir'}
           onClick={(event: any) => state.handleSupportClick(event)}
+          data-testid="view-button"
+          data-view="support"
         >
           {t('footer.about.support')}
         </a>
@@ -112,6 +118,8 @@ export default function BannerAbout(props: BannerAboutProps) {
           class="rdp-banner-about__outer-link"
           href={props.sourcesHref ?? '/sources'}
           onClick={(event: any) => state.handleSourcesClick(event)}
+          data-testid="view-button"
+          data-view="sources"
         >
           {t('footer.about.sources')}
         </a>
