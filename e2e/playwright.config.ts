@@ -70,7 +70,10 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: `PORT=${NUXT_PORT} pnpm --filter @revue-de-presse/nuxt-app preview`,
+      // Repo has no pnpm-workspace.yaml, so each app is its own install.
+      // Use cwd to run from the app's directory rather than --filter.
+      command: `PORT=${NUXT_PORT} pnpm preview`,
+      cwd: '../nuxt',
       port: NUXT_PORT,
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
@@ -80,7 +83,8 @@ export default defineConfig({
       },
     },
     {
-      command: `PORT=${NEXT_PORT} pnpm --filter @revue-de-presse/next-app start`,
+      command: `PORT=${NEXT_PORT} pnpm start`,
+      cwd: '../next',
       port: NEXT_PORT,
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
