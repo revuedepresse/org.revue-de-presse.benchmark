@@ -74,17 +74,20 @@ export default defineConfig({
     {
       // Repo has no pnpm-workspace.yaml, so each app is its own install.
       // Use cwd to run from the app's directory rather than --filter.
-      command: `PORT=${NUXT_PORT} pnpm preview`,
+      // Nuxt reads NUXT_API_BASE_URL via useRuntimeConfig, not API_BASE_URL.
+      // dotenv: false keeps nuxt/.env from clobbering our mock URL.
+      command: `PORT=${NUXT_PORT} pnpm preview --dotenv /dev/null`,
       cwd: '../nuxt',
       port: NUXT_PORT,
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
       env: {
-        API_BASE_URL: 'http://localhost:4000',
-        API_CLIENT_SECRET: 'mock-client-secret',
+        NUXT_API_BASE_URL: 'http://localhost:4000',
+        NUXT_API_CLIENT_SECRET: 'mock-client-secret',
       },
     },
     {
+      // Next reads API_BASE_URL directly via process.env (from next/lib/apiToken.ts).
       command: `PORT=${NEXT_PORT} pnpm start`,
       cwd: '../next',
       port: NEXT_PORT,
