@@ -15,7 +15,6 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "paths": {
       "@/*": ["./*"],
-      "@design-system/*": ["../design-system/output/react/src/*"],
       "@tokens/*": ["../design-system/src/tokens/*"],
       "@icons/*": ["../design-system/src/icons/*"]
     },
