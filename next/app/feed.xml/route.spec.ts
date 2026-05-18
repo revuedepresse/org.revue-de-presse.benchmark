@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mapStatusToFeedItem, type RawStatus } from './route';
+import { mapStatusToFeedItem, type RawStatus } from './mapStatusToFeedItem';
 
 describe('mapStatusToFeedItem', () => {
   it('maps every legacy field one-to-one', () => {

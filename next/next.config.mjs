@@ -7,7 +7,9 @@ const repoRoot = path.resolve(here, '..');
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
-  experimental: { typedRoutes: true },
+  // typedRoutes disabled: dynamic URLs from urlForDate() are runtime strings,
+  // not statically-knowable Route literals. Re-enable later with `as Route`
+  // casts at call sites if needed.
   webpack: (cfg) => {
     cfg.resolve.alias['@'] = here;
     cfg.resolve.alias['@design-system'] = path.join(repoRoot, 'design-system/output/react/src');
