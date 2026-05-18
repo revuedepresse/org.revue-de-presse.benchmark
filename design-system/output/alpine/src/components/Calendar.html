@@ -1,5 +1,6 @@
 <div
   role="dialog"
+  data-testid="calendar"
   x-data="calendar()"
   x-bind:class="`rdp-calendar rdp-calendar--${presentation ?? 'inline'}`"
   x-bind:aria-modal="presentation === 'sheet' ? 'true' : 'false'"

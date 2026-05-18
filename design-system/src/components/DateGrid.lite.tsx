@@ -11,6 +11,13 @@ type DateGridProps = {
   onSelect?: (date: Date) => void;
 };
 
+const ymd = (d: Date): string => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
 export default function DateGrid(props: DateGridProps) {
   const state = useStore({
     weekdays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
@@ -79,6 +86,8 @@ export default function DateGrid(props: DateGridProps) {
                     aria-disabled={state.isDisabled(d) ? 'true' : undefined}
                     data-other-month={d.getMonth() !== props.month ? 'true' : undefined}
                     data-future={state.isDisabled(d) ? 'true' : undefined}
+                    data-testid="calendar-date"
+                    data-date={ymd(d)}
                     class={`rdp-date-grid__cell${state.isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}
                     onClick={() => {
                       if (!state.isDisabled(d)) props.onSelect?.(d);

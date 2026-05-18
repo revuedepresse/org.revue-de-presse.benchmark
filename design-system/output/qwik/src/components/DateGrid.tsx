@@ -17,6 +17,12 @@ type DateGridProps = {
   locale?: Locale;
   onSelect?: (date: Date) => void;
 };
+export const ymd = (d: Date): string => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
 export const isSelected = function isSelected(props, state, rows, d: Date) {
   const sel = props.selectedDate;
   return (
@@ -96,6 +102,7 @@ export const DateGrid = component$((props: DateGridProps) => {
                 return (
                   <td
                     role="gridcell"
+                    data-testid="calendar-date"
                     aria-selected={
                       isSelected(props, state, rows, d) ? "true" : "false"
                     }
@@ -108,6 +115,7 @@ export const DateGrid = component$((props: DateGridProps) => {
                     data-future={
                       isDisabled(props, state, rows, d) ? "true" : undefined
                     }
+                    data-date={ymd(d)}
                     class={`rdp-date-grid__cell${
                       isSelected(props, state, rows, d)
                         ? " rdp-date-grid__cell--selected"
