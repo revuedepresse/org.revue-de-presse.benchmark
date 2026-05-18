@@ -1,10 +1,14 @@
-import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import type { Page } from '@playwright/test';
 import { BUDGETS, type WebVitalsBudget } from './budgets';
 
-const require = createRequire(import.meta.url);
-// Inject the IIFE bundle so `webVitals` is a page global before any app script runs.
-const WEB_VITALS_IIFE = require.resolve('web-vitals/dist/web-vitals.iife.js');
+// Inject the IIFE bundle so `webVitals` is a page global before any app
+// script runs. The package's `exports` field blocks both ./dist/* paths and
+// ./package.json — so locate the file directly under node_modules/web-vitals.
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const E2E_ROOT = path.resolve(HERE, '../..');
+const WEB_VITALS_IIFE = path.join(E2E_ROOT, 'node_modules/web-vitals/dist/web-vitals.iife.js');
 
 export type WebVitalsReport = Partial<
   Record<'LCP' | 'INP' | 'CLS' | 'TTFB' | 'FCP', number>
