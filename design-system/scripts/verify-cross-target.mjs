@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Boot apps/demo-{vue,react,svelte,solid} in parallel, screenshot Button#primary
+// Boot apps/demo (Vue) + apps/demo-react in parallel, screenshot Button#primary
 // in each, assert the rdp-button element exists with the brand background colour
 // applied. Verifies cross-framework parity before publishing.
 
@@ -13,8 +13,6 @@ const ROOT = new URL('..', import.meta.url).pathname;
 const TARGETS = [
   { name: 'vue', port: 5173, filter: '@revue-de-presse/design-system-demo' },
   { name: 'react', port: 5174, filter: '@revue-de-presse/design-system-demo-react' },
-  { name: 'svelte', port: 5175, filter: '@revue-de-presse/design-system-demo-svelte' },
-  { name: 'solid', port: 5176, filter: '@revue-de-presse/design-system-demo-solid' },
 ];
 
 const procs = [];

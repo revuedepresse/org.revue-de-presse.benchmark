@@ -103,14 +103,14 @@ importers:
         version: 3.5.34(typescript@5.9.3)
     devDependencies:
       '@vitejs/plugin-vue':
-        specifier: ^5.0.0
-        version: 5.2.4(vite@5.4.21(@types/node@20.19.39))(vue@3.5.34(typescript@5.9.3))
+        specifier: ^6.0.0
+        version: 6.0.7(vite@7.3.3(@types/node@20.19.39)(jiti@1.21.7))(vue@3.5.34(typescript@5.9.3))
       typescript:
         specifier: ^5.5.0
         version: 5.9.3
       vite:
-        specifier: ^5.4.0
-        version: 5.4.21(@types/node@20.19.39)
+        specifier: ^7.0.0
+        version: 7.3.3(@types/node@20.19.39)(jiti@1.21.7)
       vue-tsc:
         specifier: ^2.0.0
         version: 2.2.12(typescript@5.9.3)
@@ -125,37 +125,11 @@ importers:
         version: 19.2.6(react@19.2.6)
     devDependencies:
       '@vitejs/plugin-react':
-        specifier: ^4.3.0
-        version: 4.7.0(vite@5.4.21(@types/node@20.19.39))
-      vite:
-        specifier: ^5.4.0
-        version: 5.4.21(@types/node@20.19.39)
-
-  apps/demo-solid:
-    dependencies:
-      solid-js:
-        specifier: ^1.9.0
-        version: 1.9.12
-    devDependencies:
-      vite:
-        specifier: ^5.4.0
-        version: 5.4.21(@types/node@20.19.39)
-      vite-plugin-solid:
-        specifier: ^2.10.0
-        version: 2.11.12(solid-js@1.9.12)(vite@5.4.21(@types/node@20.19.39))
-
-  apps/demo-svelte:
-    dependencies:
-      svelte:
         specifier: ^5.0.0
-        version: 5.55.5
-    devDependencies:
-      '@sveltejs/vite-plugin-svelte':
-        specifier: ^4.0.0
-        version: 4.0.4(svelte@5.55.5)(vite@5.4.21(@types/node@20.19.39))
+        version: 5.2.0(vite@7.3.3(@types/node@20.19.39)(jiti@1.21.7))
       vite:
-        specifier: ^5.4.0
-        version: 5.4.21(@types/node@20.19.39)
+        specifier: ^7.0.0
+        version: 7.3.3(@types/node@20.19.39)(jiti@1.21.7)
 
   packages/provider-alpine:
     dependencies:
@@ -188,7 +162,7 @@ importers:
     dependencies:
       '@builder.io/qwik':
         specifier: '>=1.5'
-        version: 1.19.2(vite@5.4.21(@types/node@20.19.39))
+        version: 1.19.2(vite@7.3.3(@types/node@20.19.39)(jiti@1.21.7))
 
   packages/provider-react:
     dependencies:
@@ -817,6 +791,12 @@ packages:
   '@rolldown/pluginutils@1.0.0-beta.27':
     resolution: {integrity: sha512-+d0F4MKMCbeVUJwG96uQ4SgAznZNSq93I3V+9NHA4OpvqG8mRCpGdKmK8l/dl02h2CCDHwW2FqilnTyDcAnqjA==}
 
+  '@rolldown/pluginutils@1.0.0-rc.3':
+    resolution: {integrity: sha512-eybk3TjzzzV97Dlj5c+XrBFW57eTNhzod66y9HrBlzJ6NsCrWCp/2kaPS3K9wJmurBC0Tdw4yPjXKZqlznim3Q==}
+
+  '@rolldown/pluginutils@1.0.1':
+    resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
+
   '@rollup/rollup-android-arm-eabi@4.60.3':
     resolution: {integrity: sha512-x35CNW/ANXG3hE/EZpRU8MXX1JDN86hBb2wMGAtltkz7pc6cxgjpy1OMMfDosOQ+2hWqIkag/fGok1Yady9nGw==}
     cpu: [arm]
@@ -1063,11 +1043,24 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
+  '@vitejs/plugin-react@5.2.0':
+    resolution: {integrity: sha512-YmKkfhOAi3wsB1PhJq5Scj3GXMn3WvtQ/JC0xoopuHoXSdmtdStOpFrYaT1kie2YgFBcIe64ROzMYRjCrYOdYw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    peerDependencies:
+      vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+
   '@vitejs/plugin-vue@5.2.4':
     resolution: {integrity: sha512-7Yx/SXSOcQq5HiiV3orevHUFn+pmMB4cgbEkDYgnkUWb0WfeQ/wa2yFv6D5ICiCQOVpjA7vYDXrC7AGO8yjDHA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
       vite: ^5.0.0 || ^6.0.0
+      vue: ^3.2.25
+
+  '@vitejs/plugin-vue@6.0.7':
+    resolution: {integrity: sha512-km+p+XdSz9Sxm5rqUbqcSfZYaAniKxWBj1KURl+Jr7UaPvvX7BmaWMdP69I5rrFDeQGyxAG7NXdc57vz+snhWg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    peerDependencies:
+      vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
       vue: ^3.2.25
 
   '@vitest/expect@2.1.9':
@@ -2338,6 +2331,10 @@ packages:
     resolution: {integrity: sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==}
     engines: {node: '>=0.10.0'}
 
+  react-refresh@0.18.0:
+    resolution: {integrity: sha512-QgT5//D3jfjJb6Gsjxv0Slpj23ip+HtOpnNgnb2S5zU3CB26G/IDPGoy4RJB42wzFE46DRsstbW6tKHoKbhAxw==}
+    engines: {node: '>=0.10.0'}
+
   react@19.2.6:
     resolution: {integrity: sha512-sfWGGfavi0xr8Pg0sVsyHMAOziVYKgPLNrS7ig+ivMNb3wbCBw3KxtflsGBAwD3gYQlE/AEZsTLgToRrSCjb0Q==}
     engines: {node: '>=0.10.0'}
@@ -2763,6 +2760,46 @@ packages:
       sugarss:
         optional: true
       terser:
+        optional: true
+
+  vite@7.3.3:
+    resolution: {integrity: sha512-/4XH147Ui7OGTjg3HbdWe5arnZQSbfuRzdr9Ec7TQi5I7R+ir0Rlc9GIvD4v0XZurELqA035KVXJXpR61xhiTA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': ^20.19.0 || >=22.12.0
+      jiti: '>=1.21.0'
+      less: ^4.0.0
+      lightningcss: ^1.21.0
+      sass: ^1.70.0
+      sass-embedded: ^1.70.0
+      stylus: '>=0.54.8'
+      sugarss: ^5.0.0
+      terser: ^5.16.0
+      tsx: ^4.8.1
+      yaml: ^2.4.2
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      jiti:
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      sass-embedded:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+      tsx:
+        optional: true
+      yaml:
         optional: true
 
   vitefu@1.1.3:
@@ -3238,6 +3275,13 @@ snapshots:
       rollup: 4.60.3
       vite: 5.4.21(@types/node@20.19.39)
 
+  '@builder.io/qwik@1.19.2(vite@7.3.3(@types/node@20.19.39)(jiti@1.21.7))':
+    dependencies:
+      csstype: 3.2.3
+      launch-editor: 2.13.2
+      rollup: 4.60.3
+      vite: 7.3.3(@types/node@20.19.39)(jiti@1.21.7)
+
   '@builder.io/sdk@2.2.9':
     dependencies:
       hash-sum: 2.0.0
@@ -3548,6 +3592,10 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
 
+  '@rolldown/pluginutils@1.0.0-rc.3': {}
+
+  '@rolldown/pluginutils@1.0.1': {}
+
   '@rollup/rollup-android-arm-eabi@4.60.3':
     optional: true
 
@@ -3755,9 +3803,27 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@vitejs/plugin-react@5.2.0(vite@7.3.3(@types/node@20.19.39)(jiti@1.21.7))':
+    dependencies:
+      '@babel/core': 7.29.0
+      '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.29.0)
+      '@babel/plugin-transform-react-jsx-source': 7.27.1(@babel/core@7.29.0)
+      '@rolldown/pluginutils': 1.0.0-rc.3
+      '@types/babel__core': 7.20.5
+      react-refresh: 0.18.0
+      vite: 7.3.3(@types/node@20.19.39)(jiti@1.21.7)
+    transitivePeerDependencies:
+      - supports-color
+
   '@vitejs/plugin-vue@5.2.4(vite@5.4.21(@types/node@20.19.39))(vue@3.5.34(typescript@5.9.3))':
     dependencies:
       vite: 5.4.21(@types/node@20.19.39)
+      vue: 3.5.34(typescript@5.9.3)
+
+  '@vitejs/plugin-vue@6.0.7(vite@7.3.3(@types/node@20.19.39)(jiti@1.21.7))(vue@3.5.34(typescript@5.9.3))':
+    dependencies:
+      '@rolldown/pluginutils': 1.0.1
+      vite: 7.3.3(@types/node@20.19.39)(jiti@1.21.7)
       vue: 3.5.34(typescript@5.9.3)
 
   '@vitest/expect@2.1.9':
@@ -5097,6 +5163,8 @@ snapshots:
 
   react-refresh@0.17.0: {}
 
+  react-refresh@0.18.0: {}
+
   react@19.2.6: {}
 
   readdirp@3.6.0:
@@ -5519,6 +5587,19 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.19.39
       fsevents: 2.3.3
+
+  vite@7.3.3(@types/node@20.19.39)(jiti@1.21.7):
+    dependencies:
+      esbuild: 0.27.7
+      fdir: 6.5.0(picomatch@4.0.4)
+      picomatch: 4.0.4
+      postcss: 8.5.14
+      rollup: 4.60.3
+      tinyglobby: 0.2.16
+    optionalDependencies:
+      '@types/node': 20.19.39
+      fsevents: 2.3.3
+      jiti: 1.21.7
 
   vitefu@1.1.3(vite@5.4.21(@types/node@20.19.39)):
     optionalDependencies:
