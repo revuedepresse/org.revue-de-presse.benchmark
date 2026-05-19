@@ -20,5 +20,10 @@
     "@nuxtjs/sitemap": "^8.0.15",
     "nuxt-module-feed": "^1.1.4",
     "vitest": "^1.6.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "brace-expansion@5.0.5": "5.0.6"
+    }
   }
 }
