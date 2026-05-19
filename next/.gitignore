@@ -8,3 +8,22 @@ node_modules
 next-env.d.ts
 .vercel
 out
+
+# TWA / Bubblewrap (mirrors nuxt/.gitignore)
+twa-manifest.json
+*.apk
+*.aab
+*.idsig
+*.keystore
+manifest-checksum.txt
+app/
+android.keystore
+.gradle/
+build/
+build.gradle
+gradle/
+gradle.properties
+gradlew
+gradlew.bat
+settings.gradle
+local.properties
