@@ -57,3 +57,18 @@ side has no automated tests yet.
 
 [GNU General Public License v3.0](LICENSE) — same license the legacy
 Revue de presse site has used since 2019.
+
+## Third-party licenses
+
+This repository redistributes the following third-party assets:
+
+- **Roboto** (`*/public/fonts/roboto-regular.woff2`) — © Google, licensed
+  under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+- **Signika** (`*/public/fonts/signika-regular.woff2`) — © Anna Giedryś,
+  licensed under the [SIL Open Font License 1.1](https://openfontlicense.org/).
+  "Signika" is a Reserved Font Name under the OFL; modified versions must
+  not use that name.
+- **Bluesky butterfly logo** (`design-system/assets/bluesky-logo.png`) —
+  trademark of Bluesky Social PBC, displayed unmodified as nominative
+  attribution for the upstream data source. This project is not
+  affiliated with or endorsed by Bluesky Social PBC.
