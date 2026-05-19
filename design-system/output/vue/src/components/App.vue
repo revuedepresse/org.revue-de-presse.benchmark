@@ -1,5 +1,8 @@
 <template>
-  <div :class="`rdp-app rdp-app--${layout ?? 'desktop'}`">
+  <div
+    data-testid="app-shell"
+    :class="`rdp-app rdp-app--${layout ?? 'desktop'}`"
+  >
     <div class="rdp-app__header-ribbon">
       <div class="rdp-app__header-inner">
         <AppHeader

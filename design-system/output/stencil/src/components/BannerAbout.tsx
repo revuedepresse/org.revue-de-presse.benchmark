@@ -100,6 +100,8 @@ export class BannerAbout {
         <p class="rdp-banner-about__paragraph">
           <a
             class="rdp-banner-about__outer-link"
+            data-testid="view-button"
+            data-view="legal"
             href={this.legalNoticeHref ?? "/mentions-legales"}
             onClick={(event) => this.handleLegalClick(event)}
           >
@@ -108,6 +110,8 @@ export class BannerAbout {
           <br />
           <a
             class="rdp-banner-about__outer-link"
+            data-testid="view-button"
+            data-view="contact"
             href={this.contactHref ?? "/nous-contacter"}
             onClick={(event) => this.handleContactClick(event)}
           >
@@ -116,6 +120,8 @@ export class BannerAbout {
           <br />
           <a
             class="rdp-banner-about__outer-link"
+            data-testid="view-button"
+            data-view="support"
             href={this.supportHref ?? "/nous-soutenir"}
             onClick={(event) => this.handleSupportClick(event)}
           >
@@ -124,6 +130,8 @@ export class BannerAbout {
           <br />
           <a
             class="rdp-banner-about__outer-link"
+            data-testid="view-button"
+            data-view="sources"
             href={this.sourcesHref ?? "/sources"}
             onClick={(event) => this.handleSourcesClick(event)}
           >

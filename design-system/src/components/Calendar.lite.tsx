@@ -160,6 +160,7 @@ export default function Calendar(props: CalendarProps) {
       class={`rdp-calendar rdp-calendar--${props.presentation ?? 'inline'}`}
       role="dialog"
       aria-modal={props.presentation === 'sheet' ? 'true' : 'false'}
+      data-testid="calendar"
     >
       <Show when={props.presentation === 'sheet'}>
         <div

@@ -1,0 +1,22 @@
+{
+  "name": "@revue-de-presse/e2e",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:functional": "playwright test --project='*-functional'",
+    "test:perf": "playwright test --project='*-perf'",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "install-browsers": "playwright install --with-deps chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "playwright-lighthouse": "^4.0.0",
+    "lighthouse": "^12.0.0",
+    "chrome-launcher": "^1.2.0",
+    "web-vitals": "^4.2.0",
+    "typescript": "^5.5.0",
+    "@types/node": "^20.14.0"
+  }
+}

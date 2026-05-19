@@ -94,6 +94,8 @@ function BannerAbout(props: BannerAboutProps) {
         <p class="rdp-banner-about__paragraph">
           <a
             class="rdp-banner-about__outer-link"
+            data-testid="view-button"
+            data-view="legal"
             href={props.legalNoticeHref ?? "/mentions-legales"}
             onClick={(event) => handleLegalClick(event)}
           >
@@ -102,6 +104,8 @@ function BannerAbout(props: BannerAboutProps) {
           <br />
           <a
             class="rdp-banner-about__outer-link"
+            data-testid="view-button"
+            data-view="contact"
             href={props.contactHref ?? "/nous-contacter"}
             onClick={(event) => handleContactClick(event)}
           >
@@ -110,6 +114,8 @@ function BannerAbout(props: BannerAboutProps) {
           <br />
           <a
             class="rdp-banner-about__outer-link"
+            data-testid="view-button"
+            data-view="support"
             href={props.supportHref ?? "/nous-soutenir"}
             onClick={(event) => handleSupportClick(event)}
           >
@@ -118,6 +124,8 @@ function BannerAbout(props: BannerAboutProps) {
           <br />
           <a
             class="rdp-banner-about__outer-link"
+            data-testid="view-button"
+            data-view="sources"
             href={props.sourcesHref ?? "/sources"}
             onClick={(event) => handleSourcesClick(event)}
           >

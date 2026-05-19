@@ -73,6 +73,13 @@ export class DateGrid {
     return this.isFuture(d) || this.isBeforeMin(d);
   }
 
+  ymd = (d: Date): string => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+
   componentDidLoad() {}
 
   render() {
@@ -100,12 +107,14 @@ export class DateGrid {
                     this.isSelected(d) ? " rdp-date-grid__cell--selected" : ""
                   }`}
                   role="gridcell"
+                  data-testid="calendar-date"
                   aria-selected={this.isSelected(d) ? "true" : "false"}
                   aria-disabled={this.isDisabled(d) ? "true" : undefined}
                   data-other-month={
                     d.getMonth() !== this.month ? "true" : undefined
                   }
                   data-future={this.isDisabled(d) ? "true" : undefined}
+                  data-date={this.ymd(d)}
                   onClick={() => {
                     if (!this.isDisabled(d)) this.select?.(d);
                   }}

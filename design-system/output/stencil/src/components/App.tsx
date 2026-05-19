@@ -148,7 +148,10 @@ export class App {
 
   render() {
     return (
-      <div class={`rdp-app rdp-app--${this.layout ?? "desktop"}`}>
+      <div
+        class={`rdp-app rdp-app--${this.layout ?? "desktop"}`}
+        data-testid="app-shell"
+      >
         <div class="rdp-app__header-ribbon">
           <div class="rdp-app__header-inner">
             <app-header
