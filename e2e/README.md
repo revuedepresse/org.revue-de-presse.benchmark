@@ -1,7 +1,6 @@
 # @revue-de-presse/e2e
 
-Cross-app Playwright Test suite covering both `nuxt/` and `next/`. See
-(internal design notes) for the design.
+Cross-app Playwright Test suite covering both `nuxt/` and `next/`.
 
 ## One-time setup
 
@@ -59,8 +58,7 @@ start without them). The Playwright `webServer` config sets these to
 
 The suite selects on `data-testid` attributes that live in the Mitosis
 source. If those attributes go missing from the generated output, the
-suite breaks. See (internal design notes)
-§6.2 for the list.
+suite breaks.
 
 ## Reports
 
