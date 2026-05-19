@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import App from '@design-system/components/App';
 import { useSampleData } from '@/hooks/useSampleData';
-import { useHighlights } from '@/hooks/useHighlights';
+import { useHighlights, type RawStatus } from '@/hooks/useHighlights';
 
 type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources';
 
 type Props = {
   initialView?: ViewKey;
   initialDate?: Date;
+  initialStatuses?: RawStatus[];
   emptyMessageKey?: string;
 };
 
@@ -65,7 +66,12 @@ function urlForView(view: ViewKey, pickedDate: Date): string {
   }
 }
 
-export default function AppShellClient({ initialView, initialDate, emptyMessageKey }: Props) {
+export default function AppShellClient({
+  initialView,
+  initialDate,
+  initialStatuses,
+  emptyMessageKey,
+}: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const { lists } = useSampleData();
@@ -73,7 +79,7 @@ export default function AppShellClient({ initialView, initialDate, emptyMessageK
   const [layout, setLayout] = useState<'desktop' | 'mobile'>('desktop');
   const [pickedDate, setPickedDate] = useState<Date>(initialDate ?? yesterday());
 
-  const { posts, loading } = useHighlights(pickedDate);
+  const { posts, loading } = useHighlights(pickedDate, initialStatuses);
 
   // Sync pickedDate when the dynamic route swaps initialDate
   // (e.g. /2025-05-08 -> /2025-05-09).

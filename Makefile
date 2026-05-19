@@ -2,8 +2,12 @@ SHELL:=/bin/bash
 .ONESHELL:
 .PHONY: help install \
         nuxt-dev nuxt-build nuxt-prod nuxt-test \
+        nuxt-install-bubblewrap nuxt-update-twa nuxt-build-twa \
         next-dev next-build next-prod next-test \
-        e2e-install-browsers e2e-test e2e-test-functional e2e-test-perf \
+        next-install-bubblewrap next-update-twa next-build-twa \
+        install-bubblewrap update-twa build-twa \
+        e2e-install e2e-install-browsers e2e-build-apps \
+        e2e-test e2e-test-functional e2e-test-perf e2e-show-report \
         test
 
 NUXT_DIR := nuxt
@@ -14,7 +18,7 @@ E2E_DIR  := e2e
 
 install: ## Install dependencies for nuxt, next, and e2e workspaces
 	@$(MAKE) -C $(NUXT_DIR) install
-	@cd $(NEXT_DIR) && pnpm install
+	@$(MAKE) -C $(NEXT_DIR) install
 	@cd $(E2E_DIR)  && pnpm install
 
 # -- Nuxt -----------------------------------------------------------------
@@ -31,33 +35,72 @@ nuxt-prod: ## Preview the Nuxt production build locally
 nuxt-test: ## Run Nuxt unit tests (Vitest)
 	@cd $(NUXT_DIR) && pnpm test:run
 
+nuxt-install-bubblewrap: ## Install bubblewrap CLI for the Nuxt TWA
+	@$(MAKE) -C $(NUXT_DIR) install-bubblewrap
+
+nuxt-update-twa: ## Regenerate the Nuxt Android project from twa-manifest.json
+	@$(MAKE) -C $(NUXT_DIR) update-twa
+
+nuxt-build-twa: ## Compile and sign the Nuxt Android TWA (APK)
+	@$(MAKE) -C $(NUXT_DIR) build-twa
+
 # -- Next -----------------------------------------------------------------
 
 next-dev: ## Start the Next dev server
-	@cd $(NEXT_DIR) && pnpm dev
+	@$(MAKE) -C $(NEXT_DIR) dev
 
 next-build: ## Build the Next app for production
-	@cd $(NEXT_DIR) && pnpm build
+	@$(MAKE) -C $(NEXT_DIR) build
 
 next-prod: ## Start the Next production server (requires `next-build` first)
-	@cd $(NEXT_DIR) && pnpm start
+	@$(MAKE) -C $(NEXT_DIR) preview
 
 next-test: ## Run Next unit tests (Vitest)
 	@cd $(NEXT_DIR) && pnpm test:run
 
-# -- E2E (Playwright) -----------------------------------------------------
+next-install-bubblewrap: ## Install bubblewrap CLI for the Next TWA
+	@$(MAKE) -C $(NEXT_DIR) install-bubblewrap
 
-e2e-install-browsers: ## Install Playwright browsers (chromium + system deps)
+next-update-twa: ## Regenerate the Next Android project from twa-manifest.json
+	@$(MAKE) -C $(NEXT_DIR) update-twa
+
+next-build-twa: ## Compile and sign the Next Android TWA (APK)
+	@$(MAKE) -C $(NEXT_DIR) build-twa
+
+# -- TWA (aggregates, delegate to nuxt + next) ----------------------------
+
+install-bubblewrap: nuxt-install-bubblewrap next-install-bubblewrap ## Install bubblewrap CLI for both nuxt + next TWAs
+
+update-twa: nuxt-update-twa next-update-twa ## Regenerate both nuxt + next Android projects from twa-manifest.json
+
+build-twa: nuxt-build-twa next-build-twa ## Compile and sign both nuxt + next Android TWAs (APK)
+
+# -- E2E (Playwright) -----------------------------------------------------
+#
+# Playwright spawns `nuxt preview` + `next start` as `webServer` entries, so
+# the suite cannot run unless BOTH apps are built. The e2e-test* targets
+# below depend on e2e-build-apps to guarantee that — running them against a
+# fresh checkout produces a working test run, not a "missing .next" error.
+
+e2e-install: ## Install e2e Node dependencies (Playwright + helpers)
+	@cd $(E2E_DIR) && pnpm install
+
+e2e-install-browsers: e2e-install ## Install Playwright browsers (chromium + system deps)
 	@cd $(E2E_DIR) && pnpm install-browsers
 
-e2e-test: ## Run the full Playwright suite (functional + perf)
+e2e-build-apps: nuxt-build next-build ## Build nuxt + next so the Playwright webServer can start
+
+e2e-test: e2e-build-apps ## Run the full Playwright suite (functional + perf)
 	@cd $(E2E_DIR) && pnpm test
 
-e2e-test-functional: ## Run only the Playwright functional projects
+e2e-test-functional: e2e-build-apps ## Run only the Playwright functional projects
 	@cd $(E2E_DIR) && pnpm test:functional
 
-e2e-test-perf: ## Run only the Playwright perf projects
+e2e-test-perf: e2e-build-apps ## Run only the Playwright perf projects
 	@cd $(E2E_DIR) && pnpm test:perf
+
+e2e-show-report: ## Open the last Playwright HTML report in a browser
+	@cd $(E2E_DIR) && pnpm exec playwright show-report
 
 # -- Aggregates -----------------------------------------------------------
 

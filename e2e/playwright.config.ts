@@ -5,9 +5,11 @@ const NEXT_PORT = 3002;
 const NUXT_URL = `http://localhost:${NUXT_PORT}`;
 const NEXT_URL = `http://localhost:${NEXT_PORT}`;
 
-// Chromium needs a remote-debugging port for playwright-lighthouse to attach.
-// One per worker; Playwright workerIndex is 0-based.
-const LIGHTHOUSE_PORT_BASE = 9222;
+// Lighthouse needs a Chrome whose DevTools `/json/*` HTTP API is exposed;
+// Playwright's fixture browser always runs with `--remote-debugging-pipe`,
+// which suppresses that API. So the perf suite launches its own dedicated
+// Chrome via chrome-launcher inside a worker-scoped fixture — see
+// support/perf/lighthouse.ts.
 
 export default defineConfig({
   testDir: '.',
@@ -24,9 +26,6 @@ export default defineConfig({
   use: {
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    launchOptions: {
-      args: [`--remote-debugging-port=${LIGHTHOUSE_PORT_BASE}`],
-    },
   },
   projects: [
     {

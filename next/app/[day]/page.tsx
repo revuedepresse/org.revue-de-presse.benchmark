@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import AppShellClient from '@/components/AppShellClient';
+import { fetchHighlights } from '@/lib/highlights';
 
 const DAY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -30,5 +31,8 @@ export default async function DayPage({ params }: { params: Promise<{ day: strin
   const { day } = await params;
   const date = parseDay(day);
   if (!date) notFound();
-  return <AppShellClient initialDate={date} />;
+  const initialStatuses = await fetchHighlights(day, day)
+    .then((body) => body.statuses)
+    .catch(() => undefined);
+  return <AppShellClient initialDate={date} initialStatuses={initialStatuses} />;
 }
