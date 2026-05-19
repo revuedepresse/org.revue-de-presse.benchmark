@@ -9,11 +9,11 @@ importers:
   .:
     devDependencies:
       '@angular/common':
-        specifier: ^18
-        version: 18.2.14(@angular/core@18.2.14(rxjs@7.8.2)(zone.js@0.14.10))(rxjs@7.8.2)
+        specifier: ^20
+        version: 20.3.21(@angular/core@20.3.21(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core':
-        specifier: ^18
-        version: 18.2.14(rxjs@7.8.2)(zone.js@0.14.10)
+        specifier: ^20
+        version: 20.3.21(rxjs@7.8.2)
       '@builder.io/mitosis':
         specifier: ^0.13.0
         version: 0.13.0(postcss@8.5.14)
@@ -166,11 +166,11 @@ importers:
   packages/provider-angular:
     dependencies:
       '@angular/common':
-        specifier: '>=18'
-        version: 18.2.14(@angular/core@18.2.14(rxjs@7.8.2)(zone.js@0.14.10))(rxjs@7.8.2)
+        specifier: '>=20'
+        version: 20.3.21(@angular/core@20.3.21(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core':
-        specifier: '>=18'
-        version: 18.2.14(rxjs@7.8.2)(zone.js@0.14.10)
+        specifier: '>=20'
+        version: 20.3.21(rxjs@7.8.2)
 
   packages/provider-lit:
     dependencies:
@@ -226,22 +226,28 @@ packages:
     resolution: {integrity: sha512-nznEC1ZA/m3hQDEnrGQ4c5gkaa9pcaVnw4LFJyzBAaR7E3nfiAPEHS3otnSafpZouVnoKeITl5D+2LsnwlnK8g==}
     engines: {node: '>=14.0.0'}
 
-  '@angular/common@18.2.14':
-    resolution: {integrity: sha512-ZPRswzaVRiqcfZoowuAM22Hr2/z10ajWOUoFDoQ9tWqz/fH/773kJv2F9VvePIekgNPCzaizqv9gF6tGNqaAwg==}
-    engines: {node: ^18.19.1 || ^20.11.1 || >=22.0.0}
+  '@angular/common@20.3.21':
+    resolution: {integrity: sha512-BjVpJYaC0T73nIT4BCOR5jcFUcXAFe2kKPlSDfD8mjBl8+Ug3Uy/Xs3Blx/6IKDLwNkbCUAxo/IwT+zzpTYNpw==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
     peerDependencies:
-      '@angular/core': 18.2.14
+      '@angular/core': 20.3.21
       rxjs: ^6.5.3 || ^7.4.0
 
   '@angular/compiler@11.2.14':
     resolution: {integrity: sha512-XBOK3HgA+/y6Cz7kOX4zcJYmgJ264XnfcbXUMU2cD7Ac+mbNhLPKohWrEiSWalfcjnpf5gRfufQrQP7lpAGu0A==}
 
-  '@angular/core@18.2.14':
-    resolution: {integrity: sha512-BIPrCs93ZZTY9ym7yfoTgAQ5rs706yoYeAdrgc8kh/bDbM9DawxKlgeKBx2FLt09Y0YQ1bFhKVp0cV4gDEaMxQ==}
-    engines: {node: ^18.19.1 || ^20.11.1 || >=22.0.0}
+  '@angular/core@20.3.21':
+    resolution: {integrity: sha512-sZMWyxh6dkuT6F90epkM1F7E2WJeduHoA9PRHYChIIVFnBd0VKITxpfrwRQS44IPJAtR456/5twtrcCNBALweQ==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
     peerDependencies:
+      '@angular/compiler': 20.3.21
       rxjs: ^6.5.3 || ^7.4.0
-      zone.js: ~0.14.10
+      zone.js: ~0.15.0
+    peerDependenciesMeta:
+      '@angular/compiler':
+        optional: true
+      zone.js:
+        optional: true
 
   '@babel/code-frame@7.29.0':
     resolution: {integrity: sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw==}
@@ -2888,16 +2894,13 @@ packages:
   zimmerframe@1.1.4:
     resolution: {integrity: sha512-B58NGBEoc8Y9MWWCQGl/gq9xBCe4IiKM0a2x7GZdQKOW5Exr8S1W24J6OgM1njK8xCRGvAJIL/MxXHf6SkmQKQ==}
 
-  zone.js@0.14.10:
-    resolution: {integrity: sha512-YGAhaO7J5ywOXW6InXNlLmfU194F8lVgu7bRntUF3TiG8Y3nBK0x1UJJuHUP/e8IyihkjCYqhCScpSwnlaSRkQ==}
-
 snapshots:
 
   '@akryum/tinypool@0.3.1': {}
 
-  '@angular/common@18.2.14(@angular/core@18.2.14(rxjs@7.8.2)(zone.js@0.14.10))(rxjs@7.8.2)':
+  '@angular/common@20.3.21(@angular/core@20.3.21(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@angular/core': 18.2.14(rxjs@7.8.2)(zone.js@0.14.10)
+      '@angular/core': 20.3.21(rxjs@7.8.2)
       rxjs: 7.8.2
       tslib: 2.8.1
 
@@ -2905,11 +2908,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@angular/core@18.2.14(rxjs@7.8.2)(zone.js@0.14.10)':
+  '@angular/core@20.3.21(rxjs@7.8.2)':
     dependencies:
       rxjs: 7.8.2
       tslib: 2.8.1
-      zone.js: 0.14.10
 
   '@babel/code-frame@7.29.0':
     dependencies:
@@ -5630,5 +5632,3 @@ snapshots:
   yargs-parser@21.1.1: {}
 
   zimmerframe@1.1.4: {}
-
-  zone.js@0.14.10: {}
