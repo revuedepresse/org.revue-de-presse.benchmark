@@ -22,6 +22,14 @@ export default defineNuxtConfig({
     appManifest: false,
   },
 
+  // Pre-compress public assets at build time so Nitro can serve .gz/.br
+  // variants to clients that accept them. Without this, the preview server
+  // sends raw bundles and Lighthouse flags `uses-text-compression`
+  // (≈276 KiB of savings on the home route).
+  nitro: {
+    compressPublicAssets: { gzip: true, brotli: true },
+  },
+
   alias: {
     '@design-system': fileURLToPath(new URL('../design-system/output/vue/src', import.meta.url)),
     '@tokens': fileURLToPath(new URL('../design-system/src/tokens', import.meta.url)),
@@ -119,12 +127,10 @@ export default defineNuxtConfig({
           crossorigin: '',
         },
       ],
-      noscript: [
-        {
-          children:
-            'Revue de presse nécessite JavaScript pour son bon fonctionnement.',
-        },
-      ],
+      // Noscript banner is injected via the Nitro `render:html` hook below
+      // (`hooks['render:html']`). Placing it via `app.head.noscript` lands it
+      // inside <head>, where the inner <div> banner is invalid HTML and the
+      // parser drops it — so the fallback wouldn't render with JS disabled.
     },
   },
 });

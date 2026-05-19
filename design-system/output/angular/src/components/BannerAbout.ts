@@ -61,6 +61,8 @@ import { t } from "../utils/i18n";
       <p class="rdp-banner-about__paragraph">
         <a
           class="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="legal"
           [attr.href]="legalNoticeHref ?? '/mentions-legales'"
           (click)="handleLegalClick($event)"
           >{{t('footer.about.privacy-policy')}}</a
@@ -68,6 +70,8 @@ import { t } from "../utils/i18n";
         <br />
         <a
           class="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="contact"
           [attr.href]="contactHref ?? '/nous-contacter'"
           (click)="handleContactClick($event)"
           >{{t('footer.about.contact')}}</a
@@ -75,6 +79,8 @@ import { t } from "../utils/i18n";
         <br />
         <a
           class="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="support"
           [attr.href]="supportHref ?? '/nous-soutenir'"
           (click)="handleSupportClick($event)"
           >{{t('footer.about.support')}}</a
@@ -82,6 +88,8 @@ import { t } from "../utils/i18n";
         <br />
         <a
           class="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="sources"
           [attr.href]="sourcesHref ?? '/sources'"
           (click)="handleSourcesClick($event)"
           >{{t('footer.about.sources')}}</a

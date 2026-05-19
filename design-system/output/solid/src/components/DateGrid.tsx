@@ -11,6 +11,12 @@ type DateGridProps = {
 
 import { t } from "../utils/i18n";
 import type { Locale } from "../utils/i18n";
+const ymd = (d: Date): string => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
 
 function DateGrid(props: DateGridProps) {
   const [weekdays, setWeekdays] = createSignal([
@@ -107,12 +113,14 @@ function DateGrid(props: DateGridProps) {
                               : ""
                           }`}
                           role="gridcell"
+                          data-testid="calendar-date"
                           aria-selected={isSelected(d) ? "true" : "false"}
                           aria-disabled={isDisabled(d) ? "true" : undefined}
                           data-other-month={
                             d.getMonth() !== props.month ? "true" : undefined
                           }
                           data-future={isDisabled(d) ? "true" : undefined}
+                          data-date={ymd(d)}
                           onClick={(event) => {
                             if (!isDisabled(d)) props.onSelect?.(d);
                           }}

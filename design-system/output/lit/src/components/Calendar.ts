@@ -169,7 +169,7 @@ this.focusedMonth = this.selectedDate.getMonth()
      render() {
        return html`
 
-          <div  class={`rdp-calendar rdp-calendar--${props.presentation ?? 'inline'}`}  role="dialog"  aria-modal=${this.presentation === 'sheet' ? 'true' : 'false'} >${this.presentation === 'sheet' ?
+          <div  class={`rdp-calendar rdp-calendar--${props.presentation ?? 'inline'}`}  role="dialog"  data-testid="calendar"  aria-modal=${this.presentation === 'sheet' ? 'true' : 'false'} >${this.presentation === 'sheet' ?
               html`<div  aria-hidden="true"  @click=${(event) => this.onDismiss?.()} ></div>`
             : null}
         <div >${this.presentation !== 'sheet' ?

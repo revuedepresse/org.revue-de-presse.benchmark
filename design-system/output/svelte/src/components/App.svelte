@@ -173,7 +173,7 @@ initialised = true; });
 
   </script>
 
-  <div  class={`rdp-app rdp-app--${layout ?? 'desktop'}`} ><div  class="rdp-app__header-ribbon" ><div  class="rdp-app__header-inner" ><AppHeader  layout={layout ?? 'desktop'}  authenticated={authenticated ?? false}  onAccountClick={(event) => onAccountClick?.()} onMySpaceClick={(event) => onMySpaceClick?.()} onLogoClick={(event) => goHome()}></AppHeader></div></div>
+  <div  data-testid="app-shell"  class={`rdp-app rdp-app--${layout ?? 'desktop'}`} ><div  class="rdp-app__header-ribbon" ><div  class="rdp-app__header-inner" ><AppHeader  layout={layout ?? 'desktop'}  authenticated={authenticated ?? false}  onAccountClick={(event) => onAccountClick?.()} onMySpaceClick={(event) => onMySpaceClick?.()} onLogoClick={(event) => goHome()}></AppHeader></div></div>
 {#if showPopularNews === true }
 <p  class="rdp-app__popular-news" >{popularNewsLine()}</p>
 

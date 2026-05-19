@@ -39,6 +39,8 @@
   <p class="rdp-banner-about__paragraph">
     <a
       class="rdp-banner-about__outer-link"
+      data-testid="view-button"
+      data-view="legal"
       x-bind:href="legalNoticeHref ?? '/mentions-legales'"
       x-on:click="handleLegalClick($event)"
     >
@@ -47,6 +49,8 @@
     <br />
     <a
       class="rdp-banner-about__outer-link"
+      data-testid="view-button"
+      data-view="contact"
       x-bind:href="contactHref ?? '/nous-contacter'"
       x-on:click="handleContactClick($event)"
     >
@@ -55,6 +59,8 @@
     <br />
     <a
       class="rdp-banner-about__outer-link"
+      data-testid="view-button"
+      data-view="support"
       x-bind:href="supportHref ?? '/nous-soutenir'"
       x-on:click="handleSupportClick($event)"
     >
@@ -63,6 +69,8 @@
     <br />
     <a
       class="rdp-banner-about__outer-link"
+      data-testid="view-button"
+      data-view="sources"
       x-bind:href="sourcesHref ?? '/sources'"
       x-on:click="handleSourcesClick($event)"
     >

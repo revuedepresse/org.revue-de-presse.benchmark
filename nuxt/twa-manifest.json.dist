@@ -1,5 +1,5 @@
 {
-  "packageId": "org.revue_2_presse",
+  "packageId": "org.revue_2_presse.nuxt",
   "host": "revue-de-presse.org",
   "name": "Revue de presse",
   "launcherName": "revue2presse",

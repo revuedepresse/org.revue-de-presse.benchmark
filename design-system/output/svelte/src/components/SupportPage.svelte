@@ -39,12 +39,12 @@
     visibilité sur 10 publications médias.
   </p><p >
     L'intégralité du code source du projet est proposée sous licence libre (GNU General
-    Public License v3.0) et est hébergée par l'organisation « Revue de Presse » :
+    Public License v3.0) et est hébergée par l'organisation «&nbsp;Revue de Presse&nbsp;»&nbsp;:
     <br  /><a  class="rdp-support-page__external-link"  href="https://github.com/revuedepresse"  rel="noreferrer nofollow noopener" >
       github.com/revuedepresse
     </a></p><h2 >Soyez partie prenante du projet</h2><p ><strong >
       Contribuez directement au<a  href="https://revue-de-presse.org" >projet</a></strong>
-    en nous offrant de la visibilité autour de vous lorsque vous :
+    en nous offrant de la visibilité autour de vous lorsque vous&nbsp;:
   </p><ul ><li >
       vous abonnez à <a  href="https://bsky.app/profile/revue-de-presse.org"  rel="noreferrer nofollow noopener"  target="_blank" >@revue-de-presse.org</a> sur Bluesky
     </li><li >partagez les publications et la mission du projet sur les réseaux sociaux</li><li >

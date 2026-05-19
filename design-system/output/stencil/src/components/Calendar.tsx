@@ -172,6 +172,7 @@ export class Calendar {
       <div
         class={`rdp-calendar rdp-calendar--${this.presentation ?? "inline"}`}
         role="dialog"
+        data-testid="calendar"
         aria-modal={this.presentation === "sheet" ? "true" : "false"}
       >
         {this.presentation === "sheet" ? (

@@ -170,7 +170,7 @@ this.initialised = true }
      render() {
        return html`
 
-          <div  class={`rdp-app rdp-app--${props.layout ?? 'desktop'}`} ><div ><div ><app-header  .layout=${this.layout ?? 'desktop'}  .authenticated=${this.authenticated ?? false}  @accountclick=${(event) => this.onAccountClick?.()}  @myspaceclick=${(event) => this.onMySpaceClick?.()}  @logoclick=${(event) => this.goHome()} ></app-header></div></div>
+          <div  class={`rdp-app rdp-app--${props.layout ?? 'desktop'}`}  data-testid="app-shell" ><div ><div ><app-header  .layout=${this.layout ?? 'desktop'}  .authenticated=${this.authenticated ?? false}  @accountclick=${(event) => this.onAccountClick?.()}  @myspaceclick=${(event) => this.onMySpaceClick?.()}  @logoclick=${(event) => this.goHome()} ></app-header></div></div>
         ${this.showPopularNews === true ?
               html`<p >${this.popularNewsLine}</p>`
             : null}

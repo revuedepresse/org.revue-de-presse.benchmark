@@ -217,7 +217,10 @@ export const App = component$((props: AppProps) => {
   });
 
   return (
-    <div class={`rdp-app rdp-app--${props.layout ?? "desktop"}`}>
+    <div
+      data-testid="app-shell"
+      class={`rdp-app rdp-app--${props.layout ?? "desktop"}`}
+    >
       <div class="rdp-app__header-ribbon">
         <div class="rdp-app__header-inner">
           <AppHeader

@@ -129,7 +129,7 @@ function BlueskyPostCard(props: BlueskyPostCardProps) {
             locale={props.locale}
           ></MetricsBar>
         </div>
-        <article class="rdp-bsky-post">
+        <article class="rdp-bsky-post" data-testid="post-card">
           <a
             class="rdp-bsky-post__bluesky"
             aria-label="Bluesky"
