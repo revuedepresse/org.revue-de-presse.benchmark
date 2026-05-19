@@ -19,7 +19,12 @@ onSelect?: (date: Date) => void;
 
   import  { t } from '../utils/i18n';
 import type { Locale } from '../utils/i18n';
-
+  const ymd = (d: Date): string => {
+const y = d.getFullYear();
+const m = String(d.getMonth() + 1).padStart(2, '0');
+const day = String(d.getDate()).padStart(2, '0');
+return `${y}-${m}-${day}`;
+};
 
 
 
@@ -84,7 +89,7 @@ return [0, 1, 2, 3, 4, 5].map(row => all.slice(row * 7, row * 7 + 7));
 {#each rows() as row }
 <tr >
 {#each row as d }
-<td  role="gridcell"  aria-selected={isSelected(d) ? 'true' : 'false'}  aria-disabled={isDisabled(d) ? 'true' : undefined}  data-other-month={d.getMonth() !== month ? 'true' : undefined}  data-future={isDisabled(d) ? 'true' : undefined}  class={`rdp-date-grid__cell${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  on:click="{(event) => {
+<td  role="gridcell"  data-testid="calendar-date"  aria-selected={isSelected(d) ? 'true' : 'false'}  aria-disabled={isDisabled(d) ? 'true' : undefined}  data-other-month={d.getMonth() !== month ? 'true' : undefined}  data-future={isDisabled(d) ? 'true' : undefined}  data-date={ymd(d)}  class={`rdp-date-grid__cell${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}`}  on:click="{(event) => {
 if (!isDisabled(d)) onSelect?.(d);
 }}" >
 {#if !isDisabled(d) }

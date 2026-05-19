@@ -14,6 +14,12 @@ type DateGridProps = {
 
 import { t } from "../utils/i18n";
 import type { Locale } from "../utils/i18n";
+const ymd = (d: Date): string => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
 
 @Component({
   selector: "date-grid",
@@ -34,10 +40,12 @@ import type { Locale } from "../utils/i18n";
             <ng-container *ngFor="let d of row"
               ><td
                 role="gridcell"
+                data-testid="calendar-date"
                 [attr.aria-selected]="isSelected(d) ? 'true' : 'false'"
                 [attr.aria-disabled]="isDisabled(d) ? 'true' : undefined"
                 [attr.data-other-month]="d.getMonth() !== month ? 'true' : undefined"
                 [attr.data-future]="isDisabled(d) ? 'true' : undefined"
+                [attr.data-date]="ymd(d)"
                 [class]="\`rdp-date-grid__cell\${isSelected(d) ? ' rdp-date-grid__cell--selected' : ''}\`"
                 (click)="
           if (!isDisabled(d)) onSelect?.(d);
@@ -108,6 +116,7 @@ import type { Locale } from "../utils/i18n";
   ],
 })
 export default class DateGrid {
+  ymd = ymd;
   t = t;
 
   @Input() year!: DateGridProps["year"];

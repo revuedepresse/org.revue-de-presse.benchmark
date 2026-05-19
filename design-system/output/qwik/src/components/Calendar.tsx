@@ -230,6 +230,7 @@ export const Calendar = component$((props: CalendarProps) => {
   return (
     <div
       role="dialog"
+      data-testid="calendar"
       class={`rdp-calendar rdp-calendar--${props.presentation ?? "inline"}`}
       aria-modal={(() => {
         props.presentation === "sheet" ? "true" : "false";

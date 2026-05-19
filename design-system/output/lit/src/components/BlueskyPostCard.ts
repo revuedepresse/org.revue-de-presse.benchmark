@@ -137,7 +137,7 @@ export default class BlueskyPostCard extends LitElement {
               .locale="${this.locale}"
             ></metrics-bar>
           </div>
-          <article>
+          <article data-testid="post-card">
             <a
               aria-label="Bluesky"
               rel="noreferrer nofollow noopener"

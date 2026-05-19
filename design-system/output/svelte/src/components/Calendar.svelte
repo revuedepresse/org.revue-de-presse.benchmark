@@ -174,7 +174,7 @@ focusedMonth = selectedDate.getMonth();
 
   </script>
 
-  <div  role="dialog"  class={`rdp-calendar rdp-calendar--${presentation ?? 'inline'}`}  aria-modal={presentation === 'sheet' ? 'true' : 'false'} >
+  <div  role="dialog"  data-testid="calendar"  class={`rdp-calendar rdp-calendar--${presentation ?? 'inline'}`}  aria-modal={presentation === 'sheet' ? 'true' : 'false'} >
 {#if presentation === 'sheet' }
 <div  class="rdp-calendar__scrim"  aria-hidden="true"  on:click="{(event) => {onDismiss?.()}}" ></div>
 

@@ -33,21 +33,29 @@
     <p class="rdp-banner-about__paragraph">
       <a
         class="rdp-banner-about__outer-link"
+        data-testid="view-button"
+        data-view="legal"
         :href="legalNoticeHref ?? '/mentions-legales'"
         @click="async (event) => handleLegalClick(event)"
         >{{ t("footer.about.privacy-policy") }}</a
       ><br /><a
         class="rdp-banner-about__outer-link"
+        data-testid="view-button"
+        data-view="contact"
         :href="contactHref ?? '/nous-contacter'"
         @click="async (event) => handleContactClick(event)"
         >{{ t("footer.about.contact") }}</a
       ><br /><a
         class="rdp-banner-about__outer-link"
+        data-testid="view-button"
+        data-view="support"
         :href="supportHref ?? '/nous-soutenir'"
         @click="async (event) => handleSupportClick(event)"
         >{{ t("footer.about.support") }}</a
       ><br /><a
         class="rdp-banner-about__outer-link"
+        data-testid="view-button"
+        data-view="sources"
         :href="sourcesHref ?? '/sources'"
         @click="async (event) => handleSourcesClick(event)"
         >{{ t("footer.about.sources") }}</a
