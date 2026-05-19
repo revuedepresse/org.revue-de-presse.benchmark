@@ -11,12 +11,14 @@ function formatYmd(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-type RawStatus = {
+export type RawStatus = {
   screen_name?: string;
   reposts?: number;
   likes?: number;
   replies?: number;
-  avatar_url?: string;
+  // Upstream Hydra response uses `null` for missing avatars; the route's
+  // legacy adapter preserves that, so allow null in addition to undefined.
+  avatar_url?: string | null;
   text?: string;
   publication_id?: string;
   date?: string;
@@ -38,7 +40,7 @@ function mapStatus(raw: RawStatus, fallbackDate: string): BlueskyPost {
     id,
     authorName: deriveAuthorName(handle),
     authorHandle: handle,
-    authorAvatarUrl: item.avatar_url,
+    authorAvatarUrl: item.avatar_url ?? undefined,
     body: cleanText(item.text ?? ''),
     publishedAt: new Date(item.date ?? fallbackDate),
     metrics: {
@@ -51,12 +53,28 @@ function mapStatus(raw: RawStatus, fallbackDate: string): BlueskyPost {
   };
 }
 
-export function useHighlights(date: Date): { posts: BlueskyPost[]; loading: boolean } {
-  const [posts, setPosts] = useState<BlueskyPost[]>([]);
-  const [loading, setLoading] = useState(true);
+export function useHighlights(
+  date: Date,
+  seedStatuses?: RawStatus[],
+): { posts: BlueskyPost[]; loading: boolean } {
+  // Seed lets the parent Server Component prefetch posts so the first paint
+  // already has them in place — that's what avoids the post-hydration layout
+  // shift that pushed the footer down before. Subsequent date changes still
+  // fetch client-side; the seed only short-circuits the first effect.
+  const seeded = seedStatuses != null;
+  const [posts, setPosts] = useState<BlueskyPost[]>(() =>
+    seeded ? seedStatuses!.map((s) => mapStatus(s, formatYmd(date))) : [],
+  );
+  const [loading, setLoading] = useState(!seeded);
   const requestId = useRef(0);
+  const skipFirstFetch = useRef(seeded);
 
   useEffect(() => {
+    if (skipFirstFetch.current) {
+      skipFirstFetch.current = false;
+      return;
+    }
+
     const id = ++requestId.current;
     const controller = new AbortController();
     const day = formatYmd(date);

@@ -18,7 +18,7 @@ export default class ContactPage extends LitElement {
 
           <article ><h1 >Nous contacter</h1>
         <p >
-                Il est possible de prendre contact avec nous à l'adresse suivante :
+                Il est possible de prendre contact avec nous à l'adresse suivante&nbsp;:
 
         <br  />
         <a  .href=${`mailto:${this.email ?? "contact@revue-de-presse.org"}`} >${
