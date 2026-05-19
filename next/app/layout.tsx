@@ -53,6 +53,35 @@ export const viewport: Viewport = {
   themeColor: '#006663',
 };
 
+// Inside <noscript>, the browser parses children only when scripting is
+// disabled. The inline <style> there hides the SSR'd app shell so the
+// fallback banner is the only visible content — no half-rendered, inert UI.
+const NOSCRIPT_BANNER_HTML = `
+  <style>
+    body > *:not(noscript) { display: none !important; }
+    .rdp-noscript-banner {
+      position: fixed; inset: 0; z-index: 2147483647;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0; padding: 24px;
+      background: #006663; color: #fff;
+      font: 16px/1.5 'Roboto', system-ui, -apple-system, sans-serif;
+      text-align: center;
+    }
+    .rdp-noscript-banner-inner { max-width: 560px; }
+    .rdp-noscript-banner h1 {
+      margin: 0 0 12px;
+      font: 600 1.5rem/1.3 'Signika', system-ui, sans-serif;
+    }
+    .rdp-noscript-banner p { margin: 0; opacity: 0.92; }
+  </style>
+  <div class="rdp-noscript-banner" role="alert" aria-live="polite">
+    <div class="rdp-noscript-banner-inner">
+      <h1>JavaScript requis</h1>
+      <p>Revue de presse nécessite JavaScript pour son bon fonctionnement.</p>
+    </div>
+  </div>
+`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
@@ -75,9 +104,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <SpriteInjector />
         {children}
-        <noscript>
-          Revue de presse nécessite JavaScript pour son bon fonctionnement.
-        </noscript>
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html: NOSCRIPT_BANNER_HTML,
+          }}
+        />
       </body>
     </html>
   );

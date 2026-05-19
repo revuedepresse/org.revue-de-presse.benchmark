@@ -2,12 +2,14 @@
 // same field mapping (title<-screen_name, id<-publication_id, link<-url,
 // description<-avatar_url, content<-text), same yesterday-only window,
 // same swallow-on-error behaviour (emit channel metadata with zero items
-// rather than 5xx).
+// rather than 5xx). Uses the `feed` library — the same one nuxt-module-feed
+// wraps internally — so RSS escaping/structure matches the Nuxt build.
 //
 // Pure mapping helpers live in ./mapStatusToFeedItem.ts because Next App
 // Router route files cannot export non-HTTP-method names (build fails
 // otherwise).
 
+import { Feed } from 'feed';
 import { getApiToken, refreshApiToken } from '@/lib/apiToken';
 import { mapStatusToFeedItem, type FeedItem, type RawStatus } from './mapStatusToFeedItem';
 
@@ -97,36 +99,26 @@ async function fetchItems(): Promise<FeedItem[]> {
   return statuses.map(mapStatusToFeedItem);
 }
 
-function escapeXml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
-}
-
 function buildFeedXml(items: FeedItem[]): string {
-  const itemsXml = items.map((it) => `
-    <item>
-      <title>${escapeXml(it.title)}</title>
-      <guid isPermaLink="false">${escapeXml(it.id)}</guid>
-      <link>${escapeXml(it.link)}</link>
-      <description>${escapeXml(it.description)}</description>
-      <content:encoded><![CDATA[${it.content}]]></content:encoded>
-      <pubDate>${it.date.toUTCString()}</pubDate>
-    </item>`).join('');
-
-  return `<?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>${escapeXml(CHANNEL.title)}</title>
-    <link>${escapeXml(CHANNEL.link)}</link>
-    <description>${escapeXml(CHANNEL.description)}</description>
-    <language>fr</language>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${itemsXml}
-  </channel>
-</rss>`;
+  const feed = new Feed({
+    id: CHANNEL.id,
+    link: CHANNEL.link,
+    title: CHANNEL.title,
+    description: CHANNEL.description,
+    copyright: '',
+    language: 'fr',
+  });
+  for (const it of items) {
+    feed.addItem({
+      title: it.title,
+      id: it.id,
+      link: it.link,
+      description: it.description,
+      content: it.content,
+      date: it.date,
+    });
+  }
+  return feed.rss2();
 }
 
 export async function GET(): Promise<Response> {

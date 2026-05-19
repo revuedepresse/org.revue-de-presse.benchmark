@@ -13,8 +13,8 @@
     </p>
     <p>
       L'intégralité du code source du projet est proposée sous licence libre
-      (GNU General Public License v3.0) et est hébergée par l'organisation «
-      Revue de Presse » :
+      (GNU General Public License v3.0) et est hébergée par l'organisation
+      «&nbsp;Revue de Presse&nbsp;»&nbsp;:
       <br /><a
         class="rdp-support-page__external-link"
         href="https://github.com/revuedepresse"
@@ -30,7 +30,7 @@
           >projet</a
         ></strong
       >
-      en nous offrant de la visibilité autour de vous lorsque vous :
+      en nous offrant de la visibilité autour de vous lorsque vous&nbsp;:
     </p>
     <ul>
       <li>
