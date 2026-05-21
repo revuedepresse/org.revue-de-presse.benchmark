@@ -3,6 +3,28 @@
 CLI that posts the previous day's Revue de Presse top 10 to the LinkedIn
 organization page once per day. Run from cron in production.
 
+## Posting identity
+
+Posts are authored by a LinkedIn **organization page**, not a personal profile.
+
+- **Organization URN:** `urn:li:organization:75720423` (the
+  [Revue de Presse company page](https://www.linkedin.com/company/75720423/admin/settings/)).
+- **Configured by:** the `LINKEDIN_ORGANIZATION_URN` env var. Defaults to the
+  URN above; override in `.env.local` only if posting to a different page.
+- **Sent to LinkedIn at:** `bin/post-daily-top10.ts` → `linkedinClient.createPost(...)`
+  → the `author` field of the `/rest/posts` body.
+
+The human who runs `make linkedin-bootstrap` is just the **credential carrier**:
+they must be an admin of the organization above and they hold the
+`w_organization_social` scope. From LinkedIn's perspective the post is
+published by the organization, not by that admin's personal profile. The admin
+never appears as the author and the post does not show up on their personal
+feed.
+
+If the credential admin leaves the organization, LinkedIn revokes the refresh
+token and the daily cron starts failing with exit code 3. Recovery: bring a
+new admin in, re-run `make linkedin-bootstrap` as that person.
+
 ## Quick start
 
 ```bash
