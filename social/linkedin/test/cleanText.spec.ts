@@ -22,6 +22,14 @@ describe('cleanText', () => {
     expect(cleanText('1er\\xa0\\mai')).toBe('1er mai');
   });
 
+  it('decodes 4-hex-digit \\x202f\\ (NNBSP) as a regular space', () => {
+    expect(cleanText('connue\\x202f\\: attaquer')).toBe('connue : attaquer');
+  });
+
+  it('decodes 4-hex-digit \\x2026 (HORIZONTAL ELLIPSIS) to its Unicode char', () => {
+    expect(cleanText('voir aussi\\x2026')).toBe('voir aussi…');
+  });
+
   it('decodes CSS-style \\2f\\ hex escapes to printable ASCII', () => {
     expect(cleanText('A\\2f\\B')).toBe('A/B');
   });
