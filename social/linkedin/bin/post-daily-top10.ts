@@ -1,0 +1,141 @@
+#!/usr/bin/env -S node --import tsx
+import { parseArgs } from 'node:util';
+import { loadConfig, ConfigError } from '../src/config.ts';
+import { createRevueDePresseClient, UpstreamError } from '../src/revueDePresseClient.ts';
+import { createLinkedinClient, LinkedinApiError } from '../src/linkedinClient.ts';
+import { readTokenFile, writeTokenFile, TokenFileError } from '../src/tokenStore.ts';
+import { hasPostedFor, recordPost } from '../src/stateStore.ts';
+import { renderPost } from '../src/renderPost.ts';
+import { logger } from '../src/logger.ts';
+
+const EXIT = {
+  OK: 0,
+  ALREADY_POSTED: 1,
+  UPSTREAM: 2,
+  LINKEDIN: 3,
+  CONFIG: 4,
+};
+
+function previousDateInTz(tz: string): string {
+  const now = new Date();
+  const fmt = new Intl.DateTimeFormat('en-CA', {
+    timeZone: tz,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const todayInTz = fmt.format(now); // YYYY-MM-DD
+  const [y, m, d] = todayInTz.split('-').map(Number);
+  const yesterday = new Date(Date.UTC(y, m - 1, d - 1));
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'UTC',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(yesterday);
+}
+
+async function main(): Promise<number> {
+  const { values } = parseArgs({
+    options: {
+      date: { type: 'string' },
+      force: { type: 'boolean', default: false },
+      'dry-run': { type: 'boolean', default: false },
+    },
+    strict: true,
+  });
+
+  const cfg = loadConfig();
+  const targetDate = values.date ?? previousDateInTz(cfg.tz);
+  logger.info({ targetDate, dryRun: values['dry-run'], force: values.force }, 'starting');
+
+  if (!values.force && (await hasPostedFor(cfg.linkedinStateFile, targetDate))) {
+    logger.warn({ targetDate }, 'already posted for this date — pass --force to override');
+    return EXIT.ALREADY_POSTED;
+  }
+
+  const upstream = createRevueDePresseClient({
+    baseUrl: cfg.apiBaseUrl,
+    clientSecret: cfg.apiClientSecret,
+  });
+
+  let highlights;
+  try {
+    highlights = await upstream.fetchTopTen(targetDate);
+  } catch (err) {
+    logger.error({ err }, 'upstream fetchTopTen failed');
+    return EXIT.UPSTREAM;
+  }
+  if (highlights.length === 0) {
+    logger.error({ targetDate }, 'upstream returned 0 highlights — refusing to post empty digest');
+    return EXIT.UPSTREAM;
+  }
+
+  const commentary = renderPost(highlights, targetDate);
+
+  if (values['dry-run']) {
+    process.stdout.write(commentary + '\n');
+    logger.info('dry-run complete — no LinkedIn call made');
+    return EXIT.OK;
+  }
+
+  const tokens = await readTokenFile(cfg.linkedinTokenFile);
+  if (!tokens) {
+    logger.error({ tokenFile: cfg.linkedinTokenFile }, 'token file missing — run `make linkedin-bootstrap` first');
+    return EXIT.CONFIG;
+  }
+
+  const linkedin = createLinkedinClient({
+    clientId: cfg.linkedinClientId,
+    clientSecret: cfg.linkedinClientSecret,
+    redirectUrl: cfg.linkedinRedirectUri,
+    version: cfg.linkedinVersion,
+  });
+
+  let fresh;
+  try {
+    fresh = await linkedin.refreshAccessToken(tokens.refresh_token);
+  } catch (err) {
+    logger.error({ err }, 'LinkedIn refresh-token exchange failed');
+    return EXIT.LINKEDIN;
+  }
+
+  const now = Date.now();
+  await writeTokenFile(cfg.linkedinTokenFile, {
+    access_token: fresh.access_token,
+    access_token_expires_at: now + fresh.expires_in * 1000,
+    refresh_token: fresh.refresh_token,
+    refresh_token_expires_at: now + fresh.refresh_token_expires_in * 1000,
+    rotated_at: now,
+  });
+
+  let postUrn: string;
+  try {
+    postUrn = await linkedin.createPost({
+      accessToken: fresh.access_token,
+      authorUrn: cfg.linkedinOrganizationUrn,
+      commentary,
+    });
+  } catch (err) {
+    logger.error({ err }, 'LinkedIn create-post failed');
+    return EXIT.LINKEDIN;
+  }
+
+  await recordPost(cfg.linkedinStateFile, targetDate, postUrn, new Date().toISOString());
+  logger.info({ postUrn, targetDate }, 'posted');
+  process.stdout.write(postUrn + '\n');
+  return EXIT.OK;
+}
+
+main()
+  .then((code) => process.exit(code))
+  .catch((err: unknown) => {
+    if (err instanceof ConfigError || err instanceof TokenFileError) {
+      logger.error({ err }, 'config / token-store error');
+      process.exit(EXIT.CONFIG);
+    }
+    if (err instanceof UpstreamError) process.exit(EXIT.UPSTREAM);
+    if (err instanceof LinkedinApiError) process.exit(EXIT.LINKEDIN);
+    logger.error({ err }, 'unhandled error');
+    process.exit(EXIT.LINKEDIN);
+  });
