@@ -50,11 +50,21 @@ export function createLinkedinClient(opts: {
     },
     async exchangeCode(code) {
       const r = await authClient.exchangeAuthCodeForAccessToken(code);
-      return r as TokenExchangeResult;
+      return {
+        access_token: r.access_token,
+        refresh_token: r.refresh_token!,
+        expires_in: r.expires_in,
+        refresh_token_expires_in: r.refresh_token_expires_in!,
+      };
     },
     async refreshAccessToken(refreshToken) {
       const r = await authClient.exchangeRefreshTokenForAccessToken(refreshToken);
-      return r as TokenExchangeResult;
+      return {
+        access_token: r.access_token,
+        refresh_token: r.refresh_token!,
+        expires_in: r.expires_in,
+        refresh_token_expires_in: r.refresh_token_expires_in!,
+      };
     },
     async createPost({ accessToken, authorUrn, commentary }) {
       try {
@@ -75,7 +85,14 @@ export function createLinkedinClient(opts: {
           accessToken,
           versionString: opts.version,
         });
-        return res.createdEntityId as string;
+        if (typeof res.createdEntityId !== 'string' || res.createdEntityId.length === 0) {
+          throw new LinkedinApiError(
+            undefined,
+            'LinkedIn create-post returned no createdEntityId',
+            res,
+          );
+        }
+        return res.createdEntityId;
       } catch (err) {
         const status = (err as { response?: { status?: number } }).response?.status;
         throw new LinkedinApiError(status, `LinkedIn create-post failed: ${String(err)}`, err);
