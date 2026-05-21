@@ -1,0 +1,5 @@
+.env.local
+.linkedin-token.json
+.linkedin-state.json
+node_modules
+*.log

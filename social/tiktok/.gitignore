@@ -1,0 +1,6 @@
+.env.local
+.tiktok-token.json
+node_modules
+out/*
+!out/.gitkeep
+*.log

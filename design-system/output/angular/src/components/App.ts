@@ -31,6 +31,7 @@ type AppProps = {
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
+  captureMode?: boolean;
 };
 
 import { t } from "../utils/i18n";
@@ -60,22 +61,23 @@ import type { Locale } from "../utils/i18n";
       >
       <ng-container *ngIf="(layout ?? 'desktop') === 'desktop'"
         ><div class="rdp-app__content">
-          <aside class="rdp-app__column">
-            <sidebar
-              [lists]="lists"
-              [selectedListId]="selectedListId"
-              [selectedDate]="pickedDate"
-              [yearRange]="yearRange"
-              [minDate]="minDate"
-              [locale]="locale"
-              (listSelect)="onListSelect?.($event)"
-              (dateSelect)="selectFromSidebar($event)"
-              (legalNoticeClick)="goTo('legal')"
-              (contactClick)="goTo('contact')"
-              (supportClick)="goTo('support')"
-              (sourcesClick)="goTo('sources')"
-            ></sidebar>
-          </aside>
+          <ng-container *ngIf="!captureMode"
+            ><aside class="rdp-app__column">
+              <sidebar
+                [lists]="lists"
+                [selectedListId]="selectedListId"
+                [selectedDate]="pickedDate"
+                [yearRange]="yearRange"
+                [minDate]="minDate"
+                [locale]="locale"
+                (listSelect)="onListSelect?.($event)"
+                (dateSelect)="selectFromSidebar($event)"
+                (legalNoticeClick)="goTo('legal')"
+                (contactClick)="goTo('contact')"
+                (supportClick)="goTo('support')"
+                (sourcesClick)="goTo('sources')"
+              ></sidebar></aside
+          ></ng-container>
           <main
             class="rdp-app__main"
             [attr.aria-busy]="loading ? 'true' : undefined"
@@ -89,7 +91,7 @@ import type { Locale } from "../utils/i18n";
                 ← Retour aux publications
               </button></ng-container
             >
-            <ng-container *ngIf="currentView === 'main'"
+            <ng-container *ngIf="!captureMode && currentView === 'main'"
               ><intro-card></intro-card
             ></ng-container>
             <ng-container *ngIf="currentView === 'main' && loading === true"
@@ -137,7 +139,7 @@ import type { Locale } from "../utils/i18n";
               ← Retour aux publications
             </button></ng-container
           >
-          <ng-container *ngIf="currentView === 'main'"
+          <ng-container *ngIf="!captureMode && currentView === 'main'"
             ><intro-card></intro-card
           ></ng-container>
           <ng-container *ngIf="currentView === 'main' && loading === true"
@@ -173,12 +175,14 @@ import type { Locale } from "../utils/i18n";
           <ng-container *ngIf="currentView === 'sources'"
             ><sources-page></sources-page
           ></ng-container>
-          <banner-about
-            (legalNoticeClick)="goTo('legal')"
-            (contactClick)="goTo('contact')"
-            (supportClick)="goTo('support')"
-            (sourcesClick)="goTo('sources')"
-          ></banner-about>
+          <ng-container *ngIf="!captureMode"
+            ><banner-about
+              (legalNoticeClick)="goTo('legal')"
+              (contactClick)="goTo('contact')"
+              (supportClick)="goTo('support')"
+              (sourcesClick)="goTo('sources')"
+            ></banner-about
+          ></ng-container>
         </main>
         <ng-container *ngIf="isCalendarOpen"
           ><calendar
@@ -372,6 +376,7 @@ export default class App {
   @Input() onAccountClick!: AppProps["onAccountClick"];
   @Input() onMySpaceClick!: AppProps["onMySpaceClick"];
   @Input() showPopularNews!: AppProps["showPopularNews"];
+  @Input() captureMode!: AppProps["captureMode"];
   @Input() lists!: AppProps["lists"];
   @Input() selectedListId!: AppProps["selectedListId"];
   @Input() yearRange!: AppProps["yearRange"];

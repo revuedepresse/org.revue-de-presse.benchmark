@@ -37,6 +37,20 @@ describe('cleanText (mojibake handling)', () => {
   });
 });
 
+describe('cleanText (4-hex-digit escapes)', () => {
+  it('decodes \\x202f\\ (NNBSP) to a regular space', () => {
+    expect(cleanText('connue\\x202f\\: attaquer')).toBe('connue : attaquer');
+  });
+
+  it('decodes \\x2026 (HORIZONTAL ELLIPSIS) to its Unicode char', () => {
+    expect(cleanText('voir aussi\\x2026')).toBe('voir aussi…');
+  });
+
+  it('does not confuse \\xa0\\ (2-digit NBSP) with the 4-digit form', () => {
+    expect(cleanText('1er\\xa0\\mai')).toBe('1er mai');
+  });
+});
+
 describe('cleanForFeed', () => {
   it('repairs mojibake AND flattens line feeds', () => {
     expect(cleanForFeed("L'HumanitÃ©\nest\rdebout")).toBe("L'Humanité est debout");

@@ -1,4 +1,7 @@
+.env.local
+!.env.local.dist
 legacy
 nuxt/.netlify
+social/tiktok/bin/
 tmp/
 docs/

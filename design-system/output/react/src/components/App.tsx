@@ -30,6 +30,7 @@ type AppProps = {
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
+  captureMode?: boolean;
 };
 import { t } from "../utils/i18n";
 import { formatLegacyShortDay } from "../utils/intl";
@@ -181,22 +182,24 @@ function App(props: AppProps) {
       ) : null}
       {(props.layout ?? "desktop") === "desktop" ? (
         <div className="rdp-app__content">
-          <aside className="rdp-app__column">
-            <Sidebar
-              lists={props.lists}
-              selectedListId={props.selectedListId}
-              selectedDate={props.pickedDate}
-              yearRange={props.yearRange}
-              minDate={props.minDate}
-              locale={props.locale}
-              onListSelect={(id) => props.onListSelect?.(id)}
-              onDateSelect={(d) => selectFromSidebar(d)}
-              onLegalNoticeClick={(event) => goTo("legal")}
-              onContactClick={(event) => goTo("contact")}
-              onSupportClick={(event) => goTo("support")}
-              onSourcesClick={(event) => goTo("sources")}
-            />
-          </aside>
+          {!props.captureMode ? (
+            <aside className="rdp-app__column">
+              <Sidebar
+                lists={props.lists}
+                selectedListId={props.selectedListId}
+                selectedDate={props.pickedDate}
+                yearRange={props.yearRange}
+                minDate={props.minDate}
+                locale={props.locale}
+                onListSelect={(id) => props.onListSelect?.(id)}
+                onDateSelect={(d) => selectFromSidebar(d)}
+                onLegalNoticeClick={(event) => goTo("legal")}
+                onContactClick={(event) => goTo("contact")}
+                onSupportClick={(event) => goTo("support")}
+                onSourcesClick={(event) => goTo("sources")}
+              />
+            </aside>
+          ) : null}
           <main
             className="rdp-app__main"
             aria-busy={props.loading ? "true" : undefined}
@@ -210,7 +213,9 @@ function App(props: AppProps) {
                 ← Retour aux publications
               </button>
             ) : null}
-            {currentView === "main" ? <IntroCard /> : null}
+            {!props.captureMode && currentView === "main" ? (
+              <IntroCard />
+            ) : null}
             {currentView === "main" && props.loading === true ? (
               <Spinner />
             ) : null}
@@ -257,7 +262,9 @@ function App(props: AppProps) {
                 ← Retour aux publications
               </button>
             ) : null}
-            {currentView === "main" ? <IntroCard /> : null}
+            {!props.captureMode && currentView === "main" ? (
+              <IntroCard />
+            ) : null}
             {currentView === "main" && props.loading === true ? (
               <Spinner />
             ) : null}
@@ -286,12 +293,14 @@ function App(props: AppProps) {
             {currentView === "contact" ? <ContactPage /> : null}
             {currentView === "support" ? <SupportPage /> : null}
             {currentView === "sources" ? <SourcesPage /> : null}
-            <BannerAbout
-              onLegalNoticeClick={(event) => goTo("legal")}
-              onContactClick={(event) => goTo("contact")}
-              onSupportClick={(event) => goTo("support")}
-              onSourcesClick={(event) => goTo("sources")}
-            />
+            {!props.captureMode ? (
+              <BannerAbout
+                onLegalNoticeClick={(event) => goTo("legal")}
+                onContactClick={(event) => goTo("contact")}
+                onSupportClick={(event) => goTo("support")}
+                onSourcesClick={(event) => goTo("sources")}
+              />
+            ) : null}
           </main>
           {isCalendarOpen ? (
             <Calendar

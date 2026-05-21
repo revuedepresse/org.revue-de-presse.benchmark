@@ -29,6 +29,7 @@ onListSelect?: (id: string) => void;
 onDateSelect?: (date: Date) => void;
 onLogoClick?: () => void;
 onViewChange?: (view: ViewKey) => void;
+captureMode?: boolean;
 }
 
     </script>
@@ -74,6 +75,7 @@ export let authenticated: AppProps['authenticated']= undefined;
 export let onAccountClick: AppProps['onAccountClick']= undefined;
 export let onMySpaceClick: AppProps['onMySpaceClick']= undefined;
 export let showPopularNews: AppProps['showPopularNews']= undefined;
+export let captureMode: AppProps['captureMode']= undefined;
 export let lists: AppProps['lists'];
 export let selectedListId: AppProps['selectedListId']= undefined;
 export let yearRange: AppProps['yearRange'];
@@ -180,7 +182,12 @@ initialised = true; });
 
 {/if}
 {#if (layout ?? 'desktop') === 'desktop' }
-<div  class="rdp-app__content" ><aside  class="rdp-app__column" ><Sidebar  lists={lists}  selectedListId={selectedListId}  selectedDate={pickedDate}  yearRange={yearRange}  minDate={minDate}  locale={locale}  onListSelect={(id) => onListSelect?.(id)} onDateSelect={(d) => selectFromSidebar(d)} onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></Sidebar></aside><main  class="rdp-app__main"  aria-busy={loading ? 'true' : undefined} >
+<div  class="rdp-app__content" >
+{#if !captureMode }
+<aside  class="rdp-app__column" ><Sidebar  lists={lists}  selectedListId={selectedListId}  selectedDate={pickedDate}  yearRange={yearRange}  minDate={minDate}  locale={locale}  onListSelect={(id) => onListSelect?.(id)} onDateSelect={(d) => selectFromSidebar(d)} onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></Sidebar></aside>
+
+
+{/if}<main  class="rdp-app__main"  aria-busy={loading ? 'true' : undefined} >
 {#if currentView !== 'main' }
 <button  type="button"  class="rdp-app__back"  on:click="{(event) => {goTo('main')}}" >
               ← Retour aux publications
@@ -188,7 +195,7 @@ initialised = true; });
 
 
 {/if}
-{#if currentView === 'main' }
+{#if !captureMode && currentView === 'main' }
 <IntroCard ></IntroCard>
 
 
@@ -244,7 +251,7 @@ initialised = true; });
 
 
 {/if}
-{#if currentView === 'main' }
+{#if !captureMode && currentView === 'main' }
 <IntroCard ></IntroCard>
 
 
@@ -287,7 +294,12 @@ initialised = true; });
 <SourcesPage ></SourcesPage>
 
 
-{/if}<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></BannerAbout></main>
+{/if}
+{#if !captureMode }
+<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></BannerAbout>
+
+
+{/if}</main>
 
 {#if isCalendarOpen }
 <Calendar  presentation="sheet"  selectedDate={focusedDate}  locale={locale}  yearRange={yearRange}  minDate={minDate}  onSelect={(d) => pickFromCalendar(d)} onDismiss={(event) => closeCalendar()}></Calendar>
