@@ -4,7 +4,7 @@ import { loadConfig, ConfigError } from '../src/config.ts';
 import { createRevueDePresseClient, UpstreamError } from '../src/revueDePresseClient.ts';
 import { createLinkedinClient, LinkedinApiError } from '../src/linkedinClient.ts';
 import { readTokenFile, writeTokenFile, TokenFileError } from '../src/tokenStore.ts';
-import { hasPostedFor, recordPost } from '../src/stateStore.ts';
+import { hasPostedFor, recordPost, StateFileError } from '../src/stateStore.ts';
 import { renderPost } from '../src/renderPost.ts';
 import { logger } from '../src/logger.ts';
 
@@ -85,6 +85,14 @@ async function main(): Promise<number> {
     return EXIT.CONFIG;
   }
 
+  const REFRESH_WARN_MS = 14 * 24 * 60 * 60 * 1000;
+  if (tokens.refresh_token_expires_at - Date.now() < REFRESH_WARN_MS) {
+    logger.warn(
+      { refreshTokenExpiresAt: tokens.refresh_token_expires_at },
+      'refresh token expires in < 14 days — re-run `make linkedin-bootstrap` soon',
+    );
+  }
+
   const linkedin = createLinkedinClient({
     clientId: cfg.linkedinClientId,
     clientSecret: cfg.linkedinClientSecret,
@@ -130,8 +138,8 @@ async function main(): Promise<number> {
 main()
   .then((code) => process.exit(code))
   .catch((err: unknown) => {
-    if (err instanceof ConfigError || err instanceof TokenFileError) {
-      logger.error({ err }, 'config / token-store error');
+    if (err instanceof ConfigError || err instanceof TokenFileError || err instanceof StateFileError) {
+      logger.error({ err }, 'config / token-store / state-store error');
       process.exit(EXIT.CONFIG);
     }
     if (err instanceof UpstreamError) process.exit(EXIT.UPSTREAM);

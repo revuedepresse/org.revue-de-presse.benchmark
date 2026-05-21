@@ -52,6 +52,11 @@ async function main(): Promise<void> {
   }
 
   const tokens = await client.exchangeCode(returnedCode);
+  if (!tokens.refresh_token || !tokens.refresh_token_expires_in) {
+    throw new Error(
+      'LinkedIn did not return a refresh token. The app likely lacks the `offline_access` scope or the Marketing Developer Platform product approval.',
+    );
+  }
   const now = Date.now();
   await writeTokenFile(cfg.linkedinTokenFile, {
     access_token: tokens.access_token,
