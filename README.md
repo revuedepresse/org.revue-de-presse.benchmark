@@ -18,6 +18,8 @@ design-system/   Mitosis source + 10 emitted framework targets + tests
 nuxt/            Nuxt 3 app, TWA tooling, Netlify deploy config
 next/            Next.js 15 (App Router) port — same UI, separate stack
 e2e/             Playwright suite exercising both apps via a single webServer
+social/linkedin/ daily LinkedIn auto-post CLI (top 10, organization page)
+social/tiktok/   daily TikTok 9:16 scroll-capture publisher CLI
 Makefile         top-level orchestration (delegates to per-workspace Makefiles)
 LICENSE          GNU GPL v3.0
 ```
@@ -75,6 +77,14 @@ The Nuxt app deploys to Netlify with the Nitro `netlify` preset; the
 publish directory is `nuxt/dist` (Nitro's actual public output for that
 preset). See `nuxt/README.md` for the full Netlify + TWA workflow. The
 Next app has no deploy target wired yet — see `next/README.md`.
+
+## TikTok shorts publisher
+
+A daily 9:16 scroll capture of the day's top-10 publications is rendered and
+posted to [`@revue_2_presse`](https://www.tiktok.com/@revue_2_presse) by
+`social/tiktok/`. The pipeline is scheduled via
+`.github/workflows/tiktok-publish.yml`. See `social/tiktok/README.md` for the
+auth bootstrap and operational runbook.
 
 ## Contributing
 
