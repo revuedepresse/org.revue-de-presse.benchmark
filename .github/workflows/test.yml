@@ -107,6 +107,7 @@ jobs:
             nuxt/pnpm-lock.yaml
             next/pnpm-lock.yaml
             e2e/pnpm-lock.yaml
+            social/tiktok/pnpm-lock.yaml
       - name: Install nuxt deps
         run: pnpm install --frozen-lockfile
         working-directory: nuxt
@@ -116,6 +117,9 @@ jobs:
       - name: Install e2e deps
         run: pnpm install --frozen-lockfile
         working-directory: e2e
+      - name: Install tiktok deps
+        run: pnpm install --frozen-lockfile
+        working-directory: social/tiktok
       - name: Build Nuxt app
         run: pnpm build
         working-directory: nuxt

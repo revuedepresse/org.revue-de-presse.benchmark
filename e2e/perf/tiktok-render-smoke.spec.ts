@@ -60,6 +60,16 @@ function runFfprobe(mp4: string): Promise<CliResult> {
 }
 
 test.describe('tiktok render smoke', () => {
+  test.beforeAll(() => {
+    // The CLI is shelled out via `pnpm --dir social/tiktok exec tsx`, which
+    // requires the tiktok workspace's devDependencies to be installed.
+    // Surface a clear skip instead of a confusing pnpm ENOENT.
+    test.skip(
+      !existsSync(resolve(REPO_ROOT, 'social/tiktok/node_modules/.bin/tsx')),
+      'social/tiktok deps not installed — run `cd social/tiktok && pnpm install`',
+    );
+  });
+
   test.beforeEach(({}, testInfo) => {
     // Only the Nuxt webServer renders the capture-mode UI used by the CLI;
     // the Next port is irrelevant here. Filter out non-nuxt projects.
