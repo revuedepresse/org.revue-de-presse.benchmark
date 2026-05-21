@@ -33,6 +33,8 @@ export type Config = {
   linkedinVersion: string;
   linkedinTokenFile: string;
   linkedinStateFile: string;
+  linkedinRefreshTokenEnv: string | null;
+  linkedinRotatedRefreshTokenFile: string | null;
   apiBaseUrl: string;
   apiClientSecret: string;
   logLevel: string;

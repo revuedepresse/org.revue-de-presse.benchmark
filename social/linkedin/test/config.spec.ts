@@ -21,6 +21,8 @@ describe('loadConfig', () => {
     delete process.env.TZ;
     delete process.env.POST_FOOTER_URL;
     delete process.env.POST_HASHTAG;
+    delete process.env.LINKEDIN_REFRESH_TOKEN;
+    delete process.env.LINKEDIN_ROTATED_REFRESH_TOKEN_FILE;
   });
 
   afterEach(() => {
@@ -41,7 +43,7 @@ describe('loadConfig', () => {
     const { loadConfig } = await import('../src/config.ts');
     const cfg = loadConfig();
     expect(cfg.linkedinOrganizationUrn).toBe('urn:li:organization:75720423');
-    expect(cfg.linkedinVersion).toBe('202505');
+    expect(cfg.linkedinVersion).toBe('202605');
     expect(cfg.logLevel).toBe('info');
     expect(cfg.tz).toBe('Europe/Paris');
     expect(cfg.postFooterUrl).toBe(
@@ -87,5 +89,67 @@ describe('loadConfig', () => {
         expect(msg).toContain(key);
       }
     }
+  });
+
+  describe('env-sourced refresh token (CI mode)', () => {
+    const BASE_REQUIRED_FOR_ENV_MODE = {
+      LINKEDIN_CLIENT_ID: 'cid',
+      LINKEDIN_CLIENT_SECRET: 'csecret',
+      LINKEDIN_REDIRECT_URI: 'https://localhost:8080/callback',
+      API_BASE_URL: 'https://api.revue-de-presse.org',
+      API_CLIENT_SECRET: 'apisecret',
+    };
+
+    it('linkedinRefreshTokenEnv is null when LINKEDIN_REFRESH_TOKEN is unset', async () => {
+      Object.assign(process.env, REQUIRED);
+      const { loadConfig } = await import('../src/config.ts');
+      const cfg = loadConfig();
+      expect(cfg.linkedinRefreshTokenEnv).toBeNull();
+      expect(cfg.linkedinRotatedRefreshTokenFile).toBeNull();
+    });
+
+    it('populates linkedinRefreshTokenEnv when LINKEDIN_REFRESH_TOKEN is set', async () => {
+      Object.assign(process.env, REQUIRED, { LINKEDIN_REFRESH_TOKEN: 'rt-abc' });
+      const { loadConfig } = await import('../src/config.ts');
+      const cfg = loadConfig();
+      expect(cfg.linkedinRefreshTokenEnv).toBe('rt-abc');
+    });
+
+    it('does NOT require LINKEDIN_TOKEN_FILE / LINKEDIN_STATE_FILE when env-sourced', async () => {
+      Object.assign(process.env, BASE_REQUIRED_FOR_ENV_MODE, {
+        LINKEDIN_REFRESH_TOKEN: 'rt-abc',
+      });
+      const { loadConfig } = await import('../src/config.ts');
+      expect(() => loadConfig()).not.toThrow();
+    });
+
+    it('falls back to default file paths when env-sourced and file paths are unset', async () => {
+      Object.assign(process.env, BASE_REQUIRED_FOR_ENV_MODE, {
+        LINKEDIN_REFRESH_TOKEN: 'rt-abc',
+      });
+      const { loadConfig } = await import('../src/config.ts');
+      const cfg = loadConfig();
+      expect(cfg.linkedinTokenFile).toBe('./.linkedin-token.json');
+      expect(cfg.linkedinStateFile).toBe('./.linkedin-state.json');
+    });
+
+    it('still requires the base keys when env-sourced (e.g. LINKEDIN_CLIENT_ID)', async () => {
+      Object.assign(process.env, BASE_REQUIRED_FOR_ENV_MODE, {
+        LINKEDIN_REFRESH_TOKEN: 'rt-abc',
+      });
+      delete process.env.LINKEDIN_CLIENT_ID;
+      const { loadConfig } = await import('../src/config.ts');
+      expect(() => loadConfig()).toThrow(/LINKEDIN_CLIENT_ID/);
+    });
+
+    it('honours LINKEDIN_ROTATED_REFRESH_TOKEN_FILE override', async () => {
+      Object.assign(process.env, REQUIRED, {
+        LINKEDIN_REFRESH_TOKEN: 'rt-abc',
+        LINKEDIN_ROTATED_REFRESH_TOKEN_FILE: '/tmp/rotated.txt',
+      });
+      const { loadConfig } = await import('../src/config.ts');
+      const cfg = loadConfig();
+      expect(cfg.linkedinRotatedRefreshTokenFile).toBe('/tmp/rotated.txt');
+    });
   });
 });
