@@ -10,8 +10,16 @@ const EnvSchema = z.object({
     .optional()
     .or(z.literal('').transform(() => undefined)),
   PUBLISH_MODE:               z.enum(['inbox', 'direct']).default('inbox'),
-  NUXT_CAPTURE_URL:           z.string().url().default('https://revue-de-presse.org'),
-  API_BASE_URL:               z.string().url().default('https://api.revue-de-presse.org'),
+  NUXT_CAPTURE_URL:           z
+    .string()
+    .url()
+    .default('https://revue-de-presse.org')
+    .or(z.literal('').transform(() => 'https://revue-de-presse.org')),
+  API_BASE_URL:               z
+    .string()
+    .url()
+    .default('https://api.revue-de-presse.org')
+    .or(z.literal('').transform(() => 'https://api.revue-de-presse.org')),
   API_CLIENT_SECRET:          z.string().min(1, 'API_CLIENT_SECRET required'),
   DRY_RUN:                    z
     .enum(['true', 'false'])
