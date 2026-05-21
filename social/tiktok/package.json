@@ -1,0 +1,28 @@
+{
+  "name": "@revue-de-presse/social-tiktok",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "post": "tsx bin/post-daily-top10.ts",
+    "post:dry": "DRY_RUN=true tsx bin/post-daily-top10.ts",
+    "bootstrap": "tsx bin/bootstrap-auth.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "execa": "^9.5.0",
+    "pino": "^9.5.0",
+    "playwright": "^1.49.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "pino-pretty": "^11.3.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}
