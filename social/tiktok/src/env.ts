@@ -32,6 +32,15 @@ const EnvSchema = z.object({
     .or(z.literal('').transform(() => undefined)),
   LOG_LEVEL:                  z.string().default('info'),
   TZ:                          z.string().default('Europe/Paris'),
+  // Optional output-name suffix for parallel test variants. When set, the
+  // CLI writes `${date}-${OUT_VARIANT}.{webm,mp4}` instead of `${date}.…`,
+  // so two concurrent invocations against the same OUT_DIR don't collide.
+  // Production cron leaves it unset.
+  OUT_VARIANT:                z
+    .string()
+    .regex(/^[a-z0-9][a-z0-9-]*$/, 'OUT_VARIANT must match [a-z0-9][a-z0-9-]*')
+    .optional()
+    .or(z.literal('').transform(() => undefined)),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
