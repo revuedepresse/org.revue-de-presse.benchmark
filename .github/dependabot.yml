@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /design-system
+    schedule:
+      interval: weekly
+    ignore:
+      # @angular/compiler@11.x is pinned transitively by @builder.io/mitosis 0.13.x
+      # for Angular code generation at build time. The compiler is never shipped to
+      # any runtime (web, server, or CLI). Mitosis 0.13.0 is the latest release and
+      # still pins ^11.2.11. Upgrading the compiler would break Angular target
+      # generation. Tracked: revisit when a mitosis release supports Angular >= 19.
+      - dependency-name: "@angular/compiler"
+        versions: ["11.x"]
+  - package-ecosystem: npm
+    directory: /next
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /social/linkedin
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /social/tiktok
+    schedule:
+      interval: weekly
