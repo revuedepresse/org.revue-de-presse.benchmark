@@ -47,7 +47,7 @@
             </button>
           </template>
 
-          <template v-if="currentView === 'main'">
+          <template v-if="!captureMode && currentView === 'main'">
             <IntroCard></IntroCard>
           </template>
 
@@ -113,7 +113,7 @@
           </button>
         </template>
 
-        <template v-if="currentView === 'main'">
+        <template v-if="!captureMode && currentView === 'main'">
           <IntroCard></IntroCard>
         </template>
 
@@ -159,12 +159,14 @@
           <SourcesPage></SourcesPage>
         </template>
 
-        <BannerAbout
-          :onLegalNoticeClick="(event) => goTo('legal')"
-          :onContactClick="(event) => goTo('contact')"
-          :onSupportClick="(event) => goTo('support')"
-          :onSourcesClick="(event) => goTo('sources')"
-        ></BannerAbout>
+        <template v-if="!captureMode">
+          <BannerAbout
+            :onLegalNoticeClick="(event) => goTo('legal')"
+            :onContactClick="(event) => goTo('contact')"
+            :onSupportClick="(event) => goTo('support')"
+            :onSourcesClick="(event) => goTo('sources')"
+          ></BannerAbout>
+        </template>
       </main>
 
       <template v-if="isCalendarOpen">
@@ -389,6 +391,7 @@ type AppProps = {
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
+  captureMode?: boolean;
 };
 
 const props = defineProps<AppProps>();

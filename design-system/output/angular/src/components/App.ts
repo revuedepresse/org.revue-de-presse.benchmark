@@ -31,6 +31,7 @@ type AppProps = {
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
+  captureMode?: boolean;
 };
 
 import { t } from "../utils/i18n";
@@ -89,7 +90,7 @@ import type { Locale } from "../utils/i18n";
                 ← Retour aux publications
               </button></ng-container
             >
-            <ng-container *ngIf="currentView === 'main'"
+            <ng-container *ngIf="!captureMode && currentView === 'main'"
               ><intro-card></intro-card
             ></ng-container>
             <ng-container *ngIf="currentView === 'main' && loading === true"
@@ -137,7 +138,7 @@ import type { Locale } from "../utils/i18n";
               ← Retour aux publications
             </button></ng-container
           >
-          <ng-container *ngIf="currentView === 'main'"
+          <ng-container *ngIf="!captureMode && currentView === 'main'"
             ><intro-card></intro-card
           ></ng-container>
           <ng-container *ngIf="currentView === 'main' && loading === true"
@@ -173,12 +174,14 @@ import type { Locale } from "../utils/i18n";
           <ng-container *ngIf="currentView === 'sources'"
             ><sources-page></sources-page
           ></ng-container>
-          <banner-about
-            (legalNoticeClick)="goTo('legal')"
-            (contactClick)="goTo('contact')"
-            (supportClick)="goTo('support')"
-            (sourcesClick)="goTo('sources')"
-          ></banner-about>
+          <ng-container *ngIf="!captureMode"
+            ><banner-about
+              (legalNoticeClick)="goTo('legal')"
+              (contactClick)="goTo('contact')"
+              (supportClick)="goTo('support')"
+              (sourcesClick)="goTo('sources')"
+            ></banner-about
+          ></ng-container>
         </main>
         <ng-container *ngIf="isCalendarOpen"
           ><calendar
@@ -377,6 +380,7 @@ export default class App {
   @Input() yearRange!: AppProps["yearRange"];
   @Input() onListSelect!: AppProps["onListSelect"];
   @Input() loading!: AppProps["loading"];
+  @Input() captureMode!: AppProps["captureMode"];
   @Input() posts!: AppProps["posts"];
   @Input() emptyMessageKey!: AppProps["emptyMessageKey"];
 

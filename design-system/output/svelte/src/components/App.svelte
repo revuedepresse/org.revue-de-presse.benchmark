@@ -29,6 +29,7 @@ onListSelect?: (id: string) => void;
 onDateSelect?: (date: Date) => void;
 onLogoClick?: () => void;
 onViewChange?: (view: ViewKey) => void;
+captureMode?: boolean;
 }
 
     </script>
@@ -79,6 +80,7 @@ export let selectedListId: AppProps['selectedListId']= undefined;
 export let yearRange: AppProps['yearRange'];
 export let onListSelect: AppProps['onListSelect']= undefined;
 export let loading: AppProps['loading']= undefined;
+export let captureMode: AppProps['captureMode']= undefined;
 export let posts: AppProps['posts'];
 export let emptyMessageKey: AppProps['emptyMessageKey']= undefined;
 
@@ -188,7 +190,7 @@ initialised = true; });
 
 
 {/if}
-{#if currentView === 'main' }
+{#if !captureMode && currentView === 'main' }
 <IntroCard ></IntroCard>
 
 
@@ -244,7 +246,7 @@ initialised = true; });
 
 
 {/if}
-{#if currentView === 'main' }
+{#if !captureMode && currentView === 'main' }
 <IntroCard ></IntroCard>
 
 
@@ -287,7 +289,12 @@ initialised = true; });
 <SourcesPage ></SourcesPage>
 
 
-{/if}<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></BannerAbout></main>
+{/if}
+{#if !captureMode }
+<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></BannerAbout>
+
+
+{/if}</main>
 
 {#if isCalendarOpen }
 <Calendar  presentation="sheet"  selectedDate={focusedDate}  locale={locale}  yearRange={yearRange}  minDate={minDate}  onSelect={(d) => pickFromCalendar(d)} onDismiss={(event) => closeCalendar()}></Calendar>
