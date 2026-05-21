@@ -26,6 +26,20 @@ export function cleanText(text: string): string {
   }
   out = out.replace(/\\n/g, '\n');
   out = out.replace(/\\'/g, "'").replace(/\\"/g, '"');
+  // Decode 4-hex-digit `\xNNNN\?` escapes (Unicode codepoints, e.g. U+202F
+  // NARROW NO-BREAK SPACE used in French before `:` / `;` / `!` / `?`).
+  // Must run BEFORE the 2-digit step below, otherwise the 2-digit step would
+  // consume the first two hex chars and leak the remaining two as literal.
+  out = out.replace(/\\x([0-9a-fA-F]{4})\\?/g, (_, hex) => {
+    const code = parseInt(hex, 16);
+    if (code === 0xa0 || code === 0x2007 || code === 0x202f) return ' ';
+    if (code < 0x20 || (code >= 0x7f && code < 0xa0)) return '';
+    try {
+      return String.fromCodePoint(code);
+    } catch {
+      return '';
+    }
+  });
   out = out.replace(/\\x([0-9a-fA-F]{2})\\?/g, (_, hex) => {
     const code = parseInt(hex, 16);
     if (code === 0xa0) return ' ';
