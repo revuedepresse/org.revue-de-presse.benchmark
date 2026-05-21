@@ -9,6 +9,7 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "allowImportingTsExtensions": true,
     "allowJs": false,
     "lib": ["ES2022"],
     "paths": {
