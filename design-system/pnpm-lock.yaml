@@ -8,6 +8,7 @@ overrides:
   vite: ^7.0.0
   esbuild: ^0.25.0
   svelte: ^5.55.7
+  '@tootallnate/once': ^3.0.1
 
 importers:
 
@@ -836,8 +837,8 @@ packages:
     peerDependencies:
       acorn: ^8.9.0
 
-  '@tootallnate/once@2.0.1':
-    resolution: {integrity: sha512-HqmEUIGRJ5fSXchkVgR5F7qn48bDBzv0kWj/Kfu5e6uci4UlEeng4331LnBkWffb++Ei3FOVLxo8JJWMFBDMeQ==}
+  '@tootallnate/once@3.0.1':
+    resolution: {integrity: sha512-VyMVKRrpHTT8PnotUeV8L/mDaMwD5DaAKCFLP73zAqAtvF0FCqky+Ki7BYbFCYQmqFyTe9316Ed5zS70QUR9eg==}
     engines: {node: '>= 10'}
 
   '@ts-morph/common@0.20.0':
@@ -3448,7 +3449,7 @@ snapshots:
     dependencies:
       acorn: 8.16.0
 
-  '@tootallnate/once@2.0.1': {}
+  '@tootallnate/once@3.0.1': {}
 
   '@ts-morph/common@0.20.0':
     dependencies:
@@ -4406,7 +4407,7 @@ snapshots:
 
   http-proxy-agent@5.0.0:
     dependencies:
-      '@tootallnate/once': 2.0.1
+      '@tootallnate/once': 3.0.1
       agent-base: 6.0.2
       debug: 4.4.3
     transitivePeerDependencies:
