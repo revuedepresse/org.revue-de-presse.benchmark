@@ -78,13 +78,32 @@ publish directory is `nuxt/dist` (Nitro's actual public output for that
 preset). See `nuxt/README.md` for the full Netlify + TWA workflow. The
 Next app has no deploy target wired yet — see `next/README.md`.
 
-## TikTok shorts publisher
+## Social publishers
 
-A daily 9:16 scroll capture of the day's top-10 publications is rendered and
-posted to [`@revue_2_presse`](https://www.tiktok.com/@revue_2_presse) by
-`social/tiktok/`. The pipeline is scheduled via
-`.github/workflows/tiktok-publish.yml`. See `social/tiktok/README.md` for the
-auth bootstrap and operational runbook.
+Two daily auto-posters consume the same Bluesky top-10 highlights and
+publish them to social platforms. Both run on a GitHub Actions schedule,
+read their long-lived OAuth refresh token from a repository secret, and
+rotate that secret back via `gh secret set` after each successful run.
+
+### LinkedIn (`social/linkedin/`)
+
+Posts the previous day's top-10 as a text update to the
+[Revue de Presse organization page](https://www.linkedin.com/company/75720423/).
+The CLI calls the versioned LinkedIn REST API (`/rest/posts`). CI runs via
+`.github/workflows/linkedin-post.yml` (scheduled cron + `workflow_dispatch`).
+See `social/linkedin/README.md` for local bootstrap, the required secrets
+and variables (`LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`,
+`LINKEDIN_REFRESH_TOKEN`, `API_CLIENT_SECRET`, `GH_LINKEDIN_PAT`), and the
+annual re-auth procedure.
+
+### TikTok (`social/tiktok/`)
+
+Renders a 9:16 scroll capture of the day's top-10 publications with
+Playwright + ffmpeg and posts it to
+[`@revue_2_presse`](https://www.tiktok.com/@revue_2_presse) via the
+Content Posting API. CI runs via `.github/workflows/tiktok-publish.yml`.
+See `social/tiktok/README.md` for the auth bootstrap, `inbox` vs `direct`
+publish modes, exit-code reference, and operational runbook.
 
 ## Contributing
 
