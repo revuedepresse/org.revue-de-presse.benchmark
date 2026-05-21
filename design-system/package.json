@@ -54,7 +54,8 @@
     "overrides": {
       "vite": "^7.0.0",
       "esbuild": "^0.25.0",
-      "svelte": "^5.55.7"
+      "svelte": "^5.55.7",
+      "@tootallnate/once": "^3.0.1"
     }
   }
 }

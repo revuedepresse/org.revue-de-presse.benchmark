@@ -21,7 +21,8 @@ describe('transcode', { timeout: 60_000 }, () => {
       '-b:v', '500k',
       webm,
     ]);
-  });
+    // libvpx encoding can exceed vitest 3's 10s default hook timeout.
+  }, 60_000);
 
   it('produces a 1080x1920 H.264 yuv420p mp4 from a webm', async () => {
     await transcode(webm, mp4);
