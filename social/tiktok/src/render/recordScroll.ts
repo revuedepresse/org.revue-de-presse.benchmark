@@ -53,7 +53,7 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
     });
     const page = await context.newPage();
 
-    const url = `${opts.baseUrl.replace(/\/$/, '')}/${opts.date}/?capture=tiktok`;
+    const url = `${opts.baseUrl.replace(/\/$/, '')}/${opts.date}?capture=tiktok`;
     let resp;
     try {
       resp = await page.goto(url, { waitUntil: 'networkidle', timeout: 30_000 });
@@ -100,7 +100,14 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
       const start = performance.now();
       let i = 0;
       await new Promise<void>((resolve) => {
-        function tick(): void {
+        // Holder pattern: tsx invokes esbuild with keepNames:true, which wraps
+        // any named function declaration or `const tick = () => …` arrow with
+        // a `__name(...)` helper call. That helper isn't defined in the page
+        // sandbox, so the eval throws `ReferenceError: __name is not defined`.
+        // Esbuild does not emit `__name` for arrows assigned via property
+        // assignment after the holder is initialised to `null`.
+        const tickRef: { current: (() => void) | null } = { current: null };
+        tickRef.current = () => {
           const now = performance.now() - start;
           while (i < s.length - 1 && s[i + 1].atMs <= now) i++;
           window.scrollTo(0, s[i].scrollY);
@@ -108,9 +115,9 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
             resolve();
             return;
           }
-          requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
+          requestAnimationFrame(tickRef.current!);
+        };
+        requestAnimationFrame(tickRef.current);
       });
     }, steps);
 
