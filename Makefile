@@ -8,18 +8,21 @@ SHELL:=/bin/bash
         install-bubblewrap update-twa build-twa \
         e2e-install e2e-install-browsers e2e-build-apps \
         e2e-test e2e-test-functional e2e-test-perf e2e-show-report \
-        test
+        test \
+        linkedin-install linkedin-bootstrap linkedin-post linkedin-post-dry linkedin-test linkedin-typecheck
 
-NUXT_DIR := nuxt
-NEXT_DIR := next
-E2E_DIR  := e2e
+NUXT_DIR     := nuxt
+NEXT_DIR     := next
+E2E_DIR      := e2e
+LINKEDIN_DIR := social/linkedin
 
 # -- Install --------------------------------------------------------------
 
-install: ## Install dependencies for nuxt, next, and e2e workspaces
+install: ## Install dependencies for nuxt, next, e2e, and social/linkedin workspaces
 	@$(MAKE) -C $(NUXT_DIR) install
 	@$(MAKE) -C $(NEXT_DIR) install
 	@cd $(E2E_DIR)  && pnpm install
+	@$(MAKE) -C $(LINKEDIN_DIR) install
 
 # -- Nuxt -----------------------------------------------------------------
 
@@ -104,7 +107,27 @@ e2e-show-report: ## Open the last Playwright HTML report in a browser
 
 # -- Aggregates -----------------------------------------------------------
 
-test: nuxt-test next-test e2e-test ## Run all tests (nuxt unit + next unit + e2e)
+test: nuxt-test next-test linkedin-test e2e-test ## Run all tests (nuxt unit + next unit + linkedin unit + e2e)
+
+# -- LinkedIn -------------------------------------------------------------
+
+linkedin-install: ## Install social/linkedin dependencies (seeds .env.local from template)
+	@$(MAKE) -C $(LINKEDIN_DIR) install
+
+linkedin-bootstrap: ## Run the one-time LinkedIn 3-legged OAuth bootstrap (interactive)
+	@$(MAKE) -C $(LINKEDIN_DIR) bootstrap
+
+linkedin-post: ## Cron entry: post yesterday's top 10 to LinkedIn
+	@$(MAKE) -C $(LINKEDIN_DIR) post
+
+linkedin-post-dry: ## Render the post and log it without calling LinkedIn
+	@$(MAKE) -C $(LINKEDIN_DIR) post-dry
+
+linkedin-test: ## Run social/linkedin unit tests
+	@$(MAKE) -C $(LINKEDIN_DIR) test
+
+linkedin-typecheck: ## Typecheck social/linkedin
+	@$(MAKE) -C $(LINKEDIN_DIR) typecheck
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
