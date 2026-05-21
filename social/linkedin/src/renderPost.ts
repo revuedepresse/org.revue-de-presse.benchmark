@@ -1,4 +1,5 @@
 import type { Highlight } from './types.ts';
+import { cleanText } from './cleanText.ts';
 
 const PLAY_STORE_URL =
   'https://play.google.com/store/apps/details?id=org.revue_2_presse';
@@ -19,14 +20,18 @@ export function renderPost(highlights: Highlight[], isoDate: string): string {
     throw new Error('renderPost: no highlights to render');
   }
   const dateFr = formatDateFr(isoDate);
-  const lines = highlights.map((h, i) => {
+  const entries = highlights.map((h, i) => {
     const rank = String(i + 1).padStart(2, ' ');
-    return `${rank}. ${h.screenName} — ${h.url}`;
+    const text = cleanText(h.text).replace(/\s+/g, ' ').trim();
+    const lines = [`${rank}. ${h.screenName}`];
+    if (text) lines.push(`    ${text}`);
+    lines.push(`    ${h.url}`);
+    return lines.join('\n');
   });
   return [
     `Top 10 des publications de presse les plus relayées sur Bluesky le ${dateFr} :`,
     '',
-    ...lines,
+    entries.join('\n\n'),
     '',
     `Retrouvez la revue de presse complète : ${PLAY_STORE_URL}`,
     '',
