@@ -1,5 +1,5 @@
 import { chromium } from 'playwright';
-import { readdir, rename } from 'node:fs/promises';
+import { mkdir, readdir, rename, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import {
   buildSteps,
@@ -11,6 +11,10 @@ export interface RecordOpts {
   baseUrl: string;
   date: string;
   outDir: string;
+  // Output base name (no extension). Defaults to `date`. Set this when two
+  // invocations share an outDir (test parallelism) so each lands in its own
+  // tempdir and its own final webm/mp4 path.
+  fileBase?: string;
 }
 
 export class RenderInvariantError extends Error {
@@ -38,6 +42,13 @@ export class RenderArtifactError extends Error {
 }
 
 export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string }> {
+  const base = opts.fileBase ?? opts.date;
+  // Record into a per-invocation subdir so concurrent invocations against
+  // the same outDir don't fight over Playwright's random-named .webm output.
+  const videoTmpDir = join(opts.outDir, `.video-${base}`);
+  await rm(videoTmpDir, { recursive: true, force: true });
+  await mkdir(videoTmpDir, { recursive: true });
+
   const browser = await chromium.launch({
     headless: true,
     args: ['--font-render-hinting=none'],
@@ -47,13 +58,13 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
       viewport: { width: 540, height: 960 },
       deviceScaleFactor: 2,
       recordVideo: {
-        dir: opts.outDir,
+        dir: videoTmpDir,
         size: { width: 1080, height: 1920 },
       },
     });
     const page = await context.newPage();
 
-    const url = `${opts.baseUrl.replace(/\/$/, '')}/${opts.date}/?capture=tiktok`;
+    const url = `${opts.baseUrl.replace(/\/$/, '')}/${opts.date}?capture=tiktok`;
     let resp;
     try {
       resp = await page.goto(url, { waitUntil: 'networkidle', timeout: 30_000 });
@@ -100,7 +111,14 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
       const start = performance.now();
       let i = 0;
       await new Promise<void>((resolve) => {
-        function tick(): void {
+        // Holder pattern: tsx invokes esbuild with keepNames:true, which wraps
+        // any named function declaration or `const tick = () => …` arrow with
+        // a `__name(...)` helper call. That helper isn't defined in the page
+        // sandbox, so the eval throws `ReferenceError: __name is not defined`.
+        // Esbuild does not emit `__name` for arrows assigned via property
+        // assignment after the holder is initialised to `null`.
+        const tickRef: { current: (() => void) | null } = { current: null };
+        tickRef.current = () => {
           const now = performance.now() - start;
           while (i < s.length - 1 && s[i + 1].atMs <= now) i++;
           window.scrollTo(0, s[i].scrollY);
@@ -108,9 +126,9 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
             resolve();
             return;
           }
-          requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
+          requestAnimationFrame(tickRef.current!);
+        };
+        requestAnimationFrame(tickRef.current);
       });
     }, steps);
 
@@ -119,16 +137,15 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
     await page.close();
     await context.close();  // flush video to disk
 
-    const files = (await readdir(opts.outDir)).filter(
-      (f) => f.endsWith('.webm') && !f.startsWith(opts.date),
-    );
+    const files = (await readdir(videoTmpDir)).filter((f) => f.endsWith('.webm'));
     if (files.length === 0) {
-      throw new RenderArtifactError(`no .webm produced in ${opts.outDir}`);
+      throw new RenderArtifactError(`no .webm produced in ${videoTmpDir}`);
     }
     files.sort();
     const newest = files[files.length - 1];
-    const finalPath = join(opts.outDir, `${opts.date}.webm`);
-    await rename(join(opts.outDir, newest), finalPath);
+    const finalPath = join(opts.outDir, `${base}.webm`);
+    await rename(join(videoTmpDir, newest), finalPath);
+    await rm(videoTmpDir, { recursive: true, force: true });
     return { webmPath: finalPath };
   } finally {
     await browser.close();
