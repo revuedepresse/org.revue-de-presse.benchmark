@@ -78,12 +78,12 @@ type AppProps = {
 @property() onAccountClick: any
 @property() onMySpaceClick: any
 @property() showPopularNews: any
+@property() captureMode: any
 @property() lists: any
 @property() selectedListId: any
 @property() yearRange: any
 @property() onListSelect: any
 @property() loading: any
-@property() captureMode: any
 @property() posts: any
 @property() emptyMessageKey: any
 
@@ -177,7 +177,9 @@ this.initialised = true }
               html`<p >${this.popularNewsLine}</p>`
             : null}
         ${(this.layout ?? 'desktop') === 'desktop' ?
-              html`<div ><aside ><my-sidebar  .lists=${this.lists}  .selectedListId=${this.selectedListId}  .selectedDate=${this.pickedDate}  .yearRange=${this.yearRange}  .minDate=${this.minDate}  .locale=${this.locale}  @listselect=${(id) => this.onListSelect?.(id)}  @dateselect=${(d) => this.selectFromSidebar(d)}  @legalnoticeclick=${(event) => this.goTo('legal')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')} ></my-sidebar></aside>
+              html`<div >${!this.captureMode ?
+             html`<aside ><my-sidebar  .lists=${this.lists}  .selectedListId=${this.selectedListId}  .selectedDate=${this.pickedDate}  .yearRange=${this.yearRange}  .minDate=${this.minDate}  .locale=${this.locale}  @listselect=${(id) => this.onListSelect?.(id)}  @dateselect=${(d) => this.selectFromSidebar(d)}  @legalnoticeclick=${(event) => this.goTo('legal')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')} ></my-sidebar></aside>`
+           : null}
        <main  aria-busy=${this.loading ? 'true' : undefined} >${this.currentView !== 'main' ?
              html`<button  type="button"  @click=${(event) => this.goTo('main')} >
                         ← Retour aux publications

@@ -246,67 +246,69 @@ export const App = component$((props: AppProps) => {
       ) : null}
       {(props.layout ?? "desktop") === "desktop" ? (
         <div class="rdp-app__content">
-          <aside class="rdp-app__column">
-            <Sidebar
-              lists={props.lists}
-              selectedListId={props.selectedListId}
-              selectedDate={props.pickedDate}
-              yearRange={props.yearRange}
-              minDate={props.minDate}
-              locale={props.locale}
-              onListSelect$={$((event) => props.onListSelect?.(id))}
-              onDateSelect$={$((event) =>
-                selectFromSidebar(
-                  props,
-                  state,
-                  popularNewsLine,
-                  prevDayDisabled,
-                  nextDayDisabled,
-                  d
-                )
-              )}
-              onLegalNoticeClick$={$((event) =>
-                goTo(
-                  props,
-                  state,
-                  popularNewsLine,
-                  prevDayDisabled,
-                  nextDayDisabled,
-                  "legal"
-                )
-              )}
-              onContactClick$={$((event) =>
-                goTo(
-                  props,
-                  state,
-                  popularNewsLine,
-                  prevDayDisabled,
-                  nextDayDisabled,
-                  "contact"
-                )
-              )}
-              onSupportClick$={$((event) =>
-                goTo(
-                  props,
-                  state,
-                  popularNewsLine,
-                  prevDayDisabled,
-                  nextDayDisabled,
-                  "support"
-                )
-              )}
-              onSourcesClick$={$((event) =>
-                goTo(
-                  props,
-                  state,
-                  popularNewsLine,
-                  prevDayDisabled,
-                  nextDayDisabled,
-                  "sources"
-                )
-              )}
-            ></Sidebar>
-          </aside>
+          {!props.captureMode ? (
+            <aside class="rdp-app__column">
+              <Sidebar
+                lists={props.lists}
+                selectedListId={props.selectedListId}
+                selectedDate={props.pickedDate}
+                yearRange={props.yearRange}
+                minDate={props.minDate}
+                locale={props.locale}
+                onListSelect$={$((event) => props.onListSelect?.(id))}
+                onDateSelect$={$((event) =>
+                  selectFromSidebar(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    d
+                  )
+                )}
+                onLegalNoticeClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "legal"
+                  )
+                )}
+                onContactClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "contact"
+                  )
+                )}
+                onSupportClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "support"
+                  )
+                )}
+                onSourcesClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "sources"
+                  )
+                )}
+              ></Sidebar>
+            </aside>
+          ) : null}
           <main
             class="rdp-app__main"
             aria-busy={props.loading ? "true" : undefined}

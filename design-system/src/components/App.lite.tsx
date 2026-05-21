@@ -160,22 +160,24 @@ export default function App(props: AppProps) {
 
       <Show when={(props.layout ?? 'desktop') === 'desktop'}>
         <div class="rdp-app__content">
-          <aside class="rdp-app__column">
-            <Sidebar
-              lists={props.lists}
-              selectedListId={props.selectedListId}
-              selectedDate={props.pickedDate}
-              yearRange={props.yearRange}
-              minDate={props.minDate}
-              locale={props.locale}
-              onListSelect={(id: string) => props.onListSelect?.(id)}
-              onDateSelect={(d: Date) => state.selectFromSidebar(d)}
-              onLegalNoticeClick={() => state.goTo('legal')}
-              onContactClick={() => state.goTo('contact')}
-              onSupportClick={() => state.goTo('support')}
-              onSourcesClick={() => state.goTo('sources')}
-            />
-          </aside>
+          <Show when={!props.captureMode}>
+            <aside class="rdp-app__column">
+              <Sidebar
+                lists={props.lists}
+                selectedListId={props.selectedListId}
+                selectedDate={props.pickedDate}
+                yearRange={props.yearRange}
+                minDate={props.minDate}
+                locale={props.locale}
+                onListSelect={(id: string) => props.onListSelect?.(id)}
+                onDateSelect={(d: Date) => state.selectFromSidebar(d)}
+                onLegalNoticeClick={() => state.goTo('legal')}
+                onContactClick={() => state.goTo('contact')}
+                onSupportClick={() => state.goTo('support')}
+                onSourcesClick={() => state.goTo('sources')}
+              />
+            </aside>
+          </Show>
 
           <main class="rdp-app__main" aria-busy={props.loading ? 'true' : undefined}>
             <Show when={state.currentView !== 'main'}>
