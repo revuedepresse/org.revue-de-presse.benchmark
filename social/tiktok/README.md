@@ -6,8 +6,14 @@ Daily 9:16 scroll capture of the Revue de presse top-10 publications, auto-poste
 ## One-time setup
 
 1. Create a TikTok app at <https://developers.tiktok.com/apps/> with the **Login Kit**
-   and **Content Posting API** products. Add `http://127.0.0.1:54545/callback` as a
-   redirect URI. Request scopes `user.info.basic`, `video.upload`, `video.publish`.
+   and **Content Posting API** products. Add
+   `https://api.revue-de-presse.org/tiktok/oauth/callback` as the Redirect URI —
+   exactly that string. TikTok's portal requires `https://` on a public domain
+   (it rejects `http://`, `http://localhost`, and `https://localhost`), so we
+   point at the public API host. The route does not need to exist on the API
+   (a 404 is fine) — the browser's address bar still carries
+   `?code=…&state=…` after the redirect, which is all `bootstrap-auth.ts`
+   needs. Request scopes `user.info.basic`, `video.upload`, `video.publish`.
    Add `@revue_2_presse` as a Sandbox tester.
 2. Install workspace dependencies. This also seeds `.env.local` from the template
    if it's missing:
@@ -22,9 +28,14 @@ Daily 9:16 scroll capture of the Revue de presse top-10 publications, auto-poste
    ```
    make tiktok-bootstrap
    ```
-   The CLI opens the browser, completes OAuth as `@revue_2_presse`, persists
-   `TIKTOK_REFRESH_TOKEN` into `social/tiktok/.env.local`, and prints the
-   `gh secret set` commands to seed CI.
+   The CLI opens the TikTok authorize page in your browser. Sign in as
+   `@revue_2_presse` and approve the scopes; TikTok will redirect to
+   `https://api.revue-de-presse.org/tiktok/oauth/callback?code=…&state=…`.
+   That page may show a 404 — that is expected. Copy the full URL from the
+   browser's address bar and paste it back into the CLI prompt. The CLI then
+   exchanges the code, persists `TIKTOK_REFRESH_TOKEN` into
+   `social/tiktok/.env.local`, and prints the `gh secret set` commands to
+   seed CI.
 
 ## Daily run
 
