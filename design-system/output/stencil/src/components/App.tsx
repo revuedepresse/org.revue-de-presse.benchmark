@@ -42,6 +42,7 @@ export class App {
   @Event() accountClick: any;
   @Event() mySpaceClick: any;
   @Prop() showPopularNews: any;
+  @Prop() captureMode: any;
   @Prop() lists: any;
   @Prop() selectedListId: any;
   @Prop() yearRange: any;
@@ -168,22 +169,24 @@ export class App {
         ) : null}
         {(this.layout ?? "desktop") === "desktop" ? (
           <div class="rdp-app__content">
-            <aside class="rdp-app__column">
-              <sidebar
-                lists={this.lists}
-                selectedListId={this.selectedListId}
-                selectedDate={this.pickedDate}
-                yearRange={this.yearRange}
-                minDate={this.minDate}
-                locale={this.locale}
-                onListSelect={(id) => this.listSelect?.(id)}
-                onDateSelect={(d) => this.selectFromSidebar(d)}
-                onLegalNoticeClick={() => this.goTo("legal")}
-                onContactClick={() => this.goTo("contact")}
-                onSupportClick={() => this.goTo("support")}
-                onSourcesClick={() => this.goTo("sources")}
-              ></sidebar>
-            </aside>
+            {!this.captureMode ? (
+              <aside class="rdp-app__column">
+                <sidebar
+                  lists={this.lists}
+                  selectedListId={this.selectedListId}
+                  selectedDate={this.pickedDate}
+                  yearRange={this.yearRange}
+                  minDate={this.minDate}
+                  locale={this.locale}
+                  onListSelect={(id) => this.listSelect?.(id)}
+                  onDateSelect={(d) => this.selectFromSidebar(d)}
+                  onLegalNoticeClick={() => this.goTo("legal")}
+                  onContactClick={() => this.goTo("contact")}
+                  onSupportClick={() => this.goTo("support")}
+                  onSourcesClick={() => this.goTo("sources")}
+                ></sidebar>
+              </aside>
+            ) : null}
             <main
               class="rdp-app__main"
               aria-busy={this.loading ? "true" : undefined}
@@ -197,7 +200,9 @@ export class App {
                   ← Retour aux publications
                 </button>
               ) : null}
-              {this.currentView === "main" ? <intro-card></intro-card> : null}
+              {!this.captureMode && this.currentView === "main" ? (
+                <intro-card></intro-card>
+              ) : null}
               {this.currentView === "main" && this.loading === true ? (
                 <spinner></spinner>
               ) : null}
@@ -255,7 +260,9 @@ export class App {
                   ← Retour aux publications
                 </button>
               ) : null}
-              {this.currentView === "main" ? <intro-card></intro-card> : null}
+              {!this.captureMode && this.currentView === "main" ? (
+                <intro-card></intro-card>
+              ) : null}
               {this.currentView === "main" && this.loading === true ? (
                 <spinner></spinner>
               ) : null}
@@ -295,12 +302,14 @@ export class App {
               {this.currentView === "sources" ? (
                 <sources-page></sources-page>
               ) : null}
-              <banner-about
-                onLegalNoticeClick={() => this.goTo("legal")}
-                onContactClick={() => this.goTo("contact")}
-                onSupportClick={() => this.goTo("support")}
-                onSourcesClick={() => this.goTo("sources")}
-              ></banner-about>
+              {!this.captureMode ? (
+                <banner-about
+                  onLegalNoticeClick={() => this.goTo("legal")}
+                  onContactClick={() => this.goTo("contact")}
+                  onSupportClick={() => this.goTo("support")}
+                  onSourcesClick={() => this.goTo("sources")}
+                ></banner-about>
+              ) : null}
             </main>
             {this.isCalendarOpen ? (
               <calendar

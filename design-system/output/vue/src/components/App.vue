@@ -20,22 +20,25 @@
 
     <template v-if="(layout ?? 'desktop') === 'desktop'">
       <div class="rdp-app__content">
-        <aside class="rdp-app__column">
-          <Sidebar
-            :lists="lists"
-            :selectedListId="selectedListId"
-            :selectedDate="pickedDate"
-            :yearRange="yearRange"
-            :minDate="minDate"
-            :locale="locale"
-            :onListSelect="(id) => onListSelect?.(id)"
-            :onDateSelect="(d) => selectFromSidebar(d)"
-            :onLegalNoticeClick="(event) => goTo('legal')"
-            :onContactClick="(event) => goTo('contact')"
-            :onSupportClick="(event) => goTo('support')"
-            :onSourcesClick="(event) => goTo('sources')"
-          ></Sidebar>
-        </aside>
+        <template v-if="!captureMode">
+          <aside class="rdp-app__column">
+            <Sidebar
+              :lists="lists"
+              :selectedListId="selectedListId"
+              :selectedDate="pickedDate"
+              :yearRange="yearRange"
+              :minDate="minDate"
+              :locale="locale"
+              :onListSelect="(id) => onListSelect?.(id)"
+              :onDateSelect="(d) => selectFromSidebar(d)"
+              :onLegalNoticeClick="(event) => goTo('legal')"
+              :onContactClick="(event) => goTo('contact')"
+              :onSupportClick="(event) => goTo('support')"
+              :onSourcesClick="(event) => goTo('sources')"
+            ></Sidebar>
+          </aside>
+        </template>
+
         <main class="rdp-app__main" :aria-busy="loading ? 'true' : undefined">
           <template v-if="currentView !== 'main'">
             <button
@@ -47,7 +50,7 @@
             </button>
           </template>
 
-          <template v-if="currentView === 'main'">
+          <template v-if="!captureMode && currentView === 'main'">
             <IntroCard></IntroCard>
           </template>
 
@@ -113,7 +116,7 @@
           </button>
         </template>
 
-        <template v-if="currentView === 'main'">
+        <template v-if="!captureMode && currentView === 'main'">
           <IntroCard></IntroCard>
         </template>
 
@@ -159,12 +162,14 @@
           <SourcesPage></SourcesPage>
         </template>
 
-        <BannerAbout
-          :onLegalNoticeClick="(event) => goTo('legal')"
-          :onContactClick="(event) => goTo('contact')"
-          :onSupportClick="(event) => goTo('support')"
-          :onSourcesClick="(event) => goTo('sources')"
-        ></BannerAbout>
+        <template v-if="!captureMode">
+          <BannerAbout
+            :onLegalNoticeClick="(event) => goTo('legal')"
+            :onContactClick="(event) => goTo('contact')"
+            :onSupportClick="(event) => goTo('support')"
+            :onSourcesClick="(event) => goTo('sources')"
+          ></BannerAbout>
+        </template>
       </main>
 
       <template v-if="isCalendarOpen">
@@ -389,6 +394,7 @@ type AppProps = {
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
+  captureMode?: boolean;
 };
 
 const props = defineProps<AppProps>();

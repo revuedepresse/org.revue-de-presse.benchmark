@@ -28,6 +28,7 @@ type AppProps = {
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
+  captureMode?: boolean;
 };
 
 import { t } from "../utils/i18n";
@@ -181,22 +182,24 @@ function App(props: AppProps) {
         </Show>
         <Show when={(props.layout ?? "desktop") === "desktop"}>
           <div class="rdp-app__content">
-            <aside class="rdp-app__column">
-              <Sidebar
-                lists={props.lists}
-                selectedListId={props.selectedListId}
-                selectedDate={props.pickedDate}
-                yearRange={props.yearRange}
-                minDate={props.minDate}
-                locale={props.locale}
-                onListSelect={(id) => props.onListSelect?.(id)}
-                onDateSelect={(d) => selectFromSidebar(d)}
-                onLegalNoticeClick={(event) => goTo("legal")}
-                onContactClick={(event) => goTo("contact")}
-                onSupportClick={(event) => goTo("support")}
-                onSourcesClick={(event) => goTo("sources")}
-              ></Sidebar>
-            </aside>
+            <Show when={!props.captureMode}>
+              <aside class="rdp-app__column">
+                <Sidebar
+                  lists={props.lists}
+                  selectedListId={props.selectedListId}
+                  selectedDate={props.pickedDate}
+                  yearRange={props.yearRange}
+                  minDate={props.minDate}
+                  locale={props.locale}
+                  onListSelect={(id) => props.onListSelect?.(id)}
+                  onDateSelect={(d) => selectFromSidebar(d)}
+                  onLegalNoticeClick={(event) => goTo("legal")}
+                  onContactClick={(event) => goTo("contact")}
+                  onSupportClick={(event) => goTo("support")}
+                  onSourcesClick={(event) => goTo("sources")}
+                ></Sidebar>
+              </aside>
+            </Show>
             <main
               class="rdp-app__main"
               aria-busy={props.loading ? "true" : undefined}
@@ -210,7 +213,7 @@ function App(props: AppProps) {
                   ← Retour aux publications
                 </button>
               </Show>
-              <Show when={currentView() === "main"}>
+              <Show when={!props.captureMode && currentView() === "main"}>
                 <IntroCard></IntroCard>
               </Show>
               <Show when={currentView() === "main" && props.loading === true}>
@@ -282,7 +285,7 @@ function App(props: AppProps) {
                 ← Retour aux publications
               </button>
             </Show>
-            <Show when={currentView() === "main"}>
+            <Show when={!props.captureMode && currentView() === "main"}>
               <IntroCard></IntroCard>
             </Show>
             <Show when={currentView() === "main" && props.loading === true}>
@@ -337,12 +340,14 @@ function App(props: AppProps) {
             <Show when={currentView() === "sources"}>
               <SourcesPage></SourcesPage>
             </Show>
-            <BannerAbout
-              onLegalNoticeClick={(event) => goTo("legal")}
-              onContactClick={(event) => goTo("contact")}
-              onSupportClick={(event) => goTo("support")}
-              onSourcesClick={(event) => goTo("sources")}
-            ></BannerAbout>
+            <Show when={!props.captureMode}>
+              <BannerAbout
+                onLegalNoticeClick={(event) => goTo("legal")}
+                onContactClick={(event) => goTo("contact")}
+                onSupportClick={(event) => goTo("support")}
+                onSourcesClick={(event) => goTo("sources")}
+              ></BannerAbout>
+            </Show>
           </main>
           <Show when={isCalendarOpen()}>
             <Calendar
