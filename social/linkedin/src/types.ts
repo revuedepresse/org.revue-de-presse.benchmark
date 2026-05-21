@@ -37,4 +37,6 @@ export type Config = {
   apiClientSecret: string;
   logLevel: string;
   tz: string;
+  postFooterUrl: string;
+  postHashtag: string;
 };
