@@ -1,0 +1,70 @@
+name: tiktok-publish
+
+on:
+  schedule:
+    - cron: '30 21 * * *'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'YYYY-MM-DD override (defaults to today Europe/Paris)'
+        required: false
+      mode:
+        description: 'inbox | direct'
+        required: false
+        default: 'inbox'
+      dry-run:
+        description: 'true skips the TikTok POST'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tiktok-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'nuxt/.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install tiktok workspace deps
+        working-directory: social/tiktok
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright chromium
+        working-directory: social/tiktok
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Verify ffmpeg
+        run: ffmpeg -version | head -n1
+
+      - name: Render & publish
+        env:
+          TIKTOK_CLIENT_KEY:          ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET:       ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN:       ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+          TIKTOK_SECRET_ROTATOR_PAT:  ${{ secrets.TIKTOK_SECRET_ROTATOR_PAT }}
+          API_BASE_URL:               https://api.revue-de-presse.org
+          API_CLIENT_SECRET:          ${{ secrets.API_CLIENT_SECRET }}
+          NUXT_CAPTURE_URL:           https://revue-de-presse.org
+          PUBLISH_MODE:               ${{ github.event.inputs.mode || 'inbox' }}
+          DRY_RUN:                    ${{ github.event.inputs.dry-run || 'false' }}
+          DATE_OVERRIDE:              ${{ github.event.inputs.date }}
+        run: make tiktok-post
+
+      - name: Upload MP4 as artifact (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiktok-${{ github.run_id }}.mp4
+          path: social/tiktok/out/*.mp4
+          retention-days: 7
