@@ -5,13 +5,25 @@ const HISTORY_CAP = 30;
 
 const EMPTY: StateFile = { lastPostedDate: null, history: [] };
 
+export class StateFileError extends Error {
+  constructor(message: string, public readonly cause?: unknown) {
+    super(message);
+    this.name = 'StateFileError';
+  }
+}
+
 export async function readStateFile(path: string): Promise<StateFile | null> {
+  let raw: string;
   try {
-    const raw = await readFile(path, 'utf8');
-    return JSON.parse(raw) as StateFile;
+    raw = await readFile(path, 'utf8');
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
-    throw err;
+    throw new StateFileError(`Cannot read ${path}`, err);
+  }
+  try {
+    return JSON.parse(raw) as StateFile;
+  } catch (err) {
+    throw new StateFileError(`Malformed JSON in ${path}`, err);
   }
 }
 
