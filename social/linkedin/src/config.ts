@@ -3,15 +3,15 @@ import type { Config } from './types.ts';
 
 dotenv.config({ path: '.env.local' });
 
-const REQUIRED_KEYS = [
+const BASE_REQUIRED_KEYS = [
   'LINKEDIN_CLIENT_ID',
   'LINKEDIN_CLIENT_SECRET',
   'LINKEDIN_REDIRECT_URI',
-  'LINKEDIN_TOKEN_FILE',
-  'LINKEDIN_STATE_FILE',
   'API_BASE_URL',
   'API_CLIENT_SECRET',
 ] as const;
+
+const FILE_MODE_KEYS = ['LINKEDIN_TOKEN_FILE', 'LINKEDIN_STATE_FILE'] as const;
 
 export class ConfigError extends Error {
   constructor(public readonly missing: string[]) {
@@ -21,9 +21,14 @@ export class ConfigError extends Error {
 }
 
 export function loadConfig(): Config {
-  const missing = REQUIRED_KEYS.filter((key) => !process.env[key]);
+  const refreshTokenEnv = process.env.LINKEDIN_REFRESH_TOKEN ?? null;
+  const required = [
+    ...BASE_REQUIRED_KEYS,
+    ...(refreshTokenEnv ? [] : FILE_MODE_KEYS),
+  ];
+  const missing = required.filter((key) => !process.env[key]);
   if (missing.length > 0) {
-    throw new ConfigError([...missing]);
+    throw new ConfigError(missing);
   }
 
   return {
@@ -32,9 +37,12 @@ export function loadConfig(): Config {
     linkedinRedirectUri: process.env.LINKEDIN_REDIRECT_URI!,
     linkedinOrganizationUrn:
       process.env.LINKEDIN_ORGANIZATION_URN ?? 'urn:li:organization:75720423',
-    linkedinVersion: process.env.LINKEDIN_VERSION ?? '202505',
-    linkedinTokenFile: process.env.LINKEDIN_TOKEN_FILE!,
-    linkedinStateFile: process.env.LINKEDIN_STATE_FILE!,
+    linkedinVersion: process.env.LINKEDIN_VERSION ?? '202605',
+    linkedinTokenFile: process.env.LINKEDIN_TOKEN_FILE ?? './.linkedin-token.json',
+    linkedinStateFile: process.env.LINKEDIN_STATE_FILE ?? './.linkedin-state.json',
+    linkedinRefreshTokenEnv: refreshTokenEnv,
+    linkedinRotatedRefreshTokenFile:
+      process.env.LINKEDIN_ROTATED_REFRESH_TOKEN_FILE ?? null,
     apiBaseUrl: process.env.API_BASE_URL!,
     apiClientSecret: process.env.API_CLIENT_SECRET!,
     logLevel: process.env.LOG_LEVEL ?? 'info',
