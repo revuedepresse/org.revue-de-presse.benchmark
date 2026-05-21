@@ -19,22 +19,24 @@
   </template>
   <template x-if="(layout ?? 'desktop') === 'desktop'">
     <div class="rdp-app__content">
-      <aside class="rdp-app__column">
-        <Sidebar
-          x-bind:lists="lists"
-          x-bind:selectedListId="selectedListId"
-          x-bind:selectedDate="pickedDate"
-          x-bind:yearRange="yearRange"
-          x-bind:minDate="minDate"
-          x-bind:locale="locale"
-          x-on:list-select="onListSelect?.(id)"
-          x-on:date-select="selectFromSidebar(d)"
-          x-on:legal-notice-click="goTo('legal')"
-          x-on:contact-click="goTo('contact')"
-          x-on:support-click="goTo('support')"
-          x-on:sources-click="goTo('sources')"
-        ></Sidebar>
-      </aside>
+      <template x-if="!captureMode">
+        <aside class="rdp-app__column">
+          <Sidebar
+            x-bind:lists="lists"
+            x-bind:selectedListId="selectedListId"
+            x-bind:selectedDate="pickedDate"
+            x-bind:yearRange="yearRange"
+            x-bind:minDate="minDate"
+            x-bind:locale="locale"
+            x-on:list-select="onListSelect?.(id)"
+            x-on:date-select="selectFromSidebar(d)"
+            x-on:legal-notice-click="goTo('legal')"
+            x-on:contact-click="goTo('contact')"
+            x-on:support-click="goTo('support')"
+            x-on:sources-click="goTo('sources')"
+          ></Sidebar>
+        </aside>
+      </template>
       <main
         class="rdp-app__main"
         x-bind:aria-busy="loading ? 'true' : undefined"

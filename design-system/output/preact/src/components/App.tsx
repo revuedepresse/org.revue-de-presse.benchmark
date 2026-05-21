@@ -182,22 +182,24 @@ function App(props: AppProps) {
       ) : null}
       {(props.layout ?? "desktop") === "desktop" ? (
         <div className="rdp-app__content">
-          <aside className="rdp-app__column">
-            <Sidebar
-              lists={props.lists}
-              selectedListId={props.selectedListId}
-              selectedDate={props.pickedDate}
-              yearRange={props.yearRange}
-              minDate={props.minDate}
-              locale={props.locale}
-              onListSelect={(id) => props.onListSelect?.(id)}
-              onDateSelect={(d) => selectFromSidebar(d)}
-              onLegalNoticeClick={(event) => goTo("legal")}
-              onContactClick={(event) => goTo("contact")}
-              onSupportClick={(event) => goTo("support")}
-              onSourcesClick={(event) => goTo("sources")}
-            />
-          </aside>
+          {!props.captureMode ? (
+            <aside className="rdp-app__column">
+              <Sidebar
+                lists={props.lists}
+                selectedListId={props.selectedListId}
+                selectedDate={props.pickedDate}
+                yearRange={props.yearRange}
+                minDate={props.minDate}
+                locale={props.locale}
+                onListSelect={(id) => props.onListSelect?.(id)}
+                onDateSelect={(d) => selectFromSidebar(d)}
+                onLegalNoticeClick={(event) => goTo("legal")}
+                onContactClick={(event) => goTo("contact")}
+                onSupportClick={(event) => goTo("support")}
+                onSourcesClick={(event) => goTo("sources")}
+              />
+            </aside>
+          ) : null}
           <main
             className="rdp-app__main"
             aria-busy={props.loading ? "true" : undefined}
