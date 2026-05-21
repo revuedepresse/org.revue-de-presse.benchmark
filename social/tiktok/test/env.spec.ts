@@ -78,4 +78,14 @@ describe('loadEnv', () => {
     stubAll({ TIKTOK_SECRET_ROTATOR_PAT: 'pat-xyz' });
     expect(loadEnv().TIKTOK_SECRET_ROTATOR_PAT).toBe('pat-xyz');
   });
+
+  it('empty NUXT_CAPTURE_URL falls back to default', () => {
+    stubAll({ NUXT_CAPTURE_URL: '' });
+    expect(loadEnv().NUXT_CAPTURE_URL).toBe('https://revue-de-presse.org');
+  });
+
+  it('empty API_BASE_URL falls back to default', () => {
+    stubAll({ API_BASE_URL: '' });
+    expect(loadEnv().API_BASE_URL).toBe('https://api.revue-de-presse.org');
+  });
 });
