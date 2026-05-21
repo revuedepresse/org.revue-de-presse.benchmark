@@ -47,6 +47,7 @@ export class App {
   @Prop() yearRange: any;
   @Event() listSelect: any;
   @Prop() loading: any;
+  @Prop() captureMode: any;
   @Prop() posts: any;
   @Prop() emptyMessageKey: any;
   @State() focusedDate = new Date();
@@ -197,7 +198,9 @@ export class App {
                   ← Retour aux publications
                 </button>
               ) : null}
-              {this.currentView === "main" ? <intro-card></intro-card> : null}
+              {!this.captureMode && this.currentView === "main" ? (
+                <intro-card></intro-card>
+              ) : null}
               {this.currentView === "main" && this.loading === true ? (
                 <spinner></spinner>
               ) : null}
@@ -255,7 +258,9 @@ export class App {
                   ← Retour aux publications
                 </button>
               ) : null}
-              {this.currentView === "main" ? <intro-card></intro-card> : null}
+              {!this.captureMode && this.currentView === "main" ? (
+                <intro-card></intro-card>
+              ) : null}
               {this.currentView === "main" && this.loading === true ? (
                 <spinner></spinner>
               ) : null}
@@ -295,12 +300,14 @@ export class App {
               {this.currentView === "sources" ? (
                 <sources-page></sources-page>
               ) : null}
-              <banner-about
-                onLegalNoticeClick={() => this.goTo("legal")}
-                onContactClick={() => this.goTo("contact")}
-                onSupportClick={() => this.goTo("support")}
-                onSourcesClick={() => this.goTo("sources")}
-              ></banner-about>
+              {!this.captureMode ? (
+                <banner-about
+                  onLegalNoticeClick={() => this.goTo("legal")}
+                  onContactClick={() => this.goTo("contact")}
+                  onSupportClick={() => this.goTo("support")}
+                  onSourcesClick={() => this.goTo("sources")}
+                ></banner-about>
+              ) : null}
             </main>
             {this.isCalendarOpen ? (
               <calendar
