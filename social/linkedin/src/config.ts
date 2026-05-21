@@ -1,5 +1,7 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import type { Config } from './types.ts';
+
+dotenv.config({ path: '.env.local' });
 
 const REQUIRED_KEYS = [
   'LINKEDIN_CLIENT_ID',
