@@ -39,5 +39,9 @@ export function loadConfig(): Config {
     apiClientSecret: process.env.API_CLIENT_SECRET!,
     logLevel: process.env.LOG_LEVEL ?? 'info',
     tz: process.env.TZ ?? 'Europe/Paris',
+    postFooterUrl:
+      process.env.POST_FOOTER_URL ??
+      'https://play.google.com/store/apps/details?id=org.revue_2_presse',
+    postHashtag: process.env.POST_HASHTAG ?? '#RevueDePresse',
   };
 }

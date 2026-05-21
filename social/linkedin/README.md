@@ -98,3 +98,54 @@ Both default paths are relative to the workspace and gitignored.
 make linkedin-test       # vitest run
 make linkedin-typecheck  # tsc --noEmit
 ```
+
+## License
+
+[GNU General Public License v3.0](../../LICENSE) — same license as the rest of
+the repository.
+
+This workspace depends on the following third-party packages (all
+GPL-3.0-compatible):
+
+| Package                | License      | Role                              |
+|------------------------|--------------|-----------------------------------|
+| `linkedin-api-client`  | Apache-2.0   | LinkedIn REST + OAuth SDK         |
+| `pino`                 | MIT          | Structured JSON logging           |
+| `pino-pretty`          | MIT          | Dev-only pretty log transport     |
+| `dotenv`               | BSD-2-Clause | `.env.local` loader               |
+| `tsx`                  | MIT          | TypeScript runner for the CLI     |
+| `typescript`, `vitest` | Apache-2.0 / MIT | Build + test tooling          |
+
+## Forking this workspace
+
+Everything that ties this CLI to the upstream Revue de Presse organization is
+either env-driven (override in `.env.local`) or clearly localized in source.
+Audit checklist when forking:
+
+1. **LinkedIn organization** — set `LINKEDIN_ORGANIZATION_URN` to your own
+   organization page URN (the URL fragment after `/company/` on the page admin
+   settings). Update the credential-runbook URL in this README.
+2. **LinkedIn app credentials** — your own `LINKEDIN_CLIENT_ID`,
+   `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_REDIRECT_URI` from your LinkedIn
+   developer-portal app.
+3. **Upstream data source** — set `API_BASE_URL` and `API_CLIENT_SECRET` to
+   your own highlights API, or replace `src/revueDePresseClient.ts` with a
+   client for whatever feed you want to publish. The renderer in
+   `src/renderPost.ts` only needs an array of `{ screenName, url, text, date }`
+   objects (see `src/types.ts`).
+4. **Post footer + hashtag** — `POST_FOOTER_URL` and `POST_HASHTAG` env vars.
+   Leave either blank to drop that section entirely from the commentary.
+5. **Header copy + locale** — the French header "Top 10 des publications de
+   presse les plus relayées sur Bluesky le {date} :" lives at
+   `src/renderPost.ts` and uses `Intl.DateTimeFormat('fr-FR', ...)` for the
+   date. Edit both if you want a different language or framing — they're a
+   handful of lines.
+6. **Package name** — `package.json` is scoped to `@revue-de-presse/…`.
+   Rename if you publish or fork into a different organization namespace.
+7. **Cron user / paths** — `/etc/cron.d/rdp-linkedin` and
+   `/opt/rdp/social-linkedin` in the cron example above are conventions of
+   the upstream deployment; substitute your own user and install path.
+
+Nothing else in `src/` or `bin/` is upstream-specific; the auth flow, atomic
+file I/O, dedupe gate, token refresh, and error / exit-code logic are
+general-purpose.

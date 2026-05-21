@@ -19,6 +19,8 @@ describe('loadConfig', () => {
     delete process.env.LINKEDIN_VERSION;
     delete process.env.LOG_LEVEL;
     delete process.env.TZ;
+    delete process.env.POST_FOOTER_URL;
+    delete process.env.POST_HASHTAG;
   });
 
   afterEach(() => {
@@ -42,6 +44,10 @@ describe('loadConfig', () => {
     expect(cfg.linkedinVersion).toBe('202505');
     expect(cfg.logLevel).toBe('info');
     expect(cfg.tz).toBe('Europe/Paris');
+    expect(cfg.postFooterUrl).toBe(
+      'https://play.google.com/store/apps/details?id=org.revue_2_presse',
+    );
+    expect(cfg.postHashtag).toBe('#RevueDePresse');
   });
 
   it('honours overrides for optional vars', async () => {
@@ -50,6 +56,8 @@ describe('loadConfig', () => {
       LINKEDIN_VERSION: '202601',
       LOG_LEVEL: 'debug',
       TZ: 'UTC',
+      POST_FOOTER_URL: 'https://example.org/digest',
+      POST_HASHTAG: '#MyDigest',
     });
     const { loadConfig } = await import('../src/config.ts');
     const cfg = loadConfig();
@@ -57,6 +65,8 @@ describe('loadConfig', () => {
     expect(cfg.linkedinVersion).toBe('202601');
     expect(cfg.logLevel).toBe('debug');
     expect(cfg.tz).toBe('UTC');
+    expect(cfg.postFooterUrl).toBe('https://example.org/digest');
+    expect(cfg.postHashtag).toBe('#MyDigest');
   });
 
   it('throws listing a single missing key', async () => {
