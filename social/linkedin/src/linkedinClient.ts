@@ -94,6 +94,7 @@ export function createLinkedinClient(opts: {
         }
         return res.createdEntityId;
       } catch (err) {
+        if (err instanceof LinkedinApiError) throw err;
         const status = (err as { response?: { status?: number } }).response?.status;
         throw new LinkedinApiError(status, `LinkedIn create-post failed: ${String(err)}`, err);
       }
