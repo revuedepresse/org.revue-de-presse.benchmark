@@ -89,6 +89,7 @@ jobs:
   perf:
     name: perf
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
     env:
       NUXT_API_BASE_URL: http://localhost:4000
       NUXT_API_CLIENT_SECRET: mock-client-secret
@@ -107,6 +108,7 @@ jobs:
             nuxt/pnpm-lock.yaml
             next/pnpm-lock.yaml
             e2e/pnpm-lock.yaml
+            social/tiktok/pnpm-lock.yaml
       - name: Install nuxt deps
         run: pnpm install --frozen-lockfile
         working-directory: nuxt
@@ -116,6 +118,9 @@ jobs:
       - name: Install e2e deps
         run: pnpm install --frozen-lockfile
         working-directory: e2e
+      - name: Install tiktok deps
+        run: pnpm install --frozen-lockfile
+        working-directory: social/tiktok
       - name: Build Nuxt app
         run: pnpm build
         working-directory: nuxt
@@ -125,6 +130,12 @@ jobs:
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
         working-directory: e2e
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version | head -n1
+          ffprobe -version | head -n1
       - name: Run e2e perf suite
         run: pnpm test:perf
         working-directory: e2e

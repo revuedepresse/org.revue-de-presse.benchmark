@@ -64,11 +64,13 @@ async function main(): Promise<number> {
 
   // 1. render
   let webmPath: string;
+  const fileBase = env.OUT_VARIANT ? `${date}-${env.OUT_VARIANT}` : date;
   try {
     ({ webmPath } = await recordScroll({
       baseUrl: env.NUXT_CAPTURE_URL,
       date,
       outDir: OUT_DIR,
+      fileBase,
     }));
     logger.info({ webmPath }, 'recordScroll done');
   } catch (e) {

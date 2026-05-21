@@ -4,7 +4,7 @@ on:
   schedule:
     # TODO: revert to "30 4 * * *" (05:30 Europe/Paris in summer / CEST) after validation.
     # Validation value: 12:55 UTC = 14:55 Europe/Paris on 2026-05-21.
-    - cron: '00 13 * * *'
+    - cron: '20 13 * * *'
   workflow_dispatch:
 
 permissions:
@@ -26,7 +26,7 @@ jobs:
       LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
       LINKEDIN_REDIRECT_URI:  ${{ vars.LINKEDIN_REDIRECT_URI }}
       LINKEDIN_REFRESH_TOKEN: ${{ secrets.LINKEDIN_REFRESH_TOKEN }}
-      LINKEDIN_ROTATED_REFRESH_TOKEN_FILE: ${{ runner.temp }}/rotated-refresh-token.txt
+      LINKEDIN_ROTATED_REFRESH_TOKEN_FILE: /tmp/rotated-refresh-token.txt
       API_BASE_URL:           ${{ vars.API_BASE_URL }}
       API_CLIENT_SECRET:      ${{ secrets.API_CLIENT_SECRET }}
       TZ: Europe/Paris
