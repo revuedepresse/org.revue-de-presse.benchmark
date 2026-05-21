@@ -6,25 +6,41 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 
-import { TIKTOK } from '../src/tiktok/endpoints.ts';
-import { TokenResponseSchema } from '../src/tiktok/types.ts';
+import { TokenResponseSchema, type TokenResponse } from '../src/tiktok/types.ts';
 import { rewriteEnvLine } from '../src/tiktok/rewriteEnvLine.ts';
 
 const HERE = resolve(fileURLToPath(import.meta.url), '..', '..');
 const ENV_PATH = resolve(HERE, '.env.local');
 // TikTok's Login Kit portal requires an https:// Redirect URI on a public
 // domain (it rejects http://, http://localhost, and https://localhost).
-// We point it at the public API host; the route itself does not need to
-// exist (a 404 is fine) — the browser's URL bar still carries
-// `?code=...&state=...` after the redirect, which is all we need.
-// The exact string below MUST match the Redirect URI registered in the
-// TikTok dev portal under Login Kit -> Redirect URI.
-const REDIRECT_URI = 'https://api.revue-de-presse.org/tiktok/oauth/callback';
+// The API exposes a public landing page at this exact path that renders
+// the incoming `code` + `state` so the maintainer can paste them back in.
+// MUST match the Redirect URI registered in the TikTok dev portal under
+// Login Kit -> Redirect URI, and the API's `app_tiktok_oauth_callback` route.
+const REDIRECT_URI = 'https://api.revue-de-presse.org/api/tiktok/oauth/callback';
 const SCOPES = 'user.info.basic,video.upload,video.publish';
 
 const EnvSchema = z.object({
   TIKTOK_CLIENT_KEY:    z.string().min(1),
   TIKTOK_CLIENT_SECRET: z.string().min(1),
+  API_BASE_URL:         z
+    .string()
+    .url()
+    .default('https://api.revue-de-presse.org')
+    .or(z.literal('').transform(() => 'https://api.revue-de-presse.org')),
+  API_CLIENT_SECRET:    z.string().min(1),
+});
+
+const ApiTokenResponseSchema = z.object({
+  access_token: z.string().min(1),
+  expires_in:   z.number().int().positive(),
+  token_type:   z.string().min(1),
+});
+
+const ProblemJsonSchema = z.object({
+  title:  z.string().optional(),
+  detail: z.string().optional(),
+  status: z.number().optional(),
 });
 
 function b64url(buf: Buffer): string {
@@ -45,7 +61,6 @@ async function openBrowser(url: string): Promise<void> {
 
 function extractCallbackParams(input: string): { code: string; state: string } {
   const trimmed = input.trim();
-  // Accept either the full callback URL or just the query string portion.
   const url = trimmed.startsWith('http')
     ? new URL(trimmed)
     : new URL(`https://placeholder/${trimmed.replace(/^[?&]/, '?')}`);
@@ -54,6 +69,60 @@ function extractCallbackParams(input: string): { code: string; state: string } {
   if (!code) throw new Error('no `code` param in the pasted URL');
   if (!state) throw new Error('no `state` param in the pasted URL');
   return { code, state };
+}
+
+async function describeUpstreamFailure(res: Response): Promise<string> {
+  const text = await res.text();
+  if (res.headers.get('content-type')?.includes('problem+json')) {
+    try {
+      const problem = ProblemJsonSchema.parse(JSON.parse(text));
+      const parts = [problem.title, problem.detail].filter((s): s is string => Boolean(s));
+      if (parts.length > 0) return parts.join(': ');
+    } catch {
+      // fall through to raw body
+    }
+  }
+  return text;
+}
+
+async function mintApiAccessToken(baseUrl: string, clientSecret: string): Promise<string> {
+  const url = new URL('/api/token', baseUrl);
+  const basic = 'Basic ' + Buffer.from(':' + clientSecret).toString('base64');
+  const res = await fetch(url.toString(), {
+    method: 'POST',
+    headers: { authorization: basic, accept: 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`/api/token mint failed: ${res.status} ${await describeUpstreamFailure(res)}`);
+  }
+  const body = ApiTokenResponseSchema.parse(await res.json());
+  if (body.token_type !== 'Bearer') {
+    throw new Error(`unexpected token_type from /api/token: ${body.token_type}`);
+  }
+  return body.access_token;
+}
+
+async function exchangeViaApi(
+  baseUrl: string,
+  bearer: string,
+  body: { code: string; code_verifier: string; redirect_uri: string },
+): Promise<TokenResponse> {
+  const url = new URL('/api/tiktok/oauth/exchange', baseUrl);
+  const res = await fetch(url.toString(), {
+    method: 'POST',
+    headers: {
+      authorization:  `Bearer ${bearer}`,
+      'content-type': 'application/json',
+      accept:         'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new Error(
+      `/api/tiktok/oauth/exchange failed: ${res.status} ${await describeUpstreamFailure(res)}`,
+    );
+  }
+  return TokenResponseSchema.parse(await res.json());
 }
 
 async function main(): Promise<void> {
@@ -78,8 +147,8 @@ async function main(): Promise<void> {
     `Sign in as @revue_2_presse and approve the scopes.\n\n` +
     `After approval, TikTok will redirect you to:\n` +
     `  ${REDIRECT_URI}?code=...&state=...\n\n` +
-    `That page may show a 404 — that is fine. Copy the FULL URL from your\n` +
-    `browser's address bar and paste it back here.\n\n` +
+    `The API renders that URL as an HTML page showing the code, state, and\n` +
+    `the full callback URL — copy any of those back into this prompt.\n\n` +
     `Authorize URL:\n${authUrl.toString()}\n\n`,
   );
   void openBrowser(authUrl.toString());
@@ -97,25 +166,12 @@ async function main(): Promise<void> {
     rl.close();
   }
 
-  const tokenRes = await fetch(TIKTOK.oauthToken, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Cache-Control': 'no-cache',
-    },
-    body: new URLSearchParams({
-      client_key:    env.TIKTOK_CLIENT_KEY,
-      client_secret: env.TIKTOK_CLIENT_SECRET,
-      grant_type:    'authorization_code',
-      code,
-      redirect_uri:  REDIRECT_URI,
-      code_verifier: codeVerifier,
-    }),
+  const bearer = await mintApiAccessToken(env.API_BASE_URL, env.API_CLIENT_SECRET);
+  const token = await exchangeViaApi(env.API_BASE_URL, bearer, {
+    code,
+    code_verifier: codeVerifier,
+    redirect_uri:  REDIRECT_URI,
   });
-  if (!tokenRes.ok) {
-    throw new Error(`token exchange ${tokenRes.status}: ${await tokenRes.text()}`);
-  }
-  const token = TokenResponseSchema.parse(await tokenRes.json());
 
   await rewriteEnvLine(ENV_PATH, 'TIKTOK_REFRESH_TOKEN', token.refresh_token);
 

@@ -7,14 +7,14 @@ Daily 9:16 scroll capture of the Revue de presse top-10 publications, auto-poste
 
 1. Create a TikTok app at <https://developers.tiktok.com/apps/> with the **Login Kit**
    and **Content Posting API** products. Add
-   `https://api.revue-de-presse.org/tiktok/oauth/callback` as the Redirect URI —
+   `https://api.revue-de-presse.org/api/tiktok/oauth/callback` as the Redirect URI —
    exactly that string. TikTok's portal requires `https://` on a public domain
    (it rejects `http://`, `http://localhost`, and `https://localhost`), so we
-   point at the public API host. The route does not need to exist on the API
-   (a 404 is fine) — the browser's address bar still carries
-   `?code=…&state=…` after the redirect, which is all `bootstrap-auth.ts`
-   needs. Request scopes `user.info.basic`, `video.upload`, `video.publish`.
-   Add `@revue_2_presse` as a Sandbox tester.
+   point at the API's public callback route (`app_tiktok_oauth_callback`,
+   `PUBLIC_ACCESS`), which renders the incoming `code` + `state` as a plain
+   HTML page for copy-paste back into the bootstrap CLI. Request scopes
+   `user.info.basic`, `video.upload`, `video.publish`. Add `@revue_2_presse`
+   as a Sandbox tester.
 2. Install workspace dependencies. This also seeds `.env.local` from the template
    if it's missing:
    ```
@@ -22,20 +22,25 @@ Daily 9:16 scroll capture of the Revue de presse top-10 publications, auto-poste
    ```
 3. Open `social/tiktok/.env.local` and fill in:
    - `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` — from the TikTok developer portal.
+     The bootstrap doesn't talk to TikTok's token endpoint directly anymore (the
+     API server does), but `TIKTOK_CLIENT_SECRET` is still needed locally for
+     the daily refresh-token rotation in `make tiktok-post`.
    - `API_CLIENT_SECRET` — same value as the Nuxt/Next/linkedin workspaces use to mint
-     upstream tokens.
+     upstream tokens. Required by the bootstrap to call the API's
+     `app_tiktok_oauth_exchange` route, which sits behind `ROLE_USER`.
 4. Run the interactive OAuth bootstrap to obtain the long-lived refresh token:
    ```
    make tiktok-bootstrap
    ```
    The CLI opens the TikTok authorize page in your browser. Sign in as
    `@revue_2_presse` and approve the scopes; TikTok will redirect to
-   `https://api.revue-de-presse.org/tiktok/oauth/callback?code=…&state=…`.
-   That page may show a 404 — that is expected. Copy the full URL from the
-   browser's address bar and paste it back into the CLI prompt. The CLI then
-   exchanges the code, persists `TIKTOK_REFRESH_TOKEN` into
-   `social/tiktok/.env.local`, and prints the `gh secret set` commands to
-   seed CI.
+   `https://api.revue-de-presse.org/api/tiktok/oauth/callback?code=…&state=…`,
+   which the API renders as an HTML page showing the code, state, and full
+   callback URL. Copy any of those back into the CLI prompt. The CLI mints a
+   Bearer token against `/api/token` (using `API_CLIENT_SECRET`), POSTs
+   `{code, code_verifier, redirect_uri}` to `/api/tiktok/oauth/exchange`,
+   persists the returned `refresh_token` into `social/tiktok/.env.local` as
+   `TIKTOK_REFRESH_TOKEN`, and prints the `gh secret set` commands to seed CI.
 
 ## Daily run
 
