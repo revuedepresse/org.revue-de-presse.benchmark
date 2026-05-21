@@ -71,7 +71,10 @@ async function main(): Promise<number> {
     return EXIT.UPSTREAM;
   }
 
-  const commentary = renderPost(highlights, targetDate);
+  const commentary = renderPost(highlights, targetDate, {
+    footerUrl: cfg.postFooterUrl,
+    hashtag: cfg.postHashtag,
+  });
 
   if (values['dry-run']) {
     process.stdout.write(commentary + '\n');
