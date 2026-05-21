@@ -4,7 +4,7 @@ on:
   schedule:
     # TODO: revert to "30 4 * * *" (05:30 Europe/Paris in summer / CEST) after validation.
     # Validation value: 12:55 UTC = 14:55 Europe/Paris on 2026-05-21.
-    - cron: '00 13 * * *'
+    - cron: '20 13 * * *'
   workflow_dispatch:
 
 permissions:
