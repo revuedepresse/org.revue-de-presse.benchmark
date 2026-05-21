@@ -66,6 +66,7 @@ type AppProps = {
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
+  captureMode?: boolean;
 };
 export const prevDay = function prevDay(
   props,
@@ -328,7 +329,9 @@ export const App = component$((props: AppProps) => {
                 ← Retour aux publications
               </button>
             ) : null}
-            {state.currentView === "main" ? <IntroCard></IntroCard> : null}
+            {!props.captureMode && state.currentView === "main" ? (
+              <IntroCard></IntroCard>
+            ) : null}
             {state.currentView === "main" && props.loading === true ? (
               <Spinner></Spinner>
             ) : null}
@@ -397,7 +400,9 @@ export const App = component$((props: AppProps) => {
                 ← Retour aux publications
               </button>
             ) : null}
-            {state.currentView === "main" ? <IntroCard></IntroCard> : null}
+            {!props.captureMode && state.currentView === "main" ? (
+              <IntroCard></IntroCard>
+            ) : null}
             {state.currentView === "main" && props.loading === true ? (
               <Spinner></Spinner>
             ) : null}
@@ -439,48 +444,50 @@ export const App = component$((props: AppProps) => {
             {state.currentView === "sources" ? (
               <SourcesPage></SourcesPage>
             ) : null}
-            <BannerAbout
-              onLegalNoticeClick$={$((event) =>
-                goTo(
-                  props,
-                  state,
-                  popularNewsLine,
-                  prevDayDisabled,
-                  nextDayDisabled,
-                  "legal"
-                )
-              )}
-              onContactClick$={$((event) =>
-                goTo(
-                  props,
-                  state,
-                  popularNewsLine,
-                  prevDayDisabled,
-                  nextDayDisabled,
-                  "contact"
-                )
-              )}
-              onSupportClick$={$((event) =>
-                goTo(
-                  props,
-                  state,
-                  popularNewsLine,
-                  prevDayDisabled,
-                  nextDayDisabled,
-                  "support"
-                )
-              )}
-              onSourcesClick$={$((event) =>
-                goTo(
-                  props,
-                  state,
-                  popularNewsLine,
-                  prevDayDisabled,
-                  nextDayDisabled,
-                  "sources"
-                )
-              )}
-            ></BannerAbout>
+            {!props.captureMode ? (
+              <BannerAbout
+                onLegalNoticeClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "legal"
+                  )
+                )}
+                onContactClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "contact"
+                  )
+                )}
+                onSupportClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "support"
+                  )
+                )}
+                onSourcesClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "sources"
+                  )
+                )}
+              ></BannerAbout>
+            ) : null}
           </main>
           {state.isCalendarOpen ? (
             <Calendar

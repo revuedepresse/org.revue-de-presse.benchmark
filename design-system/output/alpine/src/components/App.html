@@ -44,7 +44,7 @@
             ← Retour aux publications
           </button>
         </template>
-        <template x-if="currentView === 'main'">
+        <template x-if="!captureMode && currentView === 'main'">
           <IntroCard></IntroCard>
         </template>
         <template x-if="currentView === 'main' && loading === true">
@@ -95,7 +95,7 @@
           ← Retour aux publications
         </button>
       </template>
-      <template x-if="currentView === 'main'">
+      <template x-if="!captureMode && currentView === 'main'">
         <IntroCard></IntroCard>
       </template>
       <template x-if="currentView === 'main' && loading === true">
@@ -131,12 +131,14 @@
       <template x-if="currentView === 'sources'">
         <SourcesPage></SourcesPage>
       </template>
-      <BannerAbout
-        x-on:legal-notice-click="goTo('legal')"
-        x-on:contact-click="goTo('contact')"
-        x-on:support-click="goTo('support')"
-        x-on:sources-click="goTo('sources')"
-      ></BannerAbout>
+      <template x-if="!captureMode">
+        <BannerAbout
+          x-on:legal-notice-click="goTo('legal')"
+          x-on:contact-click="goTo('contact')"
+          x-on:support-click="goTo('support')"
+          x-on:sources-click="goTo('sources')"
+        ></BannerAbout>
+      </template>
     </main>
     <template x-if="isCalendarOpen">
       <Calendar

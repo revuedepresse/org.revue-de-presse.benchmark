@@ -28,6 +28,7 @@ type AppProps = {
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
+  captureMode?: boolean;
 };
 
 import { t } from "../utils/i18n";
@@ -210,7 +211,7 @@ function App(props: AppProps) {
                   ← Retour aux publications
                 </button>
               </Show>
-              <Show when={currentView() === "main"}>
+              <Show when={!props.captureMode && currentView() === "main"}>
                 <IntroCard></IntroCard>
               </Show>
               <Show when={currentView() === "main" && props.loading === true}>
@@ -282,7 +283,7 @@ function App(props: AppProps) {
                 ← Retour aux publications
               </button>
             </Show>
-            <Show when={currentView() === "main"}>
+            <Show when={!props.captureMode && currentView() === "main"}>
               <IntroCard></IntroCard>
             </Show>
             <Show when={currentView() === "main" && props.loading === true}>
@@ -337,12 +338,14 @@ function App(props: AppProps) {
             <Show when={currentView() === "sources"}>
               <SourcesPage></SourcesPage>
             </Show>
-            <BannerAbout
-              onLegalNoticeClick={(event) => goTo("legal")}
-              onContactClick={(event) => goTo("contact")}
-              onSupportClick={(event) => goTo("support")}
-              onSourcesClick={(event) => goTo("sources")}
-            ></BannerAbout>
+            <Show when={!props.captureMode}>
+              <BannerAbout
+                onLegalNoticeClick={(event) => goTo("legal")}
+                onContactClick={(event) => goTo("contact")}
+                onSupportClick={(event) => goTo("support")}
+                onSourcesClick={(event) => goTo("sources")}
+              ></BannerAbout>
+            </Show>
           </main>
           <Show when={isCalendarOpen()}>
             <Calendar

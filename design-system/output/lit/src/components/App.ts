@@ -49,6 +49,7 @@ type AppProps = {
  onDateSelect?: (date: Date) => void;
  onLogoClick?: () => void;
  onViewChange?: (view: ViewKey) => void;
+ captureMode?: boolean;
 }
 
 
@@ -82,6 +83,7 @@ type AppProps = {
 @property() yearRange: any
 @property() onListSelect: any
 @property() loading: any
+@property() captureMode: any
 @property() posts: any
 @property() emptyMessageKey: any
 
@@ -181,7 +183,7 @@ this.initialised = true }
                         ← Retour aux publications
                       </button>`
            : null}
-       ${this.currentView === 'main' ?
+       ${!this.captureMode && this.currentView === 'main' ?
              html`<intro-card ></intro-card>`
            : null}
        ${this.currentView === 'main' && this.loading === true ?
@@ -214,7 +216,7 @@ this.initialised = true }
                       ← Retour aux publications
                     </button>`
            : null}
-       ${this.currentView === 'main' ?
+       ${!this.captureMode && this.currentView === 'main' ?
              html`<intro-card ></intro-card>`
            : null}
        ${this.currentView === 'main' && this.loading === true ?
@@ -240,7 +242,9 @@ this.initialised = true }
        ${this.currentView === 'sources' ?
              html`<sources-page ></sources-page>`
            : null}
-       <banner-about  @legalnoticeclick=${(event) => this.goTo('legal')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')} ></banner-about></main>
+       ${!this.captureMode ?
+             html`<banner-about  @legalnoticeclick=${(event) => this.goTo('legal')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')} ></banner-about>`
+           : null}</main>
        ${this.isCalendarOpen ?
              html`<my-calendar  presentation="sheet"  .selectedDate=${this.focusedDate}  .locale=${this.locale}  .yearRange=${this.yearRange}  .minDate=${this.minDate}  @select=${(d) => this.pickFromCalendar(d)}  @dismiss=${(event) => this.closeCalendar()} ></my-calendar>`
            : null}

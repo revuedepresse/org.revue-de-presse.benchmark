@@ -12,6 +12,7 @@ const props = defineProps<{
 const router = useRouter();
 const route = useRoute();
 const { lists } = useSampleData();
+const { isCaptureModeActive } = useCaptureMode();
 
 const layout = ref<'desktop' | 'mobile'>('desktop');
 
@@ -111,6 +112,7 @@ function onLogoClick() {
 <template>
   <App
     :layout="layout"
+    :capture-mode="isCaptureModeActive"
     :authenticated="false"
     :posts="posts"
     :picked-date="pickedDate"
