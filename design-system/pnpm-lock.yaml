@@ -9,6 +9,7 @@ overrides:
   esbuild: ^0.25.0
   svelte: ^5.55.7
   '@tootallnate/once': ^3.0.1
+  '@builder.io/mitosis>@angular/compiler': ^20.0.0
 
 importers:
 
@@ -16,10 +17,10 @@ importers:
     devDependencies:
       '@angular/common':
         specifier: ^20
-        version: 20.3.21(@angular/core@20.3.21(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core':
         specifier: ^20
-        version: 20.3.21(rxjs@7.8.2)
+        version: 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)
       '@builder.io/mitosis':
         specifier: ^0.13.0
         version: 0.13.0(postcss@8.5.14)
@@ -144,10 +145,10 @@ importers:
     dependencies:
       '@angular/common':
         specifier: '>=20'
-        version: 20.3.21(@angular/core@20.3.21(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core':
         specifier: '>=20'
-        version: 20.3.21(rxjs@7.8.2)
+        version: 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)
 
   packages/provider-lit:
     dependencies:
@@ -210,8 +211,9 @@ packages:
       '@angular/core': 20.3.21
       rxjs: ^6.5.3 || ^7.4.0
 
-  '@angular/compiler@11.2.14':
-    resolution: {integrity: sha512-XBOK3HgA+/y6Cz7kOX4zcJYmgJ264XnfcbXUMU2cD7Ac+mbNhLPKohWrEiSWalfcjnpf5gRfufQrQP7lpAGu0A==}
+  '@angular/compiler@20.3.21':
+    resolution: {integrity: sha512-XufWMAUS0gNKE29LkDFf21eTxdBN2WIcN/3ownqfYqKwDzMMpUAm5EEjPYfn0b/2/b5OYGNJrU4yeTHoz0Bt7g==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   '@angular/core@20.3.21':
     resolution: {integrity: sha512-sZMWyxh6dkuT6F90epkM1F7E2WJeduHoA9PRHYChIIVFnBd0VKITxpfrwRQS44IPJAtR456/5twtrcCNBALweQ==}
@@ -2718,20 +2720,22 @@ snapshots:
 
   '@akryum/tinypool@0.3.1': {}
 
-  '@angular/common@20.3.21(@angular/core@20.3.21(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@angular/core': 20.3.21(rxjs@7.8.2)
+      '@angular/core': 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@angular/compiler@11.2.14':
+  '@angular/compiler@20.3.21':
     dependencies:
       tslib: 2.8.1
 
-  '@angular/core@20.3.21(rxjs@7.8.2)':
+  '@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)':
     dependencies:
       rxjs: 7.8.2
       tslib: 2.8.1
+    optionalDependencies:
+      '@angular/compiler': 20.3.21
 
   '@babel/code-frame@7.29.0':
     dependencies:
@@ -3005,7 +3009,7 @@ snapshots:
 
   '@builder.io/mitosis@0.13.0(postcss@8.5.14)':
     dependencies:
-      '@angular/compiler': 11.2.14
+      '@angular/compiler': 20.3.21
       '@babel/core': 7.14.5
       '@babel/generator': 7.29.1
       '@babel/plugin-syntax-decorators': 7.28.6(@babel/core@7.14.5)
