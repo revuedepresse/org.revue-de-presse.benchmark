@@ -1,6 +1,6 @@
 .env.local
 !.env.local.dist
+docs/
 legacy
 nuxt/.netlify
 tmp/
-docs/
