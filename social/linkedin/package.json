@@ -16,7 +16,7 @@
   "homepage": "https://github.com/revue-de-presse/org.revue-de-presse.benchmark/tree/main/social/linkedin#readme",
   "keywords": ["linkedin", "bluesky", "cron", "press", "social", "cli"],
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "scripts": {
     "post": "tsx bin/post-daily-top10.ts",

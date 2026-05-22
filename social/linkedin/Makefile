@@ -3,6 +3,8 @@ SHELL:=/bin/bash
 .PHONY: install bootstrap post post-dry test typecheck help
 
 install: ## Install Node dependencies (and seed .env.local from .env.local.dist if missing)
+	@pnpm env use --global 24
+	@which node && node --version
 	@pnpm install
 	@if [ ! -f .env.local ]; then cp .env.local.dist .env.local; echo "✓ created .env.local from template — fill in the missing values"; fi
 
