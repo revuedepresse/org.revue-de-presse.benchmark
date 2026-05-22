@@ -89,12 +89,11 @@ rotate that secret back via `gh secret set` after each successful run.
 
 Posts the previous day's top-10 as a text update to the
 [Revue de Presse organization page](https://www.linkedin.com/company/75720423/).
-The CLI calls the versioned LinkedIn REST API (`/rest/posts`). CI runs via
-`.github/workflows/linkedin-post.yml` (scheduled cron + `workflow_dispatch`).
-See `social/linkedin/README.md` for local bootstrap, the required secrets
-and variables (`LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`,
-`LINKEDIN_REFRESH_TOKEN`, `API_CLIENT_SECRET`, `GH_LINKEDIN_PAT`), and the
-annual re-auth procedure.
+The CLI calls the versioned LinkedIn REST API (`/rest/posts`). It runs
+from a daily cron on the production server (see `social/linkedin/README.md`
+for the crontab entry, local bootstrap, the required credentials
+(`LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `API_CLIENT_SECRET`), and
+the annual re-auth procedure).
 
 ### TikTok (`social/tiktok/`)
 
