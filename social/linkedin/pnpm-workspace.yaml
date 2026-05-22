@@ -1,0 +1,6 @@
+overrides:
+  vite: ^7.3.2
+  esbuild: ^0.25.0
+
+onlyBuiltDependencies:
+  - esbuild
