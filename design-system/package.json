@@ -28,7 +28,7 @@
     "@builder.io/qwik": "^1.5",
     "@histoire/plugin-vue": "^0.17.17",
     "@stencil/core": "^4",
-    "@types/node": "^20.14.0",
+    "@types/node": "^25.9.1",
     "@vitejs/plugin-react": "^4.3",
     "@vitejs/plugin-vue": "^5.0.0",
     "@zxcvbn-ts/core": "^3",
