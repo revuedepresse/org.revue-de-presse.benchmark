@@ -3,4 +3,4 @@ overrides:
   esbuild: ^0.25.0
 
 onlyBuiltDependencies:
-  - esbuild
+  - esbuild@0.25.12
