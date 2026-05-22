@@ -57,52 +57,12 @@ Exit codes: `0` success / dry-run, `1` already-posted, `2` upstream failure,
 
 05:30 Europe/Paris posts the previous calendar day's top 10.
 
-## CI mode (GitHub Actions)
+## Rotating credentials
 
-The CLI can also run from a stateless runner (no token file, no state file).
-The workflow at `.github/workflows/linkedin-post.yml` posts on a daily schedule
-and writes the rotated refresh token back to a GitHub secret.
-
-### Required GitHub configuration
-
-Secrets (Settings → Secrets and variables → Actions → **Secrets**):
-
-| Secret                    | Value                                                                                              |
-| ------------------------- | -------------------------------------------------------------------------------------------------- |
-| `LINKEDIN_CLIENT_ID`      | from the LinkedIn app Auth tab                                                                     |
-| `LINKEDIN_CLIENT_SECRET`  | from the LinkedIn app Auth tab                                                                     |
-| `LINKEDIN_REFRESH_TOKEN`  | `refresh_token` value from `.linkedin-token.json` after running `make linkedin-bootstrap` locally  |
-| `API_CLIENT_SECRET`       | upstream Revue de Presse API credential                                                            |
-| `GH_LINKEDIN_PAT`         | fine-grained PAT, repo-scoped, **Actions secrets: Read & write**. Used to rotate the secret above. |
-
-Variables (same page → **Variables** tab, non-secret):
-
-| Variable                | Value                                       |
-| ----------------------- | ------------------------------------------- |
-| `LINKEDIN_REDIRECT_URI` | `https://localhost:8080/callback` (config still requires it; not used at runtime) |
-| `API_BASE_URL`          | `https://api.revue-de-presse.org`           |
-
-### How env mode differs from file mode
-
-When `LINKEDIN_REFRESH_TOKEN` is set, `loadConfig` no longer requires
-`LINKEDIN_TOKEN_FILE` / `LINKEDIN_STATE_FILE`, and `post-daily-top10.ts`:
-
-- reads the refresh token from the env var (skips `.linkedin-token.json`);
-- skips the `.linkedin-state.json` dedupe check (the cron schedule is the
-  dedupe boundary; pair with `concurrency:` in the workflow to be safe);
-- writes the rotated `refresh_token` returned by LinkedIn to the path in
-  `LINKEDIN_ROTATED_REFRESH_TOKEN_FILE` so the workflow can push it back to
-  the GitHub secret via `gh secret set`.
-
-### Rotating credentials
-
-- `LINKEDIN_REFRESH_TOKEN` — auto-rotated by the workflow each successful run.
-  If LinkedIn returns the same value, the workflow skips the secret update.
-- `GH_LINKEDIN_PAT` — fine-grained PATs cap at 1 year. Rotate manually before
-  expiry.
-- The underlying LinkedIn refresh token still expires ~365 days after
-  bootstrap. Re-run `make linkedin-bootstrap` annually and copy the new
-  `refresh_token` into the `LINKEDIN_REFRESH_TOKEN` secret.
+The LinkedIn refresh token expires ~365 days after bootstrap. Re-run
+`make linkedin-bootstrap` annually and copy the new `refresh_token` into
+`.linkedin-token.json` on the production server (the CLI also rewrites this
+file in place each run if LinkedIn returns a rotated value).
 
 ## Generating LinkedIn credentials
 
