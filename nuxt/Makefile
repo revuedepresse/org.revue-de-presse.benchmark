@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 .ONESHELL:
-.PHONY: install dev build preview install-bubblewrap update-twa build-twa help
+.PHONY: install dev build preview install-bubblewrap update-twa build-twa twa-fingerprint help
 
 install: ## Install Node dependencies (delegates to pnpm)
 	@pnpm install
@@ -38,6 +38,11 @@ update-twa: install-bubblewrap ## Regenerate the Android project from the curren
 
 build-twa: ## Compile and sign the Android TWA (set BUBBLEWRAP_KEYSTORE_PASSWORD/BUBBLEWRAP_KEY_PASSWORD)
 	@/bin/bash -c 'source ./scripts/twa.sh && build_twa'
+
+APK ?= app-release-signed.apk
+twa-fingerprint: ## Print SHA-256/SHA-1 of the APK's signing cert (override path with APK=...)
+	@if [ ! -f "$(APK)" ]; then echo "APK not found: $(APK) (override with APK=path/to.apk)" >&2; exit 1; fi
+	@keytool -printcert -jarfile "$(APK)" | grep -E '^\s*(SHA1|SHA256):'
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
