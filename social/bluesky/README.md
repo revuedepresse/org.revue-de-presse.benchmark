@@ -14,7 +14,7 @@ verified per atproto rules (DNS TXT or `/.well-known/atproto-did`).
 ```bash
 cd social/bluesky
 make install                 # pnpm install + seeds .env.local from .env.local.dist
-# fill in BLUESKY_HANDLE, BLUESKY_CLIENT_METADATA_URL, API_* values in .env.local
+# fill in BLUESKY_HANDLE, BLUESKY_CLIENT_METADATA_URL, BLUESKY_REDIRECT_URI, API_* values in .env.local
 # verify nuxt is serving nuxt/public/bluesky-client-metadata.json at the URL above
 make bluesky-bootstrap       # one-time interactive OAuth (writes .bluesky-session.json)
 make bluesky-post-dry        # smoke-test: render and log, no PDS call
@@ -29,6 +29,12 @@ launch and the loopback listener, prints the auth URL, and waits for you to
 paste the redirected URL back on stdin. Open the URL on your laptop, approve,
 copy the failed-to-load URL out of the address bar (it carries `code=…` and
 `state=…`), paste it into the SSH session — done, no port-forwarding needed.
+
+Paste-back reads from `/dev/tty` directly, so it works even when `make` /
+`pnpm` closes the child's stdin (Linux production hosts hit this). If
+`/dev/tty` is unreachable (some containers), or paste-back fails for any
+reason, re-run with `BLUESKY_CALLBACK_URL=<full-redirect-url>` set — the
+script skips the stdin prompt entirely and uses that value.
 
 Alternative: bootstrap once locally and `scp` `.bluesky-session.json` (+
 `.bluesky-session.json.did`) to the server's `BLUESKY_SESSION_FILE` path, or

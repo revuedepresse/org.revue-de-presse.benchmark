@@ -18,6 +18,7 @@ design-system/   Mitosis source + 10 emitted framework targets + tests
 nuxt/            Nuxt 3 app, TWA tooling, Netlify deploy config
 next/            Next.js 15 (App Router) port — same UI, separate stack
 e2e/             Playwright suite exercising both apps via a single webServer
+social/bluesky/  daily Bluesky thread CLI (lead + 3 replies, top 3 publications)
 social/linkedin/ daily LinkedIn auto-post CLI (top 10, organization page)
 social/tiktok/   daily TikTok 9:16 scroll-capture publisher CLI
 Makefile         top-level orchestration (delegates to per-workspace Makefiles)
@@ -80,10 +81,26 @@ Next app has no deploy target wired yet — see `next/README.md`.
 
 ## Social publishers
 
-Two daily auto-posters consume the same Bluesky top-10 highlights and
-publish them to social platforms. Both run on a GitHub Actions schedule,
-read their long-lived OAuth refresh token from a repository secret, and
-rotate that secret back via `gh secret set` after each successful run.
+Three daily auto-posters consume the same upstream highlights API and
+publish them to social platforms. The LinkedIn and TikTok publishers
+run on a GitHub Actions schedule and rotate their long-lived OAuth
+refresh token back into a repository secret via `gh secret set` after
+each run; the Bluesky publisher runs from a cron entry on the
+production server (file-based session, rotated in place by
+`@atproto/oauth-client-node`).
+
+### Bluesky (`social/bluesky/`)
+
+Posts a 4-post thread (lead + 3 replies, one per outlet) of the
+previous day's top-3 most-relayed publications to
+[`@revue-de-presse.org`](https://bsky.app/profile/revue-de-presse.org)
+via the atproto API with OAuth 2.1 + DPoP + PKCE. Each reply mentions
+the outlet's verified Bluesky handle when resolvable. Two safety gates
+(per-day check via `getAuthorFeed`, content check via local state file)
+prevent duplicate posts. See `social/bluesky/README.md` for the
+bootstrap procedure (interactive + headless production variants), exit
+codes, env-mode workflow, and the `BLUESKY_ROTATED_STATE_FILE`
+mechanism for CI deployments.
 
 ### LinkedIn (`social/linkedin/`)
 

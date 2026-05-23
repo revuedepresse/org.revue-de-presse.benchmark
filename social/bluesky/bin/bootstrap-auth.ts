@@ -1,7 +1,9 @@
 #!/usr/bin/env -S node --env-file=.env.local --import tsx
 import { createServer } from 'node:http';
 import { exec } from 'node:child_process';
-import { writeFile, chmod, rename } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
+import { writeFile, chmod, rename, access } from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
 import * as readline from 'node:readline';
 import { NodeOAuthClient, type NodeSavedSession, type NodeSavedState } from '@atproto/oauth-client-node';
 import { loadConfig, ConfigError } from '../src/config.ts';
@@ -43,7 +45,22 @@ function listenForCallback(redirect: URL, port: number): Promise<URLSearchParams
   });
 }
 
+async function openTtyStream(): Promise<NodeJS.ReadableStream | null> {
+  try {
+    await access('/dev/tty', fsConstants.R_OK);
+    return createReadStream('/dev/tty', { encoding: 'utf8' });
+  } catch {
+    return null;
+  }
+}
+
 async function promptForCallback(redirectUri: string): Promise<URLSearchParams> {
+  const envCallback = process.env.BLUESKY_CALLBACK_URL?.trim();
+  if (envCallback) {
+    process.stdout.write('\n   Using BLUESKY_CALLBACK_URL — skipping stdin prompt.\n');
+    return parseCallbackParams(envCallback);
+  }
+
   process.stdout.write(
     [
       '',
@@ -51,19 +68,47 @@ async function promptForCallback(redirectUri: string): Promise<URLSearchParams> 
       "   The page will fail to load — that's expected on a headless host;",
       '   the URL in the address bar is what we need.',
       '',
+      '   (If paste-back fails: re-run with BLUESKY_CALLBACK_URL=<url> set.)',
+      '',
       '3) Paste the full redirected URL (or its query string), then press Enter:',
       '',
     ].join('\n'),
   );
-  const rl = readline.createInterface({ input: process.stdin, terminal: false });
-  const line = await new Promise<string>((resolve, reject) => {
-    rl.once('line', (l) => {
+
+  const ttyStream = await openTtyStream();
+  const input = ttyStream ?? process.stdin;
+  const rl = readline.createInterface({ input, terminal: false });
+  return new Promise<URLSearchParams>((resolve, reject) => {
+    let buffer = '';
+    let done = false;
+    const finish = (line: string) => {
+      if (done) return;
+      done = true;
       rl.close();
-      resolve(l);
+      try {
+        resolve(parseCallbackParams(line));
+      } catch (err) {
+        reject(err);
+      }
+    };
+    rl.on('line', (l) => {
+      if (l.trim()) finish(l);
+      else buffer += '\n';
     });
-    rl.once('close', () => reject(new Error('stdin closed before callback URL was pasted')));
+    rl.once('close', () => {
+      if (done) return;
+      const trimmed = buffer.trim();
+      if (trimmed) {
+        try {
+          resolve(parseCallbackParams(trimmed));
+        } catch (err) {
+          reject(err);
+        }
+      } else {
+        reject(new Error('stdin closed before callback URL was pasted'));
+      }
+    });
   });
-  return parseCallbackParams(line);
 }
 
 function isHeadless(): boolean {
