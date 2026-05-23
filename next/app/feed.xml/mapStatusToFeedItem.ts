@@ -20,7 +20,7 @@ export type FeedItem = {
   id: string;
   link: string;
   description: string;
-  content: string;
+  image: string;
   date: Date;
 };
 
@@ -30,8 +30,8 @@ export const mapStatusToFeedItem = (raw: RawStatus): FeedItem => {
     title: cleanForFeed(s.screen_name ?? ''),
     id: s.publication_id ?? s.url ?? '',
     link: s.url ?? '',
-    description: cleanForFeed(s.avatar_url ?? ''),
-    content: cleanForFeed(s.text ?? ''),
+    description: cleanForFeed(s.text ?? ''),
+    image: cleanForFeed(s.avatar_url ?? ''),
     date: s.date ? new Date(s.date) : new Date(),
   };
 };
