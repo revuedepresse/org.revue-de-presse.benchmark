@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { renderThread, graphemeLength } from '../src/renderThread.ts';
+import { renderThread, graphemeLength, truncateGraphemes } from '../src/renderThread.ts';
 import type { Highlight } from '../src/types.ts';
 
 const H = (i: number, screen = `outlet${i}.bsky.social`, text = `Headline ${i}`): Highlight => ({
@@ -83,5 +83,26 @@ describe('graphemeLength', () => {
   });
   it('counts an emoji as 1 grapheme even though it is multi-codepoint', () => {
     expect(graphemeLength('👨‍👩‍👧')).toBe(1);
+  });
+});
+
+describe('truncateGraphemes (URL-append degradation budget)', () => {
+  it('truncates a near-budget reply so a URL suffix still fits in 300 graphemes', () => {
+    // Simulate the cron-CLI degradation path: a 297g reply text plus a "\n<url>" suffix.
+    const reply = '1. @lemonde.fr — ' + 'mot '.repeat(70).trim(); // ~297g
+    const url = 'https://www.lemonde.fr/economie/article/2026/05/22/un-titre-tres-long-here?ref=rss';
+    const suffix = `\n${url}`;
+    const maxTextLen = 300 - graphemeLength(suffix);
+    const truncated = truncateGraphemes(reply, maxTextLen);
+    const final = `${truncated}${suffix}`;
+    expect(graphemeLength(final)).toBeLessThanOrEqual(300);
+    expect(final.endsWith(url)).toBe(true);
+    expect(truncated.endsWith('…')).toBe(true);
+    // Mention range start (`@lemonde.fr` at byte offset 3) is still intact.
+    expect(truncated.startsWith('1. @lemonde.fr')).toBe(true);
+  });
+
+  it('returns the input unchanged when it already fits the budget', () => {
+    expect(truncateGraphemes('short', 100)).toBe('short');
   });
 });

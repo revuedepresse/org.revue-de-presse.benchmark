@@ -6,7 +6,7 @@ import { NodeOAuthClient, type NodeSavedSession, type NodeSavedState } from '@at
 import { JoseKey } from '@atproto/jwk-jose';
 import { loadConfig, ConfigError } from '../src/config.ts';
 import { createRevueDePresseClient, UpstreamError } from '../src/revueDePresseClient.ts';
-import { renderThread, graphemeLength } from '../src/renderThread.ts';
+import { renderThread, graphemeLength, truncateGraphemes } from '../src/renderThread.ts';
 import { createMentionResolver } from '../src/mentionResolver.ts';
 import { createEmbedBuilder } from '../src/embedBuilder.ts';
 import { postThread, BlueskyApiError } from '../src/blueskyClient.ts';
@@ -150,9 +150,13 @@ async function main(): Promise<number> {
       } else {
         text = text.replace('@', '');
       }
-      let finalEmbed: unknown | undefined = embed ?? undefined;
+      const finalEmbed: unknown | undefined = embed ?? undefined;
       if (!embed) {
         const suffix = `\n${r.embedUri}`;
+        const maxTextLen = 300 - graphemeLength(suffix);
+        if (graphemeLength(text) > maxTextLen) {
+          text = truncateGraphemes(text, maxTextLen);
+        }
         const byteStart = Buffer.byteLength(text, 'utf8') + 1;
         text = `${text}${suffix}`;
         const byteEnd = Buffer.byteLength(text, 'utf8');
