@@ -16,7 +16,7 @@ export function graphemeLength(s: string): number {
   return n;
 }
 
-function truncateGraphemes(s: string, max: number): string {
+export function truncateGraphemes(s: string, max: number): string {
   if (graphemeLength(s) <= max) return s;
   const out: string[] = [];
   let count = 0;
