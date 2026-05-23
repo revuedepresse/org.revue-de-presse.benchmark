@@ -93,4 +93,30 @@ describe('revueDePresseClient', () => {
     });
     await expect(client.fetchTopThree('2026-05-20')).rejects.toBeInstanceOf(UpstreamError);
   });
+
+  it('slices to the first 3 even when upstream returns more (itemsPerPage is a hint)', async () => {
+    const TEN_RES = () =>
+      new Response(
+        JSON.stringify({
+          '@type': 'hydra:Collection',
+          'hydra:member': Array.from({ length: 10 }, (_, i) => ({
+            '@id': `/api/highlights/${i + 1}`,
+            publicationId: `p${i + 1}`,
+            screenName: `Outlet${i + 1}`,
+            text: `t${i + 1}`,
+            date: '2026-05-20',
+            url: `https://bsky.app/post/${i + 1}`,
+          })),
+        }),
+        { status: 200, headers: { 'content-type': 'application/ld+json' } },
+      );
+    fetchMock.mockResolvedValueOnce(TOKEN_RES()).mockResolvedValueOnce(TEN_RES());
+    const client = createRevueDePresseClient({
+      baseUrl: 'https://api.revue-de-presse.org',
+      clientSecret: 'sek',
+    });
+    const out = await client.fetchTopThree('2026-05-20');
+    expect(out).toHaveLength(3);
+    expect(out.map((h) => h.screenName)).toEqual(['Outlet1', 'Outlet2', 'Outlet3']);
+  });
 });
