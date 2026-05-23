@@ -10,20 +10,32 @@
     "url": "https://github.com/revue-de-presse/org.revue-de-presse.benchmark.git",
     "directory": "social/bluesky"
   },
-  "bugs": { "url": "https://github.com/revue-de-presse/org.revue-de-presse.benchmark/issues" },
+  "bugs": {
+    "url": "https://github.com/revue-de-presse/org.revue-de-presse.benchmark/issues"
+  },
   "homepage": "https://github.com/revue-de-presse/org.revue-de-presse.benchmark/tree/main/social/bluesky#readme",
-  "keywords": ["bluesky", "atproto", "cron", "press", "social", "cli"],
-  "engines": { "node": ">=24" },
+  "keywords": [
+    "bluesky",
+    "atproto",
+    "cron",
+    "press",
+    "social",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
-    "post":      "node --env-file=.env.local --import tsx bin/post-daily-top3.ts",
-    "post:dry":  "node --env-file=.env.local --import tsx bin/post-daily-top3.ts --dry-run",
+    "post": "node --env-file=.env.local --import tsx bin/post-daily-top3.ts",
+    "post:dry": "node --env-file=.env.local --import tsx bin/post-daily-top3.ts --dry-run",
     "bootstrap": "node --env-file=.env.local --import tsx bin/bootstrap-auth.ts",
-    "test":      "vitest",
-    "test:run":  "vitest run",
+    "test": "vitest",
+    "test:run": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@atproto/api": "^0.13.0",
+    "@atproto/jwk-jose": "^0.1.8",
     "@atproto/oauth-client-node": "^0.2.0",
     "pino": "^10.3.1",
     "sharp": "^0.34.0"
