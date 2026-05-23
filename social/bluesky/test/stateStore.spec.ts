@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { readStateFile, writeStateFile, hasPostedFor, recordPost, previousPublicationIds } from '../src/stateStore.ts';
+import { readStateFile, writeStateFile, hasPostedFor, recordPost, previousPublicationIds, writeRotatedStateFile } from '../src/stateStore.ts';
 
 let dir: string;
 let path: string;
@@ -97,6 +97,20 @@ describe('stateStore', () => {
         history: [{ date: '2026-05-20', threadRootUri: 'at://r', postedAt: 't', publicationIds: ['p1', 'p2', 'p3'] }],
       });
       expect(await previousPublicationIds(path)).toEqual(['p1', 'p2', 'p3']);
+    });
+  });
+
+  describe('writeRotatedStateFile', () => {
+    it('writes the same JSON shape as writeStateFile, atomically, mode 0600', async () => {
+      const rot = join(dir, 'rotated.json');
+      const state = {
+        lastPostedDate: '2026-05-20',
+        history: [{ date: '2026-05-20', threadRootUri: 'at://r', postedAt: 't', publicationIds: ['a', 'b', 'c'] }],
+      };
+      await writeRotatedStateFile(rot, state);
+      const { readFileSync, statSync } = await import('node:fs');
+      expect(JSON.parse(readFileSync(rot, 'utf8'))).toEqual(state);
+      expect(statSync(rot).mode & 0o777).toBe(0o600);
     });
   });
 });

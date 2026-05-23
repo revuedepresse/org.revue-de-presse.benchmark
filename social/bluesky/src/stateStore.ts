@@ -1,4 +1,4 @@
-import { readFile, writeFile, rename } from 'node:fs/promises';
+import { readFile, writeFile, rename, chmod } from 'node:fs/promises';
 import type { StateFile } from './types.ts';
 
 const HISTORY_CAP = 30;
@@ -63,4 +63,11 @@ export async function recordPost(
     ].slice(0, HISTORY_CAP),
   };
   await writeStateFile(path, next);
+}
+
+export async function writeRotatedStateFile(path: string, state: StateFile): Promise<void> {
+  const tmp = `${path}.tmp`;
+  await writeFile(tmp, JSON.stringify(state, null, 2), { mode: 0o600 });
+  await chmod(tmp, 0o600);
+  await rename(tmp, path);
 }
