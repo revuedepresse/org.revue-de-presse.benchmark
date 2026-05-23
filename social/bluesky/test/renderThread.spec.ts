@@ -1,0 +1,87 @@
+import { describe, expect, it } from 'vitest';
+import { renderThread, graphemeLength } from '../src/renderThread.ts';
+import type { Highlight } from '../src/types.ts';
+
+const H = (i: number, screen = `outlet${i}.bsky.social`, text = `Headline ${i}`): Highlight => ({
+  screenName: screen,
+  publicationId: `pub-${i}`,
+  url: `https://example.org/article/${i}`,
+  text,
+  date: '2026-05-22',
+});
+
+const SAMPLE = [H(1), H(2), H(3)];
+const OPTS = { footerUrl: 'https://play.google.com/store/apps/details?id=org.revue_2_presse', hashtag: '#RevueDePresse' };
+
+describe('renderThread', () => {
+  it('throws when given !=3 highlights', () => {
+    expect(() => renderThread([], '2026-05-22', OPTS)).toThrow(/exactly 3/i);
+    expect(() => renderThread([H(1), H(2)], '2026-05-22', OPTS)).toThrow(/exactly 3/i);
+    expect(() => renderThread([H(1), H(2), H(3), H(4) as Highlight], '2026-05-22', OPTS)).toThrow(/exactly 3/i);
+  });
+
+  it('lead post contains the French header with the formatted date', () => {
+    const d = renderThread(SAMPLE, '2026-05-22', OPTS);
+    expect(d.lead.text).toContain('Top 3 des publications de presse les plus relayées sur Bluesky le 22 mai 2026 :');
+    expect(d.lead.text).toContain('Retrouvez la revue de presse complète : https://play.google.com/store/apps/details?id=org.revue_2_presse');
+    expect(d.lead.text).toContain('#RevueDePresse');
+  });
+
+  it('drops the hashtag then the footer if the lead overflows 300 graphemes', () => {
+    const longFooter = 'https://example.org/' + 'x'.repeat(300);
+    const d = renderThread(SAMPLE, '2026-05-22', { footerUrl: longFooter, hashtag: '#RevueDePresse' });
+    expect(graphemeLength(d.lead.text)).toBeLessThanOrEqual(300);
+    expect(d.lead.text).toContain('Top 3');
+  });
+
+  it('renders 3 replies with rank + @handle + snippet', () => {
+    const d = renderThread(SAMPLE, '2026-05-22', OPTS);
+    expect(d.replies).toHaveLength(3);
+    expect(d.replies[0].text.startsWith('1. @outlet1.bsky.social — ')).toBe(true);
+    expect(d.replies[1].text.startsWith('2. @outlet2.bsky.social — ')).toBe(true);
+    expect(d.replies[2].text.startsWith('3. @outlet3.bsky.social — ')).toBe(true);
+  });
+
+  it('does NOT include the URL in the reply text', () => {
+    const d = renderThread(SAMPLE, '2026-05-22', OPTS);
+    for (const r of d.replies) expect(r.text).not.toContain('https://');
+  });
+
+  it('exposes the raw handle, embedUri, and mention byte-range per reply', () => {
+    const d = renderThread([H(1, 'lemonde.fr'), H(2), H(3)], '2026-05-22', OPTS);
+    expect(d.replies[0].handle).toBe('lemonde.fr');
+    expect(d.replies[0].embedUri).toBe('https://example.org/article/1');
+    const text = d.replies[0].text;
+    const buf = Buffer.from(text, 'utf8');
+    const slice = buf.slice(d.replies[0].mentionRange.byteStart, d.replies[0].mentionRange.byteEnd).toString('utf8');
+    expect(slice).toBe('@lemonde.fr');
+  });
+
+  it('computes mentionRange in UTF-8 BYTES, not UTF-16 code units', () => {
+    const d = renderThread([H(1, 'lemonde.fr', 'élu président'), H(2), H(3)], '2026-05-22', OPTS);
+    const { byteStart, byteEnd } = d.replies[0].mentionRange;
+    expect(byteStart).toBe(3);                                   // "1. " is 3 ASCII bytes
+    expect(byteEnd - byteStart).toBe('@lemonde.fr'.length);      // 11 ASCII bytes
+  });
+
+  it('truncates the snippet to keep every reply ≤300 graphemes', () => {
+    const big = 'mot '.repeat(200);
+    const d = renderThread([H(1, 'x.bsky.social', big), H(2), H(3)], '2026-05-22', OPTS);
+    for (const r of d.replies) expect(graphemeLength(r.text)).toBeLessThanOrEqual(300);
+    expect(d.replies[0].text.endsWith('…')).toBe(true);
+  });
+
+  it('renders the reply without snippet when text is empty', () => {
+    const d = renderThread([H(1, 'x.bsky.social', ''), H(2), H(3)], '2026-05-22', OPTS);
+    expect(d.replies[0].text).toBe('1. @x.bsky.social');
+  });
+});
+
+describe('graphemeLength', () => {
+  it('counts ASCII chars correctly', () => {
+    expect(graphemeLength('hello')).toBe(5);
+  });
+  it('counts an emoji as 1 grapheme even though it is multi-codepoint', () => {
+    expect(graphemeLength('👨‍👩‍👧')).toBe(1);
+  });
+});
