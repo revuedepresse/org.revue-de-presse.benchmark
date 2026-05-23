@@ -1,0 +1,15 @@
+.env.local
+
+# Bluesky CLI runtime artifacts written by bin/bootstrap-auth.ts,
+# bin/post-daily-top3.ts, src/oauthStore.ts and src/stateStore.ts.
+# The `.*` suffix catches every sibling the code can produce:
+#   .bluesky-session.json        OAuth session blob (chmod 0600)
+#   .bluesky-session.json.state  OAuth state store (chmod 0600)
+#   .bluesky-session.json.did    DID summary written after bootstrap
+#   .bluesky-session.json.tmp    atomic-rename leftover when a write crashes
+#   .bluesky-state.json[.tmp]    posting-dedupe state + its atomic-rename temp
+.bluesky-session.*
+.bluesky-state.*
+
+node_modules
+*.log
