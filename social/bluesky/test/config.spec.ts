@@ -58,4 +58,14 @@ describe('loadConfig', () => {
     Object.assign(process.env, FILE_ENV, { BLUESKY_ROTATED_SESSION_FILE: '/tmp/rot.json' });
     expect(loadConfig().blueskyRotatedSessionFile).toBe('/tmp/rot.json');
   });
+
+  it('exposes BLUESKY_ROTATED_STATE_FILE when set', () => {
+    Object.assign(process.env, FILE_ENV, { BLUESKY_ROTATED_STATE_FILE: '/tmp/state.json' });
+    expect(loadConfig().blueskyRotatedStateFile).toBe('/tmp/state.json');
+  });
+
+  it('defaults blueskyRotatedStateFile to null', () => {
+    Object.assign(process.env, FILE_ENV);
+    expect(loadConfig().blueskyRotatedStateFile).toBeNull();
+  });
 });
