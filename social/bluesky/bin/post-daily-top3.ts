@@ -10,16 +10,29 @@ import { createMentionResolver } from '../src/mentionResolver.ts';
 import { createEmbedBuilder } from '../src/embedBuilder.ts';
 import { postThread, BlueskyApiError } from '../src/blueskyClient.ts';
 import { createFileSessionStore, createFileStateStore, createEnvSessionStore } from '../src/oauthStore.ts';
-import { hasPostedFor, recordPost, StateFileError } from '../src/stateStore.ts';
+import {
+  previousPublicationIds,
+  readStateFile,
+  recordPost,
+  StateFileError,
+  writeRotatedStateFile,
+} from '../src/stateStore.ts';
+import { hasAuthoredTodayInTz } from '../src/dailyGuard.ts';
 import { logger } from '../src/logger.ts';
 
-const EXIT = { OK: 0, ALREADY_POSTED: 1, UPSTREAM: 2, BLUESKY: 3, CONFIG: 4 };
+const EXIT = { OK: 0, ALREADY_POSTED: 1, UPSTREAM: 2, BLUESKY: 3, CONFIG: 4, DUPLICATE_CONTENT: 5 };
 
 function previousDateInTz(tz: string): string {
   const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' });
   const [y, m, d] = fmt.format(new Date()).split('-').map(Number);
   const y2 = new Date(Date.UTC(y, m - 1, d - 1));
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit' }).format(y2);
+}
+
+function setEqualsStrings(a: string[], b: string[]): boolean {
+  if (a.length !== b.length) return false;
+  const sa = new Set(a);
+  return b.every((v) => sa.has(v));
 }
 
 function clientMetadata(cfg: ReturnType<typeof loadConfig>) {
@@ -61,9 +74,51 @@ async function main(): Promise<number> {
   const targetDate = values.date ?? previousDateInTz(cfg.tz);
   logger.info({ targetDate, dryRun: values['dry-run'], force: values.force, envMode }, 'starting');
 
-  if (!values.force && !envMode && (await hasPostedFor(cfg.blueskyStateFile, targetDate))) {
-    logger.warn({ targetDate }, 'already posted for this date — pass --force to override');
-    return EXIT.ALREADY_POSTED;
+  const sessionStore = envMode
+    ? createEnvSessionStore<NodeSavedSession>(cfg.blueskyOauthSessionEnv!)
+    : createFileSessionStore<NodeSavedSession>(cfg.blueskySessionFile);
+  const stateStore = createFileStateStore<NodeSavedState>(`${cfg.blueskySessionFile}.state`);
+
+  let did: string | null;
+  if (envMode) {
+    const decoded = JSON.parse(Buffer.from(cfg.blueskyOauthSessionEnv!, 'base64').toString('utf8')) as { did: string };
+    did = decoded.did;
+  } else {
+    did = await readDidSummary(cfg.blueskySessionFile);
+    if (!did) {
+      logger.error({ sessionFile: cfg.blueskySessionFile }, 'no .did summary alongside session file — run `make bluesky-bootstrap` first');
+      return EXIT.CONFIG;
+    }
+  }
+
+  let agent: Agent | null = null;
+  if (!values['dry-run']) {
+    const client = new NodeOAuthClient({
+      clientMetadata: clientMetadata(cfg),
+      stateStore,
+      sessionStore,
+    });
+    let oauthSession;
+    try {
+      oauthSession = await client.restore(did);
+    } catch (err) {
+      logger.error({ err, did }, 'OAuth restore failed — refresh token likely revoked; re-run `make bluesky-bootstrap`');
+      return EXIT.CONFIG;
+    }
+    agent = new Agent(oauthSession);
+
+    if (!values.force) {
+      try {
+        if (await hasAuthoredTodayInTz(agent, did, cfg.tz)) {
+          logger.warn({ targetDate, did }, 'dailyGuard.skip — already authored a post today in tz');
+          return EXIT.ALREADY_POSTED;
+        }
+      } catch (err) {
+        logger.warn({ err }, 'dailyGuard.error — proceeding without calendar-day gate');
+      }
+    }
+  } else {
+    logger.info('dailyGuard.skipped-by-dryrun');
   }
 
   const upstream = createRevueDePresseClient({ baseUrl: cfg.apiBaseUrl, clientSecret: cfg.apiClientSecret });
@@ -77,6 +132,15 @@ async function main(): Promise<number> {
   if (highlights.length !== 3) {
     logger.error({ targetDate, count: highlights.length }, 'upstream did not return 3 highlights — refusing to post incomplete digest');
     return EXIT.UPSTREAM;
+  }
+
+  if (!values.force) {
+    const prevIds = await previousPublicationIds(cfg.blueskyStateFile);
+    const currentIds = highlights.map((h) => h.publicationId);
+    if (prevIds && setEqualsStrings(prevIds, currentIds)) {
+      logger.warn({ prevIds, currentIds, targetDate }, 'contentGuard.skip — top 3 unchanged since last post');
+      return EXIT.DUPLICATE_CONTENT;
+    }
   }
 
   let draft;
@@ -97,37 +161,10 @@ async function main(): Promise<number> {
     return EXIT.OK;
   }
 
-  const sessionStore = envMode
-    ? createEnvSessionStore<NodeSavedSession>(cfg.blueskyOauthSessionEnv!)
-    : createFileSessionStore<NodeSavedSession>(cfg.blueskySessionFile);
-  const stateStore = createFileStateStore<NodeSavedState>(`${cfg.blueskySessionFile}.state`);
-
-  let did: string | null;
-  if (envMode) {
-    const decoded = JSON.parse(Buffer.from(cfg.blueskyOauthSessionEnv!, 'base64').toString('utf8')) as { did: string };
-    did = decoded.did;
-  } else {
-    did = await readDidSummary(cfg.blueskySessionFile);
-    if (!did) {
-      logger.error({ sessionFile: cfg.blueskySessionFile }, 'no .did summary alongside session file — run `make bluesky-bootstrap` first');
-      return EXIT.CONFIG;
-    }
+  if (!agent) {
+    logger.error('internal: agent not initialised at post time');
+    return EXIT.BLUESKY;
   }
-
-  const client = new NodeOAuthClient({
-    clientMetadata: clientMetadata(cfg),
-    stateStore,
-    sessionStore,
-  });
-
-  let oauthSession;
-  try {
-    oauthSession = await client.restore(did);
-  } catch (err) {
-    logger.error({ err, did }, 'OAuth restore failed — refresh token likely revoked; re-run `make bluesky-bootstrap`');
-    return EXIT.CONFIG;
-  }
-  const agent = new Agent(oauthSession);
 
   const resolver = createMentionResolver(agent);
   const embedBuilder = createEmbedBuilder({ agent });
@@ -175,9 +212,10 @@ async function main(): Promise<number> {
     return EXIT.BLUESKY;
   }
 
-  if (!envMode) {
-    await recordPost(cfg.blueskyStateFile, targetDate, rootUri, new Date().toISOString());
-  } else if (cfg.blueskyRotatedSessionFile) {
+  const publicationIds = highlights.map((h) => h.publicationId);
+  await recordPost(cfg.blueskyStateFile, targetDate, rootUri, new Date().toISOString(), publicationIds);
+
+  if (envMode && cfg.blueskyRotatedSessionFile) {
     const envStore = sessionStore as ReturnType<typeof createEnvSessionStore>;
     if (envStore.lastSet) {
       const payload = JSON.stringify({ did: envStore.lastSet.did, session: envStore.lastSet.value });
@@ -186,6 +224,11 @@ async function main(): Promise<number> {
       await chmod(tmp, 0o600);
       await rename(tmp, cfg.blueskyRotatedSessionFile);
     }
+  }
+
+  if (envMode && cfg.blueskyRotatedStateFile) {
+    const state = await readStateFile(cfg.blueskyStateFile);
+    if (state) await writeRotatedStateFile(cfg.blueskyRotatedStateFile, state);
   }
 
   logger.info({ rootUri, targetDate }, 'posted');
