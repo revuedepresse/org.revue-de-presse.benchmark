@@ -3,7 +3,6 @@ import { readFile, writeFile, chmod, rename } from 'node:fs/promises';
 import { parseArgs } from 'node:util';
 import { Agent } from '@atproto/api';
 import { NodeOAuthClient, type NodeSavedSession, type NodeSavedState } from '@atproto/oauth-client-node';
-import { JoseKey } from '@atproto/jwk-jose';
 import { loadConfig, ConfigError } from '../src/config.ts';
 import { createRevueDePresseClient, UpstreamError } from '../src/revueDePresseClient.ts';
 import { renderThread, graphemeLength, truncateGraphemes } from '../src/renderThread.ts';
@@ -119,7 +118,6 @@ async function main(): Promise<number> {
     clientMetadata: clientMetadata(cfg),
     stateStore,
     sessionStore,
-    keyset: await Promise.all([JoseKey.generate(['ES256'])]),
   });
 
   let oauthSession;
