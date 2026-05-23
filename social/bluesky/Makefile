@@ -3,7 +3,14 @@ SHELL:=/bin/bash
 .PHONY: install bootstrap post post-dry test typecheck help
 
 install: ## Install Node deps (and seed .env.local from .env.local.dist if missing)
-	@pnpm env use --global 24
+	@# `pnpm env use --global` only works when pnpm was installed via the
+	@# standalone script; brew/npm/corepack installs reject it. Verify Node
+	@# >=24 directly instead so any install method works.
+	@node_major=$$(node -v 2>/dev/null | sed -E 's/^v([0-9]+).*/\1/'); \
+	 if [ -z "$$node_major" ] || [ "$$node_major" -lt 24 ]; then \
+	   echo "✗ Node >=24 required (current: $$(node -v 2>/dev/null || echo 'not installed'))" >&2; \
+	   exit 1; \
+	 fi
 	@which node && node --version
 	@pnpm install
 	@if [ ! -f .env.local ]; then cp .env.local.dist .env.local; echo "✓ created .env.local from template — fill in the missing values"; fi
