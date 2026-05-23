@@ -1,10 +1,10 @@
 // RSS 2.0 feed for revue-de-presse.org. Ports nuxt/server/plugins/feed.ts —
 // same field mapping (title<-screen_name, id<-publication_id, link<-url,
-// description<-text, image<-avatar_url emitted as <enclosure>), same
-// yesterday-only window, same swallow-on-error behaviour (emit channel
-// metadata with zero items rather than 5xx). Uses the `feed` library — the
-// same one nuxt-module-feed wraps internally — so RSS escaping/structure
-// matches the Nuxt build.
+// description<-text plain, content<-linkified HTML in <content:encoded>,
+// image<-avatar_url emitted as <enclosure>), same yesterday-only window,
+// same swallow-on-error behaviour (emit channel metadata with zero items
+// rather than 5xx). Uses the `feed` library — the same one nuxt-module-feed
+// wraps internally — so RSS escaping/structure matches the Nuxt build.
 //
 // Pure mapping helpers live in ./mapStatusToFeedItem.ts because Next App
 // Router route files cannot export non-HTTP-method names (build fails
@@ -115,6 +115,7 @@ function buildFeedXml(items: FeedItem[]): string {
       id: it.id,
       link: it.link,
       description: it.description,
+      content: it.content,
       ...(it.image ? { image: it.image } : {}),
       date: it.date,
     });
