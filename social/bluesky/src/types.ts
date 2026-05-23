@@ -39,6 +39,7 @@ export type Config = {
   blueskyStateFile: string;
   blueskyOauthSessionEnv: string | null;
   blueskyRotatedSessionFile: string | null;
+  blueskyRotatedStateFile: string | null;
   apiBaseUrl: string;
   apiClientSecret: string;
   logLevel: string;
