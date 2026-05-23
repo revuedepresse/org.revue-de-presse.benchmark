@@ -1,8 +1,6 @@
 name: tiktok-publish
 
 on:
-  schedule:
-    - cron: '30 21 * * *'
   workflow_dispatch:
     inputs:
       date:
@@ -31,10 +29,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'nuxt/.nvmrc'
           cache: 'pnpm'
+          cache-dependency-path: social/tiktok/pnpm-lock.yaml
 
       - name: Install tiktok workspace deps
         working-directory: social/tiktok
