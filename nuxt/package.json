@@ -12,6 +12,7 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "linkifyjs": "^4.3.3",
     "nuxt": "^3.21.6",
     "vue": "^3.5.0",
     "vue-router": "^4.4.0"

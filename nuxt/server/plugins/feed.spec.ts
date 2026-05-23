@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { mapStatusToFeedItem, type RawStatus } from './feed';
+import {
+  mapStatusToFeedItem,
+  shrinkBlueskyAvatar,
+  linkifyForFeed,
+  type RawStatus,
+} from './feed';
 
 describe('mapStatusToFeedItem', () => {
   it('maps every legacy field one-to-one', () => {
@@ -17,8 +22,10 @@ describe('mapStatusToFeedItem', () => {
     expect(item.title).toBe('franceculture.fr');
     expect(item.id).toBe('at://did:plc:abc/post/123');
     expect(item.link).toBe('https://bsky.app/profile/franceculture.fr/post/123');
-    // description carries the post text (RSS 2.0 native body).
+    // description carries the post text (RSS 2.0 plain-text fallback).
     expect(item.description).toBe('Lorem ipsum.');
+    // content carries the same text linkified for <content:encoded>.
+    expect(item.content).toBe('Lorem ipsum.');
     // avatar URL becomes an <enclosure> via the `image` field.
     expect(item.image).toBe('https://cdn.bsky.app/avatar.jpg');
     expect(item.date).toBeInstanceOf(Date);
@@ -135,5 +142,113 @@ describe('mapStatusToFeedItem', () => {
 
     expect(item.title).toBe('weird handle');
     expect(item.image).toBe('https://cdn/avatar.jpg');
+  });
+
+  it('rewrites Bluesky CDN avatar URLs to the thumbnail variant', () => {
+    const raw: RawStatus = {
+      screen_name: 'x.fr',
+      publication_id: 'pub-9',
+      url: 'https://bsky.app/x/9',
+      avatar_url:
+        'https://cdn.bsky.app/img/avatar/plain/did:plc:abc/bafyreigh@jpeg',
+      text: 'body',
+    };
+
+    const item = mapStatusToFeedItem(raw);
+
+    expect(item.image).toBe(
+      'https://cdn.bsky.app/img/avatar_thumbnail/plain/did:plc:abc/bafyreigh@jpeg',
+    );
+  });
+});
+
+describe('shrinkBlueskyAvatar', () => {
+  it('rewrites the avatar path to avatar_thumbnail on the Bluesky CDN', () => {
+    expect(
+      shrinkBlueskyAvatar(
+        'https://cdn.bsky.app/img/avatar/plain/did:plc:abc/cid@jpeg',
+      ),
+    ).toBe('https://cdn.bsky.app/img/avatar_thumbnail/plain/did:plc:abc/cid@jpeg');
+  });
+
+  it('leaves non-Bluesky URLs unchanged', () => {
+    expect(shrinkBlueskyAvatar('https://example.com/img/avatar/foo.jpg')).toBe(
+      'https://example.com/img/avatar/foo.jpg',
+    );
+  });
+
+  it('leaves already-thumbnail URLs unchanged (idempotent)', () => {
+    const thumb =
+      'https://cdn.bsky.app/img/avatar_thumbnail/plain/did:plc:abc/cid@jpeg';
+    expect(shrinkBlueskyAvatar(thumb)).toBe(thumb);
+  });
+
+  it('leaves the empty string unchanged', () => {
+    expect(shrinkBlueskyAvatar('')).toBe('');
+  });
+});
+
+describe('linkifyForFeed', () => {
+  it('returns plain text unchanged when no URLs or handles are present', () => {
+    expect(linkifyForFeed('hello world')).toBe('hello world');
+  });
+
+  it('wraps bare https URLs in an anchor', () => {
+    expect(linkifyForFeed('see https://example.org for more')).toBe(
+      'see <a href="https://example.org">https://example.org</a> for more',
+    );
+  });
+
+  it('wraps bare http URLs in an anchor', () => {
+    expect(linkifyForFeed('http://example.org')).toBe(
+      '<a href="http://example.org">http://example.org</a>',
+    );
+  });
+
+  it('strips trailing sentence punctuation from the anchor target', () => {
+    expect(linkifyForFeed('voir https://example.org.')).toBe(
+      'voir <a href="https://example.org">https://example.org</a>.',
+    );
+  });
+
+  it('wraps Bluesky handles in an anchor to bsky.app/profile', () => {
+    expect(linkifyForFeed('via @franceculture.fr')).toBe(
+      'via <a href="https://bsky.app/profile/franceculture.fr">@franceculture.fr</a>',
+    );
+  });
+
+  it('handles multi-segment handles like @user.bsky.social', () => {
+    expect(linkifyForFeed('@user.bsky.social hi')).toBe(
+      '<a href="https://bsky.app/profile/user.bsky.social">@user.bsky.social</a> hi',
+    );
+  });
+
+  it('linkifies both URLs and handles in the same string', () => {
+    expect(linkifyForFeed('@lemonde.fr a publié https://lemonde.fr/article')).toBe(
+      '<a href="https://bsky.app/profile/lemonde.fr">@lemonde.fr</a>' +
+        ' a publié <a href="https://lemonde.fr/article">https://lemonde.fr/article</a>',
+    );
+  });
+
+  it('HTML-escapes plain text segments', () => {
+    expect(linkifyForFeed('a < b & "ok"')).toBe(
+      'a &lt; b &amp; &quot;ok&quot;',
+    );
+  });
+
+  it('preserves UTF-8 (accents, emoji) in plain segments', () => {
+    expect(linkifyForFeed('café 🌷 @x.fr')).toBe(
+      'café 🌷 <a href="https://bsky.app/profile/x.fr">@x.fr</a>',
+    );
+  });
+
+  it('escapes ampersands in URL query strings', () => {
+    expect(linkifyForFeed('https://example.org/p?a=1&b=2')).toBe(
+      '<a href="https://example.org/p?a=1&amp;b=2">https://example.org/p?a=1&amp;b=2</a>',
+    );
+  });
+
+  it('returns the empty string for empty input', () => {
+    expect(linkifyForFeed('')).toBe('');
   });
 });
