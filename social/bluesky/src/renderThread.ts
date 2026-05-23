@@ -43,7 +43,7 @@ const formatDateFr = (isoDate: string): string => {
 };
 
 function buildLead(date: string, opts: RenderThreadOpts): string {
-  const header = `Top 3 des publications de presse les plus relayées sur Bluesky le ${date} :`;
+  const header = `Top 3 des publications de presse parmi les plus relayées sur Bluesky le ${date} :`;
   const footer = opts.footerUrl ? `Retrouvez la revue de presse complète : ${opts.footerUrl}` : '';
   const tag = opts.hashtag ?? '';
 
