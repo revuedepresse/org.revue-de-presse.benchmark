@@ -21,6 +21,19 @@ make bluesky-post-dry        # smoke-test: render and log, no PDS call
 make bluesky-post            # production cron entry — posts yesterday's top 3
 ```
 
+### Bootstrapping on a headless production host
+
+`make bluesky-bootstrap` auto-detects headless mode when `$SSH_CONNECTION`
+is set (or when binding the redirect port fails). It then skips the browser
+launch and the loopback listener, prints the auth URL, and waits for you to
+paste the redirected URL back on stdin. Open the URL on your laptop, approve,
+copy the failed-to-load URL out of the address bar (it carries `code=…` and
+`state=…`), paste it into the SSH session — done, no port-forwarding needed.
+
+Alternative: bootstrap once locally and `scp` `.bluesky-session.json` (+
+`.bluesky-session.json.did`) to the server's `BLUESKY_SESSION_FILE` path, or
+base64 the blob into `BLUESKY_OAUTH_SESSION` (see "CI / env mode" below).
+
 ## CLI
 
 ```
@@ -103,4 +116,4 @@ Third-party (all GPL-3.0-compatible):
 
 ## Forking
 
-See (internal design notes) §14.
+See the design notes maintained by the project for the forking guidance.

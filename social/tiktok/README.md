@@ -84,6 +84,4 @@ TikTok rotates the refresh_token on every `grant_type=refresh_token` exchange, s
 is rewritten on each daily run. The 365-day TTL means annual manual re-auth is needed
 if the daily run is skipped for that long.
 
-See (internal design notes)
-for the full design and (internal design notes)
-for the implementation plan.
+See the project's design and implementation notes maintained alongside the publisher.
