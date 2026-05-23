@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { readStateFile, writeStateFile, hasPostedFor, recordPost } from '../src/stateStore.ts';
+import { readStateFile, writeStateFile, hasPostedFor, recordPost, previousPublicationIds } from '../src/stateStore.ts';
 
 let dir: string;
 let path: string;
@@ -63,5 +63,40 @@ describe('stateStore', () => {
     expect(state?.history[0].date).toBe('d-34');
     expect(state?.history.find((e) => e.date === 'd-00')).toBeUndefined();
     expect(state?.history.find((e) => e.date === 'd-05')).toBeDefined();
+  });
+
+  describe('previousPublicationIds', () => {
+    it('returns null on a missing file', async () => {
+      expect(await previousPublicationIds(path)).toBeNull();
+    });
+
+    it('returns null when history is empty', async () => {
+      await writeStateFile(path, { lastPostedDate: null, history: [] });
+      expect(await previousPublicationIds(path)).toBeNull();
+    });
+
+    it('returns null when history[0] has no publicationIds (legacy)', async () => {
+      await writeStateFile(path, {
+        lastPostedDate: '2026-05-20',
+        history: [{ date: '2026-05-20', threadRootUri: 'at://r', postedAt: 't' } as never],
+      });
+      expect(await previousPublicationIds(path)).toBeNull();
+    });
+
+    it('returns null when history[0].publicationIds is not length 3', async () => {
+      await writeStateFile(path, {
+        lastPostedDate: '2026-05-20',
+        history: [{ date: '2026-05-20', threadRootUri: 'at://r', postedAt: 't', publicationIds: ['a', 'b'] }],
+      });
+      expect(await previousPublicationIds(path)).toBeNull();
+    });
+
+    it('returns the ids when history[0].publicationIds is length 3', async () => {
+      await writeStateFile(path, {
+        lastPostedDate: '2026-05-20',
+        history: [{ date: '2026-05-20', threadRootUri: 'at://r', postedAt: 't', publicationIds: ['p1', 'p2', 'p3'] }],
+      });
+      expect(await previousPublicationIds(path)).toEqual(['p1', 'p2', 'p3']);
+    });
   });
 });

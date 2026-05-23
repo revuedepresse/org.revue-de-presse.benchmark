@@ -38,6 +38,15 @@ export async function hasPostedFor(path: string, isoDate: string): Promise<boole
   return state?.lastPostedDate === isoDate;
 }
 
+export async function previousPublicationIds(path: string): Promise<string[] | null> {
+  const state = await readStateFile(path);
+  const head = state?.history[0];
+  if (!head || !Array.isArray(head.publicationIds) || head.publicationIds.length !== 3) {
+    return null;
+  }
+  return head.publicationIds;
+}
+
 export async function recordPost(
   path: string,
   isoDate: string,
