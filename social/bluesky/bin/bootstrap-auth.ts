@@ -3,7 +3,6 @@ import { createServer } from 'node:http';
 import { exec } from 'node:child_process';
 import { writeFile, chmod, rename } from 'node:fs/promises';
 import { NodeOAuthClient, type NodeSavedSession, type NodeSavedState } from '@atproto/oauth-client-node';
-import { JoseKey } from '@atproto/jwk-jose';
 import { loadConfig, ConfigError } from '../src/config.ts';
 import { createFileSessionStore, createFileStateStore } from '../src/oauthStore.ts';
 import { logger } from '../src/logger.ts';
@@ -34,7 +33,6 @@ async function main(): Promise<number> {
     clientMetadata: clientMetadata(cfg),
     stateStore,
     sessionStore,
-    keyset: await Promise.all([JoseKey.generate(['ES256'])]),
   });
 
   const redirect = new URL(cfg.blueskyRedirectUri);
