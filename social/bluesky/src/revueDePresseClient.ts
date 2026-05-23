@@ -86,7 +86,10 @@ export function createRevueDePresseClient(opts: {
       let res = await callHighlights(await getToken(), isoDate);
       if (res.status === 401) res = await callHighlights(await getToken(true), isoDate);
       if (!res.ok) throw new UpstreamError(res.status, `Highlights fetch failed: ${res.status}`);
-      return adapt((await res.json()) as HydraCollection);
+      // The upstream API treats itemsPerPage as a page-size hint but still
+      // returns its full daily ranking. Slice to the top 3 client-side so
+      // the method name's contract holds.
+      return adapt((await res.json()) as HydraCollection).slice(0, 3);
     },
   };
 }
