@@ -24,10 +24,11 @@ describe('mapStatusToFeedItem', () => {
     expect(item.link).toBe('https://bsky.app/profile/franceculture.fr/post/123');
     // description carries the post text (RSS 2.0 plain-text fallback).
     expect(item.description).toBe('Lorem ipsum.');
-    // content carries the same text linkified for <content:encoded>.
-    expect(item.content).toBe('Lorem ipsum.');
-    // avatar URL becomes an <enclosure> via the `image` field.
-    expect(item.image).toBe('https://cdn.bsky.app/avatar.jpg');
+    // content carries the avatar <img> (sized to match the on-site post card)
+    // followed by the same text, linkified for <content:encoded>.
+    expect(item.content).toBe(
+      '<img src="https://cdn.bsky.app/avatar.jpg" width="48" height="48" alt="" /> Lorem ipsum.',
+    );
     expect(item.date).toBeInstanceOf(Date);
     expect(item.date.toISOString().startsWith('2026-05-07')).toBe(true);
   });
@@ -129,7 +130,7 @@ describe('mapStatusToFeedItem', () => {
     expect(item.description).toContain('🌷');
   });
 
-  it('applies cleanup to title and image (avatar enclosure URL), not just description', () => {
+  it('applies cleanup to title and avatar URL (inlined as <img> in content), not just description', () => {
     const raw: RawStatus = {
       screen_name: '  weird\nhandle  ',
       publication_id: 'pub-8',
@@ -141,10 +142,11 @@ describe('mapStatusToFeedItem', () => {
     const item = mapStatusToFeedItem(raw);
 
     expect(item.title).toBe('weird handle');
-    expect(item.image).toBe('https://cdn/avatar.jpg');
+    expect(item.content).toContain('src="https://cdn/avatar.jpg"');
+    expect(item.content).not.toContain('\n');
   });
 
-  it('rewrites Bluesky CDN avatar URLs to the thumbnail variant', () => {
+  it('rewrites Bluesky CDN avatar URLs to the thumbnail variant in the inline <img>', () => {
     const raw: RawStatus = {
       screen_name: 'x.fr',
       publication_id: 'pub-9',
@@ -156,9 +158,52 @@ describe('mapStatusToFeedItem', () => {
 
     const item = mapStatusToFeedItem(raw);
 
-    expect(item.image).toBe(
-      'https://cdn.bsky.app/img/avatar_thumbnail/plain/did:plc:abc/bafyreigh@jpeg',
+    expect(item.content).toContain(
+      'src="https://cdn.bsky.app/img/avatar_thumbnail/plain/did:plc:abc/bafyreigh@jpeg"',
     );
+  });
+
+  it('inlines the avatar in <content:encoded> at 48×48 to match the on-site Bluesky post card', () => {
+    const raw: RawStatus = {
+      screen_name: 'x.fr',
+      publication_id: 'pub-10',
+      url: 'https://bsky.app/x/10',
+      avatar_url: 'https://cdn.example/a.jpg',
+      text: 'body',
+    };
+
+    const item = mapStatusToFeedItem(raw);
+
+    expect(item.content).toBe(
+      '<img src="https://cdn.example/a.jpg" width="48" height="48" alt="" /> body',
+    );
+  });
+
+  it('omits the leading <img> when no avatar URL is provided', () => {
+    const raw: RawStatus = {
+      screen_name: 'x.fr',
+      publication_id: 'pub-11',
+      url: 'https://bsky.app/x/11',
+      text: 'body',
+    };
+
+    const item = mapStatusToFeedItem(raw);
+
+    expect(item.content).toBe('body');
+  });
+
+  it('HTML-escapes the avatar URL in the inline <img> attribute', () => {
+    const raw: RawStatus = {
+      screen_name: 'x.fr',
+      publication_id: 'pub-12',
+      url: 'https://bsky.app/x/12',
+      avatar_url: 'https://cdn.example/a.jpg?w=1&h=2',
+      text: 'body',
+    };
+
+    const item = mapStatusToFeedItem(raw);
+
+    expect(item.content).toContain('src="https://cdn.example/a.jpg?w=1&amp;h=2"');
   });
 });
 

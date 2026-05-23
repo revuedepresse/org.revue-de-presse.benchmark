@@ -6,8 +6,10 @@
 //   id          ← publication_id
 //   link        ← url
 //   description ← text                       (plain-text fallback for RSS 2.0 readers)
-//   content     ← linkifyForFeed(text)       (HTML in <content:encoded>: clickable URLs + handles)
-//   image       ← shrinkBlueskyAvatar(avatar_url)  (<enclosure type="image/..."/>)
+//   content     ← <img …/> + linkifyForFeed(text)  (HTML in <content:encoded>; the
+//                                                   avatar is inlined at 48×48 to
+//                                                   match the on-site Bluesky post
+//                                                   card avatar size)
 //
 // Errors are swallowed (legacy used logger.error noop). On any failure the
 // feed still renders with channel metadata and zero items rather than 5xx.
@@ -33,9 +35,14 @@ export type FeedItem = {
   link: string;
   description: string;
   content: string;
-  image: string;
   date: Date;
 };
+
+// On-site Bluesky post card renders the avatar at 48×48 (see
+// design-system/src/components/BlueskyPostCard.lite.tsx). Keep the inline
+// <img> in <content:encoded> at the same dimensions so feed readers show
+// it consistently with the site.
+const AVATAR_PX = 48;
 
 // Bluesky CDN serves avatars in two sizes:
 //   /img/avatar/plain/...           ~1000px, 150-300KB
@@ -108,13 +115,16 @@ export const linkifyForFeed = (text: string): string => {
 export const mapStatusToFeedItem = (raw: RawStatus): FeedItem => {
   const s = raw.status ?? raw;
   const text = cleanForFeed(s.text ?? '');
+  const avatar = shrinkBlueskyAvatar(cleanForFeed(s.avatar_url ?? ''));
+  const img = avatar
+    ? `<img src="${htmlEscape(avatar)}" width="${AVATAR_PX}" height="${AVATAR_PX}" alt="" /> `
+    : '';
   return {
     title: cleanForFeed(s.screen_name ?? ''),
     id: s.publication_id ?? s.url ?? '',
     link: s.url ?? '',
     description: text,
-    content: linkifyForFeed(text),
-    image: shrinkBlueskyAvatar(cleanForFeed(s.avatar_url ?? '')),
+    content: img + linkifyForFeed(text),
     date: s.date ? new Date(s.date) : new Date(),
   };
 };
