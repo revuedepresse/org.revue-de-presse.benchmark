@@ -31,7 +31,7 @@ post-daily-top3 [--date YYYY-MM-DD] [--force] [--dry-run]
 ```
 
 Exit codes: `0` success / dry-run, `1` already-posted, `2` upstream failure,
-`3` Bluesky / PDS failure, `4` config invalid.
+`3` Bluesky / PDS failure, `4` config invalid, `5` duplicate top-3 content.
 
 ## Cron
 
@@ -41,6 +41,11 @@ Exit codes: `0` success / dry-run, `1` already-posted, `2` upstream failure,
 
 05:35 Europe/Paris posts the previous calendar day's top 3. Offset by 5
 minutes from the LinkedIn sibling's 05:30.
+
+Two safety gates run before posting: a per-day check (via the PDS
+`getAuthorFeed` against our own DID) and a publication-IDs check (against
+the local state file's most-recent entry). A trip exits cleanly — `1` for
+the per-day gate, `5` for the content gate. Pass `--force` to bypass both.
 
 ## Files written
 
@@ -57,6 +62,12 @@ All gitignored.
 Set `BLUESKY_OAUTH_SESSION` (base64 of `{did, session}`) to skip the session
 file. Pair with `BLUESKY_ROTATED_SESSION_FILE` so your workflow can push the
 rotated session back into your secret store.
+
+Optionally set `BLUESKY_ROTATED_STATE_FILE` so the CLI also writes the
+updated dedupe state on each successful post; the workflow uploads it back
+and materialises it at `$BLUESKY_STATE_FILE` before the next run. Without
+this, the per-day check (via `app.bsky.feed.getAuthorFeed`) still works in
+env mode, but the publication-IDs gate is a no-op.
 
 ## Mention notifications
 
