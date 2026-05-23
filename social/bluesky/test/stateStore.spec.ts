@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { readStateFile, writeStateFile, hasPostedFor, recordPost } from '../src/stateStore.ts';
+import { readStateFile, writeStateFile, hasPostedFor, recordPost, previousPublicationIds, writeRotatedStateFile } from '../src/stateStore.ts';
 
 let dir: string;
 let path: string;
@@ -28,25 +28,89 @@ describe('stateStore', () => {
   });
 
   it('recordPost writes lastPostedDate and prepends to history', async () => {
-    await recordPost(path, '2026-05-20', 'at://did:plc:abc/app.bsky.feed.post/1', '2026-05-21T05:30:15Z');
+    await recordPost(
+      path,
+      '2026-05-20',
+      'at://did:plc:abc/app.bsky.feed.post/1',
+      '2026-05-21T05:30:15Z',
+      ['pub-1', 'pub-2', 'pub-3'],
+    );
     const state = await readStateFile(path);
     expect(state?.lastPostedDate).toBe('2026-05-20');
     expect(state?.history[0]).toEqual({
       date: '2026-05-20',
       threadRootUri: 'at://did:plc:abc/app.bsky.feed.post/1',
       postedAt: '2026-05-21T05:30:15Z',
+      publicationIds: ['pub-1', 'pub-2', 'pub-3'],
     });
+  });
+
+  it('recordPost preserves publicationIds ordering across runs', async () => {
+    await recordPost(path, 'd1', 'at://r1', 't1', ['a', 'b', 'c']);
+    await recordPost(path, 'd2', 'at://r2', 't2', ['x', 'y', 'z']);
+    const state = await readStateFile(path);
+    expect(state?.history[0].publicationIds).toEqual(['x', 'y', 'z']);
+    expect(state?.history[1].publicationIds).toEqual(['a', 'b', 'c']);
   });
 
   it('caps history at 30 entries (oldest dropped)', async () => {
     for (let i = 0; i < 35; i += 1) {
       const tag = `d-${String(i).padStart(2, '0')}`;
-      await recordPost(path, tag, `at://did:plc:abc/app.bsky.feed.post/${i}`, '2026-01-01T00:00:00Z');
+      await recordPost(path, tag, `at://did:plc:abc/app.bsky.feed.post/${i}`, '2026-01-01T00:00:00Z', [`p-${i}-1`, `p-${i}-2`, `p-${i}-3`]);
     }
     const state = await readStateFile(path);
     expect(state?.history).toHaveLength(30);
     expect(state?.history[0].date).toBe('d-34');
     expect(state?.history.find((e) => e.date === 'd-00')).toBeUndefined();
     expect(state?.history.find((e) => e.date === 'd-05')).toBeDefined();
+  });
+
+  describe('previousPublicationIds', () => {
+    it('returns null on a missing file', async () => {
+      expect(await previousPublicationIds(path)).toBeNull();
+    });
+
+    it('returns null when history is empty', async () => {
+      await writeStateFile(path, { lastPostedDate: null, history: [] });
+      expect(await previousPublicationIds(path)).toBeNull();
+    });
+
+    it('returns null when history[0] has no publicationIds (legacy)', async () => {
+      await writeStateFile(path, {
+        lastPostedDate: '2026-05-20',
+        history: [{ date: '2026-05-20', threadRootUri: 'at://r', postedAt: 't' } as never],
+      });
+      expect(await previousPublicationIds(path)).toBeNull();
+    });
+
+    it('returns null when history[0].publicationIds is not length 3', async () => {
+      await writeStateFile(path, {
+        lastPostedDate: '2026-05-20',
+        history: [{ date: '2026-05-20', threadRootUri: 'at://r', postedAt: 't', publicationIds: ['a', 'b'] }],
+      });
+      expect(await previousPublicationIds(path)).toBeNull();
+    });
+
+    it('returns the ids when history[0].publicationIds is length 3', async () => {
+      await writeStateFile(path, {
+        lastPostedDate: '2026-05-20',
+        history: [{ date: '2026-05-20', threadRootUri: 'at://r', postedAt: 't', publicationIds: ['p1', 'p2', 'p3'] }],
+      });
+      expect(await previousPublicationIds(path)).toEqual(['p1', 'p2', 'p3']);
+    });
+  });
+
+  describe('writeRotatedStateFile', () => {
+    it('writes the same JSON shape as writeStateFile, atomically, mode 0600', async () => {
+      const rot = join(dir, 'rotated.json');
+      const state = {
+        lastPostedDate: '2026-05-20',
+        history: [{ date: '2026-05-20', threadRootUri: 'at://r', postedAt: 't', publicationIds: ['a', 'b', 'c'] }],
+      };
+      await writeRotatedStateFile(rot, state);
+      const { readFileSync, statSync } = await import('node:fs');
+      expect(JSON.parse(readFileSync(rot, 'utf8'))).toEqual(state);
+      expect(statSync(rot).mode & 0o777).toBe(0o600);
+    });
   });
 });

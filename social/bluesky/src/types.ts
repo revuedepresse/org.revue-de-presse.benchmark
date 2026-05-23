@@ -22,6 +22,7 @@ export type StateEntry = {
   date: string;
   threadRootUri: string;
   postedAt: string;
+  publicationIds: string[];
 };
 
 export type StateFile = {
@@ -38,6 +39,7 @@ export type Config = {
   blueskyStateFile: string;
   blueskyOauthSessionEnv: string | null;
   blueskyRotatedSessionFile: string | null;
+  blueskyRotatedStateFile: string | null;
   apiBaseUrl: string;
   apiClientSecret: string;
   logLevel: string;

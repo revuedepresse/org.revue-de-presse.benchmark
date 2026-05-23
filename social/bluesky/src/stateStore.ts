@@ -1,4 +1,4 @@
-import { readFile, writeFile, rename } from 'node:fs/promises';
+import { readFile, writeFile, rename, chmod } from 'node:fs/promises';
 import type { StateFile } from './types.ts';
 
 const HISTORY_CAP = 30;
@@ -38,16 +38,36 @@ export async function hasPostedFor(path: string, isoDate: string): Promise<boole
   return state?.lastPostedDate === isoDate;
 }
 
+export async function previousPublicationIds(path: string): Promise<string[] | null> {
+  const state = await readStateFile(path);
+  const head = state?.history[0];
+  if (!head || !Array.isArray(head.publicationIds) || head.publicationIds.length !== 3) {
+    return null;
+  }
+  return head.publicationIds;
+}
+
 export async function recordPost(
   path: string,
   isoDate: string,
   threadRootUri: string,
   postedAt: string,
+  publicationIds: string[],
 ): Promise<void> {
   const current = (await readStateFile(path)) ?? EMPTY;
   const next: StateFile = {
     lastPostedDate: isoDate,
-    history: [{ date: isoDate, threadRootUri, postedAt }, ...current.history].slice(0, HISTORY_CAP),
+    history: [
+      { date: isoDate, threadRootUri, postedAt, publicationIds },
+      ...current.history,
+    ].slice(0, HISTORY_CAP),
   };
   await writeStateFile(path, next);
+}
+
+export async function writeRotatedStateFile(path: string, state: StateFile): Promise<void> {
+  const tmp = `${path}.tmp`;
+  await writeFile(tmp, JSON.stringify(state, null, 2), { mode: 0o600 });
+  await chmod(tmp, 0o600);
+  await rename(tmp, path);
 }

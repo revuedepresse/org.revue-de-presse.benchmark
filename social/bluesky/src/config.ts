@@ -35,6 +35,7 @@ export function loadConfig(): Config {
     blueskyStateFile: process.env.BLUESKY_STATE_FILE ?? './.bluesky-state.json',
     blueskyOauthSessionEnv: oauthSessionEnv,
     blueskyRotatedSessionFile: process.env.BLUESKY_ROTATED_SESSION_FILE ?? null,
+    blueskyRotatedStateFile: process.env.BLUESKY_ROTATED_STATE_FILE ?? null,
     apiBaseUrl: process.env.API_BASE_URL!,
     apiClientSecret: process.env.API_CLIENT_SECRET!,
     logLevel: process.env.LOG_LEVEL ?? 'info',
