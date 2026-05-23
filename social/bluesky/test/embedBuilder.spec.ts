@@ -53,7 +53,7 @@ describe('createEmbedBuilder', () => {
     fetchMock
       .mockResolvedValueOnce(new Response(HTML_FULL, { status: 200, headers: { 'content-type': 'text/html' } }))
       .mockResolvedValueOnce(new Response(Buffer.from('img'), { status: 200, headers: { 'content-type': 'image/jpeg' } }));
-    const builder = createEmbedBuilder({ agent: { uploadBlob } as never, resizeImage: resize });
+    const builder = createEmbedBuilder({ agent: { uploadBlob } as never, resizeImage: resize as never });
     const e = await builder.build('https://example.org/page');
     expect(e?.$type).toBe('app.bsky.embed.external');
     expect(e?.external.title).toBe('Le grand titre');
@@ -66,7 +66,7 @@ describe('createEmbedBuilder', () => {
     fetchMock.mockResolvedValueOnce(
       new Response('<html><head><title>T</title></head></html>', { status: 200, headers: { 'content-type': 'text/html' } }),
     );
-    const builder = createEmbedBuilder({ agent: { uploadBlob } as never, resizeImage: resize });
+    const builder = createEmbedBuilder({ agent: { uploadBlob } as never, resizeImage: resize as never });
     const e = await builder.build('https://example.org/page');
     expect(e?.external.thumb).toBeUndefined();
     expect(uploadBlob).not.toHaveBeenCalled();
@@ -76,7 +76,7 @@ describe('createEmbedBuilder', () => {
     fetchMock
       .mockResolvedValueOnce(new Response(HTML_FULL, { status: 200, headers: { 'content-type': 'text/html' } }))
       .mockResolvedValueOnce(new Response('', { status: 500 }));
-    const builder = createEmbedBuilder({ agent: { uploadBlob } as never, resizeImage: resize });
+    const builder = createEmbedBuilder({ agent: { uploadBlob } as never, resizeImage: resize as never });
     const e = await builder.build('https://example.org/page');
     expect(e?.external.title).toBe('Le grand titre');
     expect(e?.external.thumb).toBeUndefined();
@@ -87,14 +87,14 @@ describe('createEmbedBuilder', () => {
       .mockResolvedValueOnce(new Response(HTML_FULL, { status: 200, headers: { 'content-type': 'text/html' } }))
       .mockResolvedValueOnce(new Response(Buffer.from('img'), { status: 200, headers: { 'content-type': 'image/jpeg' } }));
     const failingResize = vi.fn().mockRejectedValue(new Error('unsupported image'));
-    const builder = createEmbedBuilder({ agent: { uploadBlob } as never, resizeImage: failingResize });
+    const builder = createEmbedBuilder({ agent: { uploadBlob } as never, resizeImage: failingResize as never });
     const e = await builder.build('https://example.org/page');
     expect(e?.external.thumb).toBeUndefined();
   });
 
   it('returns null embed when the OG fetch itself fails', async () => {
     fetchMock.mockResolvedValueOnce(new Response('', { status: 504 }));
-    const builder = createEmbedBuilder({ agent: { uploadBlob } as never, resizeImage: resize });
+    const builder = createEmbedBuilder({ agent: { uploadBlob } as never, resizeImage: resize as never });
     const e = await builder.build('https://example.org/page');
     expect(e).toBeNull();
   });
