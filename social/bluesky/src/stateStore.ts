@@ -43,11 +43,15 @@ export async function recordPost(
   isoDate: string,
   threadRootUri: string,
   postedAt: string,
+  publicationIds: string[],
 ): Promise<void> {
   const current = (await readStateFile(path)) ?? EMPTY;
   const next: StateFile = {
     lastPostedDate: isoDate,
-    history: [{ date: isoDate, threadRootUri, postedAt }, ...current.history].slice(0, HISTORY_CAP),
+    history: [
+      { date: isoDate, threadRootUri, postedAt, publicationIds },
+      ...current.history,
+    ].slice(0, HISTORY_CAP),
   };
   await writeStateFile(path, next);
 }

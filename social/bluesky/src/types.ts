@@ -22,6 +22,7 @@ export type StateEntry = {
   date: string;
   threadRootUri: string;
   postedAt: string;
+  publicationIds: string[];
 };
 
 export type StateFile = {
