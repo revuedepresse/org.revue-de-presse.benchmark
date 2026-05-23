@@ -1,12 +1,12 @@
 // Nitro plugin that populates /feed.xml. nuxt-module-feed fires `feed:generate`
 // for every configured source; we dispatch by options.path.
 //
-// Field mapping is verbatim from legacy/nuxt.config.ts createFeed (lines 15-61):
+// Field mapping:
 //   title       ← screen_name
 //   id          ← publication_id
 //   link        ← url
-//   description ← avatar_url   (legacy parity — intentionally not the text)
-//   content     ← text
+//   description ← text          (RSS 2.0 native body — replaces <content:encoded>)
+//   image       ← avatar_url    (emitted as <enclosure type="image/..."/>)
 //
 // Errors are swallowed (legacy used logger.error noop). On any failure the
 // feed still renders with channel metadata and zero items rather than 5xx.
@@ -30,7 +30,7 @@ export type FeedItem = {
   id: string;
   link: string;
   description: string;
-  content: string;
+  image: string;
   date: Date;
 };
 
@@ -40,8 +40,8 @@ export const mapStatusToFeedItem = (raw: RawStatus): FeedItem => {
     title: cleanForFeed(s.screen_name ?? ''),
     id: s.publication_id ?? s.url ?? '',
     link: s.url ?? '',
-    description: cleanForFeed(s.avatar_url ?? ''),
-    content: cleanForFeed(s.text ?? ''),
+    description: cleanForFeed(s.text ?? ''),
+    image: cleanForFeed(s.avatar_url ?? ''),
     date: s.date ? new Date(s.date) : new Date(),
   };
 };

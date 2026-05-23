@@ -17,8 +17,8 @@ describe('mapStatusToFeedItem', () => {
     expect(item.title).toBe('franceculture.fr');
     expect(item.id).toBe('at://did:plc:abc/post/123');
     expect(item.link).toBe('https://bsky.app/profile/franceculture.fr/post/123');
-    expect(item.description).toBe('https://cdn.bsky.app/avatar.jpg');
-    expect(item.content).toBe('Lorem ipsum.');
+    expect(item.description).toBe('Lorem ipsum.');
+    expect(item.image).toBe('https://cdn.bsky.app/avatar.jpg');
     expect(item.date).toBeInstanceOf(Date);
     expect(item.date.toISOString().startsWith('2026-05-07')).toBe(true);
   });
@@ -39,7 +39,7 @@ describe('mapStatusToFeedItem', () => {
 
     expect(item.title).toBe('lemonde.fr');
     expect(item.id).toBe('pub-2');
-    expect(item.content).toBe('Body.');
+    expect(item.description).toBe('Body.');
   });
 
   it('falls back to url when publication_id is missing', () => {
@@ -68,7 +68,7 @@ describe('mapStatusToFeedItem', () => {
     expect(Date.now() - item.date.getTime()).toBeLessThan(5000);
   });
 
-  it('flattens line feeds in content into single spaces', () => {
+  it('flattens line feeds in description into single spaces', () => {
     const raw: RawStatus = {
       screen_name: 'x.fr',
       publication_id: 'pub-5',
@@ -78,8 +78,8 @@ describe('mapStatusToFeedItem', () => {
 
     const item = mapStatusToFeedItem(raw);
 
-    expect(item.content).not.toMatch(/[\r\n]/);
-    expect(item.content).toBe('first line second line third line');
+    expect(item.description).not.toMatch(/[\r\n]/);
+    expect(item.description).toBe('first line second line third line');
   });
 
   it('strips upstream encoding artefacts via the cleanText pipeline', () => {
@@ -92,11 +92,11 @@ describe('mapStatusToFeedItem', () => {
 
     const item = mapStatusToFeedItem(raw);
 
-    expect(item.content).not.toContain('\\');
-    expect(item.content).not.toContain('"L\'');
-    expect(item.content).toContain("L'Espagne");
-    expect(item.content).toContain('fait');
-    expect(item.content).toContain('une annonce');
+    expect(item.description).not.toContain('\\');
+    expect(item.description).not.toContain('"L\'');
+    expect(item.description).toContain("L'Espagne");
+    expect(item.description).toContain('fait');
+    expect(item.description).toContain('une annonce');
   });
 
   it('preserves UTF-8 (accents, emoji)', () => {
@@ -109,12 +109,12 @@ describe('mapStatusToFeedItem', () => {
 
     const item = mapStatusToFeedItem(raw);
 
-    expect(item.content).toContain('café');
-    expect(item.content).toContain('1er mai');
-    expect(item.content).toContain('🌷');
+    expect(item.description).toContain('café');
+    expect(item.description).toContain('1er mai');
+    expect(item.description).toContain('🌷');
   });
 
-  it('applies cleanup to title and description, not just content', () => {
+  it('applies cleanup to title and image (avatar enclosure URL), not just description', () => {
     const raw: RawStatus = {
       screen_name: '  weird\nhandle  ',
       publication_id: 'pub-8',
@@ -126,6 +126,6 @@ describe('mapStatusToFeedItem', () => {
     const item = mapStatusToFeedItem(raw);
 
     expect(item.title).toBe('weird handle');
-    expect(item.description).toBe('https://cdn/avatar.jpg');
+    expect(item.image).toBe('https://cdn/avatar.jpg');
   });
 });
