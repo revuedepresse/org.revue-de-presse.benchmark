@@ -10,22 +10,25 @@ SHELL:=/bin/bash
         e2e-test e2e-test-functional e2e-test-perf e2e-show-report \
         test \
         linkedin-install linkedin-bootstrap linkedin-post linkedin-post-dry linkedin-test linkedin-typecheck \
-        tiktok-install tiktok-bootstrap tiktok-post tiktok-post-dry tiktok-test tiktok-typecheck
+        tiktok-install tiktok-bootstrap tiktok-post tiktok-post-dry tiktok-test tiktok-typecheck \
+        bluesky-install bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck
 
 NUXT_DIR     := nuxt
 NEXT_DIR     := next
 E2E_DIR      := e2e
 LINKEDIN_DIR := social/linkedin
 TIKTOK_DIR   := social/tiktok
+BLUESKY_DIR  := social/bluesky
 
 # -- Install --------------------------------------------------------------
 
-install: ## Install dependencies for nuxt, next, e2e, and social/{linkedin,tiktok} workspaces
+install: ## Install dependencies for nuxt, next, e2e, and social/{linkedin,tiktok,bluesky} workspaces
 	@$(MAKE) -C $(NUXT_DIR) install
 	@$(MAKE) -C $(NEXT_DIR) install
 	@cd $(E2E_DIR)  && pnpm install
 	@$(MAKE) -C $(LINKEDIN_DIR) install
 	@$(MAKE) -C $(TIKTOK_DIR) install
+	@$(MAKE) -C $(BLUESKY_DIR) install
 
 # -- Nuxt -----------------------------------------------------------------
 
@@ -110,7 +113,7 @@ e2e-show-report: ## Open the last Playwright HTML report in a browser
 
 # -- Aggregates -----------------------------------------------------------
 
-test: nuxt-test next-test linkedin-test tiktok-test e2e-test ## Run all tests (nuxt unit + next unit + linkedin unit + tiktok unit + e2e)
+test: nuxt-test next-test linkedin-test tiktok-test bluesky-test e2e-test ## Run all tests (nuxt unit + next unit + linkedin unit + tiktok unit + bluesky unit + e2e)
 
 # -- LinkedIn -------------------------------------------------------------
 
@@ -151,6 +154,26 @@ tiktok-test: ## Run social/tiktok unit tests
 
 tiktok-typecheck: ## Typecheck social/tiktok
 	@$(MAKE) -C $(TIKTOK_DIR) typecheck
+
+# -- Bluesky -------------------------------------------------------------
+
+bluesky-install: ## Install social/bluesky dependencies (seeds .env.local from template)
+	@$(MAKE) -C $(BLUESKY_DIR) install
+
+bluesky-bootstrap: ## Run the one-time atproto OAuth bootstrap for the Bluesky handle (interactive)
+	@$(MAKE) -C $(BLUESKY_DIR) bootstrap
+
+bluesky-post: ## Cron entry: post yesterday's top 3 to Bluesky as a 4-post thread
+	@$(MAKE) -C $(BLUESKY_DIR) post
+
+bluesky-post-dry: ## Render the thread and log it without calling the PDS
+	@$(MAKE) -C $(BLUESKY_DIR) post-dry
+
+bluesky-test: ## Run social/bluesky unit tests
+	@$(MAKE) -C $(BLUESKY_DIR) test
+
+bluesky-typecheck: ## Typecheck social/bluesky
+	@$(MAKE) -C $(BLUESKY_DIR) typecheck
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
