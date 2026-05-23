@@ -22,7 +22,7 @@ describe('renderThread', () => {
 
   it('lead post contains the French header with the formatted date', () => {
     const d = renderThread(SAMPLE, '2026-05-22', OPTS);
-    expect(d.lead.text).toContain('Top 3 des publications de presse les plus relayées sur Bluesky le 22 mai 2026 :');
+    expect(d.lead.text).toContain('Top 3 des publications de presse parmi les plus relayées sur Bluesky le 22 mai 2026 :');
     expect(d.lead.text).toContain('Retrouvez la revue de presse complète : https://play.google.com/store/apps/details?id=org.revue_2_presse');
     expect(d.lead.text).toContain('#RevueDePresse');
   });
