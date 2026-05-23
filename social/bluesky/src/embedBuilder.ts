@@ -110,10 +110,9 @@ export type EmbedBuilder = { build: (url: string) => Promise<Embed | null> };
 
 export function createEmbedBuilder(deps: {
   agent: BlobUploader;
-  resizeImage?: unknown;
+  resizeImage?: (buf: Buffer) => Promise<Buffer>;
 }): EmbedBuilder {
-  const resize: (buf: Buffer) => Promise<Buffer> =
-    (deps.resizeImage as ((buf: Buffer) => Promise<Buffer>) | undefined) ?? resizeImage;
+  const resize = deps.resizeImage ?? resizeImage;
   return {
     async build(url: string): Promise<Embed | null> {
       const fetched = await fetchWithCap(url, { headers: { 'user-agent': UA, 'accept-language': 'fr' } }, HTML_MAX_BYTES);
