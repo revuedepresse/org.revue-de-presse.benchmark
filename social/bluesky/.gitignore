@@ -1,0 +1,5 @@
+.env.local
+.bluesky-session.json
+.bluesky-state.json
+node_modules
+*.log
