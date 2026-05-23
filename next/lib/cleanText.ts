@@ -1,3 +1,13 @@
+// Legacy-data fallback. The upstream Bluesky ingest (org.revue-de-presse.bsky,
+// src/clean_text.pl) now runs the same normalisation at the repository write
+// boundary, so any row written after that landed already arrives clean. This
+// JS implementation stays in place to repair rows ingested before that point,
+// since there is no read-time backfill on the API side.
+//
+// If you change behaviour here, mirror it in clean_text.pl and re-run that
+// repo's clean_text_test.pl, otherwise legacy and fresh rows will render
+// differently for the same input.
+//
 // Repairs mojibake: a string whose characters are UTF-8 bytes that have been
 // mistakenly decoded as Latin-1, so `é` (UTF-8 `0xC3 0xA9`) appears as `Ã©`
 // (Latin-1 `Ã` + `©`). Detects the pattern and roundtrips through Latin-1

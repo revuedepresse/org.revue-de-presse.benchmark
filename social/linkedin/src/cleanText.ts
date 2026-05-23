@@ -1,7 +1,13 @@
 // Mirrored from next/lib/cleanText.ts. Kept in-workspace rather than imported
 // across workspaces because `next/` is built as a Next app, not a library, and
 // cross-bundler imports are painful. Any change here should be mirrored there
-// (and vice versa).
+// (and in org.revue-de-presse.bsky/src/clean_text.pl — that Prolog port now
+// runs the same normalisation at the upstream repository write boundary).
+//
+// Role today: legacy-data fallback for rows ingested before the upstream
+// cleaner landed. Fresh rows arrive already-clean, but this still runs on
+// every fetch since the API does not stamp a "cleaned-at" marker we can use
+// to skip work on new rows.
 
 export function repairMojibake(text: string): string {
   if (!text) return '';
