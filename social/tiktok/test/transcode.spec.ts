@@ -39,6 +39,22 @@ describe('transcode', { timeout: 60_000 }, () => {
     expect(stdout.trim()).toBe('h264,1080,1920,yuv420p');
   });
 
+  it('trimStartSec drops the leading window from the output', async () => {
+    const trimmed = join(dir, 'trimmed.mp4');
+    await transcode(webm, trimmed, { trimStartSec: 1 });
+    const { stdout } = await execa('ffprobe', [
+      '-v', 'error',
+      '-show_entries', 'format=duration',
+      '-of', 'csv=p=0',
+      trimmed,
+    ]);
+    // Source synth is 2s @ 30fps; trimming 1s should yield ~1s output.
+    // Allow a small frame-rounding window around the target duration.
+    const duration = Number(stdout.trim());
+    expect(duration).toBeGreaterThan(0.85);
+    expect(duration).toBeLessThan(1.15);
+  });
+
   it('produces a faststart MP4 (moov atom before mdat)', async () => {
     // ffprobe -show_format reveals the brand; the trustworthy check is
     // that the moov header lands in the first 1MB of the file.

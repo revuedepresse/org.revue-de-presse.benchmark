@@ -73,15 +73,16 @@ async function main(): Promise<number> {
 
   // 1. render
   let webmPath: string;
+  let leadingMs: number;
   const fileBase = env.OUT_VARIANT ? `${date}-${env.OUT_VARIANT}` : date;
   try {
-    ({ webmPath } = await recordScroll({
+    ({ webmPath, leadingMs } = await recordScroll({
       baseUrl: env.NUXT_CAPTURE_URL,
       date,
       outDir: OUT_DIR,
       fileBase,
     }));
-    logger.info({ webmPath }, 'recordScroll done');
+    logger.info({ webmPath, leadingMs }, 'recordScroll done');
   } catch (e) {
     if (e instanceof RenderInvariantError) { logger.error({ err: e.message }, 'invariant'); return 10; }
     if (e instanceof RenderNavigationError) { logger.error({ err: e.message }, 'nav'); return 11; }
@@ -90,10 +91,12 @@ async function main(): Promise<number> {
     return 1;
   }
 
-  // 2. transcode
+  // 2. transcode — drop the blank window Playwright captured between
+  // page creation and the first choreo tick so the video opens on
+  // already-rendered content rather than the browser's white default.
   const mp4Path = webmPath.replace(/\.webm$/, '.mp4');
   try {
-    await transcode(webmPath, mp4Path);
+    await transcode(webmPath, mp4Path, { trimStartSec: leadingMs / 1000 });
     logger.info({ mp4Path }, 'transcode done');
   } catch (e) {
     logger.error({ err: (e as Error).message }, 'ffmpeg');

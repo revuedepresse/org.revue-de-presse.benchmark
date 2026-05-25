@@ -41,7 +41,7 @@ export class RenderArtifactError extends Error {
   }
 }
 
-export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string }> {
+export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string; leadingMs: number }> {
   const base = opts.fileBase ?? opts.date;
   // Record into a per-invocation subdir so concurrent invocations against
   // the same outDir don't fight over Playwright's random-named .webm output.
@@ -63,6 +63,10 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
       },
     });
     const page = await context.newPage();
+    // Playwright begins capturing to the .webm here. Time from this point
+    // to the first choreo tick is the leading blank/white window we want
+    // ffmpeg to drop on transcode.
+    const recordStartMs = performance.now();
 
     const url = `${opts.baseUrl.replace(/\/$/, '')}/${opts.date}?capture=tiktok`;
     let resp;
@@ -107,6 +111,7 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
     });
 
     const steps: ChoreoStep[] = buildSteps(targetY);
+    const leadingMs = performance.now() - recordStartMs;
     await page.evaluate(async (s: ChoreoStep[]) => {
       const start = performance.now();
       let i = 0;
@@ -146,7 +151,7 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
     const finalPath = join(opts.outDir, `${base}.webm`);
     await rename(join(videoTmpDir, newest), finalPath);
     await rm(videoTmpDir, { recursive: true, force: true });
-    return { webmPath: finalPath };
+    return { webmPath: finalPath, leadingMs };
   } finally {
     await browser.close();
   }
