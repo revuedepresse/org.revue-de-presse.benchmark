@@ -39,6 +39,29 @@ describe('transcode', { timeout: 60_000 }, () => {
     expect(stdout.trim()).toBe('h264,1080,1920,yuv420p');
   });
 
+  it('upscales a 540x960 input to 1080x1920 output', async () => {
+    const smallWebm = join(dir, 'small.webm');
+    const upscaled = join(dir, 'upscaled.mp4');
+    await execa('ffmpeg', [
+      '-y',
+      '-f', 'lavfi',
+      '-i', 'testsrc=size=540x960:rate=30',
+      '-t', '1',
+      '-c:v', 'libvpx',
+      '-b:v', '300k',
+      smallWebm,
+    ]);
+    await transcode(smallWebm, upscaled);
+    const { stdout } = await execa('ffprobe', [
+      '-v', 'error',
+      '-select_streams', 'v:0',
+      '-show_entries', 'stream=width,height',
+      '-of', 'csv=p=0',
+      upscaled,
+    ]);
+    expect(stdout.trim()).toBe('1080,1920');
+  });
+
   it('trimStartSec drops the leading window from the output', async () => {
     const trimmed = join(dir, 'trimmed.mp4');
     await transcode(webm, trimmed, { trimStartSec: 1 });

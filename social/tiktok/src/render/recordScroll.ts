@@ -59,7 +59,14 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
       deviceScaleFactor: 2,
       recordVideo: {
         dir: videoTmpDir,
-        size: { width: 1080, height: 1920 },
+        // Playwright's recordVideo only scales the page render DOWN to fit
+        // this size, never up. Asking for 1080x1920 here left the
+        // 540x960 (CSS-pixel) screencast pinned to the top-left of a
+        // 1080x1920 canvas — content ended up in the top-left quarter,
+        // grey everywhere else. Matching the size to the viewport keeps
+        // the screencast filling the frame; the transcode step then
+        // upscales to TikTok's 1080x1920 with lanczos.
+        size: { width: 540, height: 960 },
       },
     });
     const page = await context.newPage();

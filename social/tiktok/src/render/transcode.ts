@@ -21,7 +21,10 @@ export async function transcode(
   }
   args.push(
     '-i', inputWebm,
-    '-vf', 'scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black',
+    // Recording is at the CSS-viewport size (540x960, 9:16); scale up to
+    // TikTok's 1080x1920 with lanczos for sharper text. No padding needed:
+    // input and output aspect ratios match exactly.
+    '-vf', 'scale=1080:1920:flags=lanczos',
     '-c:v', 'libx264',
     '-preset', 'medium',
     '-crf', '21',
