@@ -2,6 +2,11 @@ SHELL:=/bin/bash
 .ONESHELL:
 .PHONY: install bootstrap post post-dry test typecheck help
 
+POST_DATE  ?=
+POST_FORCE ?=
+POST_FLAGS := $(if $(strip $(POST_DATE)),--date $(POST_DATE)) $(if $(strip $(POST_FORCE)),--force)
+POST_ARGS  := $(if $(strip $(POST_FLAGS)),-- $(POST_FLAGS))
+
 install: ## Install Node dependencies (and seed .env.local from .env.local.dist if missing)
 	@pnpm env use --global 24
 	@which node && node --version
@@ -11,11 +16,11 @@ install: ## Install Node dependencies (and seed .env.local from .env.local.dist 
 bootstrap: ## Interactive: print LinkedIn auth URL, prompt for redirect URL, write token file
 	@pnpm bootstrap
 
-post: ## Cron entry: post yesterday's top 10 to LinkedIn
-	@pnpm post
+post: ## Cron entry: post yesterday's top 10 to LinkedIn (POST_DATE=YYYY-MM-DD, POST_FORCE=1 to bypass dedupe)
+	@pnpm post $(POST_ARGS)
 
-post-dry: ## Same as `post` but logs the rendered commentary and skips the API call
-	@pnpm post:dry
+post-dry: ## Same as `post` but logs the rendered commentary and skips the API call (POST_DATE=YYYY-MM-DD, POST_FORCE=1 to bypass dedupe)
+	@pnpm post:dry $(POST_ARGS)
 
 test: ## Run unit tests
 	@pnpm test:run
