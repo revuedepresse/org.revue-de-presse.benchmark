@@ -41,7 +41,7 @@ export class RenderArtifactError extends Error {
   }
 }
 
-export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string }> {
+export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string; leadingMs: number }> {
   const base = opts.fileBase ?? opts.date;
   // Record into a per-invocation subdir so concurrent invocations against
   // the same outDir don't fight over Playwright's random-named .webm output.
@@ -59,10 +59,21 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
       deviceScaleFactor: 2,
       recordVideo: {
         dir: videoTmpDir,
-        size: { width: 1080, height: 1920 },
+        // Playwright's recordVideo only scales the page render DOWN to fit
+        // this size, never up. Asking for 1080x1920 here left the
+        // 540x960 (CSS-pixel) screencast pinned to the top-left of a
+        // 1080x1920 canvas — content ended up in the top-left quarter,
+        // grey everywhere else. Matching the size to the viewport keeps
+        // the screencast filling the frame; the transcode step then
+        // upscales to TikTok's 1080x1920 with lanczos.
+        size: { width: 540, height: 960 },
       },
     });
     const page = await context.newPage();
+    // Playwright begins capturing to the .webm here. Time from this point
+    // to the first choreo tick is the leading blank/white window we want
+    // ffmpeg to drop on transcode.
+    const recordStartMs = performance.now();
 
     const url = `${opts.baseUrl.replace(/\/$/, '')}/${opts.date}?capture=tiktok`;
     let resp;
@@ -107,6 +118,7 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
     });
 
     const steps: ChoreoStep[] = buildSteps(targetY);
+    const leadingMs = performance.now() - recordStartMs;
     await page.evaluate(async (s: ChoreoStep[]) => {
       const start = performance.now();
       let i = 0;
@@ -146,7 +158,7 @@ export async function recordScroll(opts: RecordOpts): Promise<{ webmPath: string
     const finalPath = join(opts.outDir, `${base}.webm`);
     await rename(join(videoTmpDir, newest), finalPath);
     await rm(videoTmpDir, { recursive: true, force: true });
-    return { webmPath: finalPath };
+    return { webmPath: finalPath, leadingMs };
   } finally {
     await browser.close();
   }

@@ -32,14 +32,23 @@ const HERE = resolve(fileURLToPath(import.meta.url), '..', '..');
 const ENV_PATH = resolve(HERE, '.env.local');
 const OUT_DIR = resolve(HERE, 'out');
 
-function todayParis(): string {
+function yesterdayParis(): string {
+  // The Revue de presse top-10 for a given Paris day publishes at the end of
+  // that day, well after this CLI typically runs. Targeting yesterday's date
+  // by default guarantees the page is populated. Operators backfill or
+  // re-render a specific day via DATE_OVERRIDE.
   const fmt = new Intl.DateTimeFormat('fr-CA', {
     timeZone: 'Europe/Paris',
     year:  'numeric',
     month: '2-digit',
     day:   '2-digit',
   });
-  return fmt.format(new Date());
+  const todayInParis = fmt.format(new Date());
+  const [y, m, d] = todayInParis.split('-').map(Number);
+  // Date.UTC normalises d-1 across month/year boundaries; the Paris
+  // formatter then renders the corresponding calendar date, which is
+  // unambiguous because UTC midnight is mid-day in Paris regardless of DST.
+  return fmt.format(new Date(Date.UTC(y, m - 1, d - 1)));
 }
 
 async function main(): Promise<number> {
@@ -57,22 +66,23 @@ async function main(): Promise<number> {
     level: env.LOG_LEVEL,
     transport: process.stdout.isTTY ? { target: 'pino-pretty' } : undefined,
   });
-  const date = env.DATE_OVERRIDE ?? todayParis();
+  const date = env.DATE_OVERRIDE ?? yesterdayParis();
   logger.info({ date, mode: env.PUBLISH_MODE, dryRun: env.DRY_RUN }, 'starting tiktok post');
 
   await mkdir(OUT_DIR, { recursive: true });
 
   // 1. render
   let webmPath: string;
+  let leadingMs: number;
   const fileBase = env.OUT_VARIANT ? `${date}-${env.OUT_VARIANT}` : date;
   try {
-    ({ webmPath } = await recordScroll({
+    ({ webmPath, leadingMs } = await recordScroll({
       baseUrl: env.NUXT_CAPTURE_URL,
       date,
       outDir: OUT_DIR,
       fileBase,
     }));
-    logger.info({ webmPath }, 'recordScroll done');
+    logger.info({ webmPath, leadingMs }, 'recordScroll done');
   } catch (e) {
     if (e instanceof RenderInvariantError) { logger.error({ err: e.message }, 'invariant'); return 10; }
     if (e instanceof RenderNavigationError) { logger.error({ err: e.message }, 'nav'); return 11; }
@@ -81,10 +91,12 @@ async function main(): Promise<number> {
     return 1;
   }
 
-  // 2. transcode
+  // 2. transcode — drop the blank window Playwright captured between
+  // page creation and the first choreo tick so the video opens on
+  // already-rendered content rather than the browser's white default.
   const mp4Path = webmPath.replace(/\.webm$/, '.mp4');
   try {
-    await transcode(webmPath, mp4Path);
+    await transcode(webmPath, mp4Path, { trimStartSec: leadingMs / 1000 });
     logger.info({ mp4Path }, 'transcode done');
   } catch (e) {
     logger.error({ err: (e as Error).message }, 'ffmpeg');
@@ -151,7 +163,10 @@ async function main(): Promise<number> {
       caption: env.PUBLISH_MODE === 'direct' ? caption : '',
       mode: env.PUBLISH_MODE,
     });
-    logger.info({ publishId: r.publishId, finalStatus: r.finalStatus }, 'tiktok publish complete');
+    logger.info(
+      { publishId: r.publishId, finalStatus: r.finalStatus, postUrls: r.postUrls },
+      'tiktok publish complete',
+    );
     return 0;
   } catch (e) {
     if (e instanceof TikTokInitError) { logger.error({ err: e.message }, 'init'); return 22; }

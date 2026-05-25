@@ -76,6 +76,46 @@ describe('publishVideo', () => {
     expect(initBody.source_info.source).toBe('FILE_UPLOAD');
   });
 
+  it('direct mode PUBLISH_COMPLETE returns postUrls built from publicaly_available_post_id', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(jsonResponse({ data: { publish_id: 'p3', upload_url: 'https://upload.example/u' } }))
+      .mockResolvedValueOnce(new Response('', { status: 201 }))
+      .mockResolvedValueOnce(jsonResponse({
+        data: { status: 'PUBLISH_COMPLETE', publicaly_available_post_id: ['7400000000000000001'] },
+      }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const r = await publishVideo({
+      accessToken: 'at',
+      mp4Path: mp4Path(),
+      caption: 'hello',
+      mode: 'direct',
+      pollIntervalMs: 1,
+      pollTimeoutMs: 5000,
+    });
+    expect(r.postUrls).toEqual([
+      'https://www.tiktok.com/@revue_2_presse/video/7400000000000000001',
+    ]);
+  });
+
+  it('inbox mode INBOX_DELIVERED leaves postUrls undefined', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(jsonResponse({ data: { publish_id: 'p4', upload_url: 'https://upload.example/u' } }))
+      .mockResolvedValueOnce(new Response('', { status: 201 }))
+      .mockResolvedValueOnce(jsonResponse({ data: { status: 'SEND_TO_USER_INBOX' } }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const r = await publishVideo({
+      accessToken: 'at',
+      mp4Path: mp4Path(),
+      caption: '',
+      mode: 'inbox',
+      pollIntervalMs: 1,
+      pollTimeoutMs: 5000,
+    });
+    expect(r.postUrls).toBeUndefined();
+  });
+
   it('upload PUT sets video/mp4 + Content-Range', async () => {
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(jsonResponse({ data: { publish_id: 'p', upload_url: 'https://upload.example/u' } }))
