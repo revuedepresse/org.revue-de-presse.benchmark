@@ -4,8 +4,7 @@ SHELL:=/bin/bash
 
 POST_DATE  ?=
 POST_FORCE ?=
-POST_FLAGS := $(if $(strip $(POST_DATE)),--date $(POST_DATE)) $(if $(strip $(POST_FORCE)),--force)
-POST_ARGS  := $(if $(strip $(POST_FLAGS)),-- $(POST_FLAGS))
+POST_ARGS  := $(if $(strip $(POST_DATE)),--date $(POST_DATE)) $(if $(strip $(POST_FORCE)),--force)
 
 install: ## Install Node dependencies (and seed .env.local from .env.local.dist if missing)
 	@pnpm env use --global 24
