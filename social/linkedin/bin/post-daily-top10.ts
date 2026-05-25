@@ -7,6 +7,7 @@ import { createLinkedinClient, LinkedinApiError } from '../src/linkedinClient.ts
 import { readTokenFile, writeTokenFile, TokenFileError } from '../src/tokenStore.ts';
 import { hasPostedFor, recordPost, StateFileError } from '../src/stateStore.ts';
 import { renderPost } from '../src/renderPost.ts';
+import { escapeLittleText } from '../src/littleText.ts';
 import { logger } from '../src/logger.ts';
 
 const EXIT = {
@@ -79,10 +80,22 @@ async function main(): Promise<number> {
   });
 
   if (values['dry-run']) {
+    // Dry-run output is for human inspection — keep it readable, no escapes.
     process.stdout.write(commentary + '\n');
     logger.info('dry-run complete — no LinkedIn call made');
     return EXIT.OK;
   }
+
+  // Re-render with LinkedIn LITTLE_TEXT escaping applied to each entry's
+  // free-form text. Unescaped `()@[]{}<>*_~|\\` in the commentary cause
+  // LinkedIn's parser to truncate the post silently — see the 2026-05-25
+  // 05:30 Paris incident where only entry #1 rendered because of `(J'ai du
+  // mal...)` in the headline.
+  const linkedinCommentary = renderPost(highlights, targetDate, {
+    footerUrl: cfg.postFooterUrl,
+    hashtag: cfg.postHashtag,
+    escapeText: escapeLittleText,
+  });
 
   let refreshToken: string;
   if (envMode) {
@@ -143,7 +156,7 @@ async function main(): Promise<number> {
     postUrn = await linkedin.createPost({
       accessToken: fresh.access_token,
       authorUrn: cfg.linkedinOrganizationUrn,
-      commentary,
+      commentary: linkedinCommentary,
     });
   } catch (err) {
     logger.error({ err }, 'LinkedIn create-post failed');

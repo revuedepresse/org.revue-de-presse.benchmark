@@ -7,6 +7,10 @@ export type RenderPostOpts = {
   footerUrl?: string;
   // Hashtag printed on the last line. Omitted from the post if empty.
   hashtag?: string;
+  // Optional transform applied to each entry's free-form text (the headline
+  // body). Used by the LinkedIn posting path to apply LITTLE_TEXT escaping;
+  // the dry-run path leaves it undefined so output stays human-readable.
+  escapeText?: (s: string) => string;
 };
 
 const formatDateFr = (isoDate: string): string => {
@@ -29,9 +33,10 @@ export function renderPost(
     throw new Error('renderPost: no highlights to render');
   }
   const dateFr = formatDateFr(isoDate);
+  const escape = opts.escapeText ?? ((s: string) => s);
   const entries = highlights.map((h, i) => {
     const rank = String(i + 1).padStart(2, ' ');
-    const text = cleanText(h.text).replace(/\s+/g, ' ').trim();
+    const text = escape(cleanText(h.text).replace(/\s+/g, ' ').trim());
     const lines = [`${rank}. ${h.screenName}`];
     if (text) lines.push(`    ${text}`);
     lines.push(`    ${h.url}`);
