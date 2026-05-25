@@ -1,4 +1,4 @@
-import type { Highlight, ThreadDraft, Reply } from './types.ts';
+import type { Highlight, ThreadDraft, Reply, LinkRange } from './types.ts';
 import { cleanText } from './cleanText.ts';
 
 export type RenderThreadOpts = {
@@ -42,7 +42,7 @@ const formatDateFr = (isoDate: string): string => {
   }).format(dt);
 };
 
-function buildLead(date: string, opts: RenderThreadOpts): string {
+function buildLead(date: string, opts: RenderThreadOpts): { text: string; linkRange?: LinkRange } {
   const header = `Top 3 des publications de presse parmi les plus relayées sur Bluesky le ${date} :`;
   const footer = opts.footerUrl ? `Retrouvez la revue de presse complète : ${opts.footerUrl}` : '';
   const tag = opts.hashtag ?? '';
@@ -55,9 +55,17 @@ function buildLead(date: string, opts: RenderThreadOpts): string {
   ];
   for (const parts of candidates) {
     const text = parts.filter(Boolean).join('\n\n');
-    if (graphemeLength(text) <= MAX_GRAPHEMES) return text;
+    if (graphemeLength(text) <= MAX_GRAPHEMES) {
+      if (opts.footerUrl && parts.includes(footer)) {
+        const idx = text.lastIndexOf(opts.footerUrl);
+        const byteStart = Buffer.byteLength(text.slice(0, idx), 'utf8');
+        const byteEnd = byteStart + Buffer.byteLength(opts.footerUrl, 'utf8');
+        return { text, linkRange: { byteStart, byteEnd, uri: opts.footerUrl } };
+      }
+      return { text };
+    }
   }
-  return truncateGraphemes(header, MAX_GRAPHEMES);
+  return { text: truncateGraphemes(header, MAX_GRAPHEMES) };
 }
 
 function buildReply(rank: number, h: Highlight): Reply {
@@ -91,7 +99,7 @@ export function renderThread(
     throw new Error(`renderThread: expected exactly 3 highlights, got ${highlights.length}`);
   }
   const date = formatDateFr(isoDate);
-  const lead = { text: buildLead(date, opts) };
+  const lead = buildLead(date, opts);
   const replies = highlights.map((h, i) => buildReply(i + 1, h));
   for (const r of replies) {
     if (graphemeLength(r.text) > MAX_GRAPHEMES) {

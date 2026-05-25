@@ -58,6 +58,40 @@ describe('postThread', () => {
     expect(agent.deletePost.mock.calls[1][0]).toBe('at://lead');
   });
 
+  it('passes lead facets through to agent.post for the lead post', async () => {
+    const agent = mkAgent();
+    agent.post
+      .mockResolvedValueOnce({ uri: 'at://lead', cid: 'c-lead' })
+      .mockResolvedValueOnce({ uri: 'at://r1',  cid: 'c-r1' })
+      .mockResolvedValueOnce({ uri: 'at://r2',  cid: 'c-r2' })
+      .mockResolvedValueOnce({ uri: 'at://r3',  cid: 'c-r3' });
+
+    const leadFacets = [{
+      index: { byteStart: 5, byteEnd: 25 },
+      features: [{ $type: 'app.bsky.richtext.facet#link', uri: 'https://play.google.com/x' }],
+    }];
+    const draft = { ...DRAFT, lead: { text: 'Top 3 with https://play.google.com/x', facets: leadFacets } };
+
+    await postThread(agent as never, draft as never, { sleepMs: 0 });
+
+    expect(agent.post.mock.calls[0][0].text).toBe('Top 3 with https://play.google.com/x');
+    expect(agent.post.mock.calls[0][0].facets).toEqual(leadFacets);
+    expect(agent.post.mock.calls[0][0].reply).toBeUndefined();
+  });
+
+  it('omits facets on the lead post call when draft.lead.facets is absent', async () => {
+    const agent = mkAgent();
+    agent.post
+      .mockResolvedValueOnce({ uri: 'at://lead', cid: 'c-lead' })
+      .mockResolvedValueOnce({ uri: 'at://r1',  cid: 'c-r1' })
+      .mockResolvedValueOnce({ uri: 'at://r2',  cid: 'c-r2' })
+      .mockResolvedValueOnce({ uri: 'at://r3',  cid: 'c-r3' });
+
+    await postThread(agent as never, DRAFT as never, { sleepMs: 0 });
+
+    expect(agent.post.mock.calls[0][0].facets).toBeUndefined();
+  });
+
   it('still throws BlueskyApiError even if rollback deletes also fail', async () => {
     const agent = mkAgent();
     agent.post
