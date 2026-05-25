@@ -13,8 +13,10 @@ export type Reply = {
   mentionRange: { byteStart: number; byteEnd: number };
 };
 
+export type LinkRange = { byteStart: number; byteEnd: number; uri: string };
+
 export type ThreadDraft = {
-  lead: { text: string };
+  lead: { text: string; linkRange?: LinkRange };
   replies: Reply[];
 };
 

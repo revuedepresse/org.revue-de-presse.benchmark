@@ -75,6 +75,35 @@ describe('renderThread', () => {
     const d = renderThread([H(1, 'x.bsky.social', ''), H(2), H(3)], '2026-05-22', OPTS);
     expect(d.replies[0].text).toBe('1. @x.bsky.social');
   });
+
+  it('exposes lead.linkRange covering the footer URL when the footer survives the budget', () => {
+    const d = renderThread(SAMPLE, '2026-05-22', OPTS);
+    expect(d.lead.linkRange).toBeDefined();
+    const { byteStart, byteEnd, uri } = d.lead.linkRange!;
+    expect(uri).toBe('https://play.google.com/store/apps/details?id=org.revue_2_presse');
+    const buf = Buffer.from(d.lead.text, 'utf8');
+    expect(buf.slice(byteStart, byteEnd).toString('utf8')).toBe(uri);
+  });
+
+  it('computes lead.linkRange in UTF-8 BYTES (header includes non-ASCII "relayées")', () => {
+    const d = renderThread(SAMPLE, '2026-05-22', OPTS);
+    const { byteStart, byteEnd, uri } = d.lead.linkRange!;
+    // Sanity: the URL sits past the multi-byte header chars, so byteStart MUST exceed the UTF-16 index.
+    expect(byteStart).toBeGreaterThan(d.lead.text.indexOf(uri));
+    expect(byteEnd - byteStart).toBe(Buffer.byteLength(uri, 'utf8'));
+  });
+
+  it('omits lead.linkRange when no footerUrl is provided', () => {
+    const d = renderThread(SAMPLE, '2026-05-22', { hashtag: '#RevueDePresse' });
+    expect(d.lead.linkRange).toBeUndefined();
+  });
+
+  it('omits lead.linkRange when the footer is dropped by the 300-grapheme budget', () => {
+    const longFooter = 'https://example.org/' + 'x'.repeat(300);
+    const d = renderThread(SAMPLE, '2026-05-22', { footerUrl: longFooter, hashtag: '#RevueDePresse' });
+    expect(d.lead.linkRange).toBeUndefined();
+    expect(d.lead.text).not.toContain(longFooter);
+  });
 });
 
 describe('graphemeLength', () => {

@@ -26,7 +26,7 @@ export type EnrichedReply = {
 };
 
 export type EnrichedDraft = {
-  lead: { text: string };
+  lead: { text: string; facets?: unknown[] };
   enrichedReplies: EnrichedReply[];
 };
 
@@ -41,7 +41,7 @@ export async function postThread(
   const posted: PostResult[] = [];
   let lead: PostResult;
   try {
-    lead = await agent.post({ text: draft.lead.text });
+    lead = await agent.post({ text: draft.lead.text, facets: draft.lead.facets });
     posted.push(lead);
   } catch (err) {
     throw new BlueskyApiError(`Lead post failed: ${(err as Error).message}`, err);

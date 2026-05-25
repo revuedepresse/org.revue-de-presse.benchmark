@@ -204,9 +204,19 @@ async function main(): Promise<number> {
     }),
   );
 
+  const leadFacets = draft.lead.linkRange
+    ? [{
+        index: { byteStart: draft.lead.linkRange.byteStart, byteEnd: draft.lead.linkRange.byteEnd },
+        features: [{ $type: 'app.bsky.richtext.facet#link', uri: draft.lead.linkRange.uri }],
+      }]
+    : undefined;
+
   let rootUri: string;
   try {
-    rootUri = await postThread(agent as never, { lead: draft.lead, enrichedReplies });
+    rootUri = await postThread(agent as never, {
+      lead: { text: draft.lead.text, facets: leadFacets },
+      enrichedReplies,
+    });
   } catch (err) {
     logger.error({ err }, 'postThread failed');
     return EXIT.BLUESKY;
