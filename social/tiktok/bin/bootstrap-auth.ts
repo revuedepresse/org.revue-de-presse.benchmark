@@ -18,7 +18,14 @@ const ENV_PATH = resolve(HERE, '.env.local');
 // MUST match the Redirect URI registered in the TikTok dev portal under
 // Login Kit -> Redirect URI, and the API's `app_tiktok_oauth_callback` route.
 const REDIRECT_URI = 'https://api.revue-de-presse.org/api/tiktok/oauth/callback';
-const SCOPES = 'user.info.basic,video.upload,video.publish';
+// `video.publish` (Direct Post) is only grantable after TikTok app audit;
+// pre-audit the Content Posting API portal only exposes `video.list` +
+// `video.upload`, and requesting `video.publish` makes TikTok reject the
+// whole `scope` param on the consent page. `inbox` (the default
+// PUBLISH_MODE) only needs `video.upload`. Override via TIKTOK_SCOPES
+// once the app is audited and you want PUBLISH_MODE=direct, e.g.
+// `TIKTOK_SCOPES=user.info.basic,video.upload,video.publish make tiktok-bootstrap`.
+const SCOPES = process.env.TIKTOK_SCOPES ?? 'user.info.basic,video.upload';
 
 const EnvSchema = z.object({
   TIKTOK_CLIENT_KEY:    z.string().min(1),

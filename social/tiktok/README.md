@@ -13,8 +13,12 @@ Daily 9:16 scroll capture of the Revue de presse top-10 publications, auto-poste
    point at the API's public callback route (`app_tiktok_oauth_callback`,
    `PUBLIC_ACCESS`), which renders the incoming `code` + `state` as a plain
    HTML page for copy-paste back into the bootstrap CLI. Request scopes
-   `user.info.basic`, `video.upload`, `video.publish`. Add `@revue_2_presse`
-   as a Sandbox tester.
+   `user.info.basic` (under **Login Kit**) and `video.upload` (under
+   **Content Posting API**). `video.publish` is gated behind TikTok's app
+   audit and only appears in the Content Posting portal once that completes —
+   add it later (and pass `TIKTOK_SCOPES=user.info.basic,video.upload,video.publish`
+   to `make tiktok-bootstrap`) when you need `PUBLISH_MODE=direct`. Add
+   `@revue_2_presse` as a Sandbox tester.
 2. Install workspace dependencies. This also seeds `.env.local` from the template
    if it's missing:
    ```
