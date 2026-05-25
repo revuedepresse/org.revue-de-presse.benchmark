@@ -7,9 +7,12 @@ export type RenderPostOpts = {
   footerUrl?: string;
   // Hashtag printed on the last line. Omitted from the post if empty.
   hashtag?: string;
-  // Optional transform applied to each entry's free-form text (the headline
-  // body). Used by the LinkedIn posting path to apply LITTLE_TEXT escaping;
-  // the dry-run path leaves it undefined so output stays human-readable.
+  // Optional transform applied to user-controlled text in the rendered
+  // commentary (headline body, screen names, and URLs — but never the
+  // hashtag, which must stay literal so LinkedIn's HashtagElement detector
+  // picks it up). Used by the LinkedIn posting path to apply LITTLE_TEXT
+  // escaping; the dry-run path leaves it undefined so output stays
+  // human-readable.
   escapeText?: (s: string) => string;
 };
 
@@ -37,9 +40,9 @@ export function renderPost(
   const entries = highlights.map((h, i) => {
     const rank = String(i + 1).padStart(2, ' ');
     const text = escape(cleanText(h.text).replace(/\s+/g, ' ').trim());
-    const lines = [`${rank}. ${h.screenName}`];
+    const lines = [`${rank}. ${escape(h.screenName)}`];
     if (text) lines.push(`    ${text}`);
-    lines.push(`    ${h.url}`);
+    lines.push(`    ${escape(h.url)}`);
     return lines.join('\n');
   });
   const sections: string[] = [
@@ -48,7 +51,7 @@ export function renderPost(
     entries.join('\n\n'),
   ];
   if (opts.footerUrl) {
-    sections.push('', `Retrouvez la revue de presse complète : ${opts.footerUrl}`);
+    sections.push('', `Retrouvez la revue de presse complète : ${escape(opts.footerUrl)}`);
   }
   if (opts.hashtag) {
     sections.push('', opts.hashtag);

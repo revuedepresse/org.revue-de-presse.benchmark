@@ -147,16 +147,39 @@ describe('renderPost', () => {
       expect(out).not.toContain('\\#RevueDePresse');
     });
 
-    it('does not escape characters inside URLs', () => {
-      // Footer URL has underscores (https://play.google.com/.../id=org.revue_2_presse).
-      // LinkedIn auto-detects URLs and re-shortens them — escaping inside the URL
-      // would corrupt it.
+    // Production incident (LinkedIn activity 7464597081169620992, 2026-05-25):
+    // the footer URL `https://play.google.com/store/apps/details?id=org.revue_2_presse`
+    // was rendered by LinkedIn's lnkd.in shortener as
+    // `https://play.google.com/store/apps/details?id=org.revue2presse` — the
+    // `_2_` was consumed as italic markup before URL auto-linking. Per the
+    // LITTLE_TEXT spec, `_` is reserved and must be backslash-escaped even
+    // inside what looks like a URL; the parser strips backslashes before
+    // URL auto-detection runs, so the link still resolves correctly.
+    it('escapes underscores in the footer URL', () => {
       const out = renderPost(SAMPLE.slice(0, 1), '2026-05-20', {
         ...OPTS,
         escapeText: escapeLittleText,
       });
-      expect(out).toContain('https://play.google.com/store/apps/details?id=org.revue_2_presse');
-      expect(out).not.toContain('revue\\_2\\_presse');
+      expect(out).toContain(
+        'https://play.google.com/store/apps/details?id=org.revue\\_2\\_presse',
+      );
+    });
+
+    it('escapes reserved chars in entry URLs', () => {
+      const reserved: Highlight[] = [
+        {
+          screenName: 'OutletA',
+          publicationId: 'a',
+          url: 'https://example.com/path_with_underscores',
+          text: '',
+          date: '2026-05-20',
+        },
+      ];
+      const out = renderPost(reserved, '2026-05-20', {
+        ...OPTS,
+        escapeText: escapeLittleText,
+      });
+      expect(out).toContain('https://example.com/path\\_with\\_underscores');
     });
 
   });
