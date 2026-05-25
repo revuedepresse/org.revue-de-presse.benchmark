@@ -10,6 +10,11 @@ import {
 } from './types.ts';
 import { CHOREO_TOTAL_MS } from '../render/scrollChoreo.ts';
 
+// TikTok handle the bootstrap signs in as. The Content Posting API returns
+// raw post IDs in `publicaly_available_post_id`; the public video URL is
+// reconstructed as `https://www.tiktok.com/@<handle>/video/<id>`.
+const TIKTOK_HANDLE = 'revue_2_presse';
+
 export interface PublishOpts {
   accessToken: string;
   mp4Path: string;
@@ -22,6 +27,10 @@ export interface PublishOpts {
 export interface PublishResult {
   publishId: string;
   finalStatus: 'INBOX_DELIVERED' | 'PUBLISHED';
+  // Public TikTok URLs, populated only when direct-mode polling returns
+  // `publicaly_available_post_id` on PUBLISH_COMPLETE. Inbox-mode drafts
+  // have no public URL until the operator finalises the post in-app.
+  postUrls?: string[];
 }
 
 export async function publishVideo(opts: PublishOpts): Promise<PublishResult> {
@@ -108,7 +117,10 @@ export async function publishVideo(opts: PublishOpts): Promise<PublishResult> {
       return { publishId: publish_id, finalStatus: 'INBOX_DELIVERED' };
     }
     if (status.status === 'PUBLISH_COMPLETE') {
-      return { publishId: publish_id, finalStatus: 'PUBLISHED' };
+      const postUrls = status.publicaly_available_post_id?.map(
+        (id) => `https://www.tiktok.com/@${TIKTOK_HANDLE}/video/${id}`,
+      );
+      return { publishId: publish_id, finalStatus: 'PUBLISHED', postUrls };
     }
     if (status.status === 'FAILED') {
       throw new TikTokPublishFailedError(

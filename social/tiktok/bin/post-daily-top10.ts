@@ -163,7 +163,10 @@ async function main(): Promise<number> {
       caption: env.PUBLISH_MODE === 'direct' ? caption : '',
       mode: env.PUBLISH_MODE,
     });
-    logger.info({ publishId: r.publishId, finalStatus: r.finalStatus }, 'tiktok publish complete');
+    logger.info(
+      { publishId: r.publishId, finalStatus: r.finalStatus, postUrls: r.postUrls },
+      'tiktok publish complete',
+    );
     return 0;
   } catch (e) {
     if (e instanceof TikTokInitError) { logger.error({ err: e.message }, 'init'); return 22; }
