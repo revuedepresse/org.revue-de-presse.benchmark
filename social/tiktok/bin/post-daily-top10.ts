@@ -32,14 +32,23 @@ const HERE = resolve(fileURLToPath(import.meta.url), '..', '..');
 const ENV_PATH = resolve(HERE, '.env.local');
 const OUT_DIR = resolve(HERE, 'out');
 
-function todayParis(): string {
+function yesterdayParis(): string {
+  // The Revue de presse top-10 for a given Paris day publishes at the end of
+  // that day, well after this CLI typically runs. Targeting yesterday's date
+  // by default guarantees the page is populated. Operators backfill or
+  // re-render a specific day via DATE_OVERRIDE.
   const fmt = new Intl.DateTimeFormat('fr-CA', {
     timeZone: 'Europe/Paris',
     year:  'numeric',
     month: '2-digit',
     day:   '2-digit',
   });
-  return fmt.format(new Date());
+  const todayInParis = fmt.format(new Date());
+  const [y, m, d] = todayInParis.split('-').map(Number);
+  // Date.UTC normalises d-1 across month/year boundaries; the Paris
+  // formatter then renders the corresponding calendar date, which is
+  // unambiguous because UTC midnight is mid-day in Paris regardless of DST.
+  return fmt.format(new Date(Date.UTC(y, m - 1, d - 1)));
 }
 
 async function main(): Promise<number> {
@@ -57,7 +66,7 @@ async function main(): Promise<number> {
     level: env.LOG_LEVEL,
     transport: process.stdout.isTTY ? { target: 'pino-pretty' } : undefined,
   });
-  const date = env.DATE_OVERRIDE ?? todayParis();
+  const date = env.DATE_OVERRIDE ?? yesterdayParis();
   logger.info({ date, mode: env.PUBLISH_MODE, dryRun: env.DRY_RUN }, 'starting tiktok post');
 
   await mkdir(OUT_DIR, { recursive: true });

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       date:
-        description: 'YYYY-MM-DD override (defaults to today Europe/Paris)'
+        description: 'YYYY-MM-DD override (defaults to yesterday Europe/Paris)'
         required: false
       mode:
         description: 'inbox | direct'
