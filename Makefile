@@ -123,11 +123,11 @@ linkedin-install: ## Install social/linkedin dependencies (seeds .env.local from
 linkedin-bootstrap: ## Run the one-time LinkedIn 3-legged OAuth bootstrap (interactive)
 	@$(MAKE) -C $(LINKEDIN_DIR) bootstrap
 
-linkedin-post: ## Cron entry: post yesterday's top 10 to LinkedIn (override date with POST_DATE=YYYY-MM-DD)
-	@$(MAKE) -C $(LINKEDIN_DIR) post POST_DATE=$(POST_DATE)
+linkedin-post: ## Cron entry: post yesterday's top 10 to LinkedIn (POST_DATE=YYYY-MM-DD to override date, POST_FORCE=1 to bypass dedupe)
+	@$(MAKE) -C $(LINKEDIN_DIR) post POST_DATE=$(POST_DATE) POST_FORCE=$(POST_FORCE)
 
-linkedin-post-dry: ## Render the post and log it without calling LinkedIn (override date with POST_DATE=YYYY-MM-DD)
-	@$(MAKE) -C $(LINKEDIN_DIR) post-dry POST_DATE=$(POST_DATE)
+linkedin-post-dry: ## Render the post and log it without calling LinkedIn (POST_DATE=YYYY-MM-DD to override date, POST_FORCE=1 to bypass dedupe)
+	@$(MAKE) -C $(LINKEDIN_DIR) post-dry POST_DATE=$(POST_DATE) POST_FORCE=$(POST_FORCE)
 
 linkedin-test: ## Run social/linkedin unit tests
 	@$(MAKE) -C $(LINKEDIN_DIR) test
