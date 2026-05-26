@@ -178,11 +178,22 @@ submit()"
               font-family: 'Roboto', sans-serif;
               font-size: var(--font-size-content);
               cursor: pointer;
+              transition: filter 160ms ease, background 160ms ease;
             }
-            .rdp-discuter__cta-button:hover,
             .rdp-discuter__composer-send:hover,
             .rdp-discuter__error-retry:hover {
               background: var(--button-bg-primary-hover);
+            }
+            /* CTA: keep the deep-teal brand colour, just darken slightly on hover
+               so the entry-point button gives interaction feedback without
+               flashing to the brighter active shade. */
+            .rdp-discuter__cta-button:hover {
+              background: var(--button-bg-primary);
+              filter: brightness(0.92);
+            }
+            .rdp-discuter__cta-button:focus-visible {
+              outline: 2px solid var(--button-bg-primary-hover);
+              outline-offset: 2px;
             }
             .rdp-discuter__composer-cancel {
               background: var(--button-bg-secondary);
