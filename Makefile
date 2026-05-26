@@ -1,7 +1,7 @@
 SHELL:=/bin/bash
 .ONESHELL:
 .PHONY: help install \
-        nuxt-dev nuxt-build nuxt-prod nuxt-test \
+        nuxt-dev nuxt-dev-tls nuxt-certs nuxt-build nuxt-prod nuxt-test \
         nuxt-install-bubblewrap nuxt-update-twa nuxt-build-twa \
         chat-jwt-secret \
         next-dev next-build next-prod next-test \
@@ -35,6 +35,12 @@ install: ## Install dependencies for nuxt, next, e2e, and social/{linkedin,tikto
 
 nuxt-dev: ## Start the Nuxt dev server (http://localhost:3000)
 	@$(MAKE) -C $(NUXT_DIR) dev
+
+nuxt-certs: ## Generate mkcert TLS certs for the Nuxt dev server (idempotent)
+	@$(MAKE) -C $(NUXT_DIR) certs
+
+nuxt-dev-tls: ## Start the Nuxt dev server on https://local.revue-de-presse.org:3000 (mkcert)
+	@$(MAKE) -C $(NUXT_DIR) dev-tls
 
 nuxt-build: ## Build the Nuxt app for production
 	@$(MAKE) -C $(NUXT_DIR) build

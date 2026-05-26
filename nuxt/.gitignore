@@ -8,6 +8,7 @@ dist
 .DS_Store
 .env
 .env.local
+.certs/
 twa-manifest.json
 *.apk
 *.aab

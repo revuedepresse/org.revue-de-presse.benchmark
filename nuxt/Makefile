@@ -1,12 +1,32 @@
 SHELL:=/bin/bash
 .ONESHELL:
-.PHONY: install dev build preview install-bubblewrap update-twa build-twa twa-fingerprint chat-jwt-secret help
+.PHONY: install dev dev-tls certs build preview install-bubblewrap update-twa build-twa twa-fingerprint chat-jwt-secret help
 
 install: ## Install Node dependencies (delegates to pnpm)
 	@pnpm install
 
 dev: ## Start the Nuxt dev server (http://localhost:3000)
 	@pnpm dev
+
+# mkcert-backed local TLS. Hostname must resolve to 127.0.0.1
+# (add `127.0.0.1 local.revue-de-presse.org` to /etc/hosts).
+# One-time setup on a fresh machine: `mkcert -install` (adds the local CA
+# to the system trust store; requires sudo password).
+CERT_DIR   := .certs
+CERT_KEY   := $(CERT_DIR)/local-key.pem
+CERT_CERT  := $(CERT_DIR)/local-cert.pem
+CERT_HOSTS := local.revue-de-presse.org 127.0.0.1 ::1
+
+certs: $(CERT_CERT) ## Generate mkcert TLS certs for local dev (idempotent)
+
+$(CERT_CERT):
+	@command -v mkcert >/dev/null 2>&1 || { printf '✗ mkcert not found — install with: brew install mkcert\n' >&2; exit 1; }
+	@mkdir -p $(CERT_DIR)
+	@mkcert -key-file $(CERT_KEY) -cert-file $(CERT_CERT) $(CERT_HOSTS)
+	@printf '✓ TLS certs written to %s/ for: %s\n' '$(CERT_DIR)' '$(CERT_HOSTS)'
+
+dev-tls: certs ## Start the Nuxt dev server on https://local.revue-de-presse.org:3000 (mkcert)
+	@NUXT_DEV_TLS=1 PUBLIC_ORIGIN=https://local.revue-de-presse.org:3000 pnpm dev
 
 # Nitro's `netlify` preset writes the publish dir to `{rootDir}/dist/`,
 # not `.output/public/` — so the well-known assets must be copied there
