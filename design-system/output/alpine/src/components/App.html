@@ -84,6 +84,20 @@
         <template x-if="currentView === 'sources'">
           <SourcesPage></SourcesPage>
         </template>
+        <template x-if="currentView === 'discuter'">
+          <DiscuterPage
+            x-bind:status="discuterStatus ?? 'unauthenticated'"
+            x-bind:turns="discuterTurns"
+            x-bind:citations="discuterCitations"
+            x-bind:errorCode="discuterErrorCode"
+            x-bind:draft="discuterDraft"
+            x-on:login="onDiscuterLogin?.()"
+            x-on:draft-change="onDiscuterDraftChange?.(next)"
+            x-on:send="onDiscuterSend?.(text)"
+            x-on:cancel="onDiscuterCancel?.()"
+            x-on:retry="onDiscuterRetry?.()"
+          ></DiscuterPage>
+        </template>
       </main>
     </div>
   </template>
@@ -132,6 +146,20 @@
       </template>
       <template x-if="currentView === 'sources'">
         <SourcesPage></SourcesPage>
+      </template>
+      <template x-if="currentView === 'discuter'">
+        <DiscuterPage
+          x-bind:status="discuterStatus ?? 'unauthenticated'"
+          x-bind:turns="discuterTurns"
+          x-bind:citations="discuterCitations"
+          x-bind:errorCode="discuterErrorCode"
+          x-bind:draft="discuterDraft"
+          x-on:login="onDiscuterLogin?.()"
+          x-on:draft-change="onDiscuterDraftChange?.(next)"
+          x-on:send="onDiscuterSend?.(text)"
+          x-on:cancel="onDiscuterCancel?.()"
+          x-on:retry="onDiscuterRetry?.()"
+        ></DiscuterPage>
       </template>
       <template x-if="!captureMode">
         <BannerAbout

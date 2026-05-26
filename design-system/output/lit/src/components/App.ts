@@ -11,10 +11,12 @@ import './LegalNoticePage.ts';
 import './ContactPage.ts';
 import './SupportPage.ts';
 import './SourcesPage.ts';
+import './DiscuterPage.ts';
 import './IntroCard.ts';
 import './Spinner.ts';
 import './BlueskyPostCard.ts';
 import type { Locale } from '../utils/i18n';
+import './DiscuterPage.ts';
 
 
 
@@ -25,7 +27,7 @@ import type { Locale } from '../utils/i18n';
  id: string;
  label: string;
 }
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources'
+type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter'
 type AppProps = {
  layout?: 'mobile' | 'desktop';
  authenticated?: boolean;
@@ -50,6 +52,16 @@ type AppProps = {
  onLogoClick?: () => void;
  onViewChange?: (view: ViewKey) => void;
  captureMode?: boolean;
+ discuterStatus?: DiscuterStatus;
+ discuterTurns?: DiscuterTurn[];
+ discuterCitations?: DiscuterCitation[];
+ discuterErrorCode?: DiscuterErrorCode;
+ discuterDraft?: string;
+ onDiscuterLogin?: () => void;
+ onDiscuterDraftChange?: (next: string) => void;
+ onDiscuterSend?: (text: string) => void;
+ onDiscuterCancel?: () => void;
+ onDiscuterRetry?: () => void;
 }
 
 
@@ -86,6 +98,16 @@ type AppProps = {
 @property() loading: any
 @property() posts: any
 @property() emptyMessageKey: any
+@property() discuterStatus: any
+@property() discuterTurns: any
+@property() discuterCitations: any
+@property() discuterErrorCode: any
+@property() discuterDraft: any
+@property() onDiscuterLogin: any
+@property() onDiscuterDraftChange: any
+@property() onDiscuterSend: any
+@property() onDiscuterCancel: any
+@property() onDiscuterRetry: any
 
        @state()  focusedDate= new Date()
 @state()  isCalendarOpen= false
@@ -210,6 +232,9 @@ this.initialised = true }
            : null}
        ${this.currentView === 'sources' ?
              html`<sources-page ></sources-page>`
+           : null}
+       ${this.currentView === 'discuter' ?
+             html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  @login=${(event) => this.onDiscuterLogin?.()}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
            : null}</main></div>`
             : null}
         ${(this.layout ?? 'desktop') === 'mobile' ?
@@ -243,6 +268,9 @@ this.initialised = true }
            : null}
        ${this.currentView === 'sources' ?
              html`<sources-page ></sources-page>`
+           : null}
+       ${this.currentView === 'discuter' ?
+             html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  @login=${(event) => this.onDiscuterLogin?.()}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
            : null}
        ${!this.captureMode ?
              html`<banner-about  @legalnoticeclick=${(event) => this.goTo('legal')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')} ></banner-about>`

@@ -124,5 +124,20 @@
   "auth.edit-email.new-label": "New email",
   "auth.edit-email.current-password-label": "Password",
   "auth.edit-email.submit-label": "Submit",
-  "bluesky.handle.prefix": "@"
+  "bluesky.handle.prefix": "@",
+  "discuter.title": "Chat with the press digest",
+  "discuter.lede": "Ask questions about the publications most relayed each day. The assistant answers only from cited excerpts, in French.",
+  "discuter.unauthenticated.body": "Connect your Bluesky account to start a conversation.",
+  "discuter.unauthenticated.cta": "Connect my Bluesky account",
+  "discuter.authenticating": "Signing in…",
+  "discuter.composer.label": "Your question",
+  "discuter.composer.placeholder": "For example: how did Le Monde cover the pension reform in March?",
+  "discuter.composer.send": "Send",
+  "discuter.composer.cancel": "Cancel",
+  "discuter.sources.title": "Cited sources",
+  "discuter.error.rate_limited_user": "You've reached the question limit for this hour. Try again in a few minutes.",
+  "discuter.error.rate_limited_global": "The press digest has reached today's quota. The chat resumes tomorrow.",
+  "discuter.error.providers_exhausted": "Language models are unavailable right now. Try again later.",
+  "discuter.error.truncated": "The response was interrupted. You can re-send your question.",
+  "discuter.error.retry": "Retry"
 }

@@ -4,7 +4,7 @@ id: string;
 label: string;
 }
 
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources'
+type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter'
 
 type AppProps = {
 layout?: 'mobile' | 'desktop';
@@ -30,6 +30,16 @@ onDateSelect?: (date: Date) => void;
 onLogoClick?: () => void;
 onViewChange?: (view: ViewKey) => void;
 captureMode?: boolean;
+discuterStatus?: DiscuterStatus;
+discuterTurns?: DiscuterTurn[];
+discuterCitations?: DiscuterCitation[];
+discuterErrorCode?: DiscuterErrorCode;
+discuterDraft?: string;
+onDiscuterLogin?: () => void;
+onDiscuterDraftChange?: (next: string) => void;
+onDiscuterSend?: (text: string) => void;
+onDiscuterCancel?: () => void;
+onDiscuterRetry?: () => void;
 }
 
     </script>
@@ -54,10 +64,12 @@ import  LegalNoticePage from './LegalNoticePage.svelte';
 import  ContactPage from './ContactPage.svelte';
 import  SupportPage from './SupportPage.svelte';
 import  SourcesPage from './SourcesPage.svelte';
+import  DiscuterPage from './DiscuterPage.svelte';
 import  IntroCard from './IntroCard.svelte';
 import  Spinner from './Spinner.svelte';
 import type { BlueskyPost } from './BlueskyPostCard.svelte';
 import type { Locale } from '../utils/i18n';
+import type { DiscuterStatus, DiscuterTurn, DiscuterCitation, DiscuterErrorCode } from './DiscuterPage.svelte';
 
 
 
@@ -83,6 +95,16 @@ export let onListSelect: AppProps['onListSelect']= undefined;
 export let loading: AppProps['loading']= undefined;
 export let posts: AppProps['posts'];
 export let emptyMessageKey: AppProps['emptyMessageKey']= undefined;
+export let discuterStatus: AppProps['discuterStatus']= undefined;
+export let discuterTurns: AppProps['discuterTurns']= undefined;
+export let discuterCitations: AppProps['discuterCitations']= undefined;
+export let discuterErrorCode: AppProps['discuterErrorCode']= undefined;
+export let discuterDraft: AppProps['discuterDraft']= undefined;
+export let onDiscuterLogin: AppProps['onDiscuterLogin']= undefined;
+export let onDiscuterDraftChange: AppProps['onDiscuterDraftChange']= undefined;
+export let onDiscuterSend: AppProps['onDiscuterSend']= undefined;
+export let onDiscuterCancel: AppProps['onDiscuterCancel']= undefined;
+export let onDiscuterRetry: AppProps['onDiscuterRetry']= undefined;
 
 
 
@@ -238,6 +260,11 @@ initialised = true; });
 <SourcesPage ></SourcesPage>
 
 
+{/if}
+{#if currentView === 'discuter' }
+<DiscuterPage  status={discuterStatus ?? 'unauthenticated'}  turns={discuterTurns}  citations={discuterCitations}  errorCode={discuterErrorCode}  draft={discuterDraft}  onLogin={(event) => onDiscuterLogin?.()} onDraftChange={(next) => onDiscuterDraftChange?.(next)} onSend={(text) => onDiscuterSend?.(text)} onCancel={(event) => onDiscuterCancel?.()} onRetry={(event) => onDiscuterRetry?.()}></DiscuterPage>
+
+
 {/if}</main></div>
 
 
@@ -292,6 +319,11 @@ initialised = true; });
 {/if}
 {#if currentView === 'sources' }
 <SourcesPage ></SourcesPage>
+
+
+{/if}
+{#if currentView === 'discuter' }
+<DiscuterPage  status={discuterStatus ?? 'unauthenticated'}  turns={discuterTurns}  citations={discuterCitations}  errorCode={discuterErrorCode}  draft={discuterDraft}  onLogin={(event) => onDiscuterLogin?.()} onDraftChange={(next) => onDiscuterDraftChange?.(next)} onSend={(text) => onDiscuterSend?.(text)} onCancel={(event) => onDiscuterCancel?.()} onRetry={(event) => onDiscuterRetry?.()}></DiscuterPage>
 
 
 {/if}

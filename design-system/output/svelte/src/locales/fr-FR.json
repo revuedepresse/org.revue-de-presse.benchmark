@@ -124,5 +124,20 @@
   "auth.edit-email.new-label": "Nouvel email",
   "auth.edit-email.current-password-label": "Mot de passe",
   "auth.edit-email.submit-label": "Valider",
-  "bluesky.handle.prefix": "@"
+  "bluesky.handle.prefix": "@",
+  "discuter.title": "Discuter avec la revue de presse",
+  "discuter.lede": "Posez vos questions sur les publications les plus relayées chaque jour. L'assistant répond uniquement à partir des extraits cités, en français.",
+  "discuter.unauthenticated.body": "Connectez votre compte Bluesky pour démarrer une conversation.",
+  "discuter.unauthenticated.cta": "Connecter mon compte Bluesky",
+  "discuter.authenticating": "Connexion en cours…",
+  "discuter.composer.label": "Votre question",
+  "discuter.composer.placeholder": "Par exemple : comment Le Monde a-t-il couvert la réforme des retraites en mars ?",
+  "discuter.composer.send": "Envoyer",
+  "discuter.composer.cancel": "Interrompre",
+  "discuter.sources.title": "Sources citées",
+  "discuter.error.rate_limited_user": "Vous avez atteint la limite de questions pour cette heure. Réessayez dans quelques minutes.",
+  "discuter.error.rate_limited_global": "La revue de presse a atteint son quota du jour. La discussion reprend demain.",
+  "discuter.error.providers_exhausted": "Les modèles de langage sont indisponibles pour le moment. Réessayez plus tard.",
+  "discuter.error.truncated": "La réponse a été interrompue. Vous pouvez relancer votre question.",
+  "discuter.error.retry": "Réessayer"
 }

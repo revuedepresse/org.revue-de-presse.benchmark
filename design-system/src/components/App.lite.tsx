@@ -12,14 +12,21 @@ import LegalNoticePage from './LegalNoticePage.lite';
 import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
+import DiscuterPage from './DiscuterPage.lite';
 import IntroCard from './IntroCard.lite';
 import Spinner from './Spinner.lite';
 import type { BlueskyPost } from './BlueskyPostCard.lite';
 import type { Locale } from '../utils/i18n';
+import type {
+  DiscuterStatus,
+  DiscuterTurn,
+  DiscuterCitation,
+  DiscuterErrorCode,
+} from './DiscuterPage.lite';
 
 type SnapshotItem = { id: string; label: string };
 
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources';
+type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter';
 
 type AppProps = {
   layout?: 'mobile' | 'desktop';
@@ -42,13 +49,23 @@ type AppProps = {
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
   captureMode?: boolean;
+  discuterStatus?: DiscuterStatus;
+  discuterTurns?: DiscuterTurn[];
+  discuterCitations?: DiscuterCitation[];
+  discuterErrorCode?: DiscuterErrorCode;
+  discuterDraft?: string;
+  onDiscuterLogin?: () => void;
+  onDiscuterDraftChange?: (next: string) => void;
+  onDiscuterSend?: (text: string) => void;
+  onDiscuterCancel?: () => void;
+  onDiscuterRetry?: () => void;
 };
 
 export default function App(props: AppProps) {
   const state = useStore({
     focusedDate: new Date(),
     isCalendarOpen: false,
-    currentView: 'main' as 'main' | 'legal' | 'contact' | 'support' | 'sources',
+    currentView: 'main' as 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter',
     initialised: false,
     get popularNewsLine(): string {
       return t(
@@ -224,6 +241,20 @@ export default function App(props: AppProps) {
             <Show when={state.currentView === 'sources'}>
               <SourcesPage />
             </Show>
+            <Show when={state.currentView === 'discuter'}>
+              <DiscuterPage
+                status={props.discuterStatus ?? 'unauthenticated'}
+                turns={props.discuterTurns}
+                citations={props.discuterCitations}
+                errorCode={props.discuterErrorCode}
+                draft={props.discuterDraft}
+                onLogin={() => props.onDiscuterLogin?.()}
+                onDraftChange={(next: string) => props.onDiscuterDraftChange?.(next)}
+                onSend={(text: string) => props.onDiscuterSend?.(text)}
+                onCancel={() => props.onDiscuterCancel?.()}
+                onRetry={() => props.onDiscuterRetry?.()}
+              />
+            </Show>
           </main>
         </div>
       </Show>
@@ -273,6 +304,20 @@ export default function App(props: AppProps) {
           </Show>
           <Show when={state.currentView === 'sources'}>
             <SourcesPage />
+          </Show>
+          <Show when={state.currentView === 'discuter'}>
+            <DiscuterPage
+              status={props.discuterStatus ?? 'unauthenticated'}
+              turns={props.discuterTurns}
+              citations={props.discuterCitations}
+              errorCode={props.discuterErrorCode}
+              draft={props.discuterDraft}
+              onLogin={() => props.onDiscuterLogin?.()}
+              onDraftChange={(next: string) => props.onDiscuterDraftChange?.(next)}
+              onSend={(text: string) => props.onDiscuterSend?.(text)}
+              onCancel={() => props.onDiscuterCancel?.()}
+              onRetry={() => props.onDiscuterRetry?.()}
+            />
           </Show>
           <Show when={!props.captureMode}>
             <BannerAbout

@@ -11,10 +11,17 @@ import { LegalNoticePage } from "./LegalNoticePage";
 import { ContactPage } from "./ContactPage";
 import { SupportPage } from "./SupportPage";
 import { SourcesPage } from "./SourcesPage";
+import { DiscuterPage } from "./DiscuterPage";
 import { IntroCard } from "./IntroCard";
 import { Spinner } from "./Spinner";
 import type { BlueskyPost } from "./BlueskyPostCard";
 import type { Locale } from "../utils/i18n";
+import type {
+  DiscuterStatus,
+  DiscuterTurn,
+  DiscuterCitation,
+  DiscuterErrorCode,
+} from "./DiscuterPage";
 
 import {
   Component,
@@ -50,6 +57,16 @@ export class App {
   @Prop() loading: any;
   @Prop() posts: any;
   @Prop() emptyMessageKey: any;
+  @Prop() discuterStatus: any;
+  @Prop() discuterTurns: any;
+  @Prop() discuterCitations: any;
+  @Prop() discuterErrorCode: any;
+  @Prop() discuterDraft: any;
+  @Event() discuterLogin: any;
+  @Event() discuterDraftChange: any;
+  @Event() discuterSend: any;
+  @Event() discuterCancel: any;
+  @Event() discuterRetry: any;
   @State() focusedDate = new Date();
   @State() isCalendarOpen = false;
   @State() currentView = "main";
@@ -242,6 +259,20 @@ export class App {
               {this.currentView === "sources" ? (
                 <sources-page></sources-page>
               ) : null}
+              {this.currentView === "discuter" ? (
+                <discuter-page
+                  status={this.discuterStatus ?? "unauthenticated"}
+                  turns={this.discuterTurns}
+                  citations={this.discuterCitations}
+                  errorCode={this.discuterErrorCode}
+                  draft={this.discuterDraft}
+                  onLogin={() => this.discuterLogin?.()}
+                  onDraftChange={(next) => this.discuterDraftChange?.(next)}
+                  onSend={(text) => this.discuterSend?.(text)}
+                  onCancel={() => this.discuterCancel?.()}
+                  onRetry={() => this.discuterRetry?.()}
+                ></discuter-page>
+              ) : null}
             </main>
           </div>
         ) : null}
@@ -301,6 +332,20 @@ export class App {
               ) : null}
               {this.currentView === "sources" ? (
                 <sources-page></sources-page>
+              ) : null}
+              {this.currentView === "discuter" ? (
+                <discuter-page
+                  status={this.discuterStatus ?? "unauthenticated"}
+                  turns={this.discuterTurns}
+                  citations={this.discuterCitations}
+                  errorCode={this.discuterErrorCode}
+                  draft={this.discuterDraft}
+                  onLogin={() => this.discuterLogin?.()}
+                  onDraftChange={(next) => this.discuterDraftChange?.(next)}
+                  onSend={(text) => this.discuterSend?.(text)}
+                  onCancel={() => this.discuterCancel?.()}
+                  onRetry={() => this.discuterRetry?.()}
+                ></discuter-page>
               ) : null}
               {!this.captureMode ? (
                 <banner-about

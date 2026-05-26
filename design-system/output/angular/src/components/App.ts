@@ -7,7 +7,13 @@ type SnapshotItem = {
   id: string;
   label: string;
 };
-type ViewKey = "main" | "legal" | "contact" | "support" | "sources";
+type ViewKey =
+  | "main"
+  | "legal"
+  | "contact"
+  | "support"
+  | "sources"
+  | "discuter";
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -32,6 +38,16 @@ type AppProps = {
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
   captureMode?: boolean;
+  discuterStatus?: DiscuterStatus;
+  discuterTurns?: DiscuterTurn[];
+  discuterCitations?: DiscuterCitation[];
+  discuterErrorCode?: DiscuterErrorCode;
+  discuterDraft?: string;
+  onDiscuterLogin?: () => void;
+  onDiscuterDraftChange?: (next: string) => void;
+  onDiscuterSend?: (text: string) => void;
+  onDiscuterCancel?: () => void;
+  onDiscuterRetry?: () => void;
 };
 
 import { t } from "../utils/i18n";
@@ -127,6 +143,20 @@ import type { Locale } from "../utils/i18n";
             <ng-container *ngIf="currentView === 'sources'"
               ><sources-page></sources-page
             ></ng-container>
+            <ng-container *ngIf="currentView === 'discuter'"
+              ><discuter-page
+                [status]="discuterStatus ?? 'unauthenticated'"
+                [turns]="discuterTurns"
+                [citations]="discuterCitations"
+                [errorCode]="discuterErrorCode"
+                [draft]="discuterDraft"
+                (login)="onDiscuterLogin?.()"
+                (draftChange)="onDiscuterDraftChange?.($event)"
+                (send)="onDiscuterSend?.($event)"
+                (cancel)="onDiscuterCancel?.()"
+                (retry)="onDiscuterRetry?.()"
+              ></discuter-page
+            ></ng-container>
           </main></div
       ></ng-container>
       <ng-container *ngIf="(layout ?? 'desktop') === 'mobile'"
@@ -174,6 +204,20 @@ import type { Locale } from "../utils/i18n";
           ></ng-container>
           <ng-container *ngIf="currentView === 'sources'"
             ><sources-page></sources-page
+          ></ng-container>
+          <ng-container *ngIf="currentView === 'discuter'"
+            ><discuter-page
+              [status]="discuterStatus ?? 'unauthenticated'"
+              [turns]="discuterTurns"
+              [citations]="discuterCitations"
+              [errorCode]="discuterErrorCode"
+              [draft]="discuterDraft"
+              (login)="onDiscuterLogin?.()"
+              (draftChange)="onDiscuterDraftChange?.($event)"
+              (send)="onDiscuterSend?.($event)"
+              (cancel)="onDiscuterCancel?.()"
+              (retry)="onDiscuterRetry?.()"
+            ></discuter-page
           ></ng-container>
           <ng-container *ngIf="!captureMode"
             ><banner-about
@@ -384,6 +428,16 @@ export default class App {
   @Input() loading!: AppProps["loading"];
   @Input() posts!: AppProps["posts"];
   @Input() emptyMessageKey!: AppProps["emptyMessageKey"];
+  @Input() discuterStatus!: AppProps["discuterStatus"];
+  @Input() discuterTurns!: AppProps["discuterTurns"];
+  @Input() discuterCitations!: AppProps["discuterCitations"];
+  @Input() discuterErrorCode!: AppProps["discuterErrorCode"];
+  @Input() discuterDraft!: AppProps["discuterDraft"];
+  @Input() onDiscuterLogin!: AppProps["onDiscuterLogin"];
+  @Input() onDiscuterDraftChange!: AppProps["onDiscuterDraftChange"];
+  @Input() onDiscuterSend!: AppProps["onDiscuterSend"];
+  @Input() onDiscuterCancel!: AppProps["onDiscuterCancel"];
+  @Input() onDiscuterRetry!: AppProps["onDiscuterRetry"];
 
   focusedDate = new Date();
   isCalendarOpen = false;
@@ -498,6 +552,7 @@ export default class App {
     ContactPageModule,
     SupportPageModule,
     SourcesPageModule,
+    DiscuterPageModule,
     BannerAboutModule,
     CalendarModule,
     CalendarActionBarModule,

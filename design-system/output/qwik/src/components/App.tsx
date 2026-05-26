@@ -16,6 +16,14 @@ import CalendarActionBar from "./CalendarActionBar.jsx";
 
 import ContactPage from "./ContactPage.jsx";
 
+import {
+  DiscuterCitation,
+  DiscuterErrorCode,
+  DiscuterStatus,
+  DiscuterTurn,
+  default as DiscuterPage,
+} from "./DiscuterPage.jsx";
+
 import IntroCard from "./IntroCard.jsx";
 
 import LegalNoticePage from "./LegalNoticePage.jsx";
@@ -42,7 +50,13 @@ type SnapshotItem = {
   id: string;
   label: string;
 };
-type ViewKey = "main" | "legal" | "contact" | "support" | "sources";
+type ViewKey =
+  | "main"
+  | "legal"
+  | "contact"
+  | "support"
+  | "sources"
+  | "discuter";
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -67,6 +81,16 @@ type AppProps = {
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
   captureMode?: boolean;
+  discuterStatus?: DiscuterStatus;
+  discuterTurns?: DiscuterTurn[];
+  discuterCitations?: DiscuterCitation[];
+  discuterErrorCode?: DiscuterErrorCode;
+  discuterDraft?: string;
+  onDiscuterLogin?: () => void;
+  onDiscuterDraftChange?: (next: string) => void;
+  onDiscuterSend?: (text: string) => void;
+  onDiscuterCancel?: () => void;
+  onDiscuterRetry?: () => void;
 };
 export const prevDay = function prevDay(
   props,
@@ -375,6 +399,22 @@ export const App = component$((props: AppProps) => {
             {state.currentView === "sources" ? (
               <SourcesPage></SourcesPage>
             ) : null}
+            {state.currentView === "discuter" ? (
+              <DiscuterPage
+                status={props.discuterStatus ?? "unauthenticated"}
+                turns={props.discuterTurns}
+                citations={props.discuterCitations}
+                errorCode={props.discuterErrorCode}
+                draft={props.discuterDraft}
+                onLogin$={$((event) => props.onDiscuterLogin?.())}
+                onDraftChange$={$((event) =>
+                  props.onDiscuterDraftChange?.(next)
+                )}
+                onSend$={$((event) => props.onDiscuterSend?.(text))}
+                onCancel$={$((event) => props.onDiscuterCancel?.())}
+                onRetry$={$((event) => props.onDiscuterRetry?.())}
+              ></DiscuterPage>
+            ) : null}
           </main>
         </div>
       ) : null}
@@ -445,6 +485,22 @@ export const App = component$((props: AppProps) => {
             ) : null}
             {state.currentView === "sources" ? (
               <SourcesPage></SourcesPage>
+            ) : null}
+            {state.currentView === "discuter" ? (
+              <DiscuterPage
+                status={props.discuterStatus ?? "unauthenticated"}
+                turns={props.discuterTurns}
+                citations={props.discuterCitations}
+                errorCode={props.discuterErrorCode}
+                draft={props.discuterDraft}
+                onLogin$={$((event) => props.onDiscuterLogin?.())}
+                onDraftChange$={$((event) =>
+                  props.onDiscuterDraftChange?.(next)
+                )}
+                onSend$={$((event) => props.onDiscuterSend?.(text))}
+                onCancel$={$((event) => props.onDiscuterCancel?.())}
+                onRetry$={$((event) => props.onDiscuterRetry?.())}
+              ></DiscuterPage>
             ) : null}
             {!props.captureMode ? (
               <BannerAbout

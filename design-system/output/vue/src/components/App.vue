@@ -97,6 +97,21 @@
           <template v-if="currentView === 'sources'">
             <SourcesPage></SourcesPage>
           </template>
+
+          <template v-if="currentView === 'discuter'">
+            <DiscuterPage
+              :status="discuterStatus ?? 'unauthenticated'"
+              :turns="discuterTurns"
+              :citations="discuterCitations"
+              :errorCode="discuterErrorCode"
+              :draft="discuterDraft"
+              :onLogin="(event) => onDiscuterLogin?.()"
+              :onDraftChange="(next) => onDiscuterDraftChange?.(next)"
+              :onSend="(text) => onDiscuterSend?.(text)"
+              :onCancel="(event) => onDiscuterCancel?.()"
+              :onRetry="(event) => onDiscuterRetry?.()"
+            ></DiscuterPage>
+          </template>
         </main>
       </div>
     </template>
@@ -160,6 +175,21 @@
 
         <template v-if="currentView === 'sources'">
           <SourcesPage></SourcesPage>
+        </template>
+
+        <template v-if="currentView === 'discuter'">
+          <DiscuterPage
+            :status="discuterStatus ?? 'unauthenticated'"
+            :turns="discuterTurns"
+            :citations="discuterCitations"
+            :errorCode="discuterErrorCode"
+            :draft="discuterDraft"
+            :onLogin="(event) => onDiscuterLogin?.()"
+            :onDraftChange="(next) => onDiscuterDraftChange?.(next)"
+            :onSend="(text) => onDiscuterSend?.(text)"
+            :onCancel="(event) => onDiscuterCancel?.()"
+            :onRetry="(event) => onDiscuterRetry?.()"
+          ></DiscuterPage>
         </template>
 
         <template v-if="!captureMode">
@@ -361,16 +391,29 @@ import LegalNoticePage from "./LegalNoticePage.vue";
 import ContactPage from "./ContactPage.vue";
 import SupportPage from "./SupportPage.vue";
 import SourcesPage from "./SourcesPage.vue";
+import DiscuterPage from "./DiscuterPage.vue";
 import IntroCard from "./IntroCard.vue";
 import Spinner from "./Spinner.vue";
 import type { BlueskyPost } from "./BlueskyPostCard.vue";
 import type { Locale } from "../utils/i18n";
+import type {
+  DiscuterStatus,
+  DiscuterTurn,
+  DiscuterCitation,
+  DiscuterErrorCode,
+} from "./DiscuterPage.vue";
 
 type SnapshotItem = {
   id: string;
   label: string;
 };
-type ViewKey = "main" | "legal" | "contact" | "support" | "sources";
+type ViewKey =
+  | "main"
+  | "legal"
+  | "contact"
+  | "support"
+  | "sources"
+  | "discuter";
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -395,6 +438,16 @@ type AppProps = {
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
   captureMode?: boolean;
+  discuterStatus?: DiscuterStatus;
+  discuterTurns?: DiscuterTurn[];
+  discuterCitations?: DiscuterCitation[];
+  discuterErrorCode?: DiscuterErrorCode;
+  discuterDraft?: string;
+  onDiscuterLogin?: () => void;
+  onDiscuterDraftChange?: (next: string) => void;
+  onDiscuterSend?: (text: string) => void;
+  onDiscuterCancel?: () => void;
+  onDiscuterRetry?: () => void;
 };
 
 const props = defineProps<AppProps>();

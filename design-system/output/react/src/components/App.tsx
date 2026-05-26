@@ -6,7 +6,13 @@ type SnapshotItem = {
   id: string;
   label: string;
 };
-type ViewKey = "main" | "legal" | "contact" | "support" | "sources";
+type ViewKey =
+  | "main"
+  | "legal"
+  | "contact"
+  | "support"
+  | "sources"
+  | "discuter";
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -31,6 +37,16 @@ type AppProps = {
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
   captureMode?: boolean;
+  discuterStatus?: DiscuterStatus;
+  discuterTurns?: DiscuterTurn[];
+  discuterCitations?: DiscuterCitation[];
+  discuterErrorCode?: DiscuterErrorCode;
+  discuterDraft?: string;
+  onDiscuterLogin?: () => void;
+  onDiscuterDraftChange?: (next: string) => void;
+  onDiscuterSend?: (text: string) => void;
+  onDiscuterCancel?: () => void;
+  onDiscuterRetry?: () => void;
 };
 import { t } from "../utils/i18n";
 import { formatLegacyShortDay } from "../utils/intl";
@@ -45,10 +61,17 @@ import LegalNoticePage from "./LegalNoticePage";
 import ContactPage from "./ContactPage";
 import SupportPage from "./SupportPage";
 import SourcesPage from "./SourcesPage";
+import DiscuterPage from "./DiscuterPage";
 import IntroCard from "./IntroCard";
 import Spinner from "./Spinner";
 import type { BlueskyPost } from "./BlueskyPostCard";
 import type { Locale } from "../utils/i18n";
+import type {
+  DiscuterStatus,
+  DiscuterTurn,
+  DiscuterCitation,
+  DiscuterErrorCode,
+} from "./DiscuterPage";
 
 function App(props: AppProps) {
   const [focusedDate, setFocusedDate] = useState(() => new Date());
@@ -244,6 +267,20 @@ function App(props: AppProps) {
             {currentView === "contact" ? <ContactPage /> : null}
             {currentView === "support" ? <SupportPage /> : null}
             {currentView === "sources" ? <SourcesPage /> : null}
+            {currentView === "discuter" ? (
+              <DiscuterPage
+                status={props.discuterStatus ?? "unauthenticated"}
+                turns={props.discuterTurns}
+                citations={props.discuterCitations}
+                errorCode={props.discuterErrorCode}
+                draft={props.discuterDraft}
+                onLogin={(event) => props.onDiscuterLogin?.()}
+                onDraftChange={(next) => props.onDiscuterDraftChange?.(next)}
+                onSend={(text) => props.onDiscuterSend?.(text)}
+                onCancel={(event) => props.onDiscuterCancel?.()}
+                onRetry={(event) => props.onDiscuterRetry?.()}
+              />
+            ) : null}
           </main>
         </div>
       ) : null}
@@ -293,6 +330,20 @@ function App(props: AppProps) {
             {currentView === "contact" ? <ContactPage /> : null}
             {currentView === "support" ? <SupportPage /> : null}
             {currentView === "sources" ? <SourcesPage /> : null}
+            {currentView === "discuter" ? (
+              <DiscuterPage
+                status={props.discuterStatus ?? "unauthenticated"}
+                turns={props.discuterTurns}
+                citations={props.discuterCitations}
+                errorCode={props.discuterErrorCode}
+                draft={props.discuterDraft}
+                onLogin={(event) => props.onDiscuterLogin?.()}
+                onDraftChange={(next) => props.onDiscuterDraftChange?.(next)}
+                onSend={(text) => props.onDiscuterSend?.(text)}
+                onCancel={(event) => props.onDiscuterCancel?.()}
+                onRetry={(event) => props.onDiscuterRetry?.()}
+              />
+            ) : null}
             {!props.captureMode ? (
               <BannerAbout
                 onLegalNoticeClick={(event) => goTo("legal")}
