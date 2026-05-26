@@ -36,10 +36,22 @@ describe('DiscuterPage (post-Mitosis emit)', () => {
       'discuter.composer.cancel',
       'discuter.sources.title',
       'discuter.error.retry',
+      'discuter.turn.replay',
     ];
     for (const key of required) {
       expect(vue, `expected ${key} reference in DiscuterPage.vue`).toContain(key);
     }
+  });
+
+  it('renders a per-user-turn replay button in the Vue output', () => {
+    const vue = readFileSync(
+      join(root, 'output/vue/src/components/DiscuterPage.vue'),
+      'utf-8',
+    );
+    expect(vue, 'expected the replay button class to appear in the Vue output').toContain(
+      'rdp-discuter__turn-replay',
+    );
+    expect(vue, 'expected the disabled-while-streaming guard').toContain("'streaming'");
   });
 
   it('lists every error code as a key in fr-FR.json', () => {
