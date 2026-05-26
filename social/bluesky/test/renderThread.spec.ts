@@ -47,21 +47,22 @@ describe('renderThread', () => {
     for (const r of d.replies) expect(r.text).not.toContain('https://');
   });
 
-  it('exposes the raw handle, embedUri, and mention byte-range per reply', () => {
+  it('exposes the raw handle, embedUri, and outlet mention byte-range per reply', () => {
     const d = renderThread([H(1, 'lemonde.fr'), H(2), H(3)], '2026-05-22', OPTS);
     expect(d.replies[0].handle).toBe('lemonde.fr');
     expect(d.replies[0].embedUri).toBe('https://example.org/article/1');
     const text = d.replies[0].text;
     const buf = Buffer.from(text, 'utf8');
-    const slice = buf.slice(d.replies[0].mentionRange.byteStart, d.replies[0].mentionRange.byteEnd).toString('utf8');
+    const outlet = d.replies[0].mentions[0];
+    const slice = buf.slice(outlet.byteStart, outlet.byteEnd).toString('utf8');
     expect(slice).toBe('@lemonde.fr');
   });
 
-  it('computes mentionRange in UTF-8 BYTES, not UTF-16 code units', () => {
+  it('computes mention byte offsets in UTF-8 BYTES, not UTF-16 code units', () => {
     const d = renderThread([H(1, 'lemonde.fr', 'élu président'), H(2), H(3)], '2026-05-22', OPTS);
-    const { byteStart, byteEnd } = d.replies[0].mentionRange;
-    expect(byteStart).toBe(3);                                   // "1. " is 3 ASCII bytes
-    expect(byteEnd - byteStart).toBe('@lemonde.fr'.length);      // 11 ASCII bytes
+    const outlet = d.replies[0].mentions[0];
+    expect(outlet.byteStart).toBe(3);                                   // "1. " is 3 ASCII bytes
+    expect(outlet.byteEnd - outlet.byteStart).toBe('@lemonde.fr'.length); // 11 ASCII bytes
   });
 
   it('truncates the snippet to keep every reply ≤300 graphemes', () => {
@@ -74,6 +75,77 @@ describe('renderThread', () => {
   it('renders the reply without snippet when text is empty', () => {
     const d = renderThread([H(1, 'x.bsky.social', ''), H(2), H(3)], '2026-05-22', OPTS);
     expect(d.replies[0].text).toBe('1. @x.bsky.social');
+  });
+
+  it('detects in-body @handles in addition to the outlet mention', () => {
+    // Real-world repro: bsky.app/profile/revue-de-presse.org/post/3mmq2ijlpxv2b
+    // had `@blast-info.fr` faceted but `@ferielalouti.bsky.social` plain text.
+    const t = 'Alors qu’une plainte est en préparation. Par @ferielalouti.bsky.social.';
+    const d = renderThread([H(1, 'blast-info.fr', t), H(2), H(3)], '2026-05-22', OPTS);
+    const reply = d.replies[0];
+    expect(reply.mentions).toHaveLength(2);
+    const buf = Buffer.from(reply.text, 'utf8');
+    expect(reply.mentions[0].handle).toBe('blast-info.fr');
+    expect(reply.mentions[0].byteStart).toBe(3);
+    expect(buf.slice(reply.mentions[0].byteStart, reply.mentions[0].byteEnd).toString('utf8')).toBe('@blast-info.fr');
+    expect(reply.mentions[1].handle).toBe('ferielalouti.bsky.social');
+    expect(buf.slice(reply.mentions[1].byteStart, reply.mentions[1].byteEnd).toString('utf8')).toBe('@ferielalouti.bsky.social');
+  });
+
+  it('mention byte offsets stay correct past multi-byte chars (em dash) in the snippet', () => {
+    // The em dash "—" in the head template is 3 UTF-8 bytes / 1 UTF-16 unit.
+    // An in-body mention sitting after it must use a byte offset > its UTF-16 index.
+    const t = 'lorem ipsum. cf. @other.bsky.social aujourd’hui.';
+    const d = renderThread([H(1, 'lemonde.fr', t), H(2), H(3)], '2026-05-22', OPTS);
+    const reply = d.replies[0];
+    expect(reply.mentions).toHaveLength(2);
+    const buf = Buffer.from(reply.text, 'utf8');
+    expect(buf.slice(reply.mentions[1].byteStart, reply.mentions[1].byteEnd).toString('utf8')).toBe('@other.bsky.social');
+    expect(reply.mentions[1].byteStart).toBeGreaterThan(reply.text.indexOf('@other.bsky.social'));
+  });
+
+  it('ignores bare-word @tokens that are not valid Bluesky handles', () => {
+    // "@" followed by a word with no dot (e.g. "@nodot") is not a handle.
+    const t = 'voir @nodot et aussi @real.bsky.social pour suite.';
+    const d = renderThread([H(1, 'lemonde.fr', t), H(2), H(3)], '2026-05-22', OPTS);
+    const reply = d.replies[0];
+    expect(reply.mentions.map((m) => m.handle)).toEqual(['lemonde.fr', 'real.bsky.social']);
+  });
+
+  it('detects bare https:// URLs in reply body with correct byte ranges', () => {
+    // Real-world repro from the same broken thread: reply #1 contained
+    // `👉 https://l.mediapart.fr/JGc` rendered as plain text.
+    const t = 'Émission à voir en accès libre 👉 https://l.mediapart.fr/JGc';
+    const d = renderThread([H(1, 'mediapart.fr', t), H(2), H(3)], '2026-05-22', OPTS);
+    const reply = d.replies[0];
+    expect(reply.links).toHaveLength(1);
+    const { uri, byteStart, byteEnd } = reply.links[0];
+    expect(uri).toBe('https://l.mediapart.fr/JGc');
+    const buf = Buffer.from(reply.text, 'utf8');
+    expect(buf.slice(byteStart, byteEnd).toString('utf8')).toBe(uri);
+    // The 👉 emoji (4 UTF-8 bytes) sits before the URL — byte offset must
+    // exceed the UTF-16 index of the URL in the text.
+    expect(byteStart).toBeGreaterThan(reply.text.indexOf('https://'));
+  });
+
+  it('trims trailing sentence punctuation from detected URLs', () => {
+    const t = 'cf https://example.org/article. Suite ailleurs.';
+    const d = renderThread([H(1, 'lemonde.fr', t), H(2), H(3)], '2026-05-22', OPTS);
+    const reply = d.replies[0];
+    expect(reply.links).toHaveLength(1);
+    expect(reply.links[0].uri).toBe('https://example.org/article');
+  });
+
+  it('detects multiple bare URLs in reply body', () => {
+    const t = 'voir https://a.example/x et aussi https://b.example/y pour suite';
+    const d = renderThread([H(1, 'lemonde.fr', t), H(2), H(3)], '2026-05-22', OPTS);
+    const reply = d.replies[0];
+    expect(reply.links.map((l) => l.uri)).toEqual(['https://a.example/x', 'https://b.example/y']);
+  });
+
+  it('exposes an empty links array when no URL is present in the reply', () => {
+    const d = renderThread(SAMPLE, '2026-05-22', OPTS);
+    for (const r of d.replies) expect(r.links).toEqual([]);
   });
 
   it('exposes lead.linkRange covering the footer URL when the footer survives the budget', () => {

@@ -6,11 +6,14 @@ export type Highlight = {
   date: string;
 };
 
+export type MentionRange = { handle: string; byteStart: number; byteEnd: number };
+
 export type Reply = {
   text: string;
   handle: string;
   embedUri: string;
-  mentionRange: { byteStart: number; byteEnd: number };
+  mentions: MentionRange[];
+  links: LinkRange[];
 };
 
 export type LinkRange = { byteStart: number; byteEnd: number; uri: string };

@@ -171,36 +171,55 @@ async function main(): Promise<number> {
 
   const enrichedReplies = await Promise.all(
     draft.replies.map(async (r) => {
-      const [didResult, embed] = await Promise.all([
-        resolver.resolve(r.handle),
+      const [resolved, embed] = await Promise.all([
+        Promise.all(r.mentions.map(async (m) => ({ ...m, did: await resolver.resolve(m.handle) }))),
         embedBuilder.build(r.embedUri),
       ]);
-      const facets: unknown[] = [];
+
       let text = r.text;
-      if (didResult) {
-        facets.push({
-          index: { byteStart: r.mentionRange.byteStart, byteEnd: r.mentionRange.byteEnd },
-          features: [{ $type: 'app.bsky.richtext.facet#mention', did: didResult }],
-        });
-      } else {
-        text = text.replace('@', '');
-      }
-      const finalEmbed: unknown | undefined = embed ?? undefined;
+      let linkFacet: unknown | null = null;
       if (!embed) {
         const suffix = `\n${r.embedUri}`;
         const maxTextLen = 300 - graphemeLength(suffix);
         if (graphemeLength(text) > maxTextLen) {
           text = truncateGraphemes(text, maxTextLen);
         }
-        const byteStart = Buffer.byteLength(text, 'utf8') + 1;
+        const linkStart = Buffer.byteLength(text, 'utf8') + 1;
         text = `${text}${suffix}`;
-        const byteEnd = Buffer.byteLength(text, 'utf8');
-        facets.push({
-          index: { byteStart, byteEnd },
+        const linkEnd = Buffer.byteLength(text, 'utf8');
+        linkFacet = {
+          index: { byteStart: linkStart, byteEnd: linkEnd },
           features: [{ $type: 'app.bsky.richtext.facet#link', uri: r.embedUri }],
+        };
+      }
+
+      // truncateGraphemes only trims from the tail — a mention whose byteEnd
+      // now exceeds the pre-suffix text length was clipped and must be
+      // dropped. byteEnd is computed against the original r.text, which is
+      // identical to the truncated text on its retained prefix.
+      const truncatedByteLen = linkFacet
+        ? Buffer.byteLength(text, 'utf8') - Buffer.byteLength(`\n${r.embedUri}`, 'utf8')
+        : Buffer.byteLength(text, 'utf8');
+
+      const facets: unknown[] = [];
+      for (const m of resolved) {
+        if (!m.did) continue;
+        if (m.byteEnd > truncatedByteLen) continue;
+        facets.push({
+          index: { byteStart: m.byteStart, byteEnd: m.byteEnd },
+          features: [{ $type: 'app.bsky.richtext.facet#mention', did: m.did }],
         });
       }
-      return { text, facets, embed: finalEmbed };
+      for (const l of r.links) {
+        if (l.byteEnd > truncatedByteLen) continue;
+        facets.push({
+          index: { byteStart: l.byteStart, byteEnd: l.byteEnd },
+          features: [{ $type: 'app.bsky.richtext.facet#link', uri: l.uri }],
+        });
+      }
+      if (linkFacet) facets.push(linkFacet);
+
+      return { text, facets, embed: embed ?? undefined };
     }),
   );
 
