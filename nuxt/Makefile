@@ -5,7 +5,7 @@ SHELL:=/bin/bash
 install: ## Install Node dependencies (delegates to pnpm)
 	@pnpm install
 
-dev: ## Start the Nuxt dev server (http://localhost:3000)
+dev: ## Start the Nuxt dev server (http://127.0.0.1:3000)
 	@pnpm dev
 
 # mkcert-backed local TLS. Hostname must resolve to 127.0.0.1
