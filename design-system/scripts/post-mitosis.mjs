@@ -7,6 +7,14 @@
 //     that fails to compile. We strip that block so Svelte compiles cleanly.
 //     The per-component CSS rules are lost on Svelte until upstream fix —
 //     foundation tokens still apply via the shared tokens.css.
+//
+// Known limitation (not patched here): Mitosis 0.13's Lit adapter strips
+// `class="..."` from inner elements and emits invalid `class={template-literal}`
+// on the outermost element. The CSS rules in the `<style>` block are correct,
+// but the HTML elements lack the classes the rules target — so a Lit consumer
+// renders DiscuterPage (and most other components) unstyled. Nuxt consumes the
+// Vue target, so production is unaffected; the Lit emit is kept in TARGETS for
+// parity testing only.
 // Idempotent.
 
 import { cpSync, existsSync, mkdirSync, readdirSync, statSync, readFileSync, writeFileSync } from 'node:fs';
