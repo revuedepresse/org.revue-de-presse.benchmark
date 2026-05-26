@@ -110,24 +110,25 @@ function onLogoClick() {
 }
 
 // --- Bluesky chat session ----------------------------------------------------
-const { me, isAuthenticated, refresh: refreshBsky, login: loginBsky, logout: logoutBsky } = useBluesky();
+const { isAuthenticated, refresh: refreshBsky, login: loginBsky } = useBluesky();
+const chat = useChat();
 
 // Hydrate on mount so the discuter page knows the current session.
 onMounted(() => {
   void refreshBsky();
 });
 
-const discuterStatus = ref<'unauthenticated' | 'authenticating' | 'idle' | 'streaming' | 'error'>(
-  'unauthenticated',
-);
-const discuterErrorCode = ref<
-  'rate_limited_user' | 'rate_limited_global' | 'providers_exhausted' | 'truncated' | undefined
->(undefined);
-
+// Mirror auth state into the chat status (unauthenticated / idle).
+// Streaming + error states are owned by useChat().
 watch(
   isAuthenticated,
   (logged) => {
-    discuterStatus.value = logged ? 'idle' : 'unauthenticated';
+    if (chat.status.value === 'streaming') return;
+    if (logged) {
+      if (chat.status.value === 'unauthenticated') chat.status.value = 'idle';
+    } else {
+      chat.status.value = 'unauthenticated';
+    }
   },
   { immediate: true },
 );
@@ -141,7 +142,7 @@ async function onDiscuterLogin() {
   const handle = raw.trim().replace(/^@/, '');
   if (handle === '') return;
 
-  discuterStatus.value = 'authenticating';
+  chat.status.value = 'authenticating';
   try {
     await loginBsky(handle);
     // loginBsky redirects the browser to the PDS — we won't reach this line
@@ -149,14 +150,26 @@ async function onDiscuterLogin() {
     await refreshBsky();
   } catch (err) {
     console.error('bluesky login failed', err);
-    discuterStatus.value = 'error';
-    discuterErrorCode.value = 'providers_exhausted';
+    chat.status.value = 'error';
+    chat.errorCode.value = 'providers_exhausted';
   }
 }
 
-async function onDiscuterRetry() {
-  discuterStatus.value = isAuthenticated.value ? 'idle' : 'unauthenticated';
-  discuterErrorCode.value = undefined;
+function onDiscuterRetry() {
+  chat.errorCode.value = undefined;
+  chat.status.value = isAuthenticated.value ? 'idle' : 'unauthenticated';
+}
+
+function onDiscuterSend(text: string) {
+  void chat.send(text);
+}
+
+function onDiscuterCancel() {
+  chat.cancel();
+}
+
+function onDiscuterDraftChange(next: string) {
+  chat.setDraft(next);
 }
 </script>
 
@@ -178,9 +191,15 @@ async function onDiscuterRetry() {
     :on-date-select="onDateSelect"
     :on-view-change="onViewChange"
     :on-logo-click="onLogoClick"
-    :discuter-status="discuterStatus"
-    :discuter-error-code="discuterErrorCode"
+    :discuter-status="chat.status.value"
+    :discuter-turns="chat.messages.value"
+    :discuter-citations="chat.citations.value"
+    :discuter-error-code="chat.errorCode.value"
+    :discuter-draft="chat.draft.value"
     :on-discuter-login="onDiscuterLogin"
     :on-discuter-retry="onDiscuterRetry"
+    :on-discuter-send="onDiscuterSend"
+    :on-discuter-cancel="onDiscuterCancel"
+    :on-discuter-draft-change="onDiscuterDraftChange"
   />
 </template>
