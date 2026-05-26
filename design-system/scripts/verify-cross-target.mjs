@@ -89,9 +89,12 @@ async function main() {
     });
     await page.screenshot({ path: `${screenshotDir}/${t.name}.png` });
 
+    // Resting-state primary button. The script does not simulate hover, so
+    // the bg assertion must match `--button-bg-primary` at rest, which is
+    // `var(--color-brand)` = #006663 since the deep-green palette migration.
     const ok =
       evidence.btnFound === true &&
-      evidence.bg === 'rgb(0, 205, 199)' &&
+      evidence.bg === 'rgb(0, 102, 99)' &&
       evidence.color === 'rgb(255, 255, 255)' &&
       evidence.iconUseCount === 1 &&
       evidence.brandVar === '#006663' &&
