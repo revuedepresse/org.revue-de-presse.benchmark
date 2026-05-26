@@ -6,6 +6,17 @@ type BlueskyMe = {
 
 type StartResponse = { redirectUrl: string };
 
+export type BlueskyHandleErrorCode = 'handle_invalid' | 'handle_not_found';
+
+export class BlueskyLoginError extends Error {
+  readonly code: BlueskyHandleErrorCode | 'unknown';
+  constructor(code: BlueskyHandleErrorCode | 'unknown', message: string) {
+    super(message);
+    this.code = code;
+    this.name = 'BlueskyLoginError';
+  }
+}
+
 const STATE_KEY = 'rdp:chat:me';
 
 /**
@@ -40,14 +51,25 @@ export const useBluesky = () => {
   const login = async (handle: string): Promise<void> => {
     const trimmed = handle.trim().replace(/^@/, '');
     if (trimmed === '') {
-      throw new Error('Bluesky handle is required');
+      throw new BlueskyLoginError('handle_invalid', 'empty handle');
     }
-    const res = await $fetch<StartResponse>('/api/auth/bluesky/start', {
-      method: 'POST',
-      body: { handle: trimmed },
-    });
-    if (import.meta.client) {
-      window.location.href = res.redirectUrl;
+    try {
+      const res = await $fetch<StartResponse>('/api/auth/bluesky/start', {
+        method: 'POST',
+        body: { handle: trimmed },
+      });
+      if (import.meta.client) {
+        window.location.href = res.redirectUrl;
+      }
+    } catch (err: any) {
+      const code = err?.data?.data?.code as BlueskyHandleErrorCode | undefined;
+      if (code === 'handle_not_found' || code === 'handle_invalid') {
+        throw new BlueskyLoginError(code, err?.statusMessage ?? code);
+      }
+      throw new BlueskyLoginError(
+        'unknown',
+        err?.statusMessage ?? err?.message ?? 'bluesky login failed',
+      );
     }
   };
 

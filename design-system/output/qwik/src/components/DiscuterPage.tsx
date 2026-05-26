@@ -12,7 +12,9 @@ export type DiscuterErrorCode =
   | "rate_limited_user"
   | "rate_limited_global"
   | "providers_exhausted"
-  | "truncated";
+  | "truncated"
+  | "bluesky_login_failed";
+export type DiscuterHandleErrorCode = "handle_not_found" | "handle_invalid";
 export type DiscuterTurn = {
   id: string;
   role: "user" | "assistant";
@@ -32,21 +34,56 @@ type DiscuterPageProps = {
   citations?: DiscuterCitation[];
   errorCode?: DiscuterErrorCode;
   draft?: string;
-  onLogin?: () => void;
+  handleDraft?: string;
+  handleErrorCode?: DiscuterHandleErrorCode;
+  onLogin?: (handle: string) => void;
+  onHandleDraftChange?: (next: string) => void;
   onDraftChange?: (next: string) => void;
   onSend?: (text: string) => void;
   onCancel?: () => void;
   onRetry?: () => void;
 };
-export const submit = function submit(props, state, errorKey) {
+export const submit = function submit(
+  props,
+  state,
+  errorKey,
+  handleErrorKey,
+  cleanedHandle,
+  canSubmitHandle
+) {
   const text = (props.draft ?? "").trim();
   if (text.length === 0) return;
   props.onSend?.(text);
+};
+export const submitHandle = function submitHandle(
+  props,
+  state,
+  errorKey,
+  handleErrorKey,
+  cleanedHandle,
+  canSubmitHandle
+) {
+  const handle = cleanedHandle.value;
+  if (handle.length === 0) return;
+  props.onLogin?.(handle);
 };
 export const DiscuterPage = component$((props: DiscuterPageProps) => {
   const errorKey = useComputed$(() => {
     const code = props.errorCode ?? "providers_exhausted";
     return `discuter.error.${code}`;
+  });
+  const handleErrorKey = useComputed$(() => {
+    const code = props.handleErrorCode;
+    if (code === "handle_not_found") {
+      return "discuter.unauthenticated.error.handleNotFound";
+    }
+    return "discuter.unauthenticated.error.handleInvalid";
+  });
+  const cleanedHandle = useComputed$(() => {
+    return (props.handleDraft ?? "").trim().replace(/^@/, "");
+  });
+  const canSubmitHandle = useComputed$(() => {
+    return cleanedHandle.value.length > 0;
   });
   const state: any = {};
 
@@ -67,13 +104,67 @@ export const DiscuterPage = component$((props: DiscuterPageProps) => {
           <p class="rdp-discuter__cta-body">
             {t("discuter.unauthenticated.body")}
           </p>
-          <button
-            type="button"
-            class="rdp-discuter__cta-button"
-            onClick$={$((event) => props.onLogin?.())}
+          <form
+            class="rdp-discuter__handle-form"
+            preventdefault:submit
+            onSubmit$={$((event) => {
+              submitHandle(
+                props,
+                state,
+                errorKey,
+                handleErrorKey,
+                cleanedHandle,
+                canSubmitHandle
+              );
+            })}
           >
-            {t("discuter.unauthenticated.cta")}
-          </button>
+            <label class="rdp-discuter__handle-label" for="rdp-discuter-handle">
+              {t("discuter.unauthenticated.handleLabel")}
+            </label>
+            <div class="rdp-discuter__handle-row">
+              <input
+                id="rdp-discuter-handle"
+                class="rdp-discuter__handle-input"
+                type="text"
+                autocomplete="username"
+                autocapitalize="off"
+                autocorrect="off"
+                spellcheck={false}
+                required={true}
+                value={props.handleDraft ?? ""}
+                placeholder={t("discuter.unauthenticated.handlePlaceholder")}
+                aria-invalid={props.handleErrorCode ? "true" : "false"}
+                aria-describedby={
+                  props.handleErrorCode
+                    ? "rdp-discuter-handle-error"
+                    : undefined
+                }
+                onInput$={$((event) =>
+                  props.onHandleDraftChange?.(
+                    (event.target as HTMLInputElement).value
+                  )
+                )}
+              />
+              <button
+                type="submit"
+                class="rdp-discuter__cta-button"
+                disabled={(() => {
+                  !canSubmitHandle.value;
+                })()}
+              >
+                {t("discuter.unauthenticated.cta")}
+              </button>
+            </div>
+            {props.handleErrorCode != null ? (
+              <p
+                id="rdp-discuter-handle-error"
+                class="rdp-discuter__handle-error"
+                role="alert"
+              >
+                {t(handleErrorKey.value)}
+              </p>
+            ) : null}
+          </form>
         </div>
       ) : null}
       {props.status === "authenticating" ? (
@@ -143,7 +234,14 @@ export const DiscuterPage = component$((props: DiscuterPageProps) => {
             class="rdp-discuter__composer"
             preventdefault:submit
             onSubmit$={$((event) => {
-              submit(props, state, errorKey);
+              submit(
+                props,
+                state,
+                errorKey,
+                handleErrorKey,
+                cleanedHandle,
+                canSubmitHandle
+              );
             })}
           >
             <label
@@ -228,9 +326,47 @@ export const DiscuterPage = component$((props: DiscuterPageProps) => {
           gap: var(--separation-2);
         }
         .rdp-discuter__panel--cta {
-          align-items: flex-start;
+          align-items: stretch;
         }
         .rdp-discuter__cta-body { margin: 0; }
+        .rdp-discuter__handle-form {
+          display: flex;
+          flex-direction: column;
+          gap: var(--separation-1);
+        }
+        .rdp-discuter__handle-label {
+          font-size: 0.85em;
+          color: var(--color-content-text);
+        }
+        .rdp-discuter__handle-row {
+          display: flex;
+          gap: var(--separation-1);
+          flex-wrap: wrap;
+        }
+        .rdp-discuter__handle-input {
+          flex: 1 1 240px;
+          min-width: 0;
+          padding: var(--separation-1);
+          font-family: 'Roboto', sans-serif;
+          font-size: var(--font-size-content);
+          line-height: var(--line-height-base);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-default);
+          background: var(--color-white);
+          box-sizing: border-box;
+        }
+        .rdp-discuter__handle-input[aria-invalid='true'] {
+          border-color: var(--color-brand);
+        }
+        .rdp-discuter__handle-error {
+          margin: 0;
+          font-size: 0.85em;
+          color: var(--color-brand);
+        }
+        .rdp-discuter__cta-button:disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
         .rdp-discuter__cta-button,
         .rdp-discuter__composer-send,
         .rdp-discuter__error-retry {

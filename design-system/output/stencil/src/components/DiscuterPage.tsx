@@ -14,10 +14,13 @@ import {
 })
 export class DiscuterPage {
   @Prop() errorCode: any;
+  @Prop() handleErrorCode: any;
+  @Prop() handleDraft: any;
   @Prop() draft: any;
   @Event() send: any;
-  @Prop() status: any;
   @Event() login: any;
+  @Prop() status: any;
+  @Event() handleDraftChange: any;
   @Prop() turns: any;
   @Prop() citations: any;
   @Event() draftChange: any;
@@ -28,10 +31,28 @@ export class DiscuterPage {
     const code = this.errorCode ?? "providers_exhausted";
     return `discuter.error.${code}`;
   }
+  get handleErrorKey() {
+    const code = this.handleErrorCode;
+    if (code === "handle_not_found") {
+      return "discuter.unauthenticated.error.handleNotFound";
+    }
+    return "discuter.unauthenticated.error.handleInvalid";
+  }
+  get cleanedHandle() {
+    return (this.handleDraft ?? "").trim().replace(/^@/, "");
+  }
+  get canSubmitHandle() {
+    return this.cleanedHandle.length > 0;
+  }
   submit() {
     const text = (this.draft ?? "").trim();
     if (text.length === 0) return;
     this.send?.(text);
+  }
+  submitHandle() {
+    const handle = this.cleanedHandle;
+    if (handle.length === 0) return;
+    this.login?.(handle);
   }
 
   componentDidLoad() {}
@@ -57,13 +78,61 @@ export class DiscuterPage {
             <p class="rdp-discuter__cta-body">
               {t("discuter.unauthenticated.body")}
             </p>
-            <button
-              class="rdp-discuter__cta-button"
-              type="button"
-              onClick={() => this.login?.()}
+            <form
+              class="rdp-discuter__handle-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                this.submitHandle();
+              }}
             >
-              {t("discuter.unauthenticated.cta")}
-            </button>
+              <label
+                class="rdp-discuter__handle-label"
+                htmlFor="rdp-discuter-handle"
+              >
+                {t("discuter.unauthenticated.handleLabel")}
+              </label>
+              <div class="rdp-discuter__handle-row">
+                <input
+                  class="rdp-discuter__handle-input"
+                  id="rdp-discuter-handle"
+                  type="text"
+                  autocomplete="username"
+                  autocapitalize="off"
+                  autocorrect="off"
+                  spellcheck={false}
+                  required={true}
+                  value={this.handleDraft ?? ""}
+                  placeholder={t("discuter.unauthenticated.handlePlaceholder")}
+                  aria-invalid={this.handleErrorCode ? "true" : "false"}
+                  aria-describedby={
+                    this.handleErrorCode
+                      ? "rdp-discuter-handle-error"
+                      : undefined
+                  }
+                  onInput={(event) =>
+                    this.handleDraftChange?.(
+                      (event.target as HTMLInputElement).value
+                    )
+                  }
+                />
+                <button
+                  class="rdp-discuter__cta-button"
+                  type="submit"
+                  disabled={!this.canSubmitHandle}
+                >
+                  {t("discuter.unauthenticated.cta")}
+                </button>
+              </div>
+              {this.handleErrorCode != null ? (
+                <p
+                  class="rdp-discuter__handle-error"
+                  id="rdp-discuter-handle-error"
+                  role="alert"
+                >
+                  {t(this.handleErrorKey)}
+                </p>
+              ) : null}
+            </form>
           </div>
         ) : null}
         {this.status === "authenticating" ? (
@@ -217,9 +286,47 @@ export class DiscuterPage {
           gap: var(--separation-2);
         }
         .rdp-discuter__panel--cta {
-          align-items: flex-start;
+          align-items: stretch;
         }
         .rdp-discuter__cta-body { margin: 0; }
+        .rdp-discuter__handle-form {
+          display: flex;
+          flex-direction: column;
+          gap: var(--separation-1);
+        }
+        .rdp-discuter__handle-label {
+          font-size: 0.85em;
+          color: var(--color-content-text);
+        }
+        .rdp-discuter__handle-row {
+          display: flex;
+          gap: var(--separation-1);
+          flex-wrap: wrap;
+        }
+        .rdp-discuter__handle-input {
+          flex: 1 1 240px;
+          min-width: 0;
+          padding: var(--separation-1);
+          font-family: 'Roboto', sans-serif;
+          font-size: var(--font-size-content);
+          line-height: var(--line-height-base);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-default);
+          background: var(--color-white);
+          box-sizing: border-box;
+        }
+        .rdp-discuter__handle-input[aria-invalid='true'] {
+          border-color: var(--color-brand);
+        }
+        .rdp-discuter__handle-error {
+          margin: 0;
+          font-size: 0.85em;
+          color: var(--color-brand);
+        }
+        .rdp-discuter__cta-button:disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
         .rdp-discuter__cta-button,
         .rdp-discuter__composer-send,
         .rdp-discuter__error-retry {

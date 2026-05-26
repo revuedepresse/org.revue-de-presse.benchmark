@@ -21,6 +21,7 @@ import type {
   DiscuterTurn,
   DiscuterCitation,
   DiscuterErrorCode,
+  DiscuterHandleErrorCode,
 } from "./DiscuterPage";
 
 import {
@@ -62,7 +63,10 @@ export class App {
   @Prop() discuterCitations: any;
   @Prop() discuterErrorCode: any;
   @Prop() discuterDraft: any;
+  @Prop() discuterHandleDraft: any;
+  @Prop() discuterHandleErrorCode: any;
   @Event() discuterLogin: any;
+  @Event() discuterHandleDraftChange: any;
   @Event() discuterDraftChange: any;
   @Event() discuterSend: any;
   @Event() discuterCancel: any;
@@ -267,7 +271,12 @@ export class App {
                   citations={this.discuterCitations}
                   errorCode={this.discuterErrorCode}
                   draft={this.discuterDraft}
-                  onLogin={() => this.discuterLogin?.()}
+                  handleDraft={this.discuterHandleDraft}
+                  handleErrorCode={this.discuterHandleErrorCode}
+                  onLogin={(handle) => this.discuterLogin?.(handle)}
+                  onHandleDraftChange={(next) =>
+                    this.discuterHandleDraftChange?.(next)
+                  }
                   onDraftChange={(next) => this.discuterDraftChange?.(next)}
                   onSend={(text) => this.discuterSend?.(text)}
                   onCancel={() => this.discuterCancel?.()}

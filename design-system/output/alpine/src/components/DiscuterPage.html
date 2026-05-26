@@ -15,13 +15,48 @@
       <p class="rdp-discuter__cta-body">
         <span x-html="t('discuter.unauthenticated.body')"></span>
       </p>
-      <button
-        type="button"
-        class="rdp-discuter__cta-button"
-        x-on:click="onLogin?.()"
+      <form
+        class="rdp-discuter__handle-form"
+        x-on:submit="$event.preventDefault();
+submitHandle()"
       >
-        <span x-html="t('discuter.unauthenticated.cta')"></span>
-      </button>
+        <label class="rdp-discuter__handle-label" for="rdp-discuter-handle">
+          <span x-html="t('discuter.unauthenticated.handleLabel')"></span>
+        </label>
+        <div class="rdp-discuter__handle-row">
+          <input
+            id="rdp-discuter-handle"
+            class="rdp-discuter__handle-input"
+            type="text"
+            autocomplete="username"
+            autocapitalize="off"
+            autocorrect="off"
+            x-bind:spellcheck="false"
+            x-bind:required="true"
+            x-bind:value="handleDraft ?? ''"
+            x-bind:placeholder="t('discuter.unauthenticated.handlePlaceholder')"
+            x-bind:aria-invalid="handleErrorCode ? 'true' : 'false'"
+            x-bind:aria-describedby="handleErrorCode ? 'rdp-discuter-handle-error' : undefined"
+            x-on:input="onHandleDraftChange?.($event.target.value)"
+          />
+          <button
+            type="submit"
+            class="rdp-discuter__cta-button"
+            x-bind:disabled="!canSubmitHandle"
+          >
+            <span x-html="t('discuter.unauthenticated.cta')"></span>
+          </button>
+        </div>
+        <template x-if="handleErrorCode != null">
+          <p
+            id="rdp-discuter-handle-error"
+            class="rdp-discuter__handle-error"
+            role="alert"
+          >
+            <span x-html="t(handleErrorKey)"></span>
+          </p>
+        </template>
+      </form>
     </div>
   </template>
   <template x-if="status === 'authenticating'">
@@ -164,9 +199,47 @@ submit()"
               gap: var(--separation-2);
             }
             .rdp-discuter__panel--cta {
-              align-items: flex-start;
+              align-items: stretch;
             }
             .rdp-discuter__cta-body { margin: 0; }
+            .rdp-discuter__handle-form {
+              display: flex;
+              flex-direction: column;
+              gap: var(--separation-1);
+            }
+            .rdp-discuter__handle-label {
+              font-size: 0.85em;
+              color: var(--color-content-text);
+            }
+            .rdp-discuter__handle-row {
+              display: flex;
+              gap: var(--separation-1);
+              flex-wrap: wrap;
+            }
+            .rdp-discuter__handle-input {
+              flex: 1 1 240px;
+              min-width: 0;
+              padding: var(--separation-1);
+              font-family: 'Roboto', sans-serif;
+              font-size: var(--font-size-content);
+              line-height: var(--line-height-base);
+              border: 1px solid var(--color-border);
+              border-radius: var(--radius-default);
+              background: var(--color-white);
+              box-sizing: border-box;
+            }
+            .rdp-discuter__handle-input[aria-invalid='true'] {
+              border-color: var(--color-brand);
+            }
+            .rdp-discuter__handle-error {
+              margin: 0;
+              font-size: 0.85em;
+              color: var(--color-brand);
+            }
+            .rdp-discuter__cta-button:disabled {
+              cursor: not-allowed;
+              opacity: 0.5;
+            }
             .rdp-discuter__cta-button,
             .rdp-discuter__composer-send,
             .rdp-discuter__error-retry {
@@ -330,10 +403,28 @@ submit()"
         const code = props.errorCode ?? "providers_exhausted";
         return `discuter.error.${code}`;
       },
+      get handleErrorKey() {
+        const code = props.handleErrorCode;
+        if (code === "handle_not_found") {
+          return "discuter.unauthenticated.error.handleNotFound";
+        }
+        return "discuter.unauthenticated.error.handleInvalid";
+      },
+      get cleanedHandle() {
+        return (props.handleDraft ?? "").trim().replace(/^@/, "");
+      },
+      get canSubmitHandle() {
+        return this.cleanedHandle.length > 0;
+      },
       submit() {
         const text = (props.draft ?? "").trim();
         if (text.length === 0) return;
         props.onSend?.(text);
+      },
+      submitHandle() {
+        const handle = this.cleanedHandle;
+        if (handle.length === 0) return;
+        props.onLogin?.(handle);
       },
     }));
   });

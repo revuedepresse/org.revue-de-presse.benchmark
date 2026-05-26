@@ -25,6 +25,10 @@ describe('DiscuterPage (post-Mitosis emit)', () => {
       'discuter.lede',
       'discuter.unauthenticated.body',
       'discuter.unauthenticated.cta',
+      'discuter.unauthenticated.handleLabel',
+      'discuter.unauthenticated.handlePlaceholder',
+      'discuter.unauthenticated.error.handleNotFound',
+      'discuter.unauthenticated.error.handleInvalid',
       'discuter.authenticating',
       'discuter.composer.label',
       'discuter.composer.placeholder',
@@ -47,8 +51,27 @@ describe('DiscuterPage (post-Mitosis emit)', () => {
       'rate_limited_global',
       'providers_exhausted',
       'truncated',
+      'bluesky_login_failed',
     ]) {
       expect(fr[`discuter.error.${code}`], `missing French copy for ${code}`).toBeTruthy();
     }
+    for (const key of [
+      'discuter.unauthenticated.handleLabel',
+      'discuter.unauthenticated.handlePlaceholder',
+      'discuter.unauthenticated.error.handleNotFound',
+      'discuter.unauthenticated.error.handleInvalid',
+    ]) {
+      expect(fr[key], `missing French copy for ${key}`).toBeTruthy();
+    }
+  });
+
+  it('renders a handle input and submits the trimmed value', () => {
+    const vue = readFileSync(
+      join(root, 'output/vue/src/components/DiscuterPage.vue'),
+      'utf-8',
+    );
+    expect(vue, 'expected a handle input element').toMatch(/id="rdp-discuter-handle"/);
+    expect(vue, 'expected the input to be wired to handleDraft').toContain('handleDraft');
+    expect(vue, 'expected the submit handler to call onLogin with a handle').toContain('onLogin');
   });
 });

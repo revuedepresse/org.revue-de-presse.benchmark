@@ -130,6 +130,10 @@
   "discuter.lede": "Posez vos questions sur les publications les plus relayées chaque jour. L'assistant répond uniquement à partir des extraits cités, en français.",
   "discuter.unauthenticated.body": "Connectez votre compte Bluesky pour démarrer une conversation.",
   "discuter.unauthenticated.cta": "Connecter mon compte Bluesky",
+  "discuter.unauthenticated.handleLabel": "Votre identifiant Bluesky",
+  "discuter.unauthenticated.handlePlaceholder": "alice.bsky.social",
+  "discuter.unauthenticated.error.handleNotFound": "Identifiant Bluesky introuvable.",
+  "discuter.unauthenticated.error.handleInvalid": "Identifiant Bluesky invalide.",
   "discuter.authenticating": "Connexion en cours…",
   "discuter.composer.label": "Votre question",
   "discuter.composer.placeholder": "Par exemple : comment Le Monde a-t-il couvert la réforme des retraites en mars ?",
@@ -140,5 +144,6 @@
   "discuter.error.rate_limited_global": "La revue de presse a atteint son quota du jour. La discussion reprend demain.",
   "discuter.error.providers_exhausted": "Les modèles de langage sont indisponibles pour le moment. Réessayez plus tard.",
   "discuter.error.truncated": "La réponse a été interrompue. Vous pouvez relancer votre question.",
+  "discuter.error.bluesky_login_failed": "La connexion à Bluesky a échoué. Vérifiez votre identifiant et réessayez.",
   "discuter.error.retry": "Réessayer"
 }

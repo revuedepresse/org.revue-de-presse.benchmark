@@ -1,7 +1,9 @@
 <script context='module' lang='ts'>
       export type DiscuterStatus = 'unauthenticated' | 'authenticating' | 'idle' | 'streaming' | 'error'
 
-export type DiscuterErrorCode = 'rate_limited_user' | 'rate_limited_global' | 'providers_exhausted' | 'truncated'
+export type DiscuterErrorCode = 'rate_limited_user' | 'rate_limited_global' | 'providers_exhausted' | 'truncated' | 'bluesky_login_failed'
+
+export type DiscuterHandleErrorCode = 'handle_not_found' | 'handle_invalid'
 
 export type DiscuterTurn = {
 id: string;
@@ -24,7 +26,10 @@ turns?: DiscuterTurn[];
 citations?: DiscuterCitation[];
 errorCode?: DiscuterErrorCode;
 draft?: string;
-onLogin?: () => void;
+handleDraft?: string;
+handleErrorCode?: DiscuterHandleErrorCode;
+onLogin?: (handle: string) => void;
+onHandleDraftChange?: (next: string) => void;
 onDraftChange?: (next: string) => void;
 onSend?: (text: string) => void;
 onCancel?: () => void;
@@ -47,10 +52,13 @@ onRetry?: () => void;
 
 
     export let errorCode: DiscuterPageProps['errorCode']= undefined;
+export let handleErrorCode: DiscuterPageProps['handleErrorCode']= undefined;
+export let handleDraft: DiscuterPageProps['handleDraft']= undefined;
 export let draft: DiscuterPageProps['draft']= undefined;
 export let onSend: DiscuterPageProps['onSend']= undefined;
-export let status: DiscuterPageProps['status'];
 export let onLogin: DiscuterPageProps['onLogin']= undefined;
+export let status: DiscuterPageProps['status'];
+export let onHandleDraftChange: DiscuterPageProps['onHandleDraftChange']= undefined;
 export let turns: DiscuterPageProps['turns']= undefined;
 export let citations: DiscuterPageProps['citations']= undefined;
 export let onDraftChange: DiscuterPageProps['onDraftChange']= undefined;
@@ -64,9 +72,27 @@ const text = (draft ?? '').trim();
 if (text.length === 0) return;
 onSend?.(text);
 }
+function submitHandle() {
+const handle = cleanedHandle();
+if (handle.length === 0) return;
+onLogin?.(handle);
+}
     $: errorKey = () => {
 const code = errorCode ?? 'providers_exhausted';
 return `discuter.error.${code}`;
+};
+$: handleErrorKey = () => {
+const code = handleErrorCode;
+if (code === 'handle_not_found') {
+  return 'discuter.unauthenticated.error.handleNotFound';
+}
+return 'discuter.unauthenticated.error.handleInvalid';
+};
+$: cleanedHandle = () => {
+return (handleDraft ?? '').trim().replace(/^@/, '');
+};
+$: canSubmitHandle = () => {
+return cleanedHandle().length > 0;
 };
 
 
@@ -85,7 +111,15 @@ return `discuter.error.${code}`;
 
   <section  class="rdp-discuter"  data-testid="discuter-page"  aria-labelledby="rdp-discuter-h1" ><header  class="rdp-discuter__header" ><h1  id="rdp-discuter-h1"  class="rdp-discuter__title" >{t('discuter.title')}</h1><p  class="rdp-discuter__lede" >{t('discuter.lede')}</p></header>
 {#if status === 'unauthenticated' }
-<div  class="rdp-discuter__panel rdp-discuter__panel--cta"  role="region" ><p  class="rdp-discuter__cta-body" >{t('discuter.unauthenticated.body')}</p><button  type="button"  class="rdp-discuter__cta-button"  on:click="{(event) => {onLogin?.()}}" >{t('discuter.unauthenticated.cta')}</button></div>
+<div  class="rdp-discuter__panel rdp-discuter__panel--cta"  role="region" ><p  class="rdp-discuter__cta-body" >{t('discuter.unauthenticated.body')}</p><form  class="rdp-discuter__handle-form"  on:submit="{(event) => {
+event.preventDefault();
+submitHandle();
+}}" ><label  class="rdp-discuter__handle-label"  for="rdp-discuter-handle" >{t('discuter.unauthenticated.handleLabel')}</label><div  class="rdp-discuter__handle-row" ><input  id="rdp-discuter-handle"  class="rdp-discuter__handle-input"  type="text"  autocomplete="username"  autocapitalize="off"  autocorrect="off"  spellcheck={false}  required={true}  value={handleDraft ?? ''}  placeholder={t('discuter.unauthenticated.handlePlaceholder')}  aria-invalid={handleErrorCode ? 'true' : 'false'}  aria-describedby={handleErrorCode ? 'rdp-discuter-handle-error' : undefined}  on:input="{(event) => {onHandleDraftChange?.(event.target.value)}}"  /><button  type="submit"  class="rdp-discuter__cta-button"  disabled={!canSubmitHandle()} >{t('discuter.unauthenticated.cta')}</button></div>
+{#if handleErrorCode != null }
+<p  id="rdp-discuter-handle-error"  class="rdp-discuter__handle-error"  role="alert" >{t(handleErrorKey())}</p>
+
+
+{/if}</form></div>
 
 
 {/if}

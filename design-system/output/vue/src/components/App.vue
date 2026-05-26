@@ -106,7 +106,12 @@
               :citations="discuterCitations"
               :errorCode="discuterErrorCode"
               :draft="discuterDraft"
-              :onLogin="(event) => onDiscuterLogin?.()"
+              :handleDraft="discuterHandleDraft"
+              :handleErrorCode="discuterHandleErrorCode"
+              :onLogin="(handle) => onDiscuterLogin?.(handle)"
+              :onHandleDraftChange="
+                (next) => onDiscuterHandleDraftChange?.(next)
+              "
               :onDraftChange="(next) => onDiscuterDraftChange?.(next)"
               :onSend="(text) => onDiscuterSend?.(text)"
               :onCancel="(event) => onDiscuterCancel?.()"
@@ -403,6 +408,7 @@ import type {
   DiscuterTurn,
   DiscuterCitation,
   DiscuterErrorCode,
+  DiscuterHandleErrorCode,
 } from "./DiscuterPage.vue";
 
 type SnapshotItem = {
@@ -445,7 +451,10 @@ type AppProps = {
   discuterCitations?: DiscuterCitation[];
   discuterErrorCode?: DiscuterErrorCode;
   discuterDraft?: string;
-  onDiscuterLogin?: () => void;
+  discuterHandleDraft?: string;
+  discuterHandleErrorCode?: DiscuterHandleErrorCode;
+  onDiscuterLogin?: (handle: string) => void;
+  onDiscuterHandleDraftChange?: (next: string) => void;
   onDiscuterDraftChange?: (next: string) => void;
   onDiscuterSend?: (text: string) => void;
   onDiscuterCancel?: () => void;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import App from '@design-system/components/App.vue';
+import { BlueskyLoginError, type BlueskyHandleErrorCode } from '../composables/useBluesky';
 
 type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter';
 
@@ -113,6 +114,9 @@ function onLogoClick() {
 const { isAuthenticated, refresh: refreshBsky, login: loginBsky } = useBluesky();
 const chat = useChat();
 
+const handleDraft = ref('');
+const handleErrorCode = ref<BlueskyHandleErrorCode | undefined>(undefined);
+
 // Hydrate on mount so the discuter page knows the current session.
 onMounted(() => {
   void refreshBsky();
@@ -133,15 +137,8 @@ watch(
   { immediate: true },
 );
 
-async function onDiscuterLogin() {
+async function onDiscuterLogin(handle: string) {
   if (!import.meta.client) return;
-  const raw = window.prompt(
-    "Votre identifiant Bluesky (par ex. alice.bsky.social) :",
-  );
-  if (raw === null) return;
-  const handle = raw.trim().replace(/^@/, '');
-  if (handle === '') return;
-
   chat.status.value = 'authenticating';
   try {
     await loginBsky(handle);
@@ -149,14 +146,25 @@ async function onDiscuterLogin() {
     // in the happy path. If we do, hydrate.
     await refreshBsky();
   } catch (err) {
+    if (err instanceof BlueskyLoginError && err.code !== 'unknown') {
+      handleErrorCode.value = err.code;
+      chat.status.value = 'unauthenticated';
+      return;
+    }
     console.error('bluesky login failed', err);
     chat.status.value = 'error';
-    chat.errorCode.value = 'providers_exhausted';
+    chat.errorCode.value = 'bluesky_login_failed';
   }
+}
+
+function onDiscuterHandleDraftChange(next: string) {
+  handleDraft.value = next;
+  handleErrorCode.value = undefined;
 }
 
 function onDiscuterRetry() {
   chat.errorCode.value = undefined;
+  handleErrorCode.value = undefined;
   chat.status.value = isAuthenticated.value ? 'idle' : 'unauthenticated';
 }
 
@@ -196,10 +204,13 @@ function onDiscuterDraftChange(next: string) {
     :discuter-citations="chat.citations.value"
     :discuter-error-code="chat.errorCode.value"
     :discuter-draft="chat.draft.value"
+    :discuter-handle-draft="handleDraft"
+    :discuter-handle-error-code="handleErrorCode"
     :on-discuter-login="onDiscuterLogin"
     :on-discuter-retry="onDiscuterRetry"
     :on-discuter-send="onDiscuterSend"
     :on-discuter-cancel="onDiscuterCancel"
     :on-discuter-draft-change="onDiscuterDraftChange"
+    :on-discuter-handle-draft-change="onDiscuterHandleDraftChange"
   />
 </template>

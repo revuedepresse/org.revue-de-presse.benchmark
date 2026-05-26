@@ -42,7 +42,10 @@ type AppProps = {
   discuterCitations?: DiscuterCitation[];
   discuterErrorCode?: DiscuterErrorCode;
   discuterDraft?: string;
-  onDiscuterLogin?: () => void;
+  discuterHandleDraft?: string;
+  discuterHandleErrorCode?: DiscuterHandleErrorCode;
+  onDiscuterLogin?: (handle: string) => void;
+  onDiscuterHandleDraftChange?: (next: string) => void;
   onDiscuterDraftChange?: (next: string) => void;
   onDiscuterSend?: (text: string) => void;
   onDiscuterCancel?: () => void;
@@ -71,6 +74,7 @@ import type {
   DiscuterTurn,
   DiscuterCitation,
   DiscuterErrorCode,
+  DiscuterHandleErrorCode,
 } from "./DiscuterPage";
 
 function App(props: AppProps) {
@@ -275,7 +279,12 @@ function App(props: AppProps) {
                 citations={props.discuterCitations}
                 errorCode={props.discuterErrorCode}
                 draft={props.discuterDraft}
-                onLogin={(event) => props.onDiscuterLogin?.()}
+                handleDraft={props.discuterHandleDraft}
+                handleErrorCode={props.discuterHandleErrorCode}
+                onLogin={(handle) => props.onDiscuterLogin?.(handle)}
+                onHandleDraftChange={(next) =>
+                  props.onDiscuterHandleDraftChange?.(next)
+                }
                 onDraftChange={(next) => props.onDiscuterDraftChange?.(next)}
                 onSend={(text) => props.onDiscuterSend?.(text)}
                 onCancel={(event) => props.onDiscuterCancel?.()}

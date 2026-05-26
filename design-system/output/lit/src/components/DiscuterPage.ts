@@ -6,7 +6,8 @@ import  { t } from '../utils/i18n';
    import { customElement, property, state, query } from 'lit/decorators';
 
    export type DiscuterStatus = 'unauthenticated' | 'authenticating' | 'idle' | 'streaming' | 'error'
-export type DiscuterErrorCode = 'rate_limited_user' | 'rate_limited_global' | 'providers_exhausted' | 'truncated'
+export type DiscuterErrorCode = 'rate_limited_user' | 'rate_limited_global' | 'providers_exhausted' | 'truncated' | 'bluesky_login_failed'
+export type DiscuterHandleErrorCode = 'handle_not_found' | 'handle_invalid'
 export type DiscuterTurn = {
  id: string;
  role: 'user' | 'assistant';
@@ -26,7 +27,10 @@ type DiscuterPageProps = {
  citations?: DiscuterCitation[];
  errorCode?: DiscuterErrorCode;
  draft?: string;
- onLogin?: () => void;
+ handleDraft?: string;
+ handleErrorCode?: DiscuterHandleErrorCode;
+ onLogin?: (handle: string) => void;
+ onHandleDraftChange?: (next: string) => void;
  onDraftChange?: (next: string) => void;
  onSend?: (text: string) => void;
  onCancel?: () => void;
@@ -48,10 +52,13 @@ type DiscuterPageProps = {
 
 
      @property() errorCode: any
+@property() handleErrorCode: any
+@property() handleDraft: any
 @property() draft: any
 @property() onSend: any
-@property() status: any
 @property() onLogin: any
+@property() status: any
+@property() onHandleDraftChange: any
 @property() turns: any
 @property() citations: any
 @property() onDraftChange: any
@@ -63,10 +70,28 @@ type DiscuterPageProps = {
  const code = this.errorCode ?? 'providers_exhausted';
  return `discuter.error.${code}`;
 }
+get handleErrorKey() {
+ const code = this.handleErrorCode;
+ if (code === 'handle_not_found') {
+   return 'discuter.unauthenticated.error.handleNotFound';
+ }
+ return 'discuter.unauthenticated.error.handleInvalid';
+}
+get cleanedHandle() {
+ return (this.handleDraft ?? '').trim().replace(/^@/, '');
+}
+get canSubmitHandle() {
+ return this.cleanedHandle.length > 0;
+}
 submit() {
  const text = (this.draft ?? '').trim();
  if (text.length === 0) return;
  this.onSend?.(text);
+}
+submitHandle() {
+ const handle = this.cleanedHandle;
+ if (handle.length === 0) return;
+ this.onLogin?.(handle);
 }
 
 
@@ -81,7 +106,15 @@ submit() {
         <p >${t('discuter.lede')}</p></header>
         ${this.status === 'unauthenticated' ?
               html`<div  role="region" ><p >${t('discuter.unauthenticated.body')}</p>
-       <button  type="button"  @click=${(event) => this.onLogin?.()} >${t('discuter.unauthenticated.cta')}</button></div>`
+       <form  @submit=${(event) => {
+         event.preventDefault();
+         this.submitHandle();
+       }} ><label  for="rdp-discuter-handle" >${t('discuter.unauthenticated.handleLabel')}</label>
+       <div ><input  id="rdp-discuter-handle"  type="text"  autocomplete="username"  autocapitalize="off"  autocorrect="off"  .spellcheck=${false}  .required=${true}  .value=${this.handleDraft ?? ''}  .placeholder=${t('discuter.unauthenticated.handlePlaceholder')}  aria-invalid=${this.handleErrorCode ? 'true' : 'false'}  aria-describedby=${this.handleErrorCode ? 'rdp-discuter-handle-error' : undefined}  @input=${(event) => this.onHandleDraftChange?.((event.target as HTMLInputElement).value)}  />
+       <button  type="submit"  .disabled=${!this.canSubmitHandle} >${t('discuter.unauthenticated.cta')}</button></div>
+       ${this.handleErrorCode != null ?
+             html`<p  id="rdp-discuter-handle-error"  role="alert" >${t(this.handleErrorKey)}</p>`
+           : null}</form></div>`
             : null}
         ${this.status === 'authenticating' ?
               html`<div  role="status"  aria-live="polite" ><p >${t('discuter.authenticating')}</p></div>`
@@ -150,9 +183,47 @@ submit() {
                  gap: var(--separation-2);
                }
                .rdp-discuter__panel--cta {
-                 align-items: flex-start;
+                 align-items: stretch;
                }
                .rdp-discuter__cta-body { margin: 0; }
+               .rdp-discuter__handle-form {
+                 display: flex;
+                 flex-direction: column;
+                 gap: var(--separation-1);
+               }
+               .rdp-discuter__handle-label {
+                 font-size: 0.85em;
+                 color: var(--color-content-text);
+               }
+               .rdp-discuter__handle-row {
+                 display: flex;
+                 gap: var(--separation-1);
+                 flex-wrap: wrap;
+               }
+               .rdp-discuter__handle-input {
+                 flex: 1 1 240px;
+                 min-width: 0;
+                 padding: var(--separation-1);
+                 font-family: 'Roboto', sans-serif;
+                 font-size: var(--font-size-content);
+                 line-height: var(--line-height-base);
+                 border: 1px solid var(--color-border);
+                 border-radius: var(--radius-default);
+                 background: var(--color-white);
+                 box-sizing: border-box;
+               }
+               .rdp-discuter__handle-input[aria-invalid='true'] {
+                 border-color: var(--color-brand);
+               }
+               .rdp-discuter__handle-error {
+                 margin: 0;
+                 font-size: 0.85em;
+                 color: var(--color-brand);
+               }
+               .rdp-discuter__cta-button:disabled {
+                 cursor: not-allowed;
+                 opacity: 0.5;
+               }
                .rdp-discuter__cta-button,
                .rdp-discuter__composer-send,
                .rdp-discuter__error-retry {

@@ -43,7 +43,10 @@ type AppProps = {
   discuterCitations?: DiscuterCitation[];
   discuterErrorCode?: DiscuterErrorCode;
   discuterDraft?: string;
-  onDiscuterLogin?: () => void;
+  discuterHandleDraft?: string;
+  discuterHandleErrorCode?: DiscuterHandleErrorCode;
+  onDiscuterLogin?: (handle: string) => void;
+  onDiscuterHandleDraftChange?: (next: string) => void;
   onDiscuterDraftChange?: (next: string) => void;
   onDiscuterSend?: (text: string) => void;
   onDiscuterCancel?: () => void;
@@ -151,7 +154,10 @@ import type { Locale } from "../utils/i18n";
                 [citations]="discuterCitations"
                 [errorCode]="discuterErrorCode"
                 [draft]="discuterDraft"
-                (login)="onDiscuterLogin?.()"
+                [handleDraft]="discuterHandleDraft"
+                [handleErrorCode]="discuterHandleErrorCode"
+                (login)="onDiscuterLogin?.($event)"
+                (handleDraftChange)="onDiscuterHandleDraftChange?.($event)"
                 (draftChange)="onDiscuterDraftChange?.($event)"
                 (send)="onDiscuterSend?.($event)"
                 (cancel)="onDiscuterCancel?.()"
@@ -435,7 +441,11 @@ export default class App {
   @Input() discuterCitations!: AppProps["discuterCitations"];
   @Input() discuterErrorCode!: AppProps["discuterErrorCode"];
   @Input() discuterDraft!: AppProps["discuterDraft"];
+  @Input() discuterHandleDraft!: AppProps["discuterHandleDraft"];
+  @Input() discuterHandleErrorCode!: AppProps["discuterHandleErrorCode"];
   @Input() onDiscuterLogin!: AppProps["onDiscuterLogin"];
+  @Input()
+  onDiscuterHandleDraftChange!: AppProps["onDiscuterHandleDraftChange"];
   @Input() onDiscuterDraftChange!: AppProps["onDiscuterDraftChange"];
   @Input() onDiscuterSend!: AppProps["onDiscuterSend"];
   @Input() onDiscuterCancel!: AppProps["onDiscuterCancel"];

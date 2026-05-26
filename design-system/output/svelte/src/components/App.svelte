@@ -35,7 +35,10 @@ discuterTurns?: DiscuterTurn[];
 discuterCitations?: DiscuterCitation[];
 discuterErrorCode?: DiscuterErrorCode;
 discuterDraft?: string;
-onDiscuterLogin?: () => void;
+discuterHandleDraft?: string;
+discuterHandleErrorCode?: DiscuterHandleErrorCode;
+onDiscuterLogin?: (handle: string) => void;
+onDiscuterHandleDraftChange?: (next: string) => void;
 onDiscuterDraftChange?: (next: string) => void;
 onDiscuterSend?: (text: string) => void;
 onDiscuterCancel?: () => void;
@@ -69,7 +72,7 @@ import  IntroCard from './IntroCard.svelte';
 import  Spinner from './Spinner.svelte';
 import type { BlueskyPost } from './BlueskyPostCard.svelte';
 import type { Locale } from '../utils/i18n';
-import type { DiscuterStatus, DiscuterTurn, DiscuterCitation, DiscuterErrorCode } from './DiscuterPage.svelte';
+import type { DiscuterStatus, DiscuterTurn, DiscuterCitation, DiscuterErrorCode, DiscuterHandleErrorCode } from './DiscuterPage.svelte';
 
 
 
@@ -100,7 +103,10 @@ export let discuterTurns: AppProps['discuterTurns']= undefined;
 export let discuterCitations: AppProps['discuterCitations']= undefined;
 export let discuterErrorCode: AppProps['discuterErrorCode']= undefined;
 export let discuterDraft: AppProps['discuterDraft']= undefined;
+export let discuterHandleDraft: AppProps['discuterHandleDraft']= undefined;
+export let discuterHandleErrorCode: AppProps['discuterHandleErrorCode']= undefined;
 export let onDiscuterLogin: AppProps['onDiscuterLogin']= undefined;
+export let onDiscuterHandleDraftChange: AppProps['onDiscuterHandleDraftChange']= undefined;
 export let onDiscuterDraftChange: AppProps['onDiscuterDraftChange']= undefined;
 export let onDiscuterSend: AppProps['onDiscuterSend']= undefined;
 export let onDiscuterCancel: AppProps['onDiscuterCancel']= undefined;
@@ -262,7 +268,7 @@ initialised = true; });
 
 {/if}
 {#if currentView === 'discuter' }
-<DiscuterPage  status={discuterStatus ?? 'unauthenticated'}  turns={discuterTurns}  citations={discuterCitations}  errorCode={discuterErrorCode}  draft={discuterDraft}  onLogin={(event) => onDiscuterLogin?.()} onDraftChange={(next) => onDiscuterDraftChange?.(next)} onSend={(text) => onDiscuterSend?.(text)} onCancel={(event) => onDiscuterCancel?.()} onRetry={(event) => onDiscuterRetry?.()}></DiscuterPage>
+<DiscuterPage  status={discuterStatus ?? 'unauthenticated'}  turns={discuterTurns}  citations={discuterCitations}  errorCode={discuterErrorCode}  draft={discuterDraft}  handleDraft={discuterHandleDraft}  handleErrorCode={discuterHandleErrorCode}  onLogin={(handle) => onDiscuterLogin?.(handle)} onHandleDraftChange={(next) => onDiscuterHandleDraftChange?.(next)} onDraftChange={(next) => onDiscuterDraftChange?.(next)} onSend={(text) => onDiscuterSend?.(text)} onCancel={(event) => onDiscuterCancel?.()} onRetry={(event) => onDiscuterRetry?.()}></DiscuterPage>
 
 
 {/if}</main></div>

@@ -19,6 +19,7 @@ import ContactPage from "./ContactPage.jsx";
 import {
   DiscuterCitation,
   DiscuterErrorCode,
+  DiscuterHandleErrorCode,
   DiscuterStatus,
   DiscuterTurn,
   default as DiscuterPage,
@@ -86,7 +87,10 @@ type AppProps = {
   discuterCitations?: DiscuterCitation[];
   discuterErrorCode?: DiscuterErrorCode;
   discuterDraft?: string;
-  onDiscuterLogin?: () => void;
+  discuterHandleDraft?: string;
+  discuterHandleErrorCode?: DiscuterHandleErrorCode;
+  onDiscuterLogin?: (handle: string) => void;
+  onDiscuterHandleDraftChange?: (next: string) => void;
   onDiscuterDraftChange?: (next: string) => void;
   onDiscuterSend?: (text: string) => void;
   onDiscuterCancel?: () => void;
@@ -416,7 +420,12 @@ export const App = component$((props: AppProps) => {
                 citations={props.discuterCitations}
                 errorCode={props.discuterErrorCode}
                 draft={props.discuterDraft}
-                onLogin$={$((event) => props.onDiscuterLogin?.())}
+                handleDraft={props.discuterHandleDraft}
+                handleErrorCode={props.discuterHandleErrorCode}
+                onLogin$={$((event) => props.onDiscuterLogin?.(handle))}
+                onHandleDraftChange$={$((event) =>
+                  props.onDiscuterHandleDraftChange?.(next)
+                )}
                 onDraftChange$={$((event) =>
                   props.onDiscuterDraftChange?.(next)
                 )}

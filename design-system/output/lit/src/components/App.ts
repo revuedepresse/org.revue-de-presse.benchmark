@@ -57,7 +57,10 @@ type AppProps = {
  discuterCitations?: DiscuterCitation[];
  discuterErrorCode?: DiscuterErrorCode;
  discuterDraft?: string;
- onDiscuterLogin?: () => void;
+ discuterHandleDraft?: string;
+ discuterHandleErrorCode?: DiscuterHandleErrorCode;
+ onDiscuterLogin?: (handle: string) => void;
+ onDiscuterHandleDraftChange?: (next: string) => void;
  onDiscuterDraftChange?: (next: string) => void;
  onDiscuterSend?: (text: string) => void;
  onDiscuterCancel?: () => void;
@@ -103,7 +106,10 @@ type AppProps = {
 @property() discuterCitations: any
 @property() discuterErrorCode: any
 @property() discuterDraft: any
+@property() discuterHandleDraft: any
+@property() discuterHandleErrorCode: any
 @property() onDiscuterLogin: any
+@property() onDiscuterHandleDraftChange: any
 @property() onDiscuterDraftChange: any
 @property() onDiscuterSend: any
 @property() onDiscuterCancel: any
@@ -234,7 +240,7 @@ this.initialised = true }
              html`<sources-page ></sources-page>`
            : null}
        ${this.currentView === 'discuter' ?
-             html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  @login=${(event) => this.onDiscuterLogin?.()}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
+             html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  .handleDraft=${this.discuterHandleDraft}  .handleErrorCode=${this.discuterHandleErrorCode}  @login=${(handle) => this.onDiscuterLogin?.(handle)}  @handledraftchange=${(next) => this.onDiscuterHandleDraftChange?.(next)}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
            : null}</main></div>`
             : null}
         ${(this.layout ?? 'desktop') === 'mobile' ?

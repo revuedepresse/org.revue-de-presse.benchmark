@@ -15,13 +15,55 @@
         <p class="rdp-discuter__cta-body">
           {{ t("discuter.unauthenticated.body") }}
         </p>
-        <button
-          type="button"
-          class="rdp-discuter__cta-button"
-          @click="async (event) => onLogin?.()"
+        <form
+          class="rdp-discuter__handle-form"
+          @submit="
+            async (event) => {
+              event.preventDefault();
+              submitHandle();
+            }
+          "
         >
-          {{ t("discuter.unauthenticated.cta") }}
-        </button>
+          <label class="rdp-discuter__handle-label" for="rdp-discuter-handle">{{
+            t("discuter.unauthenticated.handleLabel")
+          }}</label>
+          <div class="rdp-discuter__handle-row">
+            <input
+              id="rdp-discuter-handle"
+              class="rdp-discuter__handle-input"
+              type="text"
+              autocomplete="username"
+              autocapitalize="off"
+              autocorrect="off"
+              :spellcheck="false"
+              :required="true"
+              :value="handleDraft ?? ''"
+              :placeholder="t('discuter.unauthenticated.handlePlaceholder')"
+              :aria-invalid="handleErrorCode ? 'true' : 'false'"
+              :aria-describedby="
+                handleErrorCode ? 'rdp-discuter-handle-error' : undefined
+              "
+              @input="
+                async (event) => onHandleDraftChange?.(event.target.value)
+              "
+            /><button
+              type="submit"
+              class="rdp-discuter__cta-button"
+              :disabled="!canSubmitHandle"
+            >
+              {{ t("discuter.unauthenticated.cta") }}
+            </button>
+          </div>
+          <template v-if="handleErrorCode != null">
+            <p
+              id="rdp-discuter-handle-error"
+              class="rdp-discuter__handle-error"
+              role="alert"
+            >
+              {{ t(handleErrorKey) }}
+            </p>
+          </template>
+        </form>
       </div>
     </template>
 
@@ -168,9 +210,47 @@
           gap: var(--separation-2);
         }
         .rdp-discuter__panel--cta {
-          align-items: flex-start;
+          align-items: stretch;
         }
         .rdp-discuter__cta-body { margin: 0; }
+        .rdp-discuter__handle-form {
+          display: flex;
+          flex-direction: column;
+          gap: var(--separation-1);
+        }
+        .rdp-discuter__handle-label {
+          font-size: 0.85em;
+          color: var(--color-content-text);
+        }
+        .rdp-discuter__handle-row {
+          display: flex;
+          gap: var(--separation-1);
+          flex-wrap: wrap;
+        }
+        .rdp-discuter__handle-input {
+          flex: 1 1 240px;
+          min-width: 0;
+          padding: var(--separation-1);
+          font-family: 'Roboto', sans-serif;
+          font-size: var(--font-size-content);
+          line-height: var(--line-height-base);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-default);
+          background: var(--color-white);
+          box-sizing: border-box;
+        }
+        .rdp-discuter__handle-input[aria-invalid='true'] {
+          border-color: var(--color-brand);
+        }
+        .rdp-discuter__handle-error {
+          margin: 0;
+          font-size: 0.85em;
+          color: var(--color-brand);
+        }
+        .rdp-discuter__cta-button:disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
         .rdp-discuter__cta-button,
         .rdp-discuter__composer-send,
         .rdp-discuter__error-retry {
@@ -344,7 +424,9 @@ export type DiscuterErrorCode =
   | "rate_limited_user"
   | "rate_limited_global"
   | "providers_exhausted"
-  | "truncated";
+  | "truncated"
+  | "bluesky_login_failed";
+export type DiscuterHandleErrorCode = "handle_not_found" | "handle_invalid";
 export type DiscuterTurn = {
   id: string;
   role: "user" | "assistant";
@@ -364,7 +446,10 @@ type DiscuterPageProps = {
   citations?: DiscuterCitation[];
   errorCode?: DiscuterErrorCode;
   draft?: string;
-  onLogin?: () => void;
+  handleDraft?: string;
+  handleErrorCode?: DiscuterHandleErrorCode;
+  onLogin?: (handle: string) => void;
+  onHandleDraftChange?: (next: string) => void;
   onDraftChange?: (next: string) => void;
   onSend?: (text: string) => void;
   onCancel?: () => void;
@@ -377,10 +462,28 @@ const errorKey = computed(() => {
   const code = props.errorCode ?? "providers_exhausted";
   return `discuter.error.${code}`;
 });
+const handleErrorKey = computed(() => {
+  const code = props.handleErrorCode;
+  if (code === "handle_not_found") {
+    return "discuter.unauthenticated.error.handleNotFound";
+  }
+  return "discuter.unauthenticated.error.handleInvalid";
+});
+const cleanedHandle = computed(() => {
+  return (props.handleDraft ?? "").trim().replace(/^@/, "");
+});
+const canSubmitHandle = computed(() => {
+  return cleanedHandle.length > 0;
+});
 
 function submit() {
   const text = (props.draft ?? "").trim();
   if (text.length === 0) return;
   props.onSend?.(text);
+}
+function submitHandle() {
+  const handle = cleanedHandle;
+  if (handle.length === 0) return;
+  props.onLogin?.(handle);
 }
 </script>

@@ -130,6 +130,10 @@
   "discuter.lede": "Ask questions about the publications most relayed each day. The assistant answers only from cited excerpts, in French.",
   "discuter.unauthenticated.body": "Connect your Bluesky account to start a conversation.",
   "discuter.unauthenticated.cta": "Connect my Bluesky account",
+  "discuter.unauthenticated.handleLabel": "Bluesky handle",
+  "discuter.unauthenticated.handlePlaceholder": "alice.bsky.social",
+  "discuter.unauthenticated.error.handleNotFound": "Bluesky handle not found.",
+  "discuter.unauthenticated.error.handleInvalid": "Invalid Bluesky handle.",
   "discuter.authenticating": "Signing in…",
   "discuter.composer.label": "Your question",
   "discuter.composer.placeholder": "For example: how did Le Monde cover the pension reform in March?",
@@ -140,5 +144,6 @@
   "discuter.error.rate_limited_global": "The press digest has reached today's quota. The chat resumes tomorrow.",
   "discuter.error.providers_exhausted": "Language models are unavailable right now. Try again later.",
   "discuter.error.truncated": "The response was interrupted. You can re-send your question.",
+  "discuter.error.bluesky_login_failed": "Bluesky sign-in failed. Check your handle and try again.",
   "discuter.error.retry": "Retry"
 }

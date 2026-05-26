@@ -24,7 +24,8 @@ export type DiscuterErrorCode =
   | 'rate_limited_user'
   | 'rate_limited_global'
   | 'providers_exhausted'
-  | 'truncated';
+  | 'truncated'
+  | 'bluesky_login_failed';
 
 const MESSAGES_KEY = 'rdp:chat:messages';
 const CITATIONS_KEY = 'rdp:chat:citations';
