@@ -201,6 +201,7 @@ export class App {
                   onContactClick={() => this.goTo("contact")}
                   onSupportClick={() => this.goTo("support")}
                   onSourcesClick={() => this.goTo("sources")}
+                  onDiscuterClick={() => this.goTo("discuter")}
                 ></sidebar>
               </aside>
             ) : null}
@@ -353,6 +354,7 @@ export class App {
                   onContactClick={() => this.goTo("contact")}
                   onSupportClick={() => this.goTo("support")}
                   onSourcesClick={() => this.goTo("sources")}
+                  onDiscuterClick={() => this.goTo("discuter")}
                 ></banner-about>
               ) : null}
             </main>

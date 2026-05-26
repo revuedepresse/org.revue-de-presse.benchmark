@@ -18,6 +18,7 @@ type SidebarProps = {
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
+  onDiscuterClick?: () => void;
 };
 
 import Calendar from "./Calendar";
@@ -40,6 +41,7 @@ function Sidebar(props: SidebarProps) {
           onContactClick={(event) => props.onContactClick()}
           onSupportClick={(event) => props.onSupportClick()}
           onSourcesClick={(event) => props.onSourcesClick()}
+          onDiscuterClick={(event) => props.onDiscuterClick()}
         ></BannerAbout>
         <style>{`
         .rdp-sidebar {

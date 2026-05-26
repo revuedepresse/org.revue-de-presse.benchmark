@@ -220,6 +220,7 @@ function App(props: AppProps) {
                 onContactClick={(event) => goTo("contact")}
                 onSupportClick={(event) => goTo("support")}
                 onSourcesClick={(event) => goTo("sources")}
+                onDiscuterClick={(event) => goTo("discuter")}
               />
             </aside>
           ) : null}
@@ -350,6 +351,7 @@ function App(props: AppProps) {
                 onContactClick={(event) => goTo("contact")}
                 onSupportClick={(event) => goTo("support")}
                 onSourcesClick={(event) => goTo("sources")}
+                onDiscuterClick={(event) => goTo("discuter")}
               />
             ) : null}
           </main>

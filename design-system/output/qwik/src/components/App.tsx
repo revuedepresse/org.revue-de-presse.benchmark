@@ -330,6 +330,16 @@ export const App = component$((props: AppProps) => {
                     "sources"
                   )
                 )}
+                onDiscuterClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "discuter"
+                  )
+                )}
               ></Sidebar>
             </aside>
           ) : null}
@@ -542,6 +552,16 @@ export const App = component$((props: AppProps) => {
                     prevDayDisabled,
                     nextDayDisabled,
                     "sources"
+                  )
+                )}
+                onDiscuterClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "discuter"
                   )
                 )}
               ></BannerAbout>

@@ -18,11 +18,13 @@ export class BannerAbout {
   @Event() contactClick: any;
   @Event() supportClick: any;
   @Event() sourcesClick: any;
+  @Event() discuterClick: any;
   @Prop() subscribeHref: any;
   @Prop() legalNoticeHref: any;
   @Prop() contactHref: any;
   @Prop() supportHref: any;
   @Prop() sourcesHref: any;
+  @Prop() discuterHref: any;
 
   get year() {
     return new Date().getFullYear();
@@ -49,6 +51,12 @@ export class BannerAbout {
     if (this.sourcesClick) {
       event.preventDefault();
       this.sourcesClick.emit();
+    }
+  }
+  handleDiscuterClick(event: any) {
+    if (this.discuterClick) {
+      event.preventDefault();
+      this.discuterClick.emit();
     }
   }
 
@@ -136,6 +144,16 @@ export class BannerAbout {
             onClick={(event) => this.handleSourcesClick(event)}
           >
             {t("footer.about.sources")}
+          </a>
+          <br />
+          <a
+            class="rdp-banner-about__outer-link"
+            data-testid="view-button"
+            data-view="discuter"
+            href={this.discuterHref ?? "/discuter"}
+            onClick={(event) => this.handleDiscuterClick(event)}
+          >
+            {t("footer.about.discuter")}
           </a>
           <br />
         </p>
