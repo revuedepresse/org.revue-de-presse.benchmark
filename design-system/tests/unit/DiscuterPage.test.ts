@@ -51,7 +51,10 @@ describe('DiscuterPage (post-Mitosis emit)', () => {
     expect(vue, 'expected the replay button class to appear in the Vue output').toContain(
       'rdp-discuter__turn-replay',
     );
-    expect(vue, 'expected the disabled-while-streaming guard').toContain("'streaming'");
+    expect(
+      vue,
+      'expected the replay button to be disabled while the chat is streaming',
+    ).toMatch(/rdp-discuter__turn-replay[\s\S]{0,200}:disabled="status === 'streaming'"/);
   });
 
   it('lists every error code as a key in fr-FR.json', () => {
