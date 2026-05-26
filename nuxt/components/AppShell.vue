@@ -108,13 +108,63 @@ function onViewChange(view: ViewKey) {
 function onLogoClick() {
   pickedDate.value = yesterday();
 }
+
+// --- Bluesky chat session ----------------------------------------------------
+const { me, isAuthenticated, refresh: refreshBsky, login: loginBsky, logout: logoutBsky } = useBluesky();
+
+// Hydrate on mount so the discuter page knows the current session.
+onMounted(() => {
+  void refreshBsky();
+});
+
+const discuterStatus = ref<'unauthenticated' | 'authenticating' | 'idle' | 'streaming' | 'error'>(
+  'unauthenticated',
+);
+const discuterErrorCode = ref<
+  'rate_limited_user' | 'rate_limited_global' | 'providers_exhausted' | 'truncated' | undefined
+>(undefined);
+
+watch(
+  isAuthenticated,
+  (logged) => {
+    discuterStatus.value = logged ? 'idle' : 'unauthenticated';
+  },
+  { immediate: true },
+);
+
+async function onDiscuterLogin() {
+  if (!import.meta.client) return;
+  const raw = window.prompt(
+    "Votre identifiant Bluesky (par ex. alice.bsky.social) :",
+  );
+  if (raw === null) return;
+  const handle = raw.trim().replace(/^@/, '');
+  if (handle === '') return;
+
+  discuterStatus.value = 'authenticating';
+  try {
+    await loginBsky(handle);
+    // loginBsky redirects the browser to the PDS — we won't reach this line
+    // in the happy path. If we do, hydrate.
+    await refreshBsky();
+  } catch (err) {
+    console.error('bluesky login failed', err);
+    discuterStatus.value = 'error';
+    discuterErrorCode.value = 'providers_exhausted';
+  }
+}
+
+async function onDiscuterRetry() {
+  discuterStatus.value = isAuthenticated.value ? 'idle' : 'unauthenticated';
+  discuterErrorCode.value = undefined;
+}
 </script>
 
 <template>
   <App
     :layout="layout"
     :capture-mode="isCaptureModeActive"
-    :authenticated="false"
+    :authenticated="isAuthenticated"
     :posts="posts"
     :picked-date="pickedDate"
     :lists="lists"
@@ -128,5 +178,9 @@ function onLogoClick() {
     :on-date-select="onDateSelect"
     :on-view-change="onViewChange"
     :on-logo-click="onLogoClick"
+    :discuter-status="discuterStatus"
+    :discuter-error-code="discuterErrorCode"
+    :on-discuter-login="onDiscuterLogin"
+    :on-discuter-retry="onDiscuterRetry"
   />
 </template>

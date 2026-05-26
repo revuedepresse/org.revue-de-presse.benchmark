@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 .ONESHELL:
-.PHONY: install dev build preview install-bubblewrap update-twa build-twa twa-fingerprint help
+.PHONY: install dev build preview install-bubblewrap update-twa build-twa twa-fingerprint chat-jwt-secret help
 
 install: ## Install Node dependencies (delegates to pnpm)
 	@pnpm install
@@ -43,6 +43,18 @@ APK ?= app-release-signed.apk
 twa-fingerprint: ## Print SHA-256/SHA-1 of the APK's signing cert (override path with APK=...)
 	@if [ ! -f "$(APK)" ]; then echo "APK not found: $(APK) (override with APK=path/to.apk)" >&2; exit 1; fi
 	@keytool -printcert -jarfile "$(APK)" | grep -E '^\s*(SHA1|SHA256):'
+
+chat-jwt-secret: ## Generate a fresh 256-bit API_JWT_SECRET; print to stdout (does NOT touch any .env)
+	@set -euo pipefail; \
+	secret=$$(openssl rand -base64 32 | tr -d '\n=+/' | head -c 43); \
+	if [ -z "$$secret" ]; then printf '✗ Failed to generate API_JWT_SECRET\n' 1>&2; exit 1; fi; \
+	printf '✓ Generated a fresh API_JWT_SECRET (43 URL-safe chars, 256-bit entropy):\n\n'; \
+	printf '  API_JWT_SECRET=%s\n\n' "$$secret"; \
+	printf '→ Paste the SAME line into:\n'; \
+	printf '    1. ../org.revue-de-presse.api/.env.local  (API verifier)\n'; \
+	printf '    2. nuxt/.env.local                        (Nuxt signer, local dev)\n'; \
+	printf '    3. Netlify env vars for the Nuxt site     (Nuxt signer, prod)\n\n'; \
+	printf '⚠  Rotating invalidates every active chat session. Deploy API first, Nuxt second.\n'
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

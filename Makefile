@@ -3,6 +3,7 @@ SHELL:=/bin/bash
 .PHONY: help install \
         nuxt-dev nuxt-build nuxt-prod nuxt-test \
         nuxt-install-bubblewrap nuxt-update-twa nuxt-build-twa \
+        chat-jwt-secret \
         next-dev next-build next-prod next-test \
         next-install-bubblewrap next-update-twa next-build-twa \
         install-bubblewrap update-twa build-twa \
@@ -52,6 +53,9 @@ nuxt-update-twa: ## Regenerate the Nuxt Android project from twa-manifest.json
 
 nuxt-build-twa: ## Compile and sign the Nuxt Android TWA (APK)
 	@$(MAKE) -C $(NUXT_DIR) build-twa
+
+chat-jwt-secret: ## Generate a fresh 256-bit API_JWT_SECRET (delegates to nuxt/)
+	@$(MAKE) -C $(NUXT_DIR) chat-jwt-secret
 
 # -- Next -----------------------------------------------------------------
 

@@ -3,4 +3,5 @@
 docs/
 legacy
 nuxt/.netlify
+nuxt/.session-store
 tmp/
