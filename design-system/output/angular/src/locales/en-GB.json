@@ -145,5 +145,6 @@
   "discuter.error.providers_exhausted": "Language models are unavailable right now. Try again later.",
   "discuter.error.truncated": "The response was interrupted. You can re-send your question.",
   "discuter.error.bluesky_login_failed": "Bluesky sign-in failed. Check your handle and try again.",
-  "discuter.error.retry": "Retry"
+  "discuter.error.retry": "Retry",
+  "discuter.turn.replay": "Resend this question"
 }

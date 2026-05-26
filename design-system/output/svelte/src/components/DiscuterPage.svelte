@@ -131,7 +131,12 @@ submitHandle();
 {#if status === 'idle' || status === 'streaming' }
 <div  class="rdp-discuter__panel rdp-discuter__panel--chat" ><ol  class="rdp-discuter__turns"  aria-live="polite" >
 {#each turns ?? [] as turn }
-<li  class={`rdp-discuter__turn rdp-discuter__turn--${turn.role}`}  data-role={turn.role} ><div  class="rdp-discuter__turn-body" >{turn.content}</div></li>
+<li  class={`rdp-discuter__turn rdp-discuter__turn--${turn.role}`}  data-role={turn.role} ><div  class="rdp-discuter__turn-bubble" >{turn.content}</div>
+{#if turn.role === 'user' }
+<button  type="button"  class="rdp-discuter__turn-replay"  disabled={status === 'streaming'}  aria-label={t('discuter.turn.replay')}  on:click="{(event) => {onSend?.(turn.content)}}" ><svg  class="rdp-discuter__turn-replay-icon"  width="16"  height="16"  viewBox="0 0 24 24"  aria-hidden="true" ><path  d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"  fill="currentColor" ></path></svg></button>
+
+
+{/if}</li>
 {/each}
 
 {#if status === 'streaming' }

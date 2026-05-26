@@ -181,7 +181,31 @@ export const DiscuterPage = component$((props: DiscuterPageProps) => {
                   class={`rdp-discuter__turn rdp-discuter__turn--${turn.role}`}
                   data-role={turn.role}
                 >
-                  <div class="rdp-discuter__turn-body">{turn.content}</div>
+                  <div class="rdp-discuter__turn-bubble">{turn.content}</div>
+                  {turn.role === "user" ? (
+                    <button
+                      type="button"
+                      class="rdp-discuter__turn-replay"
+                      disabled={(() => {
+                        props.status === "streaming";
+                      })()}
+                      aria-label={t("discuter.turn.replay")}
+                      onClick$={$((event) => props.onSend?.(turn.content))}
+                    >
+                      <svg
+                        class="rdp-discuter__turn-replay-icon"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
+                    </button>
+                  ) : null}
                 </li>
               );
             })}
@@ -418,19 +442,44 @@ export const DiscuterPage = component$((props: DiscuterPageProps) => {
           gap: var(--separation-1);
         }
         .rdp-discuter__turn {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          max-width: 90%;
+        }
+        .rdp-discuter__turn--user { align-self: flex-end; align-items: flex-end; }
+        .rdp-discuter__turn--assistant { align-self: flex-start; align-items: flex-start; }
+        .rdp-discuter__turn-bubble {
           padding: var(--separation-1) var(--separation-2);
           border-radius: var(--radius-default);
           background: var(--color-white);
-          max-width: 90%;
           line-height: var(--line-height-base);
+          white-space: pre-wrap;
         }
-        .rdp-discuter__turn--user {
-          align-self: flex-end;
+        .rdp-discuter__turn--user .rdp-discuter__turn-bubble {
           background: var(--color-brand);
           color: var(--color-white);
         }
-        .rdp-discuter__turn--assistant { align-self: flex-start; }
-        .rdp-discuter__turn-body { white-space: pre-wrap; }
+        .rdp-discuter__turn-replay {
+          background: transparent;
+          border: 1px solid var(--color-border);
+          color: var(--color-brand);
+          border-radius: var(--radius-default);
+          padding: 4px;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 28px;
+          height: 28px;
+          transition: background 160ms ease, opacity 160ms ease;
+        }
+        .rdp-discuter__turn-replay:hover { background: var(--color-taupe-grey); }
+        .rdp-discuter__turn-replay:focus-visible {
+          outline: 2px solid var(--button-bg-primary-hover);
+          outline-offset: 2px;
+        }
+        .rdp-discuter__turn-replay:disabled { opacity: 0.4; cursor: not-allowed; }
         .rdp-discuter__streaming-indicator {
           align-self: flex-start;
           display: inline-flex;
@@ -452,6 +501,7 @@ export const DiscuterPage = component$((props: DiscuterPageProps) => {
         }
         @media (prefers-reduced-motion: reduce) {
           .rdp-discuter__dot { animation: none; opacity: 0.5; }
+          .rdp-discuter__turn-replay { transition: none; }
         }
         .rdp-discuter__sources {
           border-top: 1px solid var(--color-border);

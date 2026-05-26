@@ -145,5 +145,6 @@
   "discuter.error.providers_exhausted": "Les modèles de langage sont indisponibles pour le moment. Réessayez plus tard.",
   "discuter.error.truncated": "La réponse a été interrompue. Vous pouvez relancer votre question.",
   "discuter.error.bluesky_login_failed": "La connexion à Bluesky a échoué. Vérifiez votre identifiant et réessayez.",
-  "discuter.error.retry": "Réessayer"
+  "discuter.error.retry": "Réessayer",
+  "discuter.turn.replay": "Renvoyer cette question"
 }
