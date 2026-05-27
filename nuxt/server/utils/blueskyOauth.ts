@@ -72,8 +72,8 @@ function prodClientMetadata(origin: string) {
     client_name: 'Revue de presse — chat',
     client_uri: `${base}/discuter`,
     logo_uri: `${base}/logo-revue-de-presse.png`,
-    tos_uri: `${base}/mentions-legales#cgu`,
-    policy_uri: `${base}/mentions-legales#confidentialite`,
+    tos_uri: `${base}/conditions-utilisation`,
+    policy_uri: `${base}/mentions-legales`,
     redirect_uris: [`${base}/api/auth/bluesky/callback`] as [string],
     scope: 'atproto transition:generic',
     grant_types: ['authorization_code', 'refresh_token'] as [
