@@ -196,7 +196,6 @@ export default function App(props: AppProps) {
                 onContactClick={() => state.goTo('contact')}
                 onSupportClick={() => state.goTo('support')}
                 onSourcesClick={() => state.goTo('sources')}
-                onDiscuterClick={() => state.goTo('discuter')}
               />
             </aside>
           </Show>
@@ -333,7 +332,6 @@ export default function App(props: AppProps) {
               onContactClick={() => state.goTo('contact')}
               onSupportClick={() => state.goTo('support')}
               onSourcesClick={() => state.goTo('sources')}
-              onDiscuterClick={() => state.goTo('discuter')}
             />
           </Show>
         </main>

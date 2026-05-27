@@ -9,13 +9,11 @@ type BannerAboutProps = {
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
-  discuterHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
-  onDiscuterClick?: () => void;
 };
 export const handleLegalClick = function handleLegalClick(
   props,
@@ -59,17 +57,6 @@ export const handleSourcesClick = function handleSourcesClick(
   if (props.onSourcesClick) {
     event.preventDefault();
     props.onSourcesClick();
-  }
-};
-export const handleDiscuterClick = function handleDiscuterClick(
-  props,
-  state,
-  year,
-  event: any
-) {
-  if (props.onDiscuterClick) {
-    event.preventDefault();
-    props.onDiscuterClick();
   }
 };
 export const BannerAbout = component$((props: BannerAboutProps) => {
@@ -159,18 +146,6 @@ export const BannerAbout = component$((props: BannerAboutProps) => {
           onClick$={$((event) => handleSourcesClick(props, state, year, event))}
         >
           {t("footer.about.sources")}
-        </a>
-        <br />
-        <a
-          class="rdp-banner-about__outer-link"
-          data-testid="view-button"
-          data-view="discuter"
-          href={props.discuterHref ?? "/discuter"}
-          onClick$={$((event) =>
-            handleDiscuterClick(props, state, year, event)
-          )}
-        >
-          {t("footer.about.discuter")}
         </a>
         <br />
       </p>

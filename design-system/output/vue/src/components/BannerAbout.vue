@@ -59,13 +59,6 @@
         :href="sourcesHref ?? '/sources'"
         @click="async (event) => handleSourcesClick(event)"
         >{{ t("footer.about.sources") }}</a
-      ><br /><a
-        class="rdp-banner-about__outer-link"
-        data-testid="view-button"
-        data-view="discuter"
-        :href="discuterHref ?? '/discuter'"
-        @click="async (event) => handleDiscuterClick(event)"
-        >{{ t("footer.about.discuter") }}</a
       ><br />
     </p>
     <h2 class="rdp-banner-about__title rdp-banner-about__title--funding">
@@ -233,13 +226,11 @@ type BannerAboutProps = {
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
-  discuterHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
-  onDiscuterClick?: () => void;
 };
 
 const props = defineProps<BannerAboutProps>();
@@ -270,12 +261,6 @@ function handleSourcesClick(event: any) {
   if (props.onSourcesClick) {
     event.preventDefault();
     props.onSourcesClick();
-  }
-}
-function handleDiscuterClick(event: any) {
-  if (props.onDiscuterClick) {
-    event.preventDefault();
-    props.onDiscuterClick();
   }
 }
 </script>

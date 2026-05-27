@@ -2,7 +2,12 @@
 import App from '@design-system/components/App.vue';
 import { BlueskyLoginError, type BlueskyHandleErrorCode } from '../composables/useBluesky';
 
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter';
+// `discuter` is intentionally absent — the /discuter route is disabled
+// (the page file is deleted and the footer link removed in the design
+// system). To re-enable: restore nuxt/pages/discuter.vue, re-add the
+// link in design-system/src/components/BannerAbout.lite.tsx, regenerate
+// Mitosis outputs, and add 'discuter' back to this union.
+type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources';
 
 const props = defineProps<{
   initialView?: ViewKey;
@@ -76,7 +81,6 @@ function urlForView(view: ViewKey): string {
     case 'contact': return '/nous-contacter';
     case 'support': return '/nous-soutenir';
     case 'sources': return '/sources';
-    case 'discuter': return '/discuter';
     case 'main':
     default:
       return urlForDate(pickedDate.value);

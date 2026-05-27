@@ -212,7 +212,7 @@ initialised = true; });
 {#if (layout ?? 'desktop') === 'desktop' }
 <div  class="rdp-app__content" >
 {#if !captureMode }
-<aside  class="rdp-app__column" ><Sidebar  lists={lists}  selectedListId={selectedListId}  selectedDate={pickedDate}  yearRange={yearRange}  minDate={minDate}  locale={locale}  onListSelect={(id) => onListSelect?.(id)} onDateSelect={(d) => selectFromSidebar(d)} onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')} onDiscuterClick={(event) => goTo('discuter')}></Sidebar></aside>
+<aside  class="rdp-app__column" ><Sidebar  lists={lists}  selectedListId={selectedListId}  selectedDate={pickedDate}  yearRange={yearRange}  minDate={minDate}  locale={locale}  onListSelect={(id) => onListSelect?.(id)} onDateSelect={(d) => selectFromSidebar(d)} onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></Sidebar></aside>
 
 
 {/if}<main  class="rdp-app__main"  aria-busy={loading ? 'true' : undefined} >
@@ -334,7 +334,7 @@ initialised = true; });
 
 {/if}
 {#if !captureMode }
-<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')} onDiscuterClick={(event) => goTo('discuter')}></BannerAbout>
+<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></BannerAbout>
 
 
 {/if}</main>

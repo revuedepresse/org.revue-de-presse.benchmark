@@ -26,7 +26,6 @@ type SidebarProps = {
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
-  onDiscuterClick?: () => void;
 };
 export const Sidebar = component$((props: SidebarProps) => {
   return (
@@ -43,7 +42,6 @@ export const Sidebar = component$((props: SidebarProps) => {
         onContactClick$={$((event) => props.onContactClick())}
         onSupportClick$={$((event) => props.onSupportClick())}
         onSourcesClick$={$((event) => props.onSourcesClick())}
-        onDiscuterClick$={$((event) => props.onDiscuterClick())}
       ></BannerAbout>
       <style>{`
         .rdp-sidebar {

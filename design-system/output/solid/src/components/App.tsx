@@ -224,7 +224,6 @@ function App(props: AppProps) {
                   onContactClick={(event) => goTo("contact")}
                   onSupportClick={(event) => goTo("support")}
                   onSourcesClick={(event) => goTo("sources")}
-                  onDiscuterClick={(event) => goTo("discuter")}
                 ></Sidebar>
               </aside>
             </Show>
@@ -407,7 +406,6 @@ function App(props: AppProps) {
                 onContactClick={(event) => goTo("contact")}
                 onSupportClick={(event) => goTo("support")}
                 onSourcesClick={(event) => goTo("sources")}
-                onDiscuterClick={(event) => goTo("discuter")}
               ></BannerAbout>
             </Show>
           </main>

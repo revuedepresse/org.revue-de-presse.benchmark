@@ -35,7 +35,6 @@
               :onContactClick="(event) => goTo('contact')"
               :onSupportClick="(event) => goTo('support')"
               :onSourcesClick="(event) => goTo('sources')"
-              :onDiscuterClick="(event) => goTo('discuter')"
             ></Sidebar>
           </aside>
         </template>
@@ -204,7 +203,6 @@
             :onContactClick="(event) => goTo('contact')"
             :onSupportClick="(event) => goTo('support')"
             :onSourcesClick="(event) => goTo('sources')"
-            :onDiscuterClick="(event) => goTo('discuter')"
           ></BannerAbout>
         </template>
       </main>

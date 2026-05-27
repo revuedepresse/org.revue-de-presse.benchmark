@@ -20,7 +20,6 @@ onLegalNoticeClick?: () => void;
 onContactClick?: () => void;
 onSupportClick?: () => void;
 onSourcesClick?: () => void;
-onDiscuterClick?: () => void;
 }
 
     </script>
@@ -49,7 +48,6 @@ export let onLegalNoticeClick: SidebarProps['onLegalNoticeClick']= undefined;
 export let onContactClick: SidebarProps['onContactClick']= undefined;
 export let onSupportClick: SidebarProps['onSupportClick']= undefined;
 export let onSourcesClick: SidebarProps['onSourcesClick']= undefined;
-export let onDiscuterClick: SidebarProps['onDiscuterClick']= undefined;
 
 
 
@@ -70,4 +68,4 @@ export let onDiscuterClick: SidebarProps['onDiscuterClick']= undefined;
 
 </script>
 
-<aside  class="rdp-sidebar" ><Calendar  selectedDate={selectedDate}  locale={locale}  yearRange={yearRange}  minDate={minDate}  onSelect={(d) => onDateSelect?.(d)}></Calendar><BannerAbout  onLegalNoticeClick={(event) => onLegalNoticeClick()} onContactClick={(event) => onContactClick()} onSupportClick={(event) => onSupportClick()} onSourcesClick={(event) => onSourcesClick()} onDiscuterClick={(event) => onDiscuterClick()}></BannerAbout></aside>
+<aside  class="rdp-sidebar" ><Calendar  selectedDate={selectedDate}  locale={locale}  yearRange={yearRange}  minDate={minDate}  onSelect={(d) => onDateSelect?.(d)}></Calendar><BannerAbout  onLegalNoticeClick={(event) => onLegalNoticeClick()} onContactClick={(event) => onContactClick()} onSupportClick={(event) => onSupportClick()} onSourcesClick={(event) => onSourcesClick()}></BannerAbout></aside>
