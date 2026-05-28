@@ -21,6 +21,7 @@ export class Sidebar {
   @Prop() minDate: any;
   @Event() dateSelect: any;
   @Event() legalNoticeClick: any;
+  @Event() termsOfServiceClick: any;
   @Event() contactClick: any;
   @Event() supportClick: any;
   @Event() sourcesClick: any;
@@ -40,6 +41,7 @@ export class Sidebar {
         ></calendar>
         <banner-about
           onLegalNoticeClick={() => this.legalNoticeClick.emit()}
+          onTermsOfServiceClick={() => this.termsOfServiceClick.emit()}
           onContactClick={() => this.contactClick.emit()}
           onSupportClick={() => this.supportClick.emit()}
           onSourcesClick={() => this.sourcesClick.emit()}

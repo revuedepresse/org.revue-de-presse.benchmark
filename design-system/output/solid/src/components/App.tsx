@@ -7,6 +7,7 @@ type SnapshotItem = {
 type ViewKey =
   | "main"
   | "legal"
+  | "terms"
   | "contact"
   | "support"
   | "sources"
@@ -60,6 +61,7 @@ import BannerAbout from "./BannerAbout";
 import Calendar from "./Calendar";
 import CalendarActionBar from "./CalendarActionBar";
 import LegalNoticePage from "./LegalNoticePage";
+import TermsOfServicePage from "./TermsOfServicePage";
 import ContactPage from "./ContactPage";
 import SupportPage from "./SupportPage";
 import SourcesPage from "./SourcesPage";
@@ -221,6 +223,7 @@ function App(props: AppProps) {
                   onListSelect={(id) => props.onListSelect?.(id)}
                   onDateSelect={(d) => selectFromSidebar(d)}
                   onLegalNoticeClick={(event) => goTo("legal")}
+                  onTermsOfServiceClick={(event) => goTo("terms")}
                   onContactClick={(event) => goTo("contact")}
                   onSupportClick={(event) => goTo("support")}
                   onSourcesClick={(event) => goTo("sources")}
@@ -286,6 +289,9 @@ function App(props: AppProps) {
               </Show>
               <Show when={currentView() === "legal"}>
                 <LegalNoticePage></LegalNoticePage>
+              </Show>
+              <Show when={currentView() === "terms"}>
+                <TermsOfServicePage></TermsOfServicePage>
               </Show>
               <Show when={currentView() === "contact"}>
                 <ContactPage></ContactPage>
@@ -378,6 +384,9 @@ function App(props: AppProps) {
             <Show when={currentView() === "legal"}>
               <LegalNoticePage></LegalNoticePage>
             </Show>
+            <Show when={currentView() === "terms"}>
+              <TermsOfServicePage></TermsOfServicePage>
+            </Show>
             <Show when={currentView() === "contact"}>
               <ContactPage></ContactPage>
             </Show>
@@ -404,6 +413,7 @@ function App(props: AppProps) {
             <Show when={!props.captureMode}>
               <BannerAbout
                 onLegalNoticeClick={(event) => goTo("legal")}
+                onTermsOfServiceClick={(event) => goTo("terms")}
                 onContactClick={(event) => goTo("contact")}
                 onSupportClick={(event) => goTo("support")}
                 onSourcesClick={(event) => goTo("sources")}

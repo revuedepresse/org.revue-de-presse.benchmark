@@ -8,6 +8,7 @@ import { BannerAbout } from "./BannerAbout";
 import { Calendar } from "./Calendar";
 import { CalendarActionBar } from "./CalendarActionBar";
 import { LegalNoticePage } from "./LegalNoticePage";
+import { TermsOfServicePage } from "./TermsOfServicePage";
 import { ContactPage } from "./ContactPage";
 import { SupportPage } from "./SupportPage";
 import { SourcesPage } from "./SourcesPage";
@@ -202,6 +203,7 @@ export class App {
                   onListSelect={(id) => this.listSelect?.(id)}
                   onDateSelect={(d) => this.selectFromSidebar(d)}
                   onLegalNoticeClick={() => this.goTo("legal")}
+                  onTermsOfServiceClick={() => this.goTo("terms")}
                   onContactClick={() => this.goTo("contact")}
                   onSupportClick={() => this.goTo("support")}
                   onSourcesClick={() => this.goTo("sources")}
@@ -254,6 +256,9 @@ export class App {
               ) : null}
               {this.currentView === "legal" ? (
                 <legal-notice-page></legal-notice-page>
+              ) : null}
+              {this.currentView === "terms" ? (
+                <terms-of-service-page></terms-of-service-page>
               ) : null}
               {this.currentView === "contact" ? (
                 <contact-page></contact-page>
@@ -334,6 +339,9 @@ export class App {
               {this.currentView === "legal" ? (
                 <legal-notice-page></legal-notice-page>
               ) : null}
+              {this.currentView === "terms" ? (
+                <terms-of-service-page></terms-of-service-page>
+              ) : null}
               {this.currentView === "contact" ? (
                 <contact-page></contact-page>
               ) : null}
@@ -360,6 +368,7 @@ export class App {
               {!this.captureMode ? (
                 <banner-about
                   onLegalNoticeClick={() => this.goTo("legal")}
+                  onTermsOfServiceClick={() => this.goTo("terms")}
                   onContactClick={() => this.goTo("contact")}
                   onSupportClick={() => this.goTo("support")}
                   onSourcesClick={() => this.goTo("sources")}

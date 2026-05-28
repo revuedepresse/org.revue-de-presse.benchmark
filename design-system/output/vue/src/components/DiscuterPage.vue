@@ -128,20 +128,12 @@
                 v-for="(citation, index) in citations ?? []"
               >
                 <li class="rdp-discuter__source">
-                  <a
-                    class="rdp-discuter__source-link"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    :href="citation.url"
-                    ><span class="rdp-discuter__source-n"
-                      >[{{ citation.n }}]</span
-                    ><span class="rdp-discuter__source-meta"
-                      >{{ citation.screenName }} —
-                      {{ citation.snapshotDate }}</span
-                    ><span class="rdp-discuter__source-text">{{
-                      citation.text
-                    }}</span></a
-                  >
+                  <span class="rdp-discuter__source-n" aria-hidden="true">
+                    [{{ citation.n }}] </span
+                  ><BlueskyPostCard
+                    :post="citationToPost(citation)"
+                    :locale="locale"
+                  ></BlueskyPostCard>
                 </li>
               </template>
             </ol>
@@ -404,22 +396,19 @@
           padding: 0;
           display: flex;
           flex-direction: column;
-          gap: var(--separation-1);
+          gap: var(--separation-2);
         }
-        .rdp-discuter__source-link {
+        .rdp-discuter__source {
           display: flex;
           flex-direction: column;
-          gap: 2px;
-          padding: var(--separation-1);
-          background: var(--color-white);
-          border-radius: var(--radius-default);
-          text-decoration: none;
-          color: var(--color-content-text);
+          gap: var(--separation-1);
         }
-        .rdp-discuter__source-link:hover { background: var(--color-taupe-grey); }
-        .rdp-discuter__source-n { font-weight: bold; color: var(--color-brand); }
-        .rdp-discuter__source-meta { font-size: 0.85em; color: var(--color-content-text); }
-        .rdp-discuter__source-text { line-height: var(--line-height-base); }
+        .rdp-discuter__source-n {
+          font-weight: bold;
+          color: var(--color-brand);
+          font-family: 'Signika', sans-serif;
+          font-size: var(--font-size-status-text);
+        }
         .rdp-discuter__composer {
           display: flex;
           flex-direction: column;
@@ -461,6 +450,9 @@
 import { computed } from "vue";
 
 import { t } from "../utils/i18n";
+import BlueskyPostCard from "./BlueskyPostCard.vue";
+import type { BlueskyPost } from "./BlueskyPostCard.vue";
+import type { Locale } from "../utils/i18n";
 
 export type DiscuterStatus =
   | "unauthenticated"
@@ -487,6 +479,13 @@ export type DiscuterCitation = {
   snapshotDate: string;
   url: string;
   text: string;
+  // Optional so the type stays back-compat with older API responses that
+  // pre-date the BlueskyPostCard wiring. When undefined the card falls
+  // back to handle-as-name, no avatar, zero metrics.
+  avatarUrl?: string | null;
+  reposts?: number;
+  likes?: number;
+  replies?: number;
 };
 type DiscuterPageProps = {
   status: DiscuterStatus;
@@ -496,6 +495,7 @@ type DiscuterPageProps = {
   draft?: string;
   handleDraft?: string;
   handleErrorCode?: DiscuterHandleErrorCode;
+  locale?: Locale;
   onLogin?: (handle: string) => void;
   onHandleDraftChange?: (next: string) => void;
   onDraftChange?: (next: string) => void;
@@ -533,5 +533,21 @@ function submitHandle() {
   const handle = cleanedHandle;
   if (handle.length === 0) return;
   props.onLogin?.(handle);
+}
+function citationToPost(citation: DiscuterCitation) {
+  return {
+    id: citation.publicationId,
+    authorName: citation.screenName,
+    authorHandle: citation.screenName,
+    authorAvatarUrl: citation.avatarUrl ?? undefined,
+    body: citation.text,
+    publishedAt: new Date(`${citation.snapshotDate}T12:00:00Z`),
+    metrics: {
+      replies: citation.replies ?? 0,
+      reposts: citation.reposts ?? 0,
+      likes: citation.likes ?? 0,
+    },
+    publicationUrl: citation.url,
+  };
 }
 </script>

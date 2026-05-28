@@ -10,6 +10,7 @@ type SnapshotItem = {
 type ViewKey =
   | "main"
   | "legal"
+  | "terms"
   | "contact"
   | "support"
   | "sources"
@@ -92,6 +93,7 @@ import type { Locale } from "../utils/i18n";
                 (listSelect)="onListSelect?.($event)"
                 (dateSelect)="selectFromSidebar($event)"
                 (legalNoticeClick)="goTo('legal')"
+                (termsOfServiceClick)="goTo('terms')"
                 (contactClick)="goTo('contact')"
                 (supportClick)="goTo('support')"
                 (sourcesClick)="goTo('sources')"
@@ -137,6 +139,9 @@ import type { Locale } from "../utils/i18n";
             ></ng-container>
             <ng-container *ngIf="currentView === 'legal'"
               ><legal-notice-page></legal-notice-page
+            ></ng-container>
+            <ng-container *ngIf="currentView === 'terms'"
+              ><terms-of-service-page></terms-of-service-page
             ></ng-container>
             <ng-container *ngIf="currentView === 'contact'"
               ><contact-page></contact-page
@@ -203,6 +208,9 @@ import type { Locale } from "../utils/i18n";
           <ng-container *ngIf="currentView === 'legal'"
             ><legal-notice-page></legal-notice-page
           ></ng-container>
+          <ng-container *ngIf="currentView === 'terms'"
+            ><terms-of-service-page></terms-of-service-page
+          ></ng-container>
           <ng-container *ngIf="currentView === 'contact'"
             ><contact-page></contact-page
           ></ng-container>
@@ -229,6 +237,7 @@ import type { Locale } from "../utils/i18n";
           <ng-container *ngIf="!captureMode"
             ><banner-about
               (legalNoticeClick)="goTo('legal')"
+              (termsOfServiceClick)="goTo('terms')"
               (contactClick)="goTo('contact')"
               (supportClick)="goTo('support')"
               (sourcesClick)="goTo('sources')"
@@ -561,6 +570,7 @@ export default class App {
     AlertModule,
     BlueskyPostCardModule,
     LegalNoticePageModule,
+    TermsOfServicePageModule,
     ContactPageModule,
     SupportPageModule,
     SourcesPageModule,

@@ -41,6 +41,13 @@
       ><br /><a
         class="rdp-banner-about__outer-link"
         data-testid="view-button"
+        data-view="terms"
+        :href="termsOfServiceHref ?? '/conditions-utilisation'"
+        @click="async (event) => handleTermsClick(event)"
+        >{{ t("footer.about.terms-of-service") }}</a
+      ><br /><a
+        class="rdp-banner-about__outer-link"
+        data-testid="view-button"
         data-view="contact"
         :href="contactHref ?? '/nous-contacter'"
         @click="async (event) => handleContactClick(event)"
@@ -230,12 +237,14 @@ import Icon from "./Icon.vue";
 
 type BannerAboutProps = {
   legalNoticeHref?: string;
+  termsOfServiceHref?: string;
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
   discuterHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -252,6 +261,12 @@ function handleLegalClick(event: any) {
   if (props.onLegalNoticeClick) {
     event.preventDefault();
     props.onLegalNoticeClick();
+  }
+}
+function handleTermsClick(event: any) {
+  if (props.onTermsOfServiceClick) {
+    event.preventDefault();
+    props.onTermsOfServiceClick();
   }
 }
 function handleContactClick(event: any) {

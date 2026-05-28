@@ -31,6 +31,7 @@
             x-on:list-select="onListSelect?.(id)"
             x-on:date-select="selectFromSidebar(d)"
             x-on:legal-notice-click="goTo('legal')"
+            x-on:terms-of-service-click="goTo('terms')"
             x-on:contact-click="goTo('contact')"
             x-on:support-click="goTo('support')"
             x-on:sources-click="goTo('sources')"
@@ -75,6 +76,9 @@
         </template>
         <template x-if="currentView === 'legal'">
           <LegalNoticePage></LegalNoticePage>
+        </template>
+        <template x-if="currentView === 'terms'">
+          <TermsOfServicePage></TermsOfServicePage>
         </template>
         <template x-if="currentView === 'contact'">
           <ContactPage></ContactPage>
@@ -142,6 +146,9 @@
       <template x-if="currentView === 'legal'">
         <LegalNoticePage></LegalNoticePage>
       </template>
+      <template x-if="currentView === 'terms'">
+        <TermsOfServicePage></TermsOfServicePage>
+      </template>
       <template x-if="currentView === 'contact'">
         <ContactPage></ContactPage>
       </template>
@@ -168,6 +175,7 @@
       <template x-if="!captureMode">
         <BannerAbout
           x-on:legal-notice-click="goTo('legal')"
+          x-on:terms-of-service-click="goTo('terms')"
           x-on:contact-click="goTo('contact')"
           x-on:support-click="goTo('support')"
           x-on:sources-click="goTo('sources')"

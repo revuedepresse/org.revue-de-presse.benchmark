@@ -1,4 +1,6 @@
-import { t } from "../utils/i18n";
+import { Locale, t } from "../utils/i18n";
+
+import { BlueskyPost, default as BlueskyPostCard } from "./BlueskyPostCard.jsx";
 
 import { $, Fragment, component$, h, useComputed$ } from "@builder.io/qwik";
 
@@ -27,6 +29,13 @@ export type DiscuterCitation = {
   snapshotDate: string;
   url: string;
   text: string;
+  // Optional so the type stays back-compat with older API responses that
+  // pre-date the BlueskyPostCard wiring. When undefined the card falls
+  // back to handle-as-name, no avatar, zero metrics.
+  avatarUrl?: string | null;
+  reposts?: number;
+  likes?: number;
+  replies?: number;
 };
 type DiscuterPageProps = {
   status: DiscuterStatus;
@@ -36,6 +45,7 @@ type DiscuterPageProps = {
   draft?: string;
   handleDraft?: string;
   handleErrorCode?: DiscuterHandleErrorCode;
+  locale?: Locale;
   onLogin?: (handle: string) => void;
   onHandleDraftChange?: (next: string) => void;
   onDraftChange?: (next: string) => void;
@@ -66,6 +76,30 @@ export const submitHandle = function submitHandle(
   const handle = cleanedHandle.value;
   if (handle.length === 0) return;
   props.onLogin?.(handle);
+};
+export const citationToPost = function citationToPost(
+  props,
+  state,
+  errorKey,
+  handleErrorKey,
+  cleanedHandle,
+  canSubmitHandle,
+  citation: DiscuterCitation
+) {
+  return {
+    id: citation.publicationId,
+    authorName: citation.screenName,
+    authorHandle: citation.screenName,
+    authorAvatarUrl: citation.avatarUrl ?? undefined,
+    body: citation.text,
+    publishedAt: new Date(`${citation.snapshotDate}T12:00:00Z`),
+    metrics: {
+      replies: citation.replies ?? 0,
+      reposts: citation.reposts ?? 0,
+      likes: citation.likes ?? 0,
+    },
+    publicationUrl: citation.url,
+  };
 };
 export const DiscuterPage = component$((props: DiscuterPageProps) => {
   const errorKey = useComputed$(() => {
@@ -232,22 +266,21 @@ export const DiscuterPage = component$((props: DiscuterPageProps) => {
                 {(props.citations ?? ([] || [])).map((citation) => {
                   return (
                     <li class="rdp-discuter__source">
-                      <a
-                        class="rdp-discuter__source-link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={citation.url}
-                      >
-                        <span class="rdp-discuter__source-n">
-                          [{citation.n}]
-                        </span>
-                        <span class="rdp-discuter__source-meta">
-                          {citation.screenName} — {citation.snapshotDate}
-                        </span>
-                        <span class="rdp-discuter__source-text">
-                          {citation.text}
-                        </span>
-                      </a>
+                      <span class="rdp-discuter__source-n" aria-hidden="true">
+                        [{citation.n}]
+                      </span>
+                      <BlueskyPostCard
+                        post={citationToPost(
+                          props,
+                          state,
+                          errorKey,
+                          handleErrorKey,
+                          cleanedHandle,
+                          canSubmitHandle,
+                          citation
+                        )}
+                        locale={props.locale}
+                      ></BlueskyPostCard>
                     </li>
                   );
                 })}
@@ -522,22 +555,19 @@ export const DiscuterPage = component$((props: DiscuterPageProps) => {
           padding: 0;
           display: flex;
           flex-direction: column;
-          gap: var(--separation-1);
+          gap: var(--separation-2);
         }
-        .rdp-discuter__source-link {
+        .rdp-discuter__source {
           display: flex;
           flex-direction: column;
-          gap: 2px;
-          padding: var(--separation-1);
-          background: var(--color-white);
-          border-radius: var(--radius-default);
-          text-decoration: none;
-          color: var(--color-content-text);
+          gap: var(--separation-1);
         }
-        .rdp-discuter__source-link:hover { background: var(--color-taupe-grey); }
-        .rdp-discuter__source-n { font-weight: bold; color: var(--color-brand); }
-        .rdp-discuter__source-meta { font-size: 0.85em; color: var(--color-content-text); }
-        .rdp-discuter__source-text { line-height: var(--line-height-base); }
+        .rdp-discuter__source-n {
+          font-weight: bold;
+          color: var(--color-brand);
+          font-family: 'Signika', sans-serif;
+          font-size: var(--font-size-status-text);
+        }
         .rdp-discuter__composer {
           display: flex;
           flex-direction: column;

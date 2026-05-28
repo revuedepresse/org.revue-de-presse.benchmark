@@ -3,12 +3,14 @@ import * as React from "react";
 
 type BannerAboutProps = {
   legalNoticeHref?: string;
+  termsOfServiceHref?: string;
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
   discuterHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -26,6 +28,13 @@ function BannerAbout(props: BannerAboutProps) {
     if (props.onLegalNoticeClick) {
       event.preventDefault();
       props.onLegalNoticeClick();
+    }
+  }
+
+  function handleTermsClick(event: any) {
+    if (props.onTermsOfServiceClick) {
+      event.preventDefault();
+      props.onTermsOfServiceClick();
     }
   }
 
@@ -108,6 +117,16 @@ function BannerAbout(props: BannerAboutProps) {
           onClick={(event) => handleLegalClick(event)}
         >
           {t("footer.about.privacy-policy")}
+        </a>
+        <br />
+        <a
+          className="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="terms"
+          href={props.termsOfServiceHref ?? "/conditions-utilisation"}
+          onClick={(event) => handleTermsClick(event)}
+        >
+          {t("footer.about.terms-of-service")}
         </a>
         <br />
         <a

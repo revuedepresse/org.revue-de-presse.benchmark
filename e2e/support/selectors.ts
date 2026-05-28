@@ -1,7 +1,7 @@
 import type { Page, Locator } from '@playwright/test';
 import { ymd } from './seeded';
 
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources';
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
 
 export const appShell = (p: Page): Locator => p.locator('[data-testid="app-shell"]');
 export const postCards = (p: Page): Locator => p.locator('[data-testid="post-card"]');

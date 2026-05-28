@@ -22,6 +22,7 @@ type SidebarProps = {
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -40,6 +41,7 @@ export default class Sidebar extends LitElement {
   @property() minDate: any;
   @property() onDateSelect: any;
   @property() onLegalNoticeClick: any;
+  @property() onTermsOfServiceClick: any;
   @property() onContactClick: any;
   @property() onSupportClick: any;
   @property() onSourcesClick: any;
@@ -53,7 +55,8 @@ export default class Sidebar extends LitElement {
     }  .yearRange=${this.yearRange}  .minDate=${this.minDate}  @select=${(d) =>
       this.onDateSelect?.(d)} ></my-calendar>
         <banner-about  @legalnoticeclick=${(event) =>
-          this.onLegalNoticeClick()}  @contactclick=${(event) =>
+          this.onLegalNoticeClick()}  @termsofserviceclick=${(event) =>
+      this.onTermsOfServiceClick()}  @contactclick=${(event) =>
       this.onContactClick()}  @supportclick=${(event) =>
       this.onSupportClick()}  @sourcesclick=${(event) =>
       this.onSourcesClick()}  @discuterclick=${(event) =>

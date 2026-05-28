@@ -6,12 +6,14 @@ import { customElement, property, state, query } from "lit/decorators";
 
 type BannerAboutProps = {
   legalNoticeHref?: string;
+  termsOfServiceHref?: string;
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
   discuterHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -25,12 +27,14 @@ export default class BannerAbout extends LitElement {
   }
 
   @property() onLegalNoticeClick: any;
+  @property() onTermsOfServiceClick: any;
   @property() onContactClick: any;
   @property() onSupportClick: any;
   @property() onSourcesClick: any;
   @property() onDiscuterClick: any;
   @property() subscribeHref: any;
   @property() legalNoticeHref: any;
+  @property() termsOfServiceHref: any;
   @property() contactHref: any;
   @property() supportHref: any;
   @property() sourcesHref: any;
@@ -43,6 +47,12 @@ export default class BannerAbout extends LitElement {
     if (this.onLegalNoticeClick) {
       event.preventDefault();
       this.onLegalNoticeClick();
+    }
+  }
+  handleTermsClick(event: any) {
+    if (this.onTermsOfServiceClick) {
+      event.preventDefault();
+      this.onTermsOfServiceClick();
     }
   }
   handleContactClick(event: any) {
@@ -88,6 +98,12 @@ export default class BannerAbout extends LitElement {
           this.legalNoticeHref ?? "/mentions-legales"
         }  @click=${(event) => this.handleLegalClick(event)} >${t(
       "footer.about.privacy-policy"
+    )}</a>
+        <br  />
+        <a  data-testid="view-button"  data-view="terms"  .href=${
+          this.termsOfServiceHref ?? "/conditions-utilisation"
+        }  @click=${(event) => this.handleTermsClick(event)} >${t(
+      "footer.about.terms-of-service"
     )}</a>
         <br  />
         <a  data-testid="view-button"  data-view="contact"  .href=${

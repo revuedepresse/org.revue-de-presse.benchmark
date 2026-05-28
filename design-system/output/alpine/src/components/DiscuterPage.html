@@ -120,26 +120,15 @@ submitHandle()"
           <ol class="rdp-discuter__sources-list">
             <template x-for="citation in citations ?? []">
               <li class="rdp-discuter__source">
-                <a
-                  class="rdp-discuter__source-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  x-bind:href="citation.url"
-                >
-                  <span class="rdp-discuter__source-n">
-                    [
-                    <span x-html="citation.n"></span>
-                    ]
-                  </span>
-                  <span class="rdp-discuter__source-meta">
-                    <span x-html="citation.screenName"></span>
-                    —
-                    <span x-html="citation.snapshotDate"></span>
-                  </span>
-                  <span class="rdp-discuter__source-text">
-                    <span x-html="citation.text"></span>
-                  </span>
-                </a>
+                <span class="rdp-discuter__source-n" aria-hidden="true">
+                  [
+                  <span x-html="citation.n"></span>
+                  ]
+                </span>
+                <BlueskyPostCard
+                  x-bind:post="citationToPost(citation)"
+                  x-bind:locale="locale"
+                ></BlueskyPostCard>
               </li>
             </template>
           </ol>
@@ -393,22 +382,19 @@ submit()"
               padding: 0;
               display: flex;
               flex-direction: column;
-              gap: var(--separation-1);
+              gap: var(--separation-2);
             }
-            .rdp-discuter__source-link {
+            .rdp-discuter__source {
               display: flex;
               flex-direction: column;
-              gap: 2px;
-              padding: var(--separation-1);
-              background: var(--color-white);
-              border-radius: var(--radius-default);
-              text-decoration: none;
-              color: var(--color-content-text);
+              gap: var(--separation-1);
             }
-            .rdp-discuter__source-link:hover { background: var(--color-taupe-grey); }
-            .rdp-discuter__source-n { font-weight: bold; color: var(--color-brand); }
-            .rdp-discuter__source-meta { font-size: 0.85em; color: var(--color-content-text); }
-            .rdp-discuter__source-text { line-height: var(--line-height-base); }
+            .rdp-discuter__source-n {
+              font-weight: bold;
+              color: var(--color-brand);
+              font-family: 'Signika', sans-serif;
+              font-size: var(--font-size-status-text);
+            }
             .rdp-discuter__composer {
               display: flex;
               flex-direction: column;
@@ -473,6 +459,22 @@ submit()"
         const handle = this.cleanedHandle;
         if (handle.length === 0) return;
         props.onLogin?.(handle);
+      },
+      citationToPost(citation) {
+        return {
+          id: citation.publicationId,
+          authorName: citation.screenName,
+          authorHandle: citation.screenName,
+          authorAvatarUrl: citation.avatarUrl ?? undefined,
+          body: citation.text,
+          publishedAt: new Date(`${citation.snapshotDate}T12:00:00Z`),
+          metrics: {
+            replies: citation.replies ?? 0,
+            reposts: citation.reposts ?? 0,
+            likes: citation.likes ?? 0,
+          },
+          publicationUrl: citation.url,
+        };
       },
     }));
   });

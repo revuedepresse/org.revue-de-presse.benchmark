@@ -50,6 +50,16 @@
     <a
       class="rdp-banner-about__outer-link"
       data-testid="view-button"
+      data-view="terms"
+      x-bind:href="termsOfServiceHref ?? '/conditions-utilisation'"
+      x-on:click="handleTermsClick($event)"
+    >
+      <span x-html="t('footer.about.terms-of-service')"></span>
+    </a>
+    <br />
+    <a
+      class="rdp-banner-about__outer-link"
+      data-testid="view-button"
       data-view="contact"
       x-bind:href="contactHref ?? '/nous-contacter'"
       x-on:click="handleContactClick($event)"
@@ -259,6 +269,12 @@
         if (props.onLegalNoticeClick) {
           event.preventDefault();
           props.onLegalNoticeClick();
+        }
+      },
+      handleTermsClick(event) {
+        if (props.onTermsOfServiceClick) {
+          event.preventDefault();
+          props.onTermsOfServiceClick();
         }
       },
       handleContactClick(event) {

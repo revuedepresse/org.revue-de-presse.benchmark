@@ -20,6 +20,7 @@ type SidebarProps = {
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -41,6 +42,7 @@ import type { Locale } from "../utils/i18n";
       ></calendar>
       <banner-about
         (legalNoticeClick)="this.onLegalNoticeClick.emit()"
+        (termsOfServiceClick)="this.onTermsOfServiceClick.emit()"
         (contactClick)="this.onContactClick.emit()"
         (supportClick)="this.onSupportClick.emit()"
         (sourcesClick)="this.onSourcesClick.emit()"
@@ -77,6 +79,7 @@ export default class Sidebar {
   @Input() minDate!: SidebarProps["minDate"];
   @Input() onDateSelect!: SidebarProps["onDateSelect"];
   @Output() onLegalNoticeClick = new EventEmitter<any>();
+  @Output() onTermsOfServiceClick = new EventEmitter<any>();
   @Output() onContactClick = new EventEmitter<any>();
   @Output() onSupportClick = new EventEmitter<any>();
   @Output() onSourcesClick = new EventEmitter<any>();

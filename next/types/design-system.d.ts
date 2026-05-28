@@ -26,7 +26,7 @@ declare module '@design-system/components/BlueskyPostCard' {
 
 declare module '@design-system/components/App' {
   type SnapshotItem = { id: string; label: string };
-  type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources';
+  type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
   type Locale = string;
   type BlueskyPost = import('@design-system/components/BlueskyPostCard').BlueskyPost;
 

@@ -9,6 +9,7 @@ import BannerAbout from './BannerAbout.lite';
 import Calendar from './Calendar.lite';
 import CalendarActionBar from './CalendarActionBar.lite';
 import LegalNoticePage from './LegalNoticePage.lite';
+import TermsOfServicePage from './TermsOfServicePage.lite';
 import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
@@ -27,7 +28,7 @@ import type {
 
 type SnapshotItem = { id: string; label: string };
 
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter';
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter';
 
 type AppProps = {
   layout?: 'mobile' | 'desktop';
@@ -69,7 +70,7 @@ export default function App(props: AppProps) {
   const state = useStore({
     focusedDate: new Date(),
     isCalendarOpen: false,
-    currentView: 'main' as 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter',
+    currentView: 'main' as 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter',
     initialised: false,
     get popularNewsLine(): string {
       return t(
@@ -193,6 +194,7 @@ export default function App(props: AppProps) {
                 onListSelect={(id: string) => props.onListSelect?.(id)}
                 onDateSelect={(d: Date) => state.selectFromSidebar(d)}
                 onLegalNoticeClick={() => state.goTo('legal')}
+                onTermsOfServiceClick={() => state.goTo('terms')}
                 onContactClick={() => state.goTo('contact')}
                 onSupportClick={() => state.goTo('support')}
                 onSourcesClick={() => state.goTo('sources')}
@@ -236,6 +238,9 @@ export default function App(props: AppProps) {
             </Show>
             <Show when={state.currentView === 'legal'}>
               <LegalNoticePage />
+            </Show>
+            <Show when={state.currentView === 'terms'}>
+              <TermsOfServicePage />
             </Show>
             <Show when={state.currentView === 'contact'}>
               <ContactPage />
@@ -304,6 +309,9 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'legal'}>
             <LegalNoticePage />
           </Show>
+          <Show when={state.currentView === 'terms'}>
+            <TermsOfServicePage />
+          </Show>
           <Show when={state.currentView === 'contact'}>
             <ContactPage />
           </Show>
@@ -330,6 +338,7 @@ export default function App(props: AppProps) {
           <Show when={!props.captureMode}>
             <BannerAbout
               onLegalNoticeClick={() => state.goTo('legal')}
+              onTermsOfServiceClick={() => state.goTo('terms')}
               onContactClick={() => state.goTo('contact')}
               onSupportClick={() => state.goTo('support')}
               onSourcesClick={() => state.goTo('sources')}

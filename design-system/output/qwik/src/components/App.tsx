@@ -37,6 +37,8 @@ import Spinner from "./Spinner.jsx";
 
 import SupportPage from "./SupportPage.jsx";
 
+import TermsOfServicePage from "./TermsOfServicePage.jsx";
+
 import {
   $,
   Fragment,
@@ -54,6 +56,7 @@ type SnapshotItem = {
 type ViewKey =
   | "main"
   | "legal"
+  | "terms"
   | "contact"
   | "support"
   | "sources"
@@ -304,6 +307,16 @@ export const App = component$((props: AppProps) => {
                     "legal"
                   )
                 )}
+                onTermsOfServiceClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "terms"
+                  )
+                )}
                 onContactClick$={$((event) =>
                   goTo(
                     props,
@@ -404,6 +417,9 @@ export const App = component$((props: AppProps) => {
             {state.currentView === "legal" ? (
               <LegalNoticePage></LegalNoticePage>
             ) : null}
+            {state.currentView === "terms" ? (
+              <TermsOfServicePage></TermsOfServicePage>
+            ) : null}
             {state.currentView === "contact" ? (
               <ContactPage></ContactPage>
             ) : null}
@@ -496,6 +512,9 @@ export const App = component$((props: AppProps) => {
             {state.currentView === "legal" ? (
               <LegalNoticePage></LegalNoticePage>
             ) : null}
+            {state.currentView === "terms" ? (
+              <TermsOfServicePage></TermsOfServicePage>
+            ) : null}
             {state.currentView === "contact" ? (
               <ContactPage></ContactPage>
             ) : null}
@@ -531,6 +550,16 @@ export const App = component$((props: AppProps) => {
                     prevDayDisabled,
                     nextDayDisabled,
                     "legal"
+                  )
+                )}
+                onTermsOfServiceClick$={$((event) =>
+                  goTo(
+                    props,
+                    state,
+                    popularNewsLine,
+                    prevDayDisabled,
+                    nextDayDisabled,
+                    "terms"
                   )
                 )}
                 onContactClick$={$((event) =>

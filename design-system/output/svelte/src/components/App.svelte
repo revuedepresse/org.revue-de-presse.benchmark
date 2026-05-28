@@ -4,7 +4,7 @@ id: string;
 label: string;
 }
 
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter'
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter'
 
 type AppProps = {
 layout?: 'mobile' | 'desktop';
@@ -64,6 +64,7 @@ import  BannerAbout from './BannerAbout.svelte';
 import  Calendar from './Calendar.svelte';
 import  CalendarActionBar from './CalendarActionBar.svelte';
 import  LegalNoticePage from './LegalNoticePage.svelte';
+import  TermsOfServicePage from './TermsOfServicePage.svelte';
 import  ContactPage from './ContactPage.svelte';
 import  SupportPage from './SupportPage.svelte';
 import  SourcesPage from './SourcesPage.svelte';
@@ -212,7 +213,7 @@ initialised = true; });
 {#if (layout ?? 'desktop') === 'desktop' }
 <div  class="rdp-app__content" >
 {#if !captureMode }
-<aside  class="rdp-app__column" ><Sidebar  lists={lists}  selectedListId={selectedListId}  selectedDate={pickedDate}  yearRange={yearRange}  minDate={minDate}  locale={locale}  onListSelect={(id) => onListSelect?.(id)} onDateSelect={(d) => selectFromSidebar(d)} onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')} onDiscuterClick={(event) => goTo('discuter')}></Sidebar></aside>
+<aside  class="rdp-app__column" ><Sidebar  lists={lists}  selectedListId={selectedListId}  selectedDate={pickedDate}  yearRange={yearRange}  minDate={minDate}  locale={locale}  onListSelect={(id) => onListSelect?.(id)} onDateSelect={(d) => selectFromSidebar(d)} onLegalNoticeClick={(event) => goTo('legal')} onTermsOfServiceClick={(event) => goTo('terms')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')} onDiscuterClick={(event) => goTo('discuter')}></Sidebar></aside>
 
 
 {/if}<main  class="rdp-app__main"  aria-busy={loading ? 'true' : undefined} >
@@ -249,6 +250,11 @@ initialised = true; });
 {/if}
 {#if currentView === 'legal' }
 <LegalNoticePage ></LegalNoticePage>
+
+
+{/if}
+{#if currentView === 'terms' }
+<TermsOfServicePage ></TermsOfServicePage>
 
 
 {/if}
@@ -313,6 +319,11 @@ initialised = true; });
 
 
 {/if}
+{#if currentView === 'terms' }
+<TermsOfServicePage ></TermsOfServicePage>
+
+
+{/if}
 {#if currentView === 'contact' }
 <ContactPage ></ContactPage>
 
@@ -334,7 +345,7 @@ initialised = true; });
 
 {/if}
 {#if !captureMode }
-<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')} onDiscuterClick={(event) => goTo('discuter')}></BannerAbout>
+<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onTermsOfServiceClick={(event) => goTo('terms')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')} onDiscuterClick={(event) => goTo('discuter')}></BannerAbout>
 
 
 {/if}</main>

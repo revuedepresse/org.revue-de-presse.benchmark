@@ -6,12 +6,14 @@ import { $, Fragment, component$, h, useComputed$ } from "@builder.io/qwik";
 
 type BannerAboutProps = {
   legalNoticeHref?: string;
+  termsOfServiceHref?: string;
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
   discuterHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -26,6 +28,17 @@ export const handleLegalClick = function handleLegalClick(
   if (props.onLegalNoticeClick) {
     event.preventDefault();
     props.onLegalNoticeClick();
+  }
+};
+export const handleTermsClick = function handleTermsClick(
+  props,
+  state,
+  year,
+  event: any
+) {
+  if (props.onTermsOfServiceClick) {
+    event.preventDefault();
+    props.onTermsOfServiceClick();
   }
 };
 export const handleContactClick = function handleContactClick(
@@ -129,6 +142,16 @@ export const BannerAbout = component$((props: BannerAboutProps) => {
           onClick$={$((event) => handleLegalClick(props, state, year, event))}
         >
           {t("footer.about.privacy-policy")}
+        </a>
+        <br />
+        <a
+          class="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="terms"
+          href={props.termsOfServiceHref ?? "/conditions-utilisation"}
+          onClick$={$((event) => handleTermsClick(props, state, year, event))}
+        >
+          {t("footer.about.terms-of-service")}
         </a>
         <br />
         <a

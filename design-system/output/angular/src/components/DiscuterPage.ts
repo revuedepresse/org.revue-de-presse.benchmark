@@ -28,6 +28,13 @@ export type DiscuterCitation = {
   snapshotDate: string;
   url: string;
   text: string;
+  // Optional so the type stays back-compat with older API responses that
+  // pre-date the BlueskyPostCard wiring. When undefined the card falls
+  // back to handle-as-name, no avatar, zero metrics.
+  avatarUrl?: string | null;
+  reposts?: number;
+  likes?: number;
+  replies?: number;
 };
 type DiscuterPageProps = {
   status: DiscuterStatus;
@@ -37,6 +44,7 @@ type DiscuterPageProps = {
   draft?: string;
   handleDraft?: string;
   handleErrorCode?: DiscuterHandleErrorCode;
+  locale?: Locale;
   onLogin?: (handle: string) => void;
   onHandleDraftChange?: (next: string) => void;
   onDraftChange?: (next: string) => void;
@@ -46,6 +54,7 @@ type DiscuterPageProps = {
 };
 
 import { t } from "../utils/i18n";
+import type { Locale } from "../utils/i18n";
 
 @Component({
   selector: "discuter-page",
@@ -174,28 +183,16 @@ import { t } from "../utils/i18n";
               <ol class="rdp-discuter__sources-list">
                 <ng-container *ngFor="let citation of citations ?? []"
                   ><li class="rdp-discuter__source">
-                    <a
-                      class="rdp-discuter__source-link"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      [attr.href]="citation.url"
-                      ><span class="rdp-discuter__source-n"
-                        >[ {{citation.n}} ]</span
-                      >
-                      <span class="rdp-discuter__source-meta"
-                        >{{citation.screenName}} —
-                        {{citation.snapshotDate}}</span
-                      >
-                      <span
-                        class="rdp-discuter__source-text"
-                        >{{citation.text}}</span
-                      ></a
-                    >
-                  </li></ng-container
-                >
-              </ol>
-            </aside></ng-container
-          >
+                    <span class="rdp-discuter__source-n" aria-hidden="true">
+                      [ {{citation.n}} ]
+                    </span>
+                    <bluesky-post-card
+                      [post]="citationToPost(citation)"
+                      [locale]="locale"
+                    ></bluesky-post-card></li
+                ></ng-container>
+              </ol></aside
+          ></ng-container>
           <form
             class="rdp-discuter__composer"
             (submit)="
@@ -451,22 +448,19 @@ import { t } from "../utils/i18n";
                   padding: 0;
                   display: flex;
                   flex-direction: column;
-                  gap: var(--separation-1);
+                  gap: var(--separation-2);
                 }
-                .rdp-discuter__source-link {
+                .rdp-discuter__source {
                   display: flex;
                   flex-direction: column;
-                  gap: 2px;
-                  padding: var(--separation-1);
-                  background: var(--color-white);
-                  border-radius: var(--radius-default);
-                  text-decoration: none;
-                  color: var(--color-content-text);
+                  gap: var(--separation-1);
                 }
-                .rdp-discuter__source-link:hover { background: var(--color-taupe-grey); }
-                .rdp-discuter__source-n { font-weight: bold; color: var(--color-brand); }
-                .rdp-discuter__source-meta { font-size: 0.85em; color: var(--color-content-text); }
-                .rdp-discuter__source-text { line-height: var(--line-height-base); }
+                .rdp-discuter__source-n {
+                  font-weight: bold;
+                  color: var(--color-brand);
+                  font-family: 'Signika', sans-serif;
+                  font-size: var(--font-size-status-text);
+                }
                 .rdp-discuter__composer {
                   display: flex;
                   flex-direction: column;
@@ -524,6 +518,7 @@ export default class DiscuterPage {
   @Input() onHandleDraftChange!: DiscuterPageProps["onHandleDraftChange"];
   @Input() turns!: DiscuterPageProps["turns"];
   @Input() citations!: DiscuterPageProps["citations"];
+  @Input() locale!: DiscuterPageProps["locale"];
   @Input() onDraftChange!: DiscuterPageProps["onDraftChange"];
   @Input() onCancel!: DiscuterPageProps["onCancel"];
   @Input() onRetry!: DiscuterPageProps["onRetry"];
@@ -555,11 +550,27 @@ export default class DiscuterPage {
     if (handle.length === 0) return;
     this.onLogin?.(handle);
   }
+  citationToPost(citation: DiscuterCitation) {
+    return {
+      id: citation.publicationId,
+      authorName: citation.screenName,
+      authorHandle: citation.screenName,
+      authorAvatarUrl: citation.avatarUrl ?? undefined,
+      body: citation.text,
+      publishedAt: new Date(`${citation.snapshotDate}T12:00:00Z`),
+      metrics: {
+        replies: citation.replies ?? 0,
+        reposts: citation.reposts ?? 0,
+        likes: citation.likes ?? 0,
+      },
+      publicationUrl: citation.url,
+    };
+  }
 }
 
 @NgModule({
   declarations: [DiscuterPage],
-  imports: [CommonModule],
+  imports: [CommonModule, BlueskyPostCardModule],
   exports: [DiscuterPage],
 })
 export class DiscuterPageModule {}

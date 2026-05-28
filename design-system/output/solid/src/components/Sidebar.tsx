@@ -15,6 +15,7 @@ type SidebarProps = {
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -38,6 +39,7 @@ function Sidebar(props: SidebarProps) {
         ></Calendar>
         <BannerAbout
           onLegalNoticeClick={(event) => props.onLegalNoticeClick()}
+          onTermsOfServiceClick={(event) => props.onTermsOfServiceClick()}
           onContactClick={(event) => props.onContactClick()}
           onSupportClick={(event) => props.onSupportClick()}
           onSourcesClick={(event) => props.onSourcesClick()}

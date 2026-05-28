@@ -1,4 +1,7 @@
 import { t } from "../utils/i18n";
+import { BlueskyPostCard } from "./BlueskyPostCard";
+import type { BlueskyPost } from "./BlueskyPostCard";
+import type { Locale } from "../utils/i18n";
 
 import {
   Component,
@@ -23,6 +26,7 @@ export class DiscuterPage {
   @Event() handleDraftChange: any;
   @Prop() turns: any;
   @Prop() citations: any;
+  @Prop() locale: any;
   @Event() draftChange: any;
   @Event() cancel: any;
   @Event() retry: any;
@@ -53,6 +57,22 @@ export class DiscuterPage {
     const handle = this.cleanedHandle;
     if (handle.length === 0) return;
     this.login?.(handle);
+  }
+  citationToPost(citation: DiscuterCitation) {
+    return {
+      id: citation.publicationId,
+      authorName: citation.screenName,
+      authorHandle: citation.screenName,
+      authorAvatarUrl: citation.avatarUrl ?? undefined,
+      body: citation.text,
+      publishedAt: new Date(`${citation.snapshotDate}T12:00:00Z`),
+      metrics: {
+        replies: citation.replies ?? 0,
+        reposts: citation.reposts ?? 0,
+        likes: citation.likes ?? 0,
+      },
+      publicationUrl: citation.url,
+    };
   }
 
   componentDidLoad() {}
@@ -200,22 +220,13 @@ export class DiscuterPage {
                   {this.citations ??
                     []?.map((citation) => (
                       <li class="rdp-discuter__source">
-                        <a
-                          class="rdp-discuter__source-link"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          href={citation.url}
-                        >
-                          <span class="rdp-discuter__source-n">
-                            [{citation.n}]
-                          </span>
-                          <span class="rdp-discuter__source-meta">
-                            {citation.screenName}—{citation.snapshotDate}
-                          </span>
-                          <span class="rdp-discuter__source-text">
-                            {citation.text}
-                          </span>
-                        </a>
+                        <span class="rdp-discuter__source-n" aria-hidden="true">
+                          [{citation.n}]
+                        </span>
+                        <bluesky-post-card
+                          post={this.citationToPost(citation)}
+                          locale={this.locale}
+                        ></bluesky-post-card>
                       </li>
                     ))}
                 </ol>
@@ -480,22 +491,19 @@ export class DiscuterPage {
           padding: 0;
           display: flex;
           flex-direction: column;
-          gap: var(--separation-1);
+          gap: var(--separation-2);
         }
-        .rdp-discuter__source-link {
+        .rdp-discuter__source {
           display: flex;
           flex-direction: column;
-          gap: 2px;
-          padding: var(--separation-1);
-          background: var(--color-white);
-          border-radius: var(--radius-default);
-          text-decoration: none;
-          color: var(--color-content-text);
+          gap: var(--separation-1);
         }
-        .rdp-discuter__source-link:hover { background: var(--color-taupe-grey); }
-        .rdp-discuter__source-n { font-weight: bold; color: var(--color-brand); }
-        .rdp-discuter__source-meta { font-size: 0.85em; color: var(--color-content-text); }
-        .rdp-discuter__source-text { line-height: var(--line-height-base); }
+        .rdp-discuter__source-n {
+          font-weight: bold;
+          color: var(--color-brand);
+          font-family: 'Signika', sans-serif;
+          font-size: var(--font-size-status-text);
+        }
         .rdp-discuter__composer {
           display: flex;
           flex-direction: column;

@@ -15,12 +15,14 @@ import {
 })
 export class BannerAbout {
   @Event() legalNoticeClick: any;
+  @Event() termsOfServiceClick: any;
   @Event() contactClick: any;
   @Event() supportClick: any;
   @Event() sourcesClick: any;
   @Event() discuterClick: any;
   @Prop() subscribeHref: any;
   @Prop() legalNoticeHref: any;
+  @Prop() termsOfServiceHref: any;
   @Prop() contactHref: any;
   @Prop() supportHref: any;
   @Prop() sourcesHref: any;
@@ -33,6 +35,12 @@ export class BannerAbout {
     if (this.legalNoticeClick) {
       event.preventDefault();
       this.legalNoticeClick.emit();
+    }
+  }
+  handleTermsClick(event: any) {
+    if (this.termsOfServiceClick) {
+      event.preventDefault();
+      this.termsOfServiceClick.emit();
     }
   }
   handleContactClick(event: any) {
@@ -114,6 +122,16 @@ export class BannerAbout {
             onClick={(event) => this.handleLegalClick(event)}
           >
             {t("footer.about.privacy-policy")}
+          </a>
+          <br />
+          <a
+            class="rdp-banner-about__outer-link"
+            data-testid="view-button"
+            data-view="terms"
+            href={this.termsOfServiceHref ?? "/conditions-utilisation"}
+            onClick={(event) => this.handleTermsClick(event)}
+          >
+            {t("footer.about.terms-of-service")}
           </a>
           <br />
           <a

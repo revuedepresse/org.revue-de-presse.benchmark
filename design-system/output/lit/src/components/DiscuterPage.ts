@@ -1,4 +1,7 @@
 import  { t } from '../utils/i18n';
+import './BlueskyPostCard.ts';
+import './BlueskyPostCard.ts';
+import type { Locale } from '../utils/i18n';
 
 
 
@@ -20,6 +23,13 @@ export type DiscuterCitation = {
  snapshotDate: string;
  url: string;
  text: string;
+ // Optional so the type stays back-compat with older API responses that
+ // pre-date the BlueskyPostCard wiring. When undefined the card falls
+ // back to handle-as-name, no avatar, zero metrics.
+ avatarUrl?: string | null;
+ reposts?: number;
+ likes?: number;
+ replies?: number;
 }
 type DiscuterPageProps = {
  status: DiscuterStatus;
@@ -29,6 +39,7 @@ type DiscuterPageProps = {
  draft?: string;
  handleDraft?: string;
  handleErrorCode?: DiscuterHandleErrorCode;
+ locale?: Locale;
  onLogin?: (handle: string) => void;
  onHandleDraftChange?: (next: string) => void;
  onDraftChange?: (next: string) => void;
@@ -61,6 +72,7 @@ type DiscuterPageProps = {
 @property() onHandleDraftChange: any
 @property() turns: any
 @property() citations: any
+@property() locale: any
 @property() onDraftChange: any
 @property() onCancel: any
 @property() onRetry: any
@@ -92,6 +104,22 @@ submitHandle() {
  const handle = this.cleanedHandle;
  if (handle.length === 0) return;
  this.onLogin?.(handle);
+}
+citationToPost(citation: DiscuterCitation) {
+ return {
+   id: citation.publicationId,
+   authorName: citation.screenName,
+   authorHandle: citation.screenName,
+   authorAvatarUrl: citation.avatarUrl ?? undefined,
+   body: citation.text,
+   publishedAt: new Date(`${citation.snapshotDate}T12:00:00Z`),
+   metrics: {
+     replies: citation.replies ?? 0,
+     reposts: citation.reposts ?? 0,
+     likes: citation.likes ?? 0
+   },
+   publicationUrl: citation.url
+ };
 }
 
 
@@ -134,13 +162,12 @@ submitHandle() {
        ${(this.citations ?? []).length > 0 ?
              html`<aside  aria-labelledby="rdp-discuter-sources-h" ><h2  id="rdp-discuter-sources-h" >${t('discuter.sources.title')}</h2>
         <ol >${this.citations ?? []?.map((citation, index) => (
-              html`<li ><a  target="_blank"  rel="noopener noreferrer"  .href=${citation.url} ><span >[
+              html`<li ><span  aria-hidden="true" >
+                               [
        ${citation.n}
-       ]</span>
-       <span >${citation.screenName}
-        —
-       ${citation.snapshotDate}</span>
-       <span >${citation.text}</span></a></li>`
+       ]
+                             </span>
+       <bluesky-post-card  .post=${this.citationToPost(citation)}  .locale=${this.locale} ></bluesky-post-card></li>`
             ))}</ol></aside>`
            : null}
        <form  @submit=${(event) => {
@@ -358,22 +385,19 @@ submitHandle() {
                  padding: 0;
                  display: flex;
                  flex-direction: column;
-                 gap: var(--separation-1);
+                 gap: var(--separation-2);
                }
-               .rdp-discuter__source-link {
+               .rdp-discuter__source {
                  display: flex;
                  flex-direction: column;
-                 gap: 2px;
-                 padding: var(--separation-1);
-                 background: var(--color-white);
-                 border-radius: var(--radius-default);
-                 text-decoration: none;
-                 color: var(--color-content-text);
+                 gap: var(--separation-1);
                }
-               .rdp-discuter__source-link:hover { background: var(--color-taupe-grey); }
-               .rdp-discuter__source-n { font-weight: bold; color: var(--color-brand); }
-               .rdp-discuter__source-meta { font-size: 0.85em; color: var(--color-content-text); }
-               .rdp-discuter__source-text { line-height: var(--line-height-base); }
+               .rdp-discuter__source-n {
+                 font-weight: bold;
+                 color: var(--color-brand);
+                 font-family: 'Signika', sans-serif;
+                 font-size: var(--font-size-status-text);
+               }
                .rdp-discuter__composer {
                  display: flex;
                  flex-direction: column;

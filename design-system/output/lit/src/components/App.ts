@@ -8,6 +8,7 @@ import './BannerAbout.ts';
 import './Calendar.ts';
 import './CalendarActionBar.ts';
 import './LegalNoticePage.ts';
+import './TermsOfServicePage.ts';
 import './ContactPage.ts';
 import './SupportPage.ts';
 import './SourcesPage.ts';
@@ -27,7 +28,7 @@ import './DiscuterPage.ts';
  id: string;
  label: string;
 }
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter'
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter'
 type AppProps = {
  layout?: 'mobile' | 'desktop';
  authenticated?: boolean;
@@ -206,7 +207,7 @@ this.initialised = true }
             : null}
         ${(this.layout ?? 'desktop') === 'desktop' ?
               html`<div >${!this.captureMode ?
-             html`<aside ><my-sidebar  .lists=${this.lists}  .selectedListId=${this.selectedListId}  .selectedDate=${this.pickedDate}  .yearRange=${this.yearRange}  .minDate=${this.minDate}  .locale=${this.locale}  @listselect=${(id) => this.onListSelect?.(id)}  @dateselect=${(d) => this.selectFromSidebar(d)}  @legalnoticeclick=${(event) => this.goTo('legal')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')}  @discuterclick=${(event) => this.goTo('discuter')} ></my-sidebar></aside>`
+             html`<aside ><my-sidebar  .lists=${this.lists}  .selectedListId=${this.selectedListId}  .selectedDate=${this.pickedDate}  .yearRange=${this.yearRange}  .minDate=${this.minDate}  .locale=${this.locale}  @listselect=${(id) => this.onListSelect?.(id)}  @dateselect=${(d) => this.selectFromSidebar(d)}  @legalnoticeclick=${(event) => this.goTo('legal')}  @termsofserviceclick=${(event) => this.goTo('terms')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')}  @discuterclick=${(event) => this.goTo('discuter')} ></my-sidebar></aside>`
            : null}
        <main  aria-busy=${this.loading ? 'true' : undefined} >${this.currentView !== 'main' ?
              html`<button  type="button"  @click=${(event) => this.goTo('main')} >
@@ -229,6 +230,9 @@ this.initialised = true }
            : null}
        ${this.currentView === 'legal' ?
              html`<legal-notice-page ></legal-notice-page>`
+           : null}
+       ${this.currentView === 'terms' ?
+             html`<terms-of-service-page ></terms-of-service-page>`
            : null}
        ${this.currentView === 'contact' ?
              html`<contact-page ></contact-page>`
@@ -266,6 +270,9 @@ this.initialised = true }
        ${this.currentView === 'legal' ?
              html`<legal-notice-page ></legal-notice-page>`
            : null}
+       ${this.currentView === 'terms' ?
+             html`<terms-of-service-page ></terms-of-service-page>`
+           : null}
        ${this.currentView === 'contact' ?
              html`<contact-page ></contact-page>`
            : null}
@@ -279,7 +286,7 @@ this.initialised = true }
              html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  @login=${(event) => this.onDiscuterLogin?.()}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
            : null}
        ${!this.captureMode ?
-             html`<banner-about  @legalnoticeclick=${(event) => this.goTo('legal')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')}  @discuterclick=${(event) => this.goTo('discuter')} ></banner-about>`
+             html`<banner-about  @legalnoticeclick=${(event) => this.goTo('legal')}  @termsofserviceclick=${(event) => this.goTo('terms')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')}  @discuterclick=${(event) => this.goTo('discuter')} ></banner-about>`
            : null}</main>
        ${this.isCalendarOpen ?
              html`<my-calendar  presentation="sheet"  .selectedDate=${this.focusedDate}  .locale=${this.locale}  .yearRange=${this.yearRange}  .minDate=${this.minDate}  @select=${(d) => this.pickFromCalendar(d)}  @dismiss=${(event) => this.closeCalendar()} ></my-calendar>`

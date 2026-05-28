@@ -2,7 +2,7 @@
 import App from '@design-system/components/App.vue';
 import { BlueskyLoginError, type BlueskyHandleErrorCode } from '../composables/useBluesky';
 
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources' | 'discuter';
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter';
 
 const props = defineProps<{
   initialView?: ViewKey;
@@ -73,6 +73,7 @@ function urlForDate(d: Date): string {
 function urlForView(view: ViewKey): string {
   switch (view) {
     case 'legal': return '/mentions-legales';
+    case 'terms': return '/conditions-utilisation';
     case 'contact': return '/nous-contacter';
     case 'support': return '/nous-soutenir';
     case 'sources': return '/sources';

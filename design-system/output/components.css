@@ -826,22 +826,19 @@
           padding: 0;
           display: flex;
           flex-direction: column;
-          gap: var(--separation-1);
+          gap: var(--separation-2);
         }
-        .rdp-discuter__source-link {
+        .rdp-discuter__source {
           display: flex;
           flex-direction: column;
-          gap: 2px;
-          padding: var(--separation-1);
-          background: var(--color-white);
-          border-radius: var(--radius-default);
-          text-decoration: none;
-          color: var(--color-content-text);
+          gap: var(--separation-1);
         }
-        .rdp-discuter__source-link:hover { background: var(--color-taupe-grey); }
-        .rdp-discuter__source-n { font-weight: bold; color: var(--color-brand); }
-        .rdp-discuter__source-meta { font-size: 0.85em; color: var(--color-content-text); }
-        .rdp-discuter__source-text { line-height: var(--line-height-base); }
+        .rdp-discuter__source-n {
+          font-weight: bold;
+          color: var(--color-brand);
+          font-family: 'Signika', sans-serif;
+          font-size: var(--font-size-status-text);
+        }
         .rdp-discuter__composer {
           display: flex;
           flex-direction: column;
@@ -1260,6 +1257,42 @@
         .rdp-support-page a { color: var(--color-brand); }
         .rdp-support-page ul { padding-left: var(--separation-3); margin: var(--separation-1) 0; }
         .rdp-support-page li { margin: 0 0 var(--separation-1); }
+
+/* TermsOfServicePage */
+.rdp-terms-of-service {
+          background: var(--color-white);
+          border-radius: var(--radius-default);
+          padding: var(--separation-3);
+          font-family: 'Roboto', sans-serif;
+          color: var(--color-content-text);
+        }
+        .rdp-terms-of-service h1 {
+          font-family: 'Signika', sans-serif;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-terms-of-service h2 {
+          font-family: 'Signika', sans-serif;
+          color: var(--color-brand);
+          font-size: var(--font-size-status-text);
+          margin: var(--separation-2) 0 var(--separation-1);
+        }
+        .rdp-terms-of-service p {
+          margin: 0 0 var(--separation-2);
+          line-height: var(--line-height-base);
+        }
+        .rdp-terms-of-service ul {
+          margin: 0 0 var(--separation-2);
+          padding-left: var(--separation-3);
+          line-height: var(--line-height-base);
+        }
+        .rdp-terms-of-service li {
+          margin: 0 0 var(--separation-1);
+        }
+        .rdp-terms-of-service a {
+          color: var(--color-brand);
+          text-decoration: underline;
+        }
 
 /* TextField */
 .rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: 'Roboto', sans-serif; }

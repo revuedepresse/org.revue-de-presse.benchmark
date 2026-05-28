@@ -18,6 +18,13 @@ screenName: string;
 snapshotDate: string;
 url: string;
 text: string;
+// Optional so the type stays back-compat with older API responses that
+// pre-date the BlueskyPostCard wiring. When undefined the card falls
+// back to handle-as-name, no avatar, zero metrics.
+avatarUrl?: string | null;
+reposts?: number;
+likes?: number;
+replies?: number;
 }
 
 type DiscuterPageProps = {
@@ -28,6 +35,7 @@ errorCode?: DiscuterErrorCode;
 draft?: string;
 handleDraft?: string;
 handleErrorCode?: DiscuterHandleErrorCode;
+locale?: Locale;
 onLogin?: (handle: string) => void;
 onHandleDraftChange?: (next: string) => void;
 onDraftChange?: (next: string) => void;
@@ -46,6 +54,9 @@ onRetry?: () => void;
 
 
   import  { t } from '../utils/i18n';
+import  BlueskyPostCard from './BlueskyPostCard.svelte';
+import type { BlueskyPost } from './BlueskyPostCard.svelte';
+import type { Locale } from '../utils/i18n';
 
 
 
@@ -61,6 +72,7 @@ export let status: DiscuterPageProps['status'];
 export let onHandleDraftChange: DiscuterPageProps['onHandleDraftChange']= undefined;
 export let turns: DiscuterPageProps['turns']= undefined;
 export let citations: DiscuterPageProps['citations']= undefined;
+export let locale: DiscuterPageProps['locale']= undefined;
 export let onDraftChange: DiscuterPageProps['onDraftChange']= undefined;
 export let onCancel: DiscuterPageProps['onCancel']= undefined;
 export let onRetry: DiscuterPageProps['onRetry']= undefined;
@@ -76,6 +88,22 @@ function submitHandle() {
 const handle = cleanedHandle();
 if (handle.length === 0) return;
 onLogin?.(handle);
+}
+function citationToPost(citation: DiscuterCitation) {
+return {
+  id: citation.publicationId,
+  authorName: citation.screenName,
+  authorHandle: citation.screenName,
+  authorAvatarUrl: citation.avatarUrl ?? undefined,
+  body: citation.text,
+  publishedAt: new Date(`${citation.snapshotDate}T12:00:00Z`),
+  metrics: {
+    replies: citation.replies ?? 0,
+    reposts: citation.reposts ?? 0,
+    likes: citation.likes ?? 0
+  },
+  publicationUrl: citation.url
+};
 }
     $: errorKey = () => {
 const code = errorCode ?? 'providers_exhausted';
@@ -147,7 +175,9 @@ submitHandle();
 {#if (citations ?? []).length > 0 }
 <aside  class="rdp-discuter__sources"  aria-labelledby="rdp-discuter-sources-h" ><h2  id="rdp-discuter-sources-h"  class="rdp-discuter__sources-title" >{t('discuter.sources.title')}</h2><ol  class="rdp-discuter__sources-list" >
 {#each citations ?? [] as citation }
-<li  class="rdp-discuter__source" ><a  class="rdp-discuter__source-link"  target="_blank"  rel="noopener noreferrer"  href={citation.url} ><span  class="rdp-discuter__source-n" >[{citation.n}]</span><span  class="rdp-discuter__source-meta" >{citation.screenName} — {citation.snapshotDate}</span><span  class="rdp-discuter__source-text" >{citation.text}</span></a></li>
+<li  class="rdp-discuter__source" ><span  class="rdp-discuter__source-n"  aria-hidden="true" >
+                      [{citation.n}]
+                    </span><BlueskyPostCard  post={citationToPost(citation)}  locale={locale} ></BlueskyPostCard></li>
 {/each}
 </ol></aside>
 

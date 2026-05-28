@@ -75,11 +75,14 @@ describe('buildLegacySitemapUrls', () => {
     expect(urls[0].lastmod).toBeDefined();
   });
 
-  it('includes the four fixed pages with their legacy lastmods', async () => {
+  it('includes the fixed pages with their legacy lastmods', async () => {
     const urls = await buildLegacySitemapUrls();
     const byLoc = new Map(urls.map((u) => [u.loc, u]));
     expect(byLoc.get('/mentions-legales')?.lastmod).toBe(
-      new Date('2023-01-23').toISOString(),
+      new Date('2026-05-27').toISOString(),
+    );
+    expect(byLoc.get('/conditions-utilisation')?.lastmod).toBe(
+      new Date('2026-05-27').toISOString(),
     );
     expect(byLoc.get('/nous-contacter')?.lastmod).toBe(
       new Date('2023-03-02').toISOString(),

@@ -32,6 +32,7 @@
               :onListSelect="(id) => onListSelect?.(id)"
               :onDateSelect="(d) => selectFromSidebar(d)"
               :onLegalNoticeClick="(event) => goTo('legal')"
+              :onTermsOfServiceClick="(event) => goTo('terms')"
               :onContactClick="(event) => goTo('contact')"
               :onSupportClick="(event) => goTo('support')"
               :onSourcesClick="(event) => goTo('sources')"
@@ -85,6 +86,10 @@
 
           <template v-if="currentView === 'legal'">
             <LegalNoticePage></LegalNoticePage>
+          </template>
+
+          <template v-if="currentView === 'terms'">
+            <TermsOfServicePage></TermsOfServicePage>
           </template>
 
           <template v-if="currentView === 'contact'">
@@ -171,6 +176,10 @@
           <LegalNoticePage></LegalNoticePage>
         </template>
 
+        <template v-if="currentView === 'terms'">
+          <TermsOfServicePage></TermsOfServicePage>
+        </template>
+
         <template v-if="currentView === 'contact'">
           <ContactPage></ContactPage>
         </template>
@@ -201,6 +210,7 @@
         <template v-if="!captureMode">
           <BannerAbout
             :onLegalNoticeClick="(event) => goTo('legal')"
+            :onTermsOfServiceClick="(event) => goTo('terms')"
             :onContactClick="(event) => goTo('contact')"
             :onSupportClick="(event) => goTo('support')"
             :onSourcesClick="(event) => goTo('sources')"
@@ -395,6 +405,7 @@ import BannerAbout from "./BannerAbout.vue";
 import Calendar from "./Calendar.vue";
 import CalendarActionBar from "./CalendarActionBar.vue";
 import LegalNoticePage from "./LegalNoticePage.vue";
+import TermsOfServicePage from "./TermsOfServicePage.vue";
 import ContactPage from "./ContactPage.vue";
 import SupportPage from "./SupportPage.vue";
 import SourcesPage from "./SourcesPage.vue";
@@ -418,6 +429,7 @@ type SnapshotItem = {
 type ViewKey =
   | "main"
   | "legal"
+  | "terms"
   | "contact"
   | "support"
   | "sources"

@@ -5,12 +5,14 @@ import { Output, EventEmitter, Component, Input } from "@angular/core";
 
 type BannerAboutProps = {
   legalNoticeHref?: string;
+  termsOfServiceHref?: string;
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
   discuterHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -68,6 +70,15 @@ import { t } from "../utils/i18n";
           [attr.href]="legalNoticeHref ?? '/mentions-legales'"
           (click)="handleLegalClick($event)"
           >{{t('footer.about.privacy-policy')}}</a
+        >
+        <br />
+        <a
+          class="rdp-banner-about__outer-link"
+          data-testid="view-button"
+          data-view="terms"
+          [attr.href]="termsOfServiceHref ?? '/conditions-utilisation'"
+          (click)="handleTermsClick($event)"
+          >{{t('footer.about.terms-of-service')}}</a
         >
         <br />
         <a
@@ -277,11 +288,13 @@ export default class BannerAbout {
 
   @Input() subscribeHref!: BannerAboutProps["subscribeHref"];
   @Input() legalNoticeHref!: BannerAboutProps["legalNoticeHref"];
+  @Input() termsOfServiceHref!: BannerAboutProps["termsOfServiceHref"];
   @Input() contactHref!: BannerAboutProps["contactHref"];
   @Input() supportHref!: BannerAboutProps["supportHref"];
   @Input() sourcesHref!: BannerAboutProps["sourcesHref"];
   @Input() discuterHref!: BannerAboutProps["discuterHref"];
   @Output() onLegalNoticeClick = new EventEmitter<any>();
+  @Output() onTermsOfServiceClick = new EventEmitter<any>();
   @Output() onContactClick = new EventEmitter<any>();
   @Output() onSupportClick = new EventEmitter<any>();
   @Output() onSourcesClick = new EventEmitter<any>();
@@ -294,6 +307,12 @@ export default class BannerAbout {
     if (this.onLegalNoticeClick) {
       event.preventDefault();
       this.onLegalNoticeClick.emit();
+    }
+  }
+  handleTermsClick(event: any) {
+    if (this.onTermsOfServiceClick) {
+      event.preventDefault();
+      this.onTermsOfServiceClick.emit();
     }
   }
   handleContactClick(event: any) {

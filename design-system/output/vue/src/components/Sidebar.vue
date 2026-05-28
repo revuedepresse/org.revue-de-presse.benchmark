@@ -9,6 +9,7 @@
     ></Calendar
     ><BannerAbout
       :onLegalNoticeClick="(event) => onLegalNoticeClick()"
+      :onTermsOfServiceClick="(event) => onTermsOfServiceClick()"
       :onContactClick="(event) => onContactClick()"
       :onSupportClick="(event) => onSupportClick()"
       :onSourcesClick="(event) => onSourcesClick()"
@@ -53,6 +54,7 @@ type SidebarProps = {
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;

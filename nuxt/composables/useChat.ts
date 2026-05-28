@@ -1,3 +1,5 @@
+import { cleanText } from '~/utils/clean-text';
+
 export type DiscuterTurn = {
   id: string;
   role: 'user' | 'assistant';
@@ -11,6 +13,12 @@ export type DiscuterCitation = {
   snapshotDate: string;
   url: string;
   text: string;
+  // Optional — populated by the backend so the BlueskyPostCard rendering
+  // in DiscuterPage has the same shape (avatar, metrics) as homepage cards.
+  avatarUrl?: string | null;
+  reposts?: number;
+  likes?: number;
+  replies?: number;
 };
 
 export type DiscuterStatus =
@@ -187,7 +195,11 @@ export const useChat = () => {
 
     if (frame.event === 'done') {
       const cits = Array.isArray(payload.citations) ? (payload.citations as DiscuterCitation[]) : [];
-      citations.value = cits;
+      // The backend's TextCleaner strips real \n / NBSP at embed time. The
+      // homepage's cleanText also decodes literal `\xNN` and `\\n` escapes
+      // that may survive the JSON layer (same upstream Bluesky snapshots).
+      // Apply it here so the citation panel matches homepage hygiene.
+      citations.value = cits.map((c) => ({ ...c, text: cleanText(c.text) }));
       if (typeof payload.conversationId === 'string') {
         conversationId.value = payload.conversationId;
       }

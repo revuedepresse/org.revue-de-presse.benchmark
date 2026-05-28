@@ -14,6 +14,7 @@ type SidebarProps = {
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -32,6 +33,7 @@ export default function Sidebar(props: SidebarProps) {
       />
       <BannerAbout
         onLegalNoticeClick={props.onLegalNoticeClick}
+        onTermsOfServiceClick={props.onTermsOfServiceClick}
         onContactClick={props.onContactClick}
         onSupportClick={props.onSupportClick}
         onSourcesClick={props.onSourcesClick}
