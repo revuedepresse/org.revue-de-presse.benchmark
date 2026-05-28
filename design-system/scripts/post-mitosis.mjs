@@ -52,6 +52,34 @@ for (const target of targets) {
   console.log(`post-mitosis: ${target} hydrated with utils/locales/types`);
 }
 
+// Strip Vue's inline-style emit. Mitosis 0.13 emits
+//   <component :is="'style'">{{ `...CSS...` }}</component>
+// which routes the CSS through Vue's text-interpolation. SSR HTML-escapes
+// any of >, ", ', & in the CSS but the client renders the raw template
+// literal, producing a "Hydration text mismatch in <style>" warning per
+// component on every page load. We can't rewrite to a real <style> tag
+// (Vue's compiler rejects them in component templates with "Tags with
+// side effect are ignored"), and v-html on the dynamic <component> wrapper
+// does not bind innerHTML to the rendered style node.
+//
+// So instead: strip the wrappers entirely. The same per-component CSS is
+// already collected into output/components.css further down, and the Nuxt
+// app imports that file once. Zero hydration warnings, all CSS still applies.
+const vueComponentsDir = join(outputDir, 'vue', 'src', 'components');
+if (existsSync(vueComponentsDir)) {
+  const STYLE_INTERP_RE = /<component :is="'style'">\{\{\s*\n?([\s\S]*?)\n?\s*\}\}<\/component>/g;
+  let patched = 0;
+  for (const file of readdirSync(vueComponentsDir).filter((f) => f.endsWith('.vue'))) {
+    const path = join(vueComponentsDir, file);
+    const original = readFileSync(path, 'utf8');
+    if (STYLE_INTERP_RE.test(original)) {
+      writeFileSync(path, original.replace(STYLE_INTERP_RE, ''));
+      patched++;
+    }
+  }
+  if (patched > 0) console.log(`post-mitosis: stripped ${patched} Vue inline-style block(s) (now served via shared output/components.css)`);
+}
+
 // Patch Svelte's broken inline-style emit.
 const svelteComponentsDir = join(outputDir, 'svelte', 'src', 'components');
 if (existsSync(svelteComponentsDir)) {

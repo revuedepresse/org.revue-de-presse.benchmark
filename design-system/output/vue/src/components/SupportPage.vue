@@ -52,31 +52,6 @@
         référencés
       </li>
     </ul>
-    <component :is="'style'">{{
-      `
-        .rdp-support-page {
-          background: var(--color-white);
-          border-radius: var(--radius-default);
-          padding: var(--separation-3);
-          font-family: Roboto, sans-serif;
-          color: var(--color-content-text);
-        }
-        .rdp-support-page h1 {
-          font-family: Signika, sans-serif;
-          color: var(--color-brand);
-          margin: 0 0 var(--separation-2);
-        }
-        .rdp-support-page h2 {
-          font-family: Signika, sans-serif;
-          color: var(--color-brand);
-          font-size: var(--font-size-status-text);
-          margin: var(--separation-2) 0 var(--separation-1);
-        }
-        .rdp-support-page p { margin: 0 0 var(--separation-1); }
-        .rdp-support-page a { color: var(--color-brand); }
-        .rdp-support-page ul { padding-left: var(--separation-3); margin: var(--separation-1) 0; }
-        .rdp-support-page li { margin: 0 0 var(--separation-1); }
-      `
-    }}</component>
+    
   </article>
 </template>

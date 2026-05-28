@@ -11,33 +11,7 @@
       >
         {{ y }}
       </li> </template
-    ><component :is="'style'">{{
-      `
-        .rdp-year-picker {
-          list-style: none;
-          margin: 0 var(--separation-2) var(--separation-2);
-          margin-left: calc(2 * var(--separation-2));
-          padding: 0;
-          background: var(--color-white);
-          border: 1px solid var(--color-brand);
-          border-radius: var(--radius-default);
-          font-family: Roboto, sans-serif;
-          font-size: var(--font-size-content);
-        }
-        .rdp-year-picker__item {
-          padding: var(--separation-1) var(--separation-2);
-          color: var(--color-brand);
-          cursor: pointer;
-          border-bottom: 1px solid var(--color-brand);
-          text-align: center;
-        }
-        .rdp-year-picker__item:last-child { border-bottom: none; }
-        .rdp-year-picker__item--selected {
-          background: var(--color-brand);
-          color: var(--color-white);
-        }
-      `
-    }}</component>
+    >
   </ul>
 </template>
 

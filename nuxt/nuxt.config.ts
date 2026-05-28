@@ -72,11 +72,16 @@ export default defineNuxtConfig({
 
   alias: {
     '@design-system': fileURLToPath(new URL('../design-system/output/vue/src', import.meta.url)),
+    '@design-system-css': fileURLToPath(new URL('../design-system/output/components.css', import.meta.url)),
     '@tokens': fileURLToPath(new URL('../design-system/src/tokens', import.meta.url)),
     '@icons': fileURLToPath(new URL('../design-system/src/icons', import.meta.url)),
   },
 
-  css: ['@tokens/tokens.css'],
+  // tokens.css is the design-system's foundation (vars). components.css
+  // is the per-component CSS we strip from the Mitosis-emitted Vue files
+  // (see design-system/scripts/post-mitosis.mjs) to avoid Vue SSR hydration
+  // warnings.
+  css: ['@tokens/tokens.css', '@design-system-css'],
 
   vite: {
     server: {

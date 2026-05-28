@@ -12,18 +12,7 @@
     <template v-else>
       {{ label ?? "" }}
     </template>
-    <component :is="'style'">{{
-      `
-        .rdp-link {
-          color: var(--color-brand-active);
-          text-decoration: none;
-          font-family: Roboto, sans-serif;
-        }
-        .rdp-link--underline { text-decoration: underline; }
-        .rdp-link--plain { color: inherit; }
-        .rdp-link:hover { color: var(--color-brand); }
-      `
-    }}</component></a
+    </a
   >
 </template>
 

@@ -28,22 +28,7 @@
       @click="async (event) => onShare?.(postId)"
     >
       <Icon name="share" :size="24" :decorative="true"></Icon></button
-    ><component :is="'style'">{{
-      `
-        .rdp-web-intents { display: inline-flex; gap: var(--separation-2); }
-        .rdp-web-intents__btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 24px;
-          height: 24px;
-          padding: 0;
-          background: transparent;
-          border: none;
-          cursor: pointer;
-        }
-      `
-    }}</component>
+    >
   </div>
 </template>
 

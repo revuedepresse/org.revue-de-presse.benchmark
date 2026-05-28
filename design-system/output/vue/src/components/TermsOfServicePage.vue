@@ -160,44 +160,7 @@
       Les présentes CGU sont soumises au droit français. À défaut de résolution
       amiable, tout litige sera porté devant les tribunaux français compétents.
     </p>
-    <component :is="'style'">{{
-      `
-        .rdp-terms-of-service {
-          background: var(--color-white);
-          border-radius: var(--radius-default);
-          padding: var(--separation-3);
-          font-family: Roboto, sans-serif;
-          color: var(--color-content-text);
-        }
-        .rdp-terms-of-service h1 {
-          font-family: Signika, sans-serif;
-          color: var(--color-brand);
-          margin: 0 0 var(--separation-2);
-        }
-        .rdp-terms-of-service h2 {
-          font-family: Signika, sans-serif;
-          color: var(--color-brand);
-          font-size: var(--font-size-status-text);
-          margin: var(--separation-2) 0 var(--separation-1);
-        }
-        .rdp-terms-of-service p {
-          margin: 0 0 var(--separation-2);
-          line-height: var(--line-height-base);
-        }
-        .rdp-terms-of-service ul {
-          margin: 0 0 var(--separation-2);
-          padding-left: var(--separation-3);
-          line-height: var(--line-height-base);
-        }
-        .rdp-terms-of-service li {
-          margin: 0 0 var(--separation-1);
-        }
-        .rdp-terms-of-service a {
-          color: var(--color-brand);
-          text-decoration: underline;
-        }
-      `
-    }}</component>
+    
   </article>
 </template>
 
