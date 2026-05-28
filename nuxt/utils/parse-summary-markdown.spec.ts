@@ -21,6 +21,14 @@ describe('parseSummaryMarkdown', () => {
     expect(out.map((b) => ('level' in b ? b.level : undefined))).toEqual([1, 3]);
   });
 
+  it('clamps ####+ headings to level 3 (defensive against prompt violations)', () => {
+    const out = parseSummaryMarkdown('#### Santé\n##### Encore plus profond');
+    expect(out.map((b) => ('level' in b ? b.level : undefined))).toEqual([3, 3]);
+    if (out[0]?.kind === 'heading') {
+      expect(out[0].segments[0]).toEqual({ kind: 'text', value: 'Santé' });
+    }
+  });
+
   it('parses bullet groups as one block with multiple items', () => {
     const md = `- Premier point
 - Deuxième point

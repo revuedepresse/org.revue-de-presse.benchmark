@@ -1,6 +1,9 @@
 import { readBody, createError, setResponseHeaders, sendStream } from 'h3';
 import { useRuntimeConfig } from '#imports';
 import { signApiJwt } from '../utils/signApiJwt';
+import { logger } from '../utils/logger';
+
+const log = logger.child({ route: '/api/chat' });
 
 /**
  * Browser → Nuxt → Symfony API SSE proxy.
@@ -18,12 +21,14 @@ export default defineEventHandler(async (event) => {
 
   const cfg = useRuntimeConfig(event);
   if (!cfg.chat.apiJwtSecret) {
+    log.error('API_JWT_SECRET is not configured on the Nuxt host');
     throw createError({
       statusCode: 500,
       statusMessage: 'API_JWT_SECRET is not configured on the Nuxt host',
     });
   }
   if (!cfg.apiBaseUrl) {
+    log.error('apiBaseUrl is not configured');
     throw createError({ statusCode: 500, statusMessage: 'apiBaseUrl is not configured' });
   }
 
@@ -56,6 +61,16 @@ export default defineEventHandler(async (event) => {
 
   if (!upstream.ok || upstream.body === null) {
     const detail = await upstream.text().catch(() => '');
+    log.warn(
+      {
+        did: session.did,
+        conversationId,
+        status: upstream.status,
+        statusText: upstream.statusText,
+        detail: detail.slice(0, 500),
+      },
+      'upstream chat returned non-ok response',
+    );
     throw createError({
       statusCode: upstream.status || 502,
       statusMessage: detail || upstream.statusText || 'Upstream chat error',

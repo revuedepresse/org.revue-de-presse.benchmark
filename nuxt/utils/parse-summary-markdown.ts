@@ -36,10 +36,14 @@ export function parseSummaryMarkdown(markdown: string): SummaryBlock[] {
       continue;
     }
 
-    // Headings — # / ## / ### (we cap at 3, deeper levels render as paragraph).
-    const headingMatch = line.match(/^(#{1,3})\s+(.+)$/);
+    // Headings — # / ## / ###. Deeper levels (####, #####, …) are clamped
+    // to ### so the markdown still renders as a styled heading rather than
+    // a raw "#### Politique" paragraph (the system prompt forbids them but
+    // we stay defensive).
+    const headingMatch = line.match(/^(#+)\s+(.+)$/);
     if (headingMatch) {
-      const level = headingMatch[1]!.length as 1 | 2 | 3;
+      const raw = headingMatch[1]!.length;
+      const level = Math.min(raw, 3) as 1 | 2 | 3;
       blocks.push({ kind: 'heading', level, segments: parseInline(headingMatch[2]!) });
       i++;
       continue;
@@ -67,7 +71,7 @@ export function parseSummaryMarkdown(markdown: string): SummaryBlock[] {
       if (nextRaw === undefined) break;
       const nextLine = nextRaw.trim();
       if (nextLine === '') break;
-      if (/^#{1,3}\s/.test(nextLine) || nextLine.startsWith('- ')) break;
+      if (/^#+\s/.test(nextLine) || nextLine.startsWith('- ')) break;
       para.push(nextLine);
       i++;
     }

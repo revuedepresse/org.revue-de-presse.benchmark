@@ -18,6 +18,9 @@ import { defineNitroPlugin } from 'nitropack/runtime/plugin';
 import type { NitroCtx } from 'nuxt-module-feed';
 import { find } from 'linkifyjs';
 import { cleanForFeed } from '../../utils/clean-text';
+import { logger } from '../utils/logger';
+
+const log = logger.child({ plugin: 'feed' });
 
 export type RawStatus = {
   screen_name?: string;
@@ -173,7 +176,7 @@ export default defineNitroPlugin((nitroApp) => {
     const apiBaseUrl = config.apiBaseUrl as string | undefined;
 
     if (!apiBaseUrl) {
-      console.warn('[feed.xml] NUXT_API_BASE_URL is not set; emitting empty feed.');
+      log.warn('NUXT_API_BASE_URL is not set; emitting empty feed.');
       return;
     }
 
@@ -203,7 +206,7 @@ export default defineNitroPlugin((nitroApp) => {
         }
       }
     } catch (err) {
-      console.warn('[feed.xml] upstream fetch failed:', (err as Error).message);
+      log.warn({ day, err: (err as Error).message }, 'upstream fetch failed; emitting empty feed');
       return;
     }
 

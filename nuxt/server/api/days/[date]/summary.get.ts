@@ -8,6 +8,10 @@
 //     render the "Aucune synthèse" empty state),
 //   - any other upstream error becomes a 502 with a clear message.
 
+import { logger } from '../../../utils/logger';
+
+const log = logger.child({ route: '/api/days/[date]/summary' });
+
 type SummaryUpstream = {
   '@context'?: string;
   '@id'?: string;
@@ -24,6 +28,7 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig();
   if (!config.apiBaseUrl) {
+    log.error('NUXT_API_BASE_URL is not configured');
     throw createError({ statusCode: 500, statusMessage: 'NUXT_API_BASE_URL is not configured' });
   }
 
@@ -37,8 +42,16 @@ export default defineEventHandler(async (event) => {
   } catch (err: any) {
     const status = err?.statusCode ?? err?.response?.status;
     if (status === 404) {
+      // Legitimate corpus gap — the generator hasn't produced a summary
+      // for that day. Logged at debug so prod stays quiet, but visible
+      // when LOG_LEVEL=debug to diagnose "Synthèse always empty" reports.
+      log.debug({ date }, 'upstream returned 404 (no summary for this date)');
       throw createError({ statusCode: 404, statusMessage: 'No summary for this date' });
     }
+    log.warn(
+      { date, status, err: err?.message },
+      'upstream summary fetch failed',
+    );
     throw createError({
       statusCode: 502,
       statusMessage: `Upstream summary fetch failed: ${err?.message ?? 'unknown error'}`,
