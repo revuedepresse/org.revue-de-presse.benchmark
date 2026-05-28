@@ -1,12 +1,11 @@
 # Mitosis source conventions
 
-Rules for `.lite.tsx` components in this directory. These exist because Mitosis transpiles the same source to React, Vue, Svelte, Solid, Qwik, Preact, Lit, Stencil, and Alpine — patterns that work in one target may not work in others.
+Rules for `.lite.tsx` components in this directory. They cover constructs that the Mitosis 0.13 Vue adapter handles cleanly and are intentionally conservative so re-introducing additional targets later does not require rewriting authoring patterns.
 
 ## Forbidden
 
 - `class` syntax for components. Use functions.
-- Synchronous mutation of refs during render — Solid and Qwik break.
-- React-specific event-system shortcuts (`event.persist()`, synthetic-event pooling assumptions).
+- Synchronous mutation of refs during render.
 - Direct DOM access during render. Use `onMount` / `onUpdate` lifecycle hooks.
 - Default exports without a name matching the file. Use named exports.
 
@@ -20,7 +19,7 @@ Rules for `.lite.tsx` components in this directory. These exist because Mitosis 
 
 ## Event handlers
 
-Keep handlers minimal. Mitosis tolerates `onClick={() => props.onClick?.()}` cleanly across targets. Do not destructure `event.target.value` from a synthetic event in a way that assumes React's pooling.
+Keep handlers minimal. `onClick={() => props.onClick?.()}` compiles cleanly through Mitosis.
 
 ## Slots / children
 
@@ -28,8 +27,8 @@ Mitosis maps `props.children` correctly across all targets. For named slots (e.g
 
 ## Styling
 
-Inline `<style>` blocks at the bottom of the component. Reference component-layer CSS variables. Do not import a separate `.css` file — Mitosis cannot transport that across targets reliably.
+Inline `<style>` blocks at the bottom of the component. Reference component-layer CSS variables. Do not import a separate `.css` file — the `<style>` block is the source of truth that `post-mitosis.mjs` extracts into `output/components.css`.
 
 ## Testing
 
-Tests live in `tests/unit/<ComponentName>.test.ts`. They import from the **generated** target output (e.g. `output/vue/src/Button.vue` and `output/react/src/Button.tsx`), not from `.lite.tsx` directly — Mitosis source is not a runnable component.
+Tests live in `tests/unit/<ComponentName>.test.ts`. They assert against the **generated** Vue emit at `output/vue/src/components/<Component>.vue`, not against `.lite.tsx` directly — Mitosis source is not a runnable component.
