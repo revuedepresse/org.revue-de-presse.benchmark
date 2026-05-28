@@ -180,8 +180,8 @@ bluesky-typecheck: ## Typecheck social/bluesky
 native-install:      ## Install native KMP dependencies (Gradle bootstrap)
 	cd native && ./gradlew --no-daemon help
 
-native-test:         ## Run native :domain unit tests (all targets)
-	cd native && ./gradlew :domain:allTests
+native-test:         ## Run native :domain and :data unit tests (all targets)
+	cd native && ./gradlew :domain:allTests :data:allTests
 
 native-codegen-test: ## Run design-system codegen script tests
 	cd design-system && pnpm test:scripts

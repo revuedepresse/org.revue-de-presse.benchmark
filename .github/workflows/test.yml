@@ -163,3 +163,4 @@ jobs:
       - run: cd design-system && pnpm install --frozen-lockfile
       - run: cd design-system && pnpm test:scripts
       - run: cd native && ./gradlew :domain:compileKotlinJvm
+      - run: cd native && ./gradlew :domain:allTests :data:allTests
