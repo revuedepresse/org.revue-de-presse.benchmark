@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 class MonthPickerTest {
     @Test fun emits_month_index_on_click() = runComposeUiTest {
         var picked = -1
-        setContent { RdpTheme { MonthPicker(selected = 5, onSelect = { picked = it }) } }
+        setContent { RdpTheme { MonthPicker(year = 2026, selected = 5, onSelect = { picked = it }) } }
         onNodeWithTag("MonthPicker.cell.7").performClick()
         assertEquals(7, picked)
     }

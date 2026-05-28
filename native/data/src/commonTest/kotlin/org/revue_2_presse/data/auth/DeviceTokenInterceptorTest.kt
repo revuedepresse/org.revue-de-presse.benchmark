@@ -80,7 +80,7 @@ class DeviceTokenInterceptorTest {
         HttpClient(engine) {
             install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
             install(DeviceTokenInterceptor) {
-                tokenStore = store
+                tokenStoreProvider = { store }
                 baseUrl = "https://api.example.test"
             }
         }

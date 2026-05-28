@@ -46,6 +46,15 @@ export default defineConfig({
       testDir: './perf',
       use: { ...devices['Pixel 5'], baseURL: NUXT_URL },
     },
+    {
+      name: 'nuxt-desktop-parity',
+      testDir: './parity',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: NUXT_URL,
+        viewport: { width: 1280, height: 800 },
+      },
+    },
   ],
   webServer: [
     {

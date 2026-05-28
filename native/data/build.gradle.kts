@@ -29,7 +29,11 @@ kotlin {
             implementation(libs.ktor.client.mock)
         }
         jvmMain.dependencies {
-            implementation(libs.ktor.client.cio)
+            // Ktor's CIO engine has a custom TLS stack that doesn't negotiate
+            // TLS 1.3 — production nginx fronting local.api.revue-de-presse.org
+            // rejected the handshake with a FATAL ProtocolVersion alert. Java
+            // engine delegates to JDK java.net.http.HttpClient (TLS 1.3 native).
+            implementation(libs.ktor.client.java)
         }
         appleMain.dependencies {
             implementation(libs.ktor.client.darwin)

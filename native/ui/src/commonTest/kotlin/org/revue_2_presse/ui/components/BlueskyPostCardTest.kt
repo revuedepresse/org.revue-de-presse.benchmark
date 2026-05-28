@@ -27,10 +27,10 @@ class BlueskyPostCardTest {
         onNodeWithTag("MetricsBar.root").assertIsDisplayed()
     }
 
-    @Test fun share_button_emits_callback() = runComposeUiTest {
+    @Test fun bluesky_mark_emits_share_callback() = runComposeUiTest {
         var shared = false
         setContent { RdpTheme { BlueskyPostCard(post = fixture(), onShareClick = { shared = true }) } }
-        onNodeWithTag("BlueskyPostCard.shareButton").performClick()
+        onNodeWithTag("BlueskyPostCard.blueskyMark").performClick()
         assertTrue(shared)
     }
 }

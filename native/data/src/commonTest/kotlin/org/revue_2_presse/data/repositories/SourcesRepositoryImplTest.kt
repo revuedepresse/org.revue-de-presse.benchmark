@@ -33,8 +33,16 @@ class SourcesRepositoryImplTest {
             val result = awaitItem()
             assertTrue(result.isSuccess)
             val sources = result.getOrThrow()
-            // Fixture has 3 distinct handles → 3 sources
-            assertEquals(3, sources.size)
+            // Fixture has 3 distinct handles → 3 API-derived sources. The roster also
+            // contributes baseline entries for media that haven't been highlighted in
+            // the 90-day window — handles overlapping the fixture are deduped, so the
+            // final size is 3 + (BASELINE_SIZE − overlap). The fixture's franceculture.fr
+            // overlaps with the baseline; the remaining 25 baseline screen names don't.
+            assertEquals(26, sources.size)
+            // API entries must come first so their displayName / avatarUrl /
+            // highlightsCount win in the UI.
+            val first = sources[0]
+            assertTrue(first.highlightsCount > 0, "API-derived entry should carry a non-zero highlightsCount")
             awaitComplete()
         }
     }

@@ -17,8 +17,7 @@ class HydraTypesTest {
         val tok = HydraDeviceToken(token = "abc123", expiresInSec = 3600)
         assertEquals("abc123", tok.token)
         assertEquals(3600, tok.expiresInSec)
-        assertNull(tok.context)
-        assertNull(tok.id)
+        assertEquals(emptyList(), tok.scopes)
     }
 
     @Test fun hydra_source_holds_fields() {
@@ -39,7 +38,7 @@ class HydraTypesTest {
         val err = HydraError(title = "Not Found", description = "Resource not found", status = 404)
         assertEquals("Not Found", err.title)
         assertEquals(404, err.status)
-        assertNull(err.context)
+        assertEquals("Resource not found", err.description)
     }
 
     @Test fun api_endpoints_sources_and_source() {

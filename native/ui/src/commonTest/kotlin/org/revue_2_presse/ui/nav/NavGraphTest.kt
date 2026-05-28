@@ -53,16 +53,6 @@ class NavGraphTest {
         onNodeWithTag("TermsOfServiceScreen.root").assertIsDisplayed()
     }
 
-    @Test fun navigate_to_ContactRoute_shows_ContactScreen() = runComposeUiTest {
-        setContent {
-            RdpTheme {
-                val nav = rememberRdpNavController(start = ContactRoute)
-                NavGraph(nav = nav, highlights = highlightsRepo, sources = sourcesRepo)
-            }
-        }
-        onNodeWithTag("ContactScreen.root").assertIsDisplayed()
-    }
-
     @Test fun navigate_to_SupportRoute_shows_SupportScreen() = runComposeUiTest {
         setContent {
             RdpTheme {

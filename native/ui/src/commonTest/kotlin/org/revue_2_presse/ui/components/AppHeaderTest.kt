@@ -7,18 +7,15 @@ import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class AppHeaderTest {
-    @Test fun renders_logo_title_and_right_slot() = runComposeUiTest {
+    @Test fun renders_logo_and_right_slot() = runComposeUiTest {
         setContent {
             RdpTheme {
-                AppHeader(
-                    title = { Text("Revue de presse") },
-                    right = { Text("EN") },
-                )
+                AppHeader(right = { Text("EN") })
             }
         }
         onNodeWithTag("AppHeader.root").assertIsDisplayed()
+        onNodeWithTag("AppHeader.inner").assertIsDisplayed()
         onNodeWithTag("Logo.image").assertIsDisplayed()
-        onNodeWithText("Revue de presse").assertIsDisplayed()
         onNodeWithText("EN").assertIsDisplayed()
     }
 }

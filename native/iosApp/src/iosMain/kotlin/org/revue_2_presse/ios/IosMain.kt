@@ -10,6 +10,7 @@ import org.koin.compose.koinInject
 import org.revue_2_presse.data.di.dataModule
 import org.revue_2_presse.data.di.installIdModule
 import org.revue_2_presse.design.theme.RdpTheme
+import org.revue_2_presse.domain.i18n.RdpLocale
 import org.revue_2_presse.domain.repositories.HighlightsRepository
 import org.revue_2_presse.domain.repositories.SourcesRepository
 import org.revue_2_presse.ui.components.RdpApp
@@ -30,7 +31,7 @@ fun mainViewController(): UIViewController = ComposeUIViewController {
             uiModule(),
         )
     }) {
-        RdpTheme {
+        RdpTheme(locale = RdpLocale.FR_FR) {
             Scaffold { padding ->
                 Box(Modifier.padding(padding)) {
                     val nav = rememberRdpNavController()

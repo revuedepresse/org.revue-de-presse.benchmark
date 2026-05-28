@@ -8,6 +8,5 @@ import kotlinx.serialization.Serializable
 @Serializable data class SourceRoute(val slug: String)
 @Serializable data object LegalNoticeRoute
 @Serializable data object TermsOfServiceRoute
-@Serializable data object ContactRoute
 @Serializable data object SupportRoute
 @Serializable data object NotFoundRoute

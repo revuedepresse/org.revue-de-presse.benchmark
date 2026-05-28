@@ -6,6 +6,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.testTag
 import org.revue_2_presse.design.theme.LocalRdpRadii
 import org.revue_2_presse.design.theme.LocalRdpSpacing
@@ -23,7 +25,9 @@ fun RdpButton(
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.testTag("Button.root"),
+        modifier = modifier
+            .testTag("Button.root")
+            .pointerHoverIcon(if (enabled) PointerIcon.Hand else PointerIcon.Default),
         shape = RoundedCornerShape(radii.Default),
         colors = ButtonDefaults.buttonColors(
             containerColor = RdpColors.Brand,

@@ -6,6 +6,8 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextDecoration
 import org.revue_2_presse.design.RdpColors
@@ -20,6 +22,7 @@ fun RdpLink(
     Row(
         modifier = modifier
             .testTag("Link.root")
+            .pointerHoverIcon(PointerIcon.Hand)
             .clickable(onClick = { onClick(href) }),
     ) {
         ProvideTextStyle(LocalTextStyle.current.copy(

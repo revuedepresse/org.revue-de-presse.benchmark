@@ -16,8 +16,18 @@ class SourcesRepositoryImpl(
 ) : SourcesRepository {
 
     override fun all(): Flow<Result<List<Source>>> = flow {
-        emit(Result.success(deriveFromHighlightsWindow()))
+        emit(Result.success(mergeWithBaseline(deriveFromHighlightsWindow())))
     }.catch { emit(Result.failure(it)) }
+
+    // Merge the canonical roster with whatever the highlights window produced —
+    // API entries take precedence (they carry real displayName + avatarUrl +
+    // highlightsCount), baseline fills in any media that haven't been featured
+    // recently so the Sources page never silently drops them.
+    private fun mergeWithBaseline(apiDerived: List<Source>): List<Source> {
+        val seen = apiDerived.map { it.screenName }.toSet()
+        val baselineFiller = BaselineSources.asSources().filterNot { it.screenName in seen }
+        return apiDerived + baselineFiller
+    }
 
     override fun forSlug(slug: String): Flow<Result<SourceDetail>> = flow {
         val window = highlightsWindow()

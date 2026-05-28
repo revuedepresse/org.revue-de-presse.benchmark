@@ -13,6 +13,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import org.koin.compose.koinInject
 import org.revue_2_presse.design.theme.RdpTheme
+import org.revue_2_presse.domain.i18n.RdpLocale
 import org.revue_2_presse.domain.repositories.HighlightsRepository
 import org.revue_2_presse.domain.repositories.SourcesRepository
 import org.revue_2_presse.ui.components.RdpApp
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            RdpTheme {
+            RdpTheme(locale = RdpLocale.FR_FR) {
                 Scaffold(modifier = Modifier.semantics { testTagsAsResourceId = true }) { padding ->
                     Box(Modifier.padding(padding)) {
                         val nav = rememberRdpNavController()

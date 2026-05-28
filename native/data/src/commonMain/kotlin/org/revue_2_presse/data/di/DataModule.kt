@@ -19,7 +19,7 @@ fun dataModule(baseUrl: String, platform: String, appVersion: String) = module {
     single<HttpClient> {
         get<KtorClientFactory>().create {
             install(DeviceTokenInterceptor) {
-                tokenStore = get()
+                tokenStoreProvider = { get() }
                 this.baseUrl = baseUrl
             }
         }

@@ -15,7 +15,6 @@ object DeepLinks {
     val sourceTemplate = "$WEB/source/{slug}"
     val legalNotice = "$WEB/mentions-legales"
     val termsOfService = "$WEB/conditions-utilisation"
-    val contact = "$WEB/nous-contacter"
     val support = "$WEB/nous-soutenir"
     val notFound = "$WEB/contenu-introuvable"
     val dayTemplate = "$WEB/{day}"

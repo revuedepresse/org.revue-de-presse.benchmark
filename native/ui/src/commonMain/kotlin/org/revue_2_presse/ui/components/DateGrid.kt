@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,14 @@ fun DateGrid(
     selected: LocalDate?,
     onSelect: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
+    // Last day whose snapshot has been published. Cells past this date are
+    // visually disabled (light-grey text, no hand cursor, no click). Defaults
+    // to the selected cell when no separate ceiling is supplied — the Nuxt
+    // sidebar uses "yesterday" as both selected and ceiling.
+    lastAvailable: LocalDate? = selected,
+    // First day for which a snapshot exists in the archive. Cells before this
+    // date are likewise disabled. null = no floor.
+    minDate: LocalDate? = null,
 ) {
     val radii = LocalRdpRadii.current
     val firstOfMonth = LocalDate(year, month, 1)
@@ -40,22 +50,32 @@ fun DateGrid(
             val date = cells[idx]
             val inMonth = date.monthNumber == month
             val isSelected = date == selected
-            val tagSuffix = if (inMonth) "" else ".otherMonth"
-            Box(
-                Modifier
-                    .testTag("DateGrid.cell.${date}$tagSuffix")
-                    .aspectRatio(1f)
-                    .padding(2.dp)
-                    .clip(RoundedCornerShape(radii.Default))
-                    .background(if (isSelected) RdpColors.Brand else RdpColors.White)
-                    .clickable { onSelect(date) },
-                contentAlignment = Alignment.Center,
-            ) {
+            val isFuture = lastAvailable != null && date > lastAvailable
+            val isBeforeArchive = minDate != null && date < minDate
+            val isDisabled = isFuture || isBeforeArchive
+            val tagSuffix = when {
+                isFuture -> ".future"
+                isBeforeArchive -> ".beforeArchive"
+                !inMonth -> ".otherMonth"
+                else -> ""
+            }
+            val cellModifier = Modifier
+                .testTag("DateGrid.cell.${date}$tagSuffix")
+                .aspectRatio(1f)
+                .padding(2.dp)
+                .clip(RoundedCornerShape(radii.Default))
+                .background(if (isSelected) RdpColors.Brand else RdpColors.White)
+                .let { base ->
+                    if (isDisabled) base
+                    else base.pointerHoverIcon(PointerIcon.Hand).clickable { onSelect(date) }
+                }
+            Box(cellModifier, contentAlignment = Alignment.Center) {
                 Text(
                     text = date.dayOfMonth.toString(),
                     textAlign = TextAlign.Center,
                     color = when {
                         isSelected -> RdpColors.White
+                        isDisabled -> RdpColors.LightGrey
                         !inMonth -> RdpColors.LightGrey
                         else -> RdpColors.ContentText
                     },

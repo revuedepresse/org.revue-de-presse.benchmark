@@ -1,6 +1,8 @@
 package org.revue_2_presse.design.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import org.revue_2_presse.design.i18n.currentRdpLocale
@@ -27,6 +29,13 @@ fun RdpTheme(
         MaterialTheme(
             colorScheme = rdpLightColorScheme(),
             typography = rdpTypography(),
+            shapes = Shapes(
+                extraSmall = RoundedCornerShape(RdpRadii.DatePicker),
+                small = RoundedCornerShape(RdpRadii.Selectable),
+                medium = RoundedCornerShape(RdpRadii.Default),
+                large = RoundedCornerShape(RdpRadii.Default),
+                extraLarge = RoundedCornerShape(RdpRadii.Default),
+            ),
             content = content,
         )
     }

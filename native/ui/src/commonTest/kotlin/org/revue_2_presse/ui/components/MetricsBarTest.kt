@@ -6,10 +6,10 @@ import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class MetricsBarTest {
-    @Test fun renders_3_metric_counts() = runComposeUiTest {
+    @Test fun renders_repost_and_like_counts() = runComposeUiTest {
+        // Replies cell removed by product decision — only repost + like surface.
         setContent { RdpTheme { MetricsBar(metrics = Metrics(replies = 12, reposts = 80, likes = 127)) } }
         onNodeWithTag("MetricsBar.root").assertIsDisplayed()
-        onNodeWithText("12").assertIsDisplayed()
         onNodeWithText("80").assertIsDisplayed()
         onNodeWithText("127").assertIsDisplayed()
     }

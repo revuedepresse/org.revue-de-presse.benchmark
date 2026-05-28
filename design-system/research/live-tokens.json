@@ -38,7 +38,7 @@
     "selectable": "4px"
   },
   "size": {
-    "logo-height": "64px",
+    "logo-height": "48px",
     "date-picker-height": "21px",
     "status-text-height": "21px",
     "year-picker-buttons-height": "34px",
