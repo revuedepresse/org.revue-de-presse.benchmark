@@ -23,7 +23,10 @@ const STYLE_PROPS = [
 ];
 
 type SelectorMap = Record<string, string>;
-type Screen = { name: string; path: string; selectors: SelectorMap };
+// `shots` are selectors captured as focused element-level screenshots (in
+// addition to the full viewport clip) — handy for off-the-fold components like
+// the sidebar BannerAbout that the 1280×800 clip doesn't frame well.
+type Screen = { name: string; path: string; selectors: SelectorMap; shots?: SelectorMap };
 
 const VIEWPORT = { width: 1280, height: 800 };
 
@@ -46,9 +49,21 @@ const SCREENS: Screen[] = [
       Sidebar:            '.rdp-sidebar',
       Calendar:           '[data-testid="calendar"]',
       BannerAbout:        '.rdp-banner-about',
-      BannerAboutTitle:   '.rdp-banner-about__title',
-      BannerAboutPara:    '.rdp-banner-about__paragraph',
-      BannerAboutLink:    '.rdp-banner-about__outer-link',
+      BannerAboutTitle:        '.rdp-banner-about__title',
+      BannerAboutTitleSharing: '.rdp-banner-about__title--sharing',
+      BannerAboutTitleAbout:   '.rdp-banner-about__title--introducing',
+      BannerAboutTitleFunding: '.rdp-banner-about__title--funding',
+      BannerAboutTitleIcon:    '.rdp-banner-about__title .rdp-icon',
+      BannerAboutPara:         '.rdp-banner-about__paragraph',
+      BannerAboutParaSharing:  '.rdp-banner-about__paragraph--sharing',
+      BannerAboutLink:         '.rdp-banner-about__outer-link',
+      BannerAboutSubscribe:    '.rdp-banner-about__subscribe-to',
+      BannerAboutSubscribeLbl: '.rdp-banner-about__subscription-label',
+      BannerAboutPlayStore:    '.rdp-banner-about__play-store',
+      BannerAboutPlayStoreImg: '.rdp-banner-about__play-store-badge',
+      BannerAboutNetlifyMark:  '.rdp-banner-about__netlify-mark',
+      BannerAboutCopyFooter:   '.rdp-banner-about__copyright-footer',
+      BannerAboutCopyright:    '.rdp-banner-about__copyright',
       PostCard:           '[data-testid="post-card"]',
       PostAvatar:         '.rdp-bsky-post__avatar',
       PostAuthor:         '.rdp-bsky-post__author',
@@ -62,6 +77,9 @@ const SCREENS: Screen[] = [
       MetricRepostIcon:   '.rdp-metrics-bar__icon--repost',
       MetricRepostCount:  '.rdp-metrics-bar__count--repost',
     },
+    shots: {
+      'banner-about': '.rdp-banner-about',
+    },
   },
   {
     name: 'sources',
@@ -73,6 +91,9 @@ const SCREENS: Screen[] = [
       MainColumn:         '.rdp-app__main',
       Sidebar:            '.rdp-sidebar',
       BannerAbout:        '.rdp-banner-about',
+    },
+    shots: {
+      'banner-about': '.rdp-banner-about',
     },
   },
 ];
@@ -127,6 +148,17 @@ for (const screen of SCREENS) {
       path: path.join(OUT_DIR, `${screen.name}.png`),
       clip: { x: 0, y: 0, ...VIEWPORT },
     });
+
+    // Focused element screenshots — scroll each into view and frame it tightly,
+    // so off-the-fold components (e.g. the sidebar BannerAbout) are usable as a
+    // 1:1 parity reference for the native port.
+    for (const [shotName, selector] of Object.entries(screen.shots ?? {})) {
+      const locator = page.locator(selector).first();
+      if ((await locator.count()) === 0) continue;
+      await locator.scrollIntoViewIfNeeded();
+      await locator.screenshot({ path: path.join(OUT_DIR, `${screen.name}-${shotName}.png`) });
+    }
+
     await writeFile(
       path.join(OUT_DIR, `${screen.name}.json`),
       JSON.stringify(payload, null, 2),
