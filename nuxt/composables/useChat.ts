@@ -1,4 +1,4 @@
-import { cleanText } from '~/utils/clean-text';
+import { cleanCitationText } from '~/utils/clean-text';
 
 export type DiscuterTurn = {
   id: string;
@@ -195,11 +195,12 @@ export const useChat = () => {
 
     if (frame.event === 'done') {
       const cits = Array.isArray(payload.citations) ? (payload.citations as DiscuterCitation[]) : [];
-      // The backend's TextCleaner strips real \n / NBSP at embed time. The
-      // homepage's cleanText also decodes literal `\xNN` and `\\n` escapes
-      // that may survive the JSON layer (same upstream Bluesky snapshots).
-      // Apply it here so the citation panel matches homepage hygiene.
-      citations.value = cits.map((c) => ({ ...c, text: cleanText(c.text) }));
+      // Defensive client-side scrub: the backend's PHP TextCleaner can't
+      // remove literal `\n` / `\xNN` from the upstream Bluesky JSON layer,
+      // and citation cards must stay single-line + French-typography-correct
+      // regardless of what slipped through. cleanCitationText is idempotent
+      // on already-clean input, so applying it here is cheap insurance.
+      citations.value = cits.map((c) => ({ ...c, text: cleanCitationText(c.text) }));
       if (typeof payload.conversationId === 'string') {
         conversationId.value = payload.conversationId;
       }

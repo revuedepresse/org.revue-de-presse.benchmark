@@ -1,5 +1,53 @@
 import { describe, it, expect } from 'vitest';
-import { cleanText, cleanForFeed, repairMojibake } from './clean-text';
+import { cleanText, cleanForFeed, cleanCitationText, repairMojibake } from './clean-text';
+
+describe('cleanCitationText', () => {
+  it('strips wrapping double quotes', () => {
+    expect(cleanCitationText('"En France, des Premiers ministres"')).toBe(
+      'En France, des Premiers ministres',
+    );
+  });
+
+  it('flattens real and literal \\n into a single space (citations stay single-line)', () => {
+    expect(cleanCitationText('Titre\nCorps')).toBe('Titre Corps');
+    expect(cleanCitationText('Titre\\nCorps')).toBe('Titre Corps');
+    expect(cleanCitationText('Titre\\n\\nCorps')).toBe('Titre Corps');
+  });
+
+  it('strips real NBSP and literal \\xa0 occurrences (rendering as a plain space)', () => {
+    expect(cleanCitationText('mot nbsp')).toBe('mot nbsp');
+    expect(cleanCitationText('mot\\xa0nbsp')).toBe('mot nbsp');
+  });
+
+  it('handles all four irritants at once', () => {
+    expect(
+      cleanCitationText('"En France\\nDéfense nationale\\xa0— suite"'),
+    ).toBe('En France Défense nationale — suite');
+  });
+
+  it('inserts NBSP after « when followed by anything other than NBSP', () => {
+    expect(cleanCitationText('«mot»')).toBe('« mot »');
+    expect(cleanCitationText('«  mot  »')).toBe('« mot »');
+  });
+
+  it('inserts NBSP before » when preceded by anything other than NBSP', () => {
+    expect(cleanCitationText('un «discours»')).toBe('un « discours »');
+  });
+
+  it('preserves existing NBSP around guillemets (no double-space)', () => {
+    expect(cleanCitationText('« déjà »')).toBe('« déjà »');
+  });
+
+  it('handles French nested guillemets in a typical news headline', () => {
+    expect(
+      cleanCitationText('"«Collaborations»: patronat et extrême droite"'),
+    ).toBe('« Collaborations »: patronat et extrême droite');
+  });
+
+  it('returns empty string for empty input', () => {
+    expect(cleanCitationText('')).toBe('');
+  });
+});
 
 describe('repairMojibake', () => {
   it('repairs Ã© -> é', () => {
