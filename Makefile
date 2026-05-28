@@ -12,7 +12,8 @@ SHELL:=/bin/bash
         linkedin-install linkedin-bootstrap linkedin-post linkedin-post-dry linkedin-test linkedin-typecheck \
         tiktok-install tiktok-bootstrap tiktok-post tiktok-post-dry tiktok-test tiktok-typecheck \
         bluesky-install bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck \
-        native-desktop-run
+        native-desktop-run \
+        native-android-debug native-android-release native-ios-framework native-release
 
 NUXT_DIR     := nuxt
 NEXT_DIR     := next
@@ -189,6 +190,11 @@ native-desktop-run:  ## Run the native desktop app via Gradle
 
 native-codegen-test: ## Run design-system codegen script tests
 	cd design-system && pnpm test:scripts
+
+native-android-debug:   ; cd native && ./gradlew :androidApp:assembleDebug
+native-android-release: ; cd native && ./gradlew :androidApp:bundleRelease
+native-ios-framework:   ; cd native && ./gradlew :iosApp:compileKotlinIosX64
+native-release:         native-android-release native-ios-framework
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
