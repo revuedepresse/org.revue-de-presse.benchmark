@@ -240,7 +240,11 @@ export default function DiscuterPage(props: DiscuterPageProps) {
                       <span class="rdp-discuter__source-n" aria-hidden="true">
                         [{citation.n}]
                       </span>
-                      <BlueskyPostCard post={state.citationToPost(citation)} locale={props.locale} />
+                      <BlueskyPostCard
+                        post={state.citationToPost(citation)}
+                        locale={props.locale}
+                        hideMetrics={true}
+                      />
                     </li>
                   )}
                 </For>

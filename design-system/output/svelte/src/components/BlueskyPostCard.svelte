@@ -18,6 +18,8 @@ publicationUrl?: string;
 type BlueskyPostCardProps = {
 post: BlueskyPost;
 locale?: Locale;
+/** When true, hides the replies/reposts/likes bar above the card. Used by the chat "sources citées" panel. */
+hideMetrics?: boolean;
 }
 
 type Segment = {
@@ -46,6 +48,7 @@ import type { Locale } from '../utils/i18n';
 
 
     export let post: BlueskyPostCardProps['post'];
+export let hideMetrics: BlueskyPostCardProps['hideMetrics']= undefined;
 export let locale: BlueskyPostCardProps['locale']= undefined;
 
 
@@ -145,7 +148,12 @@ return out;
 
   </script>
 
-  <div  class="rdp-bsky-post-frame" ><div  class="rdp-bsky-post__metrics"  aria-hidden="false" ><MetricsBar  replies={post.metrics.replies}  reposts={post.metrics.reposts}  likes={post.metrics.likes}  locale={locale} ></MetricsBar></div><article  class="rdp-bsky-post"  data-testid="post-card" ><a  class="rdp-bsky-post__bluesky"  aria-label="Bluesky"  rel="noreferrer nofollow noopener"  target="_blank"  href={publicationUrl()} ><svg  viewBox="0 0 600 530"  width="20"  height="20"  fill="currentColor"  aria-hidden="true" ><path  d="M135.72 44.03C202.216 93.951 273.74 195.17 300 249.49c26.262-54.316 97.782-155.54 164.28-205.46C512.26 8.009 590-19.862 590 68.825c0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.38-3.69-10.832-3.708-7.896-.017-2.936-1.193.516-3.707 7.896-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.45-163.25-81.433C20.158 217.613 10 86.535 10 68.825c0-88.687 77.742-60.816 125.72-24.795z" ></path></svg></a><header  class="rdp-bsky-post__header" ><a  class="rdp-bsky-post__avatar"  rel="noreferrer nofollow noopener"  target="_blank"  aria-label={post.authorName}  href={profileUrl()} >
+  <div  class="rdp-bsky-post-frame" >
+{#if !hideMetrics }
+<div  class="rdp-bsky-post__metrics"  aria-hidden="false" ><MetricsBar  replies={post.metrics.replies}  reposts={post.metrics.reposts}  likes={post.metrics.likes}  locale={locale} ></MetricsBar></div>
+
+
+{/if}<article  class="rdp-bsky-post"  data-testid="post-card" ><a  class="rdp-bsky-post__bluesky"  aria-label="Bluesky"  rel="noreferrer nofollow noopener"  target="_blank"  href={publicationUrl()} ><svg  viewBox="0 0 600 530"  width="20"  height="20"  fill="currentColor"  aria-hidden="true" ><path  d="M135.72 44.03C202.216 93.951 273.74 195.17 300 249.49c26.262-54.316 97.782-155.54 164.28-205.46C512.26 8.009 590-19.862 590 68.825c0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.38-3.69-10.832-3.708-7.896-.017-2.936-1.193.516-3.707 7.896-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.45-163.25-81.433C20.158 217.613 10 86.535 10 68.825c0-88.687 77.742-60.816 125.72-24.795z" ></path></svg></a><header  class="rdp-bsky-post__header" ><a  class="rdp-bsky-post__avatar"  rel="noreferrer nofollow noopener"  target="_blank"  aria-label={post.authorName}  href={profileUrl()} >
 {#if !!post.authorAvatarUrl }
 <img  alt=""  src={post.authorAvatarUrl}  />
 

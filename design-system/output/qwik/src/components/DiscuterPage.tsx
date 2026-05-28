@@ -280,6 +280,7 @@ export const DiscuterPage = component$((props: DiscuterPageProps) => {
                           citation
                         )}
                         locale={props.locale}
+                        hideMetrics={true}
                       ></BlueskyPostCard>
                     </li>
                   );

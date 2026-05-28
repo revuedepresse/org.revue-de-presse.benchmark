@@ -266,6 +266,7 @@ function DiscuterPage(props: DiscuterPageProps) {
                           <BlueskyPostCard
                             post={citationToPost(citation)}
                             locale={props.locale}
+                            hideMetrics={true}
                           ></BlueskyPostCard>
                         </li>
                       );

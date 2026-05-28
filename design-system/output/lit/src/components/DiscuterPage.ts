@@ -167,7 +167,7 @@ citationToPost(citation: DiscuterCitation) {
        ${citation.n}
        ]
                              </span>
-       <bluesky-post-card  .post=${this.citationToPost(citation)}  .locale=${this.locale} ></bluesky-post-card></li>`
+       <bluesky-post-card  .post=${this.citationToPost(citation)}  .locale=${this.locale}  .hideMetrics=${true} ></bluesky-post-card></li>`
             ))}</ol></aside>`
            : null}
        <form  @submit=${(event) => {

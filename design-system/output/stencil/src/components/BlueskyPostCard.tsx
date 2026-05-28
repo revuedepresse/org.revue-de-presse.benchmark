@@ -11,6 +11,7 @@ import { Component, h, Fragment, Prop } from "@stencil/core";
 })
 export class BlueskyPostCard {
   @Prop() post: any;
+  @Prop() hideMetrics: any;
   @Prop() locale: any;
 
   get profileUrl() {
@@ -102,14 +103,16 @@ export class BlueskyPostCard {
   render() {
     return (
       <div class="rdp-bsky-post-frame">
-        <div class="rdp-bsky-post__metrics" aria-hidden="false">
-          <metrics-bar
-            replies={this.post.metrics.replies}
-            reposts={this.post.metrics.reposts}
-            likes={this.post.metrics.likes}
-            locale={this.locale}
-          ></metrics-bar>
-        </div>
+        {!this.hideMetrics ? (
+          <div class="rdp-bsky-post__metrics" aria-hidden="false">
+            <metrics-bar
+              replies={this.post.metrics.replies}
+              reposts={this.post.metrics.reposts}
+              likes={this.post.metrics.likes}
+              locale={this.locale}
+            ></metrics-bar>
+          </div>
+        ) : null}
         <article class="rdp-bsky-post" data-testid="post-card">
           <a
             class="rdp-bsky-post__bluesky"

@@ -1,12 +1,14 @@
 <div class="rdp-bsky-post-frame" x-data="blueskyPostCard()">
-  <div class="rdp-bsky-post__metrics" aria-hidden="false">
-    <MetricsBar
-      x-bind:replies="post.metrics.replies"
-      x-bind:reposts="post.metrics.reposts"
-      x-bind:likes="post.metrics.likes"
-      x-bind:locale="locale"
-    ></MetricsBar>
-  </div>
+  <template x-if="!hideMetrics">
+    <div class="rdp-bsky-post__metrics" aria-hidden="false">
+      <MetricsBar
+        x-bind:replies="post.metrics.replies"
+        x-bind:reposts="post.metrics.reposts"
+        x-bind:likes="post.metrics.likes"
+        x-bind:locale="locale"
+      ></MetricsBar>
+    </div>
+  </template>
   <article class="rdp-bsky-post" data-testid="post-card">
     <a
       class="rdp-bsky-post__bluesky"

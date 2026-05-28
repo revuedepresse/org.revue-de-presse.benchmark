@@ -226,6 +226,7 @@ export class DiscuterPage {
                         <bluesky-post-card
                           post={this.citationToPost(citation)}
                           locale={this.locale}
+                          hideMetrics={true}
                         ></bluesky-post-card>
                       </li>
                     ))}

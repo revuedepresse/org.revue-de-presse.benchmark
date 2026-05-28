@@ -19,6 +19,8 @@ export type BlueskyPost = {
 type BlueskyPostCardProps = {
   post: BlueskyPost;
   locale?: Locale;
+  /** When true, hides the replies/reposts/likes bar above the card. Used by the chat "sources citées" panel. */
+  hideMetrics?: boolean;
 };
 type Segment = {
   kind: "text" | "mention" | "url";
@@ -120,14 +122,16 @@ function BlueskyPostCard(props: BlueskyPostCardProps) {
 
   return (
     <div className="rdp-bsky-post-frame">
-      <div className="rdp-bsky-post__metrics" aria-hidden="false">
-        <MetricsBar
-          replies={props.post.metrics.replies}
-          reposts={props.post.metrics.reposts}
-          likes={props.post.metrics.likes}
-          locale={props.locale}
-        />
-      </div>
+      {!props.hideMetrics ? (
+        <div className="rdp-bsky-post__metrics" aria-hidden="false">
+          <MetricsBar
+            replies={props.post.metrics.replies}
+            reposts={props.post.metrics.reposts}
+            likes={props.post.metrics.likes}
+            locale={props.locale}
+          />
+        </div>
+      ) : null}
       <article className="rdp-bsky-post" data-testid="post-card">
         <a
           className="rdp-bsky-post__bluesky"

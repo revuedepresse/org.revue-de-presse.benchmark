@@ -133,6 +133,7 @@
                   ><BlueskyPostCard
                     :post="citationToPost(citation)"
                     :locale="locale"
+                    :hideMetrics="true"
                   ></BlueskyPostCard>
                 </li>
               </template>

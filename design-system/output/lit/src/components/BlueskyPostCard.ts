@@ -25,6 +25,8 @@ export type BlueskyPost = {
 type BlueskyPostCardProps = {
   post: BlueskyPost;
   locale?: Locale;
+  /** When true, hides the replies/reposts/likes bar above the card. Used by the chat "sources citées" panel. */
+  hideMetrics?: boolean;
 };
 type Segment = {
   kind: "text" | "mention" | "url";
@@ -39,6 +41,7 @@ export default class BlueskyPostCard extends LitElement {
   }
 
   @property() post: any;
+  @property() hideMetrics: any;
   @property() locale: any;
 
   get profileUrl() {
@@ -129,14 +132,20 @@ export default class BlueskyPostCard extends LitElement {
     return html`
 
           <div>
-          <div aria-hidden="false">
-            <metrics-bar
-              .replies="${this.post.metrics.replies}"
-              .reposts="${this.post.metrics.reposts}"
-              .likes="${this.post.metrics.likes}"
-              .locale="${this.locale}"
-            ></metrics-bar>
-          </div>
+          ${
+            !this.hideMetrics
+              ? html`
+         <div aria-hidden="false">
+           <metrics-bar
+             .replies="${this.post.metrics.replies}"
+             .reposts="${this.post.metrics.reposts}"
+             .likes="${this.post.metrics.likes}"
+             .locale="${this.locale}"
+           ></metrics-bar>
+         </div>
+         `
+              : null
+          }
           <article data-testid="post-card">
             <a
               aria-label="Bluesky"

@@ -177,7 +177,7 @@ submitHandle();
 {#each citations ?? [] as citation }
 <li  class="rdp-discuter__source" ><span  class="rdp-discuter__source-n"  aria-hidden="true" >
                       [{citation.n}]
-                    </span><BlueskyPostCard  post={citationToPost(citation)}  locale={locale} ></BlueskyPostCard></li>
+                    </span><BlueskyPostCard  post={citationToPost(citation)}  locale={locale}  hideMetrics={true} ></BlueskyPostCard></li>
 {/each}
 </ol></aside>
 

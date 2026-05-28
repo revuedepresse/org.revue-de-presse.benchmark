@@ -189,6 +189,7 @@ import type { Locale } from "../utils/i18n";
                     <bluesky-post-card
                       [post]="citationToPost(citation)"
                       [locale]="locale"
+                      [hideMetrics]="true"
                     ></bluesky-post-card></li
                 ></ng-container>
               </ol></aside

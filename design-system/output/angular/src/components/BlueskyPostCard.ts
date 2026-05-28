@@ -21,6 +21,8 @@ export type BlueskyPost = {
 type BlueskyPostCardProps = {
   post: BlueskyPost;
   locale?: Locale;
+  /** When true, hides the replies/reposts/likes bar above the card. Used by the chat "sources citées" panel. */
+  hideMetrics?: boolean;
 };
 type Segment = {
   kind: "text" | "mention" | "url";
@@ -36,14 +38,15 @@ import type { Locale } from "../utils/i18n";
   selector: "bluesky-post-card",
   template: `
     <div class="rdp-bsky-post-frame">
-      <div class="rdp-bsky-post__metrics" aria-hidden="false">
-        <metrics-bar
-          [replies]="post.metrics.replies"
-          [reposts]="post.metrics.reposts"
-          [likes]="post.metrics.likes"
-          [locale]="locale"
-        ></metrics-bar>
-      </div>
+      <ng-container *ngIf="!hideMetrics"
+        ><div class="rdp-bsky-post__metrics" aria-hidden="false">
+          <metrics-bar
+            [replies]="post.metrics.replies"
+            [reposts]="post.metrics.reposts"
+            [likes]="post.metrics.likes"
+            [locale]="locale"
+          ></metrics-bar></div
+      ></ng-container>
       <article class="rdp-bsky-post" data-testid="post-card">
         <a
           class="rdp-bsky-post__bluesky"
@@ -228,6 +231,7 @@ export default class BlueskyPostCard {
   formatTime = formatTime;
 
   @Input() post!: BlueskyPostCardProps["post"];
+  @Input() hideMetrics!: BlueskyPostCardProps["hideMetrics"];
   @Input() locale!: BlueskyPostCardProps["locale"];
 
   get profileUrl() {
