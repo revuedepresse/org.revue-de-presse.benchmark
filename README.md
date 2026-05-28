@@ -4,18 +4,22 @@ Open-source companion app for [Revue de presse](https://revue-de-presse.org).
 A daily curated digest of the 10 French press publications most relayed on
 Bluesky, packaged as:
 
-- a framework-agnostic **design system** (Mitosis source → Vue, React,
-  Svelte, Solid, Lit, Preact, Qwik, Stencil, Alpine, Angular)
+- a framework-agnostic **design system** (Mitosis source compiled to a
+  Vue output)
 - a **Nuxt 3 app** that consumes the Vue output and proxies the upstream
   Bluesky highlights API
 - a **Trusted Web Activity (TWA)** wrapper that ships the Nuxt app on the
   Google Play Store via Bubblewrap
+- a **Compose Multiplatform** native app (JVM desktop, Android, iOS) that
+  reimplements the Nuxt app from a single Kotlin source tree, reusing the
+  same design tokens and i18n
 
 ## Repository layout
 
 ```
-design-system/   Mitosis source + 10 emitted framework targets + tests
+design-system/   Mitosis source + emitted Vue output + tests
 nuxt/            Nuxt 3 app, TWA tooling, Netlify deploy config
+native/          Compose Multiplatform app (JVM desktop, Android, iOS)
 e2e/             Playwright suite exercising the Nuxt app via a single webServer
 social/bluesky/  daily Bluesky thread CLI (lead + 3 replies, top 3 publications)
 social/linkedin/ daily LinkedIn auto-post CLI (top 10, organization page)
@@ -45,8 +49,8 @@ The design system has no Makefile yet — invoke `pnpm` directly:
 ```bash
 cd design-system
 pnpm install
-pnpm build:mitosis      # regenerate the 10 framework outputs
-pnpm test               # 363 unit tests (Vitest)
+pnpm build:mitosis      # regenerate the Vue output
+pnpm test               # Vitest unit suite
 ```
 
 The Nuxt app reads the design system's pre-emitted Vue components
