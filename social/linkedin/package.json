@@ -27,7 +27,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "dotenv": "^16.4.5",
+    "dotenv": "^17.4.2",
     "linkedin-api-client": "^0.3.0",
     "pino": "^10.3.1"
   },
