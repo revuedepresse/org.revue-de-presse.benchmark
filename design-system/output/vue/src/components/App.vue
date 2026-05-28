@@ -7,9 +7,7 @@
       <div class="rdp-app__header-inner">
         <AppHeader
           :layout="layout ?? 'desktop'"
-          :authenticated="authenticated ?? false"
-          :onAccountClick="(event) => onAccountClick?.()"
-          :onMySpaceClick="(event) => onMySpaceClick?.()"
+          :authenticated="false"
           :onLogoClick="(event) => goHome()"
         ></AppHeader>
       </div>
@@ -36,7 +34,6 @@
               :onContactClick="(event) => goTo('contact')"
               :onSupportClick="(event) => goTo('support')"
               :onSourcesClick="(event) => goTo('sources')"
-              :onDiscuterClick="(event) => goTo('discuter')"
             ></Sidebar>
           </aside>
         </template>
@@ -146,9 +143,7 @@
                           :key="index"
                           v-for="(seg, index) in block.segments"
                         >
-                          <template v-if="seg.kind === 'text'">
-                            {{ seg.value }}
-                          </template>
+                          <template v-if="seg.kind === 'text'">{{ seg.value }}</template>
 
                           <template v-if="seg.kind === 'bold'">
                             <strong>{{ seg.value }}</strong>
@@ -176,9 +171,7 @@
                         >
                           <li>
                             <template :key="index" v-for="(seg, index) in item">
-                              <template v-if="seg.kind === 'text'">
-                                {{ seg.value }}
-                              </template>
+                              <template v-if="seg.kind === 'text'">{{ seg.value }}</template>
 
                               <template v-if="seg.kind === 'bold'">
                                 <strong>{{ seg.value }}</strong>
@@ -222,27 +215,6 @@
 
           <template v-if="currentView === 'sources'">
             <SourcesPage></SourcesPage>
-          </template>
-
-          <template v-if="currentView === 'discuter'">
-            <DiscuterPage
-              :status="discuterStatus ?? 'unauthenticated'"
-              :turns="discuterTurns"
-              :citations="discuterCitations"
-              :errorCode="discuterErrorCode"
-              :draft="discuterDraft"
-              :handleDraft="discuterHandleDraft"
-              :handleErrorCode="discuterHandleErrorCode"
-              :onLogin="(handle) => onDiscuterLogin?.(handle)"
-              :onHandleDraftChange="
-                (next) => onDiscuterHandleDraftChange?.(next)
-              "
-              :onDraftChange="(next) => onDiscuterDraftChange?.(next)"
-              :onSend="(text) => onDiscuterSend?.(text)"
-              :onCancel="(event) => onDiscuterCancel?.()"
-              :onClear="(event) => onDiscuterClear?.()"
-              :onRetry="(event) => onDiscuterRetry?.()"
-            ></DiscuterPage>
           </template>
         </main>
       </div>
@@ -313,22 +285,6 @@
           <SourcesPage></SourcesPage>
         </template>
 
-        <template v-if="currentView === 'discuter'">
-          <DiscuterPage
-            :status="discuterStatus ?? 'unauthenticated'"
-            :turns="discuterTurns"
-            :citations="discuterCitations"
-            :errorCode="discuterErrorCode"
-            :draft="discuterDraft"
-            :onLogin="(event) => onDiscuterLogin?.()"
-            :onDraftChange="(next) => onDiscuterDraftChange?.(next)"
-            :onSend="(text) => onDiscuterSend?.(text)"
-            :onCancel="(event) => onDiscuterCancel?.()"
-            :onClear="(event) => onDiscuterClear?.()"
-            :onRetry="(event) => onDiscuterRetry?.()"
-          ></DiscuterPage>
-        </template>
-
         <template v-if="!captureMode">
           <BannerAbout
             :onLegalNoticeClick="(event) => goTo('legal')"
@@ -336,7 +292,6 @@
             :onContactClick="(event) => goTo('contact')"
             :onSupportClick="(event) => goTo('support')"
             :onSourcesClick="(event) => goTo('sources')"
-            :onDiscuterClick="(event) => goTo('discuter')"
           ></BannerAbout>
         </template>
       </main>
@@ -388,7 +343,6 @@ import TermsOfServicePage from "./TermsOfServicePage.vue";
 import ContactPage from "./ContactPage.vue";
 import SupportPage from "./SupportPage.vue";
 import SourcesPage from "./SourcesPage.vue";
-import DiscuterPage from "./DiscuterPage.vue";
 import IntroCard from "./IntroCard.vue";
 import Spinner from "./Spinner.vue";
 import type { BlueskyPost } from "./BlueskyPostCard.vue";
@@ -397,13 +351,6 @@ import type {
   SummaryInlineSegment,
 } from "../utils/summary-blocks";
 import type { Locale } from "../utils/i18n";
-import type {
-  DiscuterStatus,
-  DiscuterTurn,
-  DiscuterCitation,
-  DiscuterErrorCode,
-  DiscuterHandleErrorCode,
-} from "./DiscuterPage.vue";
 
 type MainSubView = "publications" | "summary";
 
@@ -426,21 +373,13 @@ type SnapshotItem = {
  *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 
-type ViewKey =
-  | "main"
-  | "legal"
-  | "terms"
-  | "contact"
-  | "support"
-  | "sources"
-  | "discuter";
+type ViewKey = "main" | "legal" | "terms" | "contact" | "support" | "sources";
 /** Initial sub-view for the day-page, when entered via a URL like
  *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 
 type AppProps = {
   layout?: "mobile" | "desktop";
-  authenticated?: boolean;
   posts: BlueskyPost[];
   pickedDate: Date;
   lists: SnapshotItem[];
@@ -455,27 +394,11 @@ type AppProps = {
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
-  onAccountClick?: () => void;
-  onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
   captureMode?: boolean;
-  discuterStatus?: DiscuterStatus;
-  discuterTurns?: DiscuterTurn[];
-  discuterCitations?: DiscuterCitation[];
-  discuterErrorCode?: DiscuterErrorCode;
-  discuterDraft?: string;
-  discuterHandleDraft?: string;
-  discuterHandleErrorCode?: DiscuterHandleErrorCode;
-  onDiscuterLogin?: (handle: string) => void;
-  onDiscuterHandleDraftChange?: (next: string) => void;
-  onDiscuterDraftChange?: (next: string) => void;
-  onDiscuterSend?: (text: string) => void;
-  onDiscuterCancel?: () => void;
-  onDiscuterClear?: () => void;
-  onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
   /** Boot-time sub-view from the URL (synthese-des-actus-du-… vs actualites-du-…).

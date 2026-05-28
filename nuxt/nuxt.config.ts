@@ -17,11 +17,6 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: true,
 
-  // In plain dev, bind to 127.0.0.1 (not localhost) so the browser origin
-  // matches the loopback redirect_uri baked into the atproto OAuth client
-  // (`http://127.0.0.1:3000/...` — see server/utils/blueskyOauth.ts).
-  // Under NUXT_DEV_TLS=1, serve over HTTPS on local.revue-de-presse.org
-  // instead (mkcert-issued certs; that host also resolves to 127.0.0.1).
   devServer: devTls
     ? {
         host: 'local.revue-de-presse.org',
@@ -39,23 +34,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiBaseUrl: '',
     apiClientSecret: '',
-    // Chat / Bluesky OAuth — server-only.
-    // Defaults are read from .env.local at build/boot time so operators
-    // only deal with one env var name per concern (no NUXT_CHAT_… prefix
-    // gymnastics). Production / Netlify also set the same names directly.
-    chat: {
-      // 256-bit shared secret minted by `make chat-jwt-secret` in the
-      // org.revue-de-presse.api repo. The SAME value lives in:
-      //   1. org.revue-de-presse.api/.env.local     (API verifier)
-      //   2. org.revue-de-presse.benchmark/nuxt/.env.local (Nuxt signer)
-      //   3. Netlify env vars                       (Nuxt signer, prod)
-      apiJwtSecret: process.env.API_JWT_SECRET ?? '',
-      // Public site origin (no trailing slash). Empty in dev → server
-      // falls back to a localhost loopback client_id.
-      publicOrigin: process.env.PUBLIC_ORIGIN ?? '',
-      // Where to keep session + OAuth state on disk in dev.
-      sessionStoreDir: process.env.CHAT_SESSION_STORE_DIR ?? './.session-store',
-    },
   },
 
   experimental: {

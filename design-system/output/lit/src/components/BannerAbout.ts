@@ -10,14 +10,12 @@ type BannerAboutProps = {
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
-  discuterHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
   onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
-  onDiscuterClick?: () => void;
 };
 
 @customElement("banner-about")
@@ -31,14 +29,12 @@ export default class BannerAbout extends LitElement {
   @property() onContactClick: any;
   @property() onSupportClick: any;
   @property() onSourcesClick: any;
-  @property() onDiscuterClick: any;
   @property() subscribeHref: any;
   @property() legalNoticeHref: any;
   @property() termsOfServiceHref: any;
   @property() contactHref: any;
   @property() supportHref: any;
   @property() sourcesHref: any;
-  @property() discuterHref: any;
 
   get year() {
     return new Date().getFullYear();
@@ -71,12 +67,6 @@ export default class BannerAbout extends LitElement {
     if (this.onSourcesClick) {
       event.preventDefault();
       this.onSourcesClick();
-    }
-  }
-  handleDiscuterClick(event: any) {
-    if (this.onDiscuterClick) {
-      event.preventDefault();
-      this.onDiscuterClick();
     }
   }
 
@@ -122,12 +112,6 @@ export default class BannerAbout extends LitElement {
           this.sourcesHref ?? "/sources"
         }  @click=${(event) => this.handleSourcesClick(event)} >${t(
       "footer.about.sources"
-    )}</a>
-        <br  />
-        <a  data-testid="view-button"  data-view="discuter"  .href=${
-          this.discuterHref ?? "/discuter"
-        }  @click=${(event) => this.handleDiscuterClick(event)} >${t(
-      "footer.about.discuter"
     )}</a>
         <br  /></p>
         <h2 ><my-icon  name="funding"  .size=${24}  .decorative=${true} ></my-icon>

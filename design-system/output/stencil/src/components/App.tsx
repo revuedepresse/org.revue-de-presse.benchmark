@@ -12,7 +12,6 @@ import { TermsOfServicePage } from "./TermsOfServicePage";
 import { ContactPage } from "./ContactPage";
 import { SupportPage } from "./SupportPage";
 import { SourcesPage } from "./SourcesPage";
-import { DiscuterPage } from "./DiscuterPage";
 import { IntroCard } from "./IntroCard";
 import { Spinner } from "./Spinner";
 import type { BlueskyPost } from "./BlueskyPostCard";
@@ -21,13 +20,6 @@ import type {
   SummaryInlineSegment,
 } from "../utils/summary-blocks";
 import type { Locale } from "../utils/i18n";
-import type {
-  DiscuterStatus,
-  DiscuterTurn,
-  DiscuterCitation,
-  DiscuterErrorCode,
-  DiscuterHandleErrorCode,
-} from "./DiscuterPage";
 
 import {
   Component,
@@ -51,9 +43,6 @@ export class App {
   @Event() logoClick: any;
   @Prop() minDate: any;
   @Prop() layout: any;
-  @Prop() authenticated: any;
-  @Event() accountClick: any;
-  @Event() mySpaceClick: any;
   @Prop() showPopularNews: any;
   @Prop() mainSubView: any;
   @Prop() captureMode: any;
@@ -67,20 +56,6 @@ export class App {
   @Event() mainSubViewChange: any;
   @Prop() summaryLoading: any;
   @Prop() summaryBlocks: any;
-  @Prop() discuterStatus: any;
-  @Prop() discuterTurns: any;
-  @Prop() discuterCitations: any;
-  @Prop() discuterErrorCode: any;
-  @Prop() discuterDraft: any;
-  @Prop() discuterHandleDraft: any;
-  @Prop() discuterHandleErrorCode: any;
-  @Event() discuterLogin: any;
-  @Event() discuterHandleDraftChange: any;
-  @Event() discuterDraftChange: any;
-  @Event() discuterSend: any;
-  @Event() discuterCancel: any;
-  @Event() discuterClear: any;
-  @Event() discuterRetry: any;
   @State() focusedDate = new Date();
   @State() isCalendarOpen = false;
   @State() currentView = "main";
@@ -197,9 +172,7 @@ export class App {
           <div class="rdp-app__header-inner">
             <app-header
               layout={this.layout ?? "desktop"}
-              authenticated={this.authenticated ?? false}
-              onAccountClick={() => this.accountClick?.()}
-              onMySpaceClick={() => this.mySpaceClick?.()}
+              authenticated={false}
               onLogoClick={() => this.goHome()}
             ></app-header>
           </div>
@@ -225,7 +198,6 @@ export class App {
                   onContactClick={() => this.goTo("contact")}
                   onSupportClick={() => this.goTo("support")}
                   onSourcesClick={() => this.goTo("sources")}
-                  onDiscuterClick={() => this.goTo("discuter")}
                 ></sidebar>
               </aside>
             ) : null}
@@ -400,26 +372,6 @@ export class App {
               {this.currentView === "sources" ? (
                 <sources-page></sources-page>
               ) : null}
-              {this.currentView === "discuter" ? (
-                <discuter-page
-                  status={this.discuterStatus ?? "unauthenticated"}
-                  turns={this.discuterTurns}
-                  citations={this.discuterCitations}
-                  errorCode={this.discuterErrorCode}
-                  draft={this.discuterDraft}
-                  handleDraft={this.discuterHandleDraft}
-                  handleErrorCode={this.discuterHandleErrorCode}
-                  onLogin={(handle) => this.discuterLogin?.(handle)}
-                  onHandleDraftChange={(next) =>
-                    this.discuterHandleDraftChange?.(next)
-                  }
-                  onDraftChange={(next) => this.discuterDraftChange?.(next)}
-                  onSend={(text) => this.discuterSend?.(text)}
-                  onCancel={() => this.discuterCancel?.()}
-                  onClear={() => this.discuterClear?.()}
-                  onRetry={() => this.discuterRetry?.()}
-                ></discuter-page>
-              ) : null}
             </main>
           </div>
         ) : null}
@@ -483,21 +435,6 @@ export class App {
               {this.currentView === "sources" ? (
                 <sources-page></sources-page>
               ) : null}
-              {this.currentView === "discuter" ? (
-                <discuter-page
-                  status={this.discuterStatus ?? "unauthenticated"}
-                  turns={this.discuterTurns}
-                  citations={this.discuterCitations}
-                  errorCode={this.discuterErrorCode}
-                  draft={this.discuterDraft}
-                  onLogin={() => this.discuterLogin?.()}
-                  onDraftChange={(next) => this.discuterDraftChange?.(next)}
-                  onSend={(text) => this.discuterSend?.(text)}
-                  onCancel={() => this.discuterCancel?.()}
-                  onClear={() => this.discuterClear?.()}
-                  onRetry={() => this.discuterRetry?.()}
-                ></discuter-page>
-              ) : null}
               {!this.captureMode ? (
                 <banner-about
                   onLegalNoticeClick={() => this.goTo("legal")}
@@ -505,7 +442,6 @@ export class App {
                   onContactClick={() => this.goTo("contact")}
                   onSupportClick={() => this.goTo("support")}
                   onSourcesClick={() => this.goTo("sources")}
-                  onDiscuterClick={() => this.goTo("discuter")}
                 ></banner-about>
               ) : null}
             </main>

@@ -24,21 +24,13 @@ type SnapshotItem = {
  *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 
-type ViewKey =
-  | "main"
-  | "legal"
-  | "terms"
-  | "contact"
-  | "support"
-  | "sources"
-  | "discuter";
+type ViewKey = "main" | "legal" | "terms" | "contact" | "support" | "sources";
 /** Initial sub-view for the day-page, when entered via a URL like
  *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 
 type AppProps = {
   layout?: "mobile" | "desktop";
-  authenticated?: boolean;
   posts: BlueskyPost[];
   pickedDate: Date;
   lists: SnapshotItem[];
@@ -53,27 +45,11 @@ type AppProps = {
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
-  onAccountClick?: () => void;
-  onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
   captureMode?: boolean;
-  discuterStatus?: DiscuterStatus;
-  discuterTurns?: DiscuterTurn[];
-  discuterCitations?: DiscuterCitation[];
-  discuterErrorCode?: DiscuterErrorCode;
-  discuterDraft?: string;
-  discuterHandleDraft?: string;
-  discuterHandleErrorCode?: DiscuterHandleErrorCode;
-  onDiscuterLogin?: (handle: string) => void;
-  onDiscuterHandleDraftChange?: (next: string) => void;
-  onDiscuterDraftChange?: (next: string) => void;
-  onDiscuterSend?: (text: string) => void;
-  onDiscuterCancel?: () => void;
-  onDiscuterClear?: () => void;
-  onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
   /** Boot-time sub-view from the URL (synthese-des-actus-du-… vs actualites-du-…).
@@ -105,9 +81,7 @@ import type { Locale } from "../utils/i18n";
         <div class="rdp-app__header-inner">
           <app-header
             [layout]="layout ?? 'desktop'"
-            [authenticated]="authenticated ?? false"
-            (accountClick)="onAccountClick?.()"
-            (mySpaceClick)="onMySpaceClick?.()"
+            [authenticated]="false"
             (logoClick)="goHome()"
           ></app-header>
         </div>
@@ -134,7 +108,6 @@ import type { Locale } from "../utils/i18n";
                 (contactClick)="goTo('contact')"
                 (supportClick)="goTo('support')"
                 (sourcesClick)="goTo('sources')"
-                (discuterClick)="goTo('discuter')"
               ></sidebar></aside
           ></ng-container>
           <main
@@ -290,24 +263,6 @@ import type { Locale } from "../utils/i18n";
             <ng-container *ngIf="currentView === 'sources'"
               ><sources-page></sources-page
             ></ng-container>
-            <ng-container *ngIf="currentView === 'discuter'"
-              ><discuter-page
-                [status]="discuterStatus ?? 'unauthenticated'"
-                [turns]="discuterTurns"
-                [citations]="discuterCitations"
-                [errorCode]="discuterErrorCode"
-                [draft]="discuterDraft"
-                [handleDraft]="discuterHandleDraft"
-                [handleErrorCode]="discuterHandleErrorCode"
-                (login)="onDiscuterLogin?.($event)"
-                (handleDraftChange)="onDiscuterHandleDraftChange?.($event)"
-                (draftChange)="onDiscuterDraftChange?.($event)"
-                (send)="onDiscuterSend?.($event)"
-                (cancel)="onDiscuterCancel?.()"
-                (clear)="onDiscuterClear?.()"
-                (retry)="onDiscuterRetry?.()"
-              ></discuter-page
-            ></ng-container>
           </main></div
       ></ng-container>
       <ng-container *ngIf="(layout ?? 'desktop') === 'mobile'"
@@ -359,21 +314,6 @@ import type { Locale } from "../utils/i18n";
           <ng-container *ngIf="currentView === 'sources'"
             ><sources-page></sources-page
           ></ng-container>
-          <ng-container *ngIf="currentView === 'discuter'"
-            ><discuter-page
-              [status]="discuterStatus ?? 'unauthenticated'"
-              [turns]="discuterTurns"
-              [citations]="discuterCitations"
-              [errorCode]="discuterErrorCode"
-              [draft]="discuterDraft"
-              (login)="onDiscuterLogin?.()"
-              (draftChange)="onDiscuterDraftChange?.($event)"
-              (send)="onDiscuterSend?.($event)"
-              (cancel)="onDiscuterCancel?.()"
-              (clear)="onDiscuterClear?.()"
-              (retry)="onDiscuterRetry?.()"
-            ></discuter-page
-          ></ng-container>
           <ng-container *ngIf="!captureMode"
             ><banner-about
               (legalNoticeClick)="goTo('legal')"
@@ -381,7 +321,6 @@ import type { Locale } from "../utils/i18n";
               (contactClick)="goTo('contact')"
               (supportClick)="goTo('support')"
               (sourcesClick)="goTo('sources')"
-              (discuterClick)="goTo('discuter')"
             ></banner-about
           ></ng-container>
         </main>
@@ -649,9 +588,6 @@ export default class App {
   @Input() onLogoClick!: AppProps["onLogoClick"];
   @Input() minDate!: AppProps["minDate"];
   @Input() layout!: AppProps["layout"];
-  @Input() authenticated!: AppProps["authenticated"];
-  @Input() onAccountClick!: AppProps["onAccountClick"];
-  @Input() onMySpaceClick!: AppProps["onMySpaceClick"];
   @Input() showPopularNews!: AppProps["showPopularNews"];
   @Input() mainSubView!: AppProps["mainSubView"];
   @Input() captureMode!: AppProps["captureMode"];
@@ -665,21 +601,6 @@ export default class App {
   @Input() onMainSubViewChange!: AppProps["onMainSubViewChange"];
   @Input() summaryLoading!: AppProps["summaryLoading"];
   @Input() summaryBlocks!: AppProps["summaryBlocks"];
-  @Input() discuterStatus!: AppProps["discuterStatus"];
-  @Input() discuterTurns!: AppProps["discuterTurns"];
-  @Input() discuterCitations!: AppProps["discuterCitations"];
-  @Input() discuterErrorCode!: AppProps["discuterErrorCode"];
-  @Input() discuterDraft!: AppProps["discuterDraft"];
-  @Input() discuterHandleDraft!: AppProps["discuterHandleDraft"];
-  @Input() discuterHandleErrorCode!: AppProps["discuterHandleErrorCode"];
-  @Input() onDiscuterLogin!: AppProps["onDiscuterLogin"];
-  @Input()
-  onDiscuterHandleDraftChange!: AppProps["onDiscuterHandleDraftChange"];
-  @Input() onDiscuterDraftChange!: AppProps["onDiscuterDraftChange"];
-  @Input() onDiscuterSend!: AppProps["onDiscuterSend"];
-  @Input() onDiscuterCancel!: AppProps["onDiscuterCancel"];
-  @Input() onDiscuterClear!: AppProps["onDiscuterClear"];
-  @Input() onDiscuterRetry!: AppProps["onDiscuterRetry"];
 
   focusedDate = new Date();
   isCalendarOpen = false;
@@ -804,7 +725,6 @@ export default class App {
     ContactPageModule,
     SupportPageModule,
     SourcesPageModule,
-    DiscuterPageModule,
     BannerAboutModule,
     CalendarModule,
     CalendarActionBarModule,

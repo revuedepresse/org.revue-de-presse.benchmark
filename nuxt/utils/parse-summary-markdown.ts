@@ -15,6 +15,7 @@
 // (Mitosis JSX struggles with that).
 
 import {
+  dropParentheticalHandleCitations,
   normalizeBrandNamesToHandles,
   resolveBlueskyHandle,
 } from './bluesky-handles';
@@ -38,7 +39,11 @@ export function parseSummaryMarkdown(markdown: string): SummaryBlock[] {
   // Pre-normalize brand-name variations (e.g. "Le Monde", "L'AFP",
   // "Mediapart.fr") into their canonical handles before any parsing —
   // covers Mistral's tendency to expand acronyms or capitalise handles.
-  const normalized = normalizeBrandNamesToHandles(markdown);
+  // Then drop any redundant "(handle)" parentheticals (Mistral often
+  // cites the same outlet twice: once inline, once in parens).
+  const normalized = dropParentheticalHandleCitations(
+    normalizeBrandNamesToHandles(markdown),
+  );
 
   const blocks: SummaryBlock[] = [];
   // Split into "block-level" chunks on blank lines, but treat consecutive

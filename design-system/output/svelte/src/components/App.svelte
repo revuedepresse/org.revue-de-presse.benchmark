@@ -23,7 +23,7 @@ type SnapshotItem = {
 *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
 *  Nuxt so the route is the source of truth. */
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter'
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources'
 
 /** Initial sub-view for the day-page, when entered via a URL like
 *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
@@ -31,7 +31,6 @@ type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 
 
 type AppProps = {
  layout?: 'mobile' | 'desktop';
- authenticated?: boolean;
  posts: BlueskyPost[];
  pickedDate: Date;
  lists: SnapshotItem[];
@@ -46,27 +45,11 @@ type AppProps = {
  showPopularNews?: boolean;
  locale?: Locale;
  initialView?: ViewKey;
- onAccountClick?: () => void;
- onMySpaceClick?: () => void;
  onListSelect?: (id: string) => void;
  onDateSelect?: (date: Date) => void;
  onLogoClick?: () => void;
  onViewChange?: (view: ViewKey) => void;
  captureMode?: boolean;
- discuterStatus?: DiscuterStatus;
- discuterTurns?: DiscuterTurn[];
- discuterCitations?: DiscuterCitation[];
- discuterErrorCode?: DiscuterErrorCode;
- discuterDraft?: string;
- discuterHandleDraft?: string;
- discuterHandleErrorCode?: DiscuterHandleErrorCode;
- onDiscuterLogin?: (handle: string) => void;
- onDiscuterHandleDraftChange?: (next: string) => void;
- onDiscuterDraftChange?: (next: string) => void;
- onDiscuterSend?: (text: string) => void;
- onDiscuterCancel?: () => void;
- onDiscuterClear?: () => void;
- onDiscuterRetry?: () => void;
  /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
  mainSubView?: MainSubView;
  /** Boot-time sub-view from the URL (synthese-des-actus-du-… vs actualites-du-…).
@@ -102,13 +85,11 @@ import  TermsOfServicePage from './TermsOfServicePage.svelte';
 import  ContactPage from './ContactPage.svelte';
 import  SupportPage from './SupportPage.svelte';
 import  SourcesPage from './SourcesPage.svelte';
-import  DiscuterPage from './DiscuterPage.svelte';
 import  IntroCard from './IntroCard.svelte';
 import  Spinner from './Spinner.svelte';
 import type { BlueskyPost } from './BlueskyPostCard.svelte';
 import type { SummaryBlock, SummaryInlineSegment } from '../utils/summary-blocks';
 import type { Locale } from '../utils/i18n';
-import type { DiscuterStatus, DiscuterTurn, DiscuterCitation, DiscuterErrorCode, DiscuterHandleErrorCode } from './DiscuterPage.svelte';
 
 
 
@@ -122,9 +103,6 @@ export let onDateSelect: AppProps['onDateSelect']= undefined;
 export let onLogoClick: AppProps['onLogoClick']= undefined;
 export let minDate: AppProps['minDate']= undefined;
 export let layout: AppProps['layout']= undefined;
-export let authenticated: AppProps['authenticated']= undefined;
-export let onAccountClick: AppProps['onAccountClick']= undefined;
-export let onMySpaceClick: AppProps['onMySpaceClick']= undefined;
 export let showPopularNews: AppProps['showPopularNews']= undefined;
 export let mainSubView: AppProps['mainSubView']= undefined;
 export let captureMode: AppProps['captureMode']= undefined;
@@ -138,20 +116,6 @@ export let emptyMessageKey: AppProps['emptyMessageKey']= undefined;
 export let onMainSubViewChange: AppProps['onMainSubViewChange']= undefined;
 export let summaryLoading: AppProps['summaryLoading']= undefined;
 export let summaryBlocks: AppProps['summaryBlocks']= undefined;
-export let discuterStatus: AppProps['discuterStatus']= undefined;
-export let discuterTurns: AppProps['discuterTurns']= undefined;
-export let discuterCitations: AppProps['discuterCitations']= undefined;
-export let discuterErrorCode: AppProps['discuterErrorCode']= undefined;
-export let discuterDraft: AppProps['discuterDraft']= undefined;
-export let discuterHandleDraft: AppProps['discuterHandleDraft']= undefined;
-export let discuterHandleErrorCode: AppProps['discuterHandleErrorCode']= undefined;
-export let onDiscuterLogin: AppProps['onDiscuterLogin']= undefined;
-export let onDiscuterHandleDraftChange: AppProps['onDiscuterHandleDraftChange']= undefined;
-export let onDiscuterDraftChange: AppProps['onDiscuterDraftChange']= undefined;
-export let onDiscuterSend: AppProps['onDiscuterSend']= undefined;
-export let onDiscuterCancel: AppProps['onDiscuterCancel']= undefined;
-export let onDiscuterClear: AppProps['onDiscuterClear']= undefined;
-export let onDiscuterRetry: AppProps['onDiscuterRetry']= undefined;
 
 
 
@@ -249,7 +213,7 @@ initialised = true; });
 
   </script>
 
-  <div  data-testid="app-shell"  class={`rdp-app rdp-app--${layout ?? 'desktop'}`} ><div  class="rdp-app__header-ribbon" ><div  class="rdp-app__header-inner" ><AppHeader  layout={layout ?? 'desktop'}  authenticated={authenticated ?? false}  onAccountClick={(event) => onAccountClick?.()} onMySpaceClick={(event) => onMySpaceClick?.()} onLogoClick={(event) => goHome()}></AppHeader></div></div>
+  <div  data-testid="app-shell"  class={`rdp-app rdp-app--${layout ?? 'desktop'}`} ><div  class="rdp-app__header-ribbon" ><div  class="rdp-app__header-inner" ><AppHeader  layout={layout ?? 'desktop'}  authenticated={false}  onLogoClick={(event) => goHome()}></AppHeader></div></div>
 {#if showPopularNews === true && mainSubView !== 'summary' }
 <p  class="rdp-app__popular-news" >{popularNewsLine()}</p>
 
@@ -258,7 +222,7 @@ initialised = true; });
 {#if (layout ?? 'desktop') === 'desktop' }
 <div  class="rdp-app__content" >
 {#if !captureMode }
-<aside  class="rdp-app__column" ><Sidebar  lists={lists}  selectedListId={selectedListId}  selectedDate={pickedDate}  yearRange={yearRange}  minDate={minDate}  locale={locale}  onListSelect={(id) => onListSelect?.(id)} onDateSelect={(d) => selectFromSidebar(d)} onLegalNoticeClick={(event) => goTo('legal')} onTermsOfServiceClick={(event) => goTo('terms')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')} onDiscuterClick={(event) => goTo('discuter')}></Sidebar></aside>
+<aside  class="rdp-app__column" ><Sidebar  lists={lists}  selectedListId={selectedListId}  selectedDate={pickedDate}  yearRange={yearRange}  minDate={minDate}  locale={locale}  onListSelect={(id) => onListSelect?.(id)} onDateSelect={(d) => selectFromSidebar(d)} onLegalNoticeClick={(event) => goTo('legal')} onTermsOfServiceClick={(event) => goTo('terms')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></Sidebar></aside>
 
 
 {/if}<main  class="rdp-app__main"  aria-busy={loading ? 'true' : undefined} >
@@ -409,11 +373,6 @@ initialised = true; });
 <SourcesPage ></SourcesPage>
 
 
-{/if}
-{#if currentView === 'discuter' }
-<DiscuterPage  status={discuterStatus ?? 'unauthenticated'}  turns={discuterTurns}  citations={discuterCitations}  errorCode={discuterErrorCode}  draft={discuterDraft}  handleDraft={discuterHandleDraft}  handleErrorCode={discuterHandleErrorCode}  onLogin={(handle) => onDiscuterLogin?.(handle)} onHandleDraftChange={(next) => onDiscuterHandleDraftChange?.(next)} onDraftChange={(next) => onDiscuterDraftChange?.(next)} onSend={(text) => onDiscuterSend?.(text)} onCancel={(event) => onDiscuterCancel?.()} onClear={(event) => onDiscuterClear?.()} onRetry={(event) => onDiscuterRetry?.()}></DiscuterPage>
-
-
 {/if}</main></div>
 
 
@@ -476,13 +435,8 @@ initialised = true; });
 
 
 {/if}
-{#if currentView === 'discuter' }
-<DiscuterPage  status={discuterStatus ?? 'unauthenticated'}  turns={discuterTurns}  citations={discuterCitations}  errorCode={discuterErrorCode}  draft={discuterDraft}  onLogin={(event) => onDiscuterLogin?.()} onDraftChange={(next) => onDiscuterDraftChange?.(next)} onSend={(text) => onDiscuterSend?.(text)} onCancel={(event) => onDiscuterCancel?.()} onClear={(event) => onDiscuterClear?.()} onRetry={(event) => onDiscuterRetry?.()}></DiscuterPage>
-
-
-{/if}
 {#if !captureMode }
-<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onTermsOfServiceClick={(event) => goTo('terms')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')} onDiscuterClick={(event) => goTo('discuter')}></BannerAbout>
+<BannerAbout  onLegalNoticeClick={(event) => goTo('legal')} onTermsOfServiceClick={(event) => goTo('terms')} onContactClick={(event) => goTo('contact')} onSupportClick={(event) => goTo('support')} onSourcesClick={(event) => goTo('sources')}></BannerAbout>
 
 
 {/if}</main>

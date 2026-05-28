@@ -5,13 +5,9 @@
     :target="external ? '_blank' : undefined"
     :rel="external ? 'noopener noreferrer' : undefined"
   >
-    <template v-if="labelKey">
-      {{ t(labelKey) }}
-    </template>
+    <template v-if="labelKey">{{ t(labelKey) }}</template>
 
-    <template v-else>
-      {{ label ?? "" }}
-    </template>
+    <template v-else>{{ label ?? "" }}</template>
     </a
   >
 </template>

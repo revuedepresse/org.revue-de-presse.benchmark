@@ -87,16 +87,6 @@
       <span x-html="t('footer.about.sources')"></span>
     </a>
     <br />
-    <a
-      class="rdp-banner-about__outer-link"
-      data-testid="view-button"
-      data-view="discuter"
-      x-bind:href="discuterHref ?? '/discuter'"
-      x-on:click="handleDiscuterClick($event)"
-    >
-      <span x-html="t('footer.about.discuter')"></span>
-    </a>
-    <br />
   </p>
   <h2 class="rdp-banner-about__title rdp-banner-about__title--funding">
     <Icon name="funding" x-bind:size="24" x-bind:decorative="true"></Icon>
@@ -293,12 +283,6 @@
         if (props.onSourcesClick) {
           event.preventDefault();
           props.onSourcesClick();
-        }
-      },
-      handleDiscuterClick(event) {
-        if (props.onDiscuterClick) {
-          event.preventDefault();
-          props.onDiscuterClick();
         }
       },
     }));

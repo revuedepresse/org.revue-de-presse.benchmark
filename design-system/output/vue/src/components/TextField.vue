@@ -1,13 +1,9 @@
 <template>
   <div class="rdp-textfield" :data-error="error ? 'true' : undefined">
     <label class="rdp-textfield__label" :for="`field-${name}`">
-      <template v-if="labelKey">
-        {{ t(labelKey) }}
-      </template>
+      <template v-if="labelKey">{{ t(labelKey) }}</template>
 
-      <template v-else>
-        {{ label ?? "" }}
-      </template> </label
+      <template v-else>{{ label ?? "" }}</template> </label
     ><input
       :id="`field-${name}`"
       :type="type ?? 'text'"

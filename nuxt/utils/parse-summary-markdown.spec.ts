@@ -141,6 +141,37 @@ describe('parseSummaryMarkdown', () => {
     }
   });
 
+  it('drops the redundant parenthetical citation when Mistral writes the brand name AND the handle', () => {
+    const out = parseSummaryMarkdown(
+      'Mediapart.fr a rapporté une enquête (mediapart.fr).',
+    );
+    if (out[0]?.kind === 'paragraph') {
+      const handles = out[0].segments
+        .filter((s) => s.kind === 'handle')
+        .map((s) => (s as { value: string }).value);
+      expect(handles).toEqual(['mediapart.fr']);
+      // The trailing period must remain attached to the sentence with no
+      // dangling whitespace where the parenthetical used to be.
+      const joined = out[0].segments
+        .filter((s) => s.kind === 'text')
+        .map((s) => (s as { value: string }).value)
+        .join('|');
+      expect(joined).not.toContain(' .');
+      expect(joined).not.toContain('(');
+    }
+  });
+
+  it('does NOT strip parens around an unknown dotted token', () => {
+    const out = parseSummaryMarkdown('Selon X (verite.fr) — propos non vérifiés.');
+    if (out[0]?.kind === 'paragraph') {
+      const joined = out[0].segments
+        .filter((s) => s.kind === 'text')
+        .map((s) => (s as { value: string }).value)
+        .join('');
+      expect(joined).toContain('(verite.fr)');
+    }
+  });
+
   it('parses bullets with mixed plain text + handle', () => {
     const md = '- Selon lemonde.fr, une dépêche.\n- Selon afp.com, autre.';
     const out = parseSummaryMarkdown(md);

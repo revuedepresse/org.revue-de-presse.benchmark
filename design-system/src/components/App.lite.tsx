@@ -13,7 +13,6 @@ import TermsOfServicePage from './TermsOfServicePage.lite';
 import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
-import DiscuterPage from './DiscuterPage.lite';
 import IntroCard from './IntroCard.lite';
 import Spinner from './Spinner.lite';
 import type { BlueskyPost } from './BlueskyPostCard.lite';
@@ -26,21 +25,13 @@ type MainSubView = 'publications' | 'summary';
  *  Nuxt so the route is the source of truth. */
 type InitialMainSubView = MainSubView;
 import type { Locale } from '../utils/i18n';
-import type {
-  DiscuterStatus,
-  DiscuterTurn,
-  DiscuterCitation,
-  DiscuterErrorCode,
-  DiscuterHandleErrorCode,
-} from './DiscuterPage.lite';
 
 type SnapshotItem = { id: string; label: string };
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter';
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
 
 type AppProps = {
   layout?: 'mobile' | 'desktop';
-  authenticated?: boolean;
   posts: BlueskyPost[];
   pickedDate: Date;
   lists: SnapshotItem[];
@@ -52,27 +43,11 @@ type AppProps = {
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
-  onAccountClick?: () => void;
-  onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
   captureMode?: boolean;
-  discuterStatus?: DiscuterStatus;
-  discuterTurns?: DiscuterTurn[];
-  discuterCitations?: DiscuterCitation[];
-  discuterErrorCode?: DiscuterErrorCode;
-  discuterDraft?: string;
-  discuterHandleDraft?: string;
-  discuterHandleErrorCode?: DiscuterHandleErrorCode;
-  onDiscuterLogin?: (handle: string) => void;
-  onDiscuterHandleDraftChange?: (next: string) => void;
-  onDiscuterDraftChange?: (next: string) => void;
-  onDiscuterSend?: (text: string) => void;
-  onDiscuterCancel?: () => void;
-  onDiscuterClear?: () => void;
-  onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
   /** Boot-time sub-view from the URL (synthese-des-actus-du-… vs actualites-du-…).
@@ -89,7 +64,7 @@ export default function App(props: AppProps) {
   const state = useStore({
     focusedDate: new Date(),
     isCalendarOpen: false,
-    currentView: 'main' as 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter',
+    currentView: 'main' as 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources',
     initialised: false,
     get popularNewsLine(): string {
       return t(
@@ -197,9 +172,7 @@ export default function App(props: AppProps) {
         <div class="rdp-app__header-inner">
           <AppHeader
             layout={props.layout ?? 'desktop'}
-            authenticated={props.authenticated ?? false}
-            onAccountClick={() => props.onAccountClick?.()}
-            onMySpaceClick={() => props.onMySpaceClick?.()}
+            authenticated={false}
             onLogoClick={() => state.goHome()}
           />
         </div>
@@ -226,7 +199,6 @@ export default function App(props: AppProps) {
                 onContactClick={() => state.goTo('contact')}
                 onSupportClick={() => state.goTo('support')}
                 onSourcesClick={() => state.goTo('sources')}
-                onDiscuterClick={() => state.goTo('discuter')}
               />
             </aside>
           </Show>
@@ -380,24 +352,6 @@ export default function App(props: AppProps) {
             <Show when={state.currentView === 'sources'}>
               <SourcesPage />
             </Show>
-            <Show when={state.currentView === 'discuter'}>
-              <DiscuterPage
-                status={props.discuterStatus ?? 'unauthenticated'}
-                turns={props.discuterTurns}
-                citations={props.discuterCitations}
-                errorCode={props.discuterErrorCode}
-                draft={props.discuterDraft}
-                handleDraft={props.discuterHandleDraft}
-                handleErrorCode={props.discuterHandleErrorCode}
-                onLogin={(handle: string) => props.onDiscuterLogin?.(handle)}
-                onHandleDraftChange={(next: string) => props.onDiscuterHandleDraftChange?.(next)}
-                onDraftChange={(next: string) => props.onDiscuterDraftChange?.(next)}
-                onSend={(text: string) => props.onDiscuterSend?.(text)}
-                onCancel={() => props.onDiscuterCancel?.()}
-                onClear={() => props.onDiscuterClear?.()}
-                onRetry={() => props.onDiscuterRetry?.()}
-              />
-            </Show>
           </main>
         </div>
       </Show>
@@ -451,21 +405,6 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'sources'}>
             <SourcesPage />
           </Show>
-          <Show when={state.currentView === 'discuter'}>
-            <DiscuterPage
-              status={props.discuterStatus ?? 'unauthenticated'}
-              turns={props.discuterTurns}
-              citations={props.discuterCitations}
-              errorCode={props.discuterErrorCode}
-              draft={props.discuterDraft}
-              onLogin={() => props.onDiscuterLogin?.()}
-              onDraftChange={(next: string) => props.onDiscuterDraftChange?.(next)}
-              onSend={(text: string) => props.onDiscuterSend?.(text)}
-              onCancel={() => props.onDiscuterCancel?.()}
-              onClear={() => props.onDiscuterClear?.()}
-              onRetry={() => props.onDiscuterRetry?.()}
-            />
-          </Show>
           <Show when={!props.captureMode}>
             <BannerAbout
               onLegalNoticeClick={() => state.goTo('legal')}
@@ -473,7 +412,6 @@ export default function App(props: AppProps) {
               onContactClick={() => state.goTo('contact')}
               onSupportClick={() => state.goTo('support')}
               onSourcesClick={() => state.goTo('sources')}
-              onDiscuterClick={() => state.goTo('discuter')}
             />
           </Show>
         </main>

@@ -24,7 +24,6 @@ type SidebarProps = {
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
-  onDiscuterClick?: () => void;
 };
 
 import type { Locale } from "../utils/i18n";
@@ -46,7 +45,6 @@ import type { Locale } from "../utils/i18n";
         (contactClick)="this.onContactClick.emit()"
         (supportClick)="this.onSupportClick.emit()"
         (sourcesClick)="this.onSourcesClick.emit()"
-        (discuterClick)="this.onDiscuterClick.emit()"
       ></banner-about>
       <style>
         {{\`
@@ -83,7 +81,6 @@ export default class Sidebar {
   @Output() onContactClick = new EventEmitter<any>();
   @Output() onSupportClick = new EventEmitter<any>();
   @Output() onSourcesClick = new EventEmitter<any>();
-  @Output() onDiscuterClick = new EventEmitter<any>();
 }
 
 @NgModule({

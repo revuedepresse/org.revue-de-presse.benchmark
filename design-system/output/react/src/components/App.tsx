@@ -23,21 +23,13 @@ type SnapshotItem = {
  *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 
-type ViewKey =
-  | "main"
-  | "legal"
-  | "terms"
-  | "contact"
-  | "support"
-  | "sources"
-  | "discuter";
+type ViewKey = "main" | "legal" | "terms" | "contact" | "support" | "sources";
 /** Initial sub-view for the day-page, when entered via a URL like
  *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 
 type AppProps = {
   layout?: "mobile" | "desktop";
-  authenticated?: boolean;
   posts: BlueskyPost[];
   pickedDate: Date;
   lists: SnapshotItem[];
@@ -52,27 +44,11 @@ type AppProps = {
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
-  onAccountClick?: () => void;
-  onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
   captureMode?: boolean;
-  discuterStatus?: DiscuterStatus;
-  discuterTurns?: DiscuterTurn[];
-  discuterCitations?: DiscuterCitation[];
-  discuterErrorCode?: DiscuterErrorCode;
-  discuterDraft?: string;
-  discuterHandleDraft?: string;
-  discuterHandleErrorCode?: DiscuterHandleErrorCode;
-  onDiscuterLogin?: (handle: string) => void;
-  onDiscuterHandleDraftChange?: (next: string) => void;
-  onDiscuterDraftChange?: (next: string) => void;
-  onDiscuterSend?: (text: string) => void;
-  onDiscuterCancel?: () => void;
-  onDiscuterClear?: () => void;
-  onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
   /** Boot-time sub-view from the URL (synthese-des-actus-du-… vs actualites-du-…).
@@ -98,7 +74,6 @@ import TermsOfServicePage from "./TermsOfServicePage";
 import ContactPage from "./ContactPage";
 import SupportPage from "./SupportPage";
 import SourcesPage from "./SourcesPage";
-import DiscuterPage from "./DiscuterPage";
 import IntroCard from "./IntroCard";
 import Spinner from "./Spinner";
 import type { BlueskyPost } from "./BlueskyPostCard";
@@ -107,13 +82,6 @@ import type {
   SummaryInlineSegment,
 } from "../utils/summary-blocks";
 import type { Locale } from "../utils/i18n";
-import type {
-  DiscuterStatus,
-  DiscuterTurn,
-  DiscuterCitation,
-  DiscuterErrorCode,
-  DiscuterHandleErrorCode,
-} from "./DiscuterPage";
 
 function App(props: AppProps) {
   const [focusedDate, setFocusedDate] = useState(() => new Date());
@@ -245,9 +213,7 @@ function App(props: AppProps) {
         <div className="rdp-app__header-inner">
           <AppHeader
             layout={props.layout ?? "desktop"}
-            authenticated={props.authenticated ?? false}
-            onAccountClick={(event) => props.onAccountClick?.()}
-            onMySpaceClick={(event) => props.onMySpaceClick?.()}
+            authenticated={false}
             onLogoClick={(event) => goHome()}
           />
         </div>
@@ -273,7 +239,6 @@ function App(props: AppProps) {
                 onContactClick={(event) => goTo("contact")}
                 onSupportClick={(event) => goTo("support")}
                 onSourcesClick={(event) => goTo("sources")}
-                onDiscuterClick={(event) => goTo("discuter")}
               />
             </aside>
           ) : null}
@@ -436,26 +401,6 @@ function App(props: AppProps) {
             {currentView === "contact" ? <ContactPage /> : null}
             {currentView === "support" ? <SupportPage /> : null}
             {currentView === "sources" ? <SourcesPage /> : null}
-            {currentView === "discuter" ? (
-              <DiscuterPage
-                status={props.discuterStatus ?? "unauthenticated"}
-                turns={props.discuterTurns}
-                citations={props.discuterCitations}
-                errorCode={props.discuterErrorCode}
-                draft={props.discuterDraft}
-                handleDraft={props.discuterHandleDraft}
-                handleErrorCode={props.discuterHandleErrorCode}
-                onLogin={(handle) => props.onDiscuterLogin?.(handle)}
-                onHandleDraftChange={(next) =>
-                  props.onDiscuterHandleDraftChange?.(next)
-                }
-                onDraftChange={(next) => props.onDiscuterDraftChange?.(next)}
-                onSend={(text) => props.onDiscuterSend?.(text)}
-                onCancel={(event) => props.onDiscuterCancel?.()}
-                onClear={(event) => props.onDiscuterClear?.()}
-                onRetry={(event) => props.onDiscuterRetry?.()}
-              />
-            ) : null}
           </main>
         </div>
       ) : null}
@@ -506,21 +451,6 @@ function App(props: AppProps) {
             {currentView === "contact" ? <ContactPage /> : null}
             {currentView === "support" ? <SupportPage /> : null}
             {currentView === "sources" ? <SourcesPage /> : null}
-            {currentView === "discuter" ? (
-              <DiscuterPage
-                status={props.discuterStatus ?? "unauthenticated"}
-                turns={props.discuterTurns}
-                citations={props.discuterCitations}
-                errorCode={props.discuterErrorCode}
-                draft={props.discuterDraft}
-                onLogin={(event) => props.onDiscuterLogin?.()}
-                onDraftChange={(next) => props.onDiscuterDraftChange?.(next)}
-                onSend={(text) => props.onDiscuterSend?.(text)}
-                onCancel={(event) => props.onDiscuterCancel?.()}
-                onClear={(event) => props.onDiscuterClear?.()}
-                onRetry={(event) => props.onDiscuterRetry?.()}
-              />
-            ) : null}
             {!props.captureMode ? (
               <BannerAbout
                 onLegalNoticeClick={(event) => goTo("legal")}
@@ -528,7 +458,6 @@ function App(props: AppProps) {
                 onContactClick={(event) => goTo("contact")}
                 onSupportClick={(event) => goTo("support")}
                 onSourcesClick={(event) => goTo("sources")}
-                onDiscuterClick={(event) => goTo("discuter")}
               />
             ) : null}
           </main>

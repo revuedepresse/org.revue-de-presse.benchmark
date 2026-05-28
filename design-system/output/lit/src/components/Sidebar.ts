@@ -26,7 +26,6 @@ type SidebarProps = {
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
-  onDiscuterClick?: () => void;
 };
 
 @customElement("my-sidebar")
@@ -45,7 +44,6 @@ export default class Sidebar extends LitElement {
   @property() onContactClick: any;
   @property() onSupportClick: any;
   @property() onSourcesClick: any;
-  @property() onDiscuterClick: any;
 
   render() {
     return html`
@@ -59,8 +57,7 @@ export default class Sidebar extends LitElement {
       this.onTermsOfServiceClick()}  @contactclick=${(event) =>
       this.onContactClick()}  @supportclick=${(event) =>
       this.onSupportClick()}  @sourcesclick=${(event) =>
-      this.onSourcesClick()}  @discuterclick=${(event) =>
-      this.onDiscuterClick()} ></banner-about>
+      this.onSourcesClick()} ></banner-about>
         <style >${`
               .rdp-sidebar {
                 width: 336px;

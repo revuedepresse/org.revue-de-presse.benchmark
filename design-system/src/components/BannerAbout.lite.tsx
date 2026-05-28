@@ -8,14 +8,12 @@ type BannerAboutProps = {
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
-  discuterHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
   onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
-  onDiscuterClick?: () => void;
 };
 
 export default function BannerAbout(props: BannerAboutProps) {
@@ -51,12 +49,6 @@ export default function BannerAbout(props: BannerAboutProps) {
       if (props.onSourcesClick) {
         event.preventDefault();
         props.onSourcesClick();
-      }
-    },
-    handleDiscuterClick(event: any) {
-      if (props.onDiscuterClick) {
-        event.preventDefault();
-        props.onDiscuterClick();
       }
     },
   });
@@ -148,16 +140,6 @@ export default function BannerAbout(props: BannerAboutProps) {
           data-view="sources"
         >
           {t('footer.about.sources')}
-        </a>
-        <br />
-        <a
-          class="rdp-banner-about__outer-link"
-          href={props.discuterHref ?? '/discuter'}
-          onClick={(event: any) => state.handleDiscuterClick(event)}
-          data-testid="view-button"
-          data-view="discuter"
-        >
-          {t('footer.about.discuter')}
         </a>
         <br />
       </p>

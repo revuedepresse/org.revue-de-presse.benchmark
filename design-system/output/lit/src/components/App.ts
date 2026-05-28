@@ -12,13 +12,11 @@ import './TermsOfServicePage.ts';
 import './ContactPage.ts';
 import './SupportPage.ts';
 import './SourcesPage.ts';
-import './DiscuterPage.ts';
 import './IntroCard.ts';
 import './Spinner.ts';
 import './BlueskyPostCard.ts';
 import type { SummaryBlock, SummaryInlineSegment } from '../utils/summary-blocks';
 import type { Locale } from '../utils/i18n';
-import './DiscuterPage.ts';
 
 
 
@@ -46,14 +44,13 @@ type SnapshotItem = {
 *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
 *  Nuxt so the route is the source of truth. */
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter'
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources'
 /** Initial sub-view for the day-page, when entered via a URL like
 *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
 *  Nuxt so the route is the source of truth. */
 
 type AppProps = {
  layout?: 'mobile' | 'desktop';
- authenticated?: boolean;
  posts: BlueskyPost[];
  pickedDate: Date;
  lists: SnapshotItem[];
@@ -68,27 +65,11 @@ type AppProps = {
  showPopularNews?: boolean;
  locale?: Locale;
  initialView?: ViewKey;
- onAccountClick?: () => void;
- onMySpaceClick?: () => void;
  onListSelect?: (id: string) => void;
  onDateSelect?: (date: Date) => void;
  onLogoClick?: () => void;
  onViewChange?: (view: ViewKey) => void;
  captureMode?: boolean;
- discuterStatus?: DiscuterStatus;
- discuterTurns?: DiscuterTurn[];
- discuterCitations?: DiscuterCitation[];
- discuterErrorCode?: DiscuterErrorCode;
- discuterDraft?: string;
- discuterHandleDraft?: string;
- discuterHandleErrorCode?: DiscuterHandleErrorCode;
- onDiscuterLogin?: (handle: string) => void;
- onDiscuterHandleDraftChange?: (next: string) => void;
- onDiscuterDraftChange?: (next: string) => void;
- onDiscuterSend?: (text: string) => void;
- onDiscuterCancel?: () => void;
- onDiscuterClear?: () => void;
- onDiscuterRetry?: () => void;
  /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
  mainSubView?: MainSubView;
  /** Boot-time sub-view from the URL (synthese-des-actus-du-… vs actualites-du-…).
@@ -123,9 +104,6 @@ type AppProps = {
 @property() onLogoClick: any
 @property() minDate: any
 @property() layout: any
-@property() authenticated: any
-@property() onAccountClick: any
-@property() onMySpaceClick: any
 @property() showPopularNews: any
 @property() mainSubView: any
 @property() captureMode: any
@@ -139,20 +117,6 @@ type AppProps = {
 @property() onMainSubViewChange: any
 @property() summaryLoading: any
 @property() summaryBlocks: any
-@property() discuterStatus: any
-@property() discuterTurns: any
-@property() discuterCitations: any
-@property() discuterErrorCode: any
-@property() discuterDraft: any
-@property() discuterHandleDraft: any
-@property() discuterHandleErrorCode: any
-@property() onDiscuterLogin: any
-@property() onDiscuterHandleDraftChange: any
-@property() onDiscuterDraftChange: any
-@property() onDiscuterSend: any
-@property() onDiscuterCancel: any
-@property() onDiscuterClear: any
-@property() onDiscuterRetry: any
 
        @state()  focusedDate= new Date()
 @state()  isCalendarOpen= false
@@ -244,13 +208,13 @@ this.initialised = true }
      render() {
        return html`
 
-          <div  class={`rdp-app rdp-app--${props.layout ?? 'desktop'}`}  data-testid="app-shell" ><div ><div ><app-header  .layout=${this.layout ?? 'desktop'}  .authenticated=${this.authenticated ?? false}  @accountclick=${(event) => this.onAccountClick?.()}  @myspaceclick=${(event) => this.onMySpaceClick?.()}  @logoclick=${(event) => this.goHome()} ></app-header></div></div>
+          <div  class={`rdp-app rdp-app--${props.layout ?? 'desktop'}`}  data-testid="app-shell" ><div ><div ><app-header  .layout=${this.layout ?? 'desktop'}  .authenticated=${false}  @logoclick=${(event) => this.goHome()} ></app-header></div></div>
         ${this.showPopularNews === true && this.mainSubView !== 'summary' ?
               html`<p >${this.popularNewsLine}</p>`
             : null}
         ${(this.layout ?? 'desktop') === 'desktop' ?
               html`<div >${!this.captureMode ?
-             html`<aside ><my-sidebar  .lists=${this.lists}  .selectedListId=${this.selectedListId}  .selectedDate=${this.pickedDate}  .yearRange=${this.yearRange}  .minDate=${this.minDate}  .locale=${this.locale}  @listselect=${(id) => this.onListSelect?.(id)}  @dateselect=${(d) => this.selectFromSidebar(d)}  @legalnoticeclick=${(event) => this.goTo('legal')}  @termsofserviceclick=${(event) => this.goTo('terms')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')}  @discuterclick=${(event) => this.goTo('discuter')} ></my-sidebar></aside>`
+             html`<aside ><my-sidebar  .lists=${this.lists}  .selectedListId=${this.selectedListId}  .selectedDate=${this.pickedDate}  .yearRange=${this.yearRange}  .minDate=${this.minDate}  .locale=${this.locale}  @listselect=${(id) => this.onListSelect?.(id)}  @dateselect=${(d) => this.selectFromSidebar(d)}  @legalnoticeclick=${(event) => this.goTo('legal')}  @termsofserviceclick=${(event) => this.goTo('terms')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')} ></my-sidebar></aside>`
            : null}
        <main  aria-busy=${this.loading ? 'true' : undefined} >${this.currentView !== 'main' ?
              html`<button  type="button"  @click=${(event) => this.goTo('main')} >
@@ -332,9 +296,6 @@ this.initialised = true }
            : null}
        ${this.currentView === 'sources' ?
              html`<sources-page ></sources-page>`
-           : null}
-       ${this.currentView === 'discuter' ?
-             html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  .handleDraft=${this.discuterHandleDraft}  .handleErrorCode=${this.discuterHandleErrorCode}  @login=${(handle) => this.onDiscuterLogin?.(handle)}  @handledraftchange=${(next) => this.onDiscuterHandleDraftChange?.(next)}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @clear=${(event) => this.onDiscuterClear?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
            : null}</main></div>`
             : null}
         ${(this.layout ?? 'desktop') === 'mobile' ?
@@ -372,11 +333,8 @@ this.initialised = true }
        ${this.currentView === 'sources' ?
              html`<sources-page ></sources-page>`
            : null}
-       ${this.currentView === 'discuter' ?
-             html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  @login=${(event) => this.onDiscuterLogin?.()}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @clear=${(event) => this.onDiscuterClear?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
-           : null}
        ${!this.captureMode ?
-             html`<banner-about  @legalnoticeclick=${(event) => this.goTo('legal')}  @termsofserviceclick=${(event) => this.goTo('terms')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')}  @discuterclick=${(event) => this.goTo('discuter')} ></banner-about>`
+             html`<banner-about  @legalnoticeclick=${(event) => this.goTo('legal')}  @termsofserviceclick=${(event) => this.goTo('terms')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')} ></banner-about>`
            : null}</main>
        ${this.isCalendarOpen ?
              html`<my-calendar  presentation="sheet"  .selectedDate=${this.focusedDate}  .locale=${this.locale}  .yearRange=${this.yearRange}  .minDate=${this.minDate}  @select=${(d) => this.pickFromCalendar(d)}  @dismiss=${(event) => this.closeCalendar()} ></my-calendar>`

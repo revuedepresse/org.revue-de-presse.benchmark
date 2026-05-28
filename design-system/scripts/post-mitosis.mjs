@@ -52,6 +52,30 @@ for (const target of targets) {
   console.log(`post-mitosis: ${target} hydrated with utils/locales/types`);
 }
 
+// Inline `<template v-if="…">{{ expr }}</template>` blocks emitted across
+// multiple lines so Vue's `whitespace: 'condense'` mode doesn't insert a
+// leading/trailing space inside the text segment. Without this, a paragraph
+// like "(mediapart.fr)" renders as "( @mediapart.fr )" because the text
+// segments holding "(" and ")" each get padded with a space.
+//
+// Pattern is narrow on purpose — only touches templates whose body is a
+// single `{{ … }}` expression with nothing else between the tags.
+if (existsSync(join(outputDir, 'vue', 'src', 'components'))) {
+  const dir = join(outputDir, 'vue', 'src', 'components');
+  const INLINE_INTERP_RE = /(<template\s+[^>]*>)\s*\n\s*(\{\{[^}]+\}\})\s*\n\s*(<\/template>)/g;
+  let patched = 0;
+  for (const file of readdirSync(dir).filter((f) => f.endsWith('.vue'))) {
+    const path = join(dir, file);
+    const original = readFileSync(path, 'utf8');
+    const next = original.replace(INLINE_INTERP_RE, '$1$2$3');
+    if (next !== original) {
+      writeFileSync(path, next);
+      patched++;
+    }
+  }
+  if (patched > 0) console.log(`post-mitosis: inlined single-interpolation <template> in ${patched} Vue file(s) (avoids whitespace padding)`);
+}
+
 // Strip Vue's inline-style emit. Mitosis 0.13 emits
 //   <component :is="'style'">{{ `...CSS...` }}</component>
 // which routes the CSS through Vue's text-interpolation. SSR HTML-escapes

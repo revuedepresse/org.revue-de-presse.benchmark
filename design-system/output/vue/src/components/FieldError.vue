@@ -1,13 +1,9 @@
 <template>
   <template v-if="!!(messageKey || message)">
     <p class="rdp-field-error" role="alert">
-      <template v-if="messageKey">
-        {{ t(messageKey, vars) }}
-      </template>
+      <template v-if="messageKey">{{ t(messageKey, vars) }}</template>
 
-      <template v-else>
-        {{ message ?? "" }}
-      </template>
+      <template v-else>{{ message ?? "" }}</template>
       
     </p>
   </template>

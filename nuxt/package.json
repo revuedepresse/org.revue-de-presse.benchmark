@@ -12,8 +12,6 @@
     "test:run": "vitest run"
   },
   "dependencies": {
-    "@atproto/oauth-client-node": "^0.2.0",
-    "jose": "^5.9.0",
     "linkifyjs": "^4.3.3",
     "nuxt": "^3.21.6",
     "pino": "^9.5.0",

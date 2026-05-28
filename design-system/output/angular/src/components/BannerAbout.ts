@@ -9,14 +9,12 @@ type BannerAboutProps = {
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
-  discuterHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
   onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
-  onDiscuterClick?: () => void;
 };
 
 import { t } from "../utils/i18n";
@@ -106,15 +104,6 @@ import { t } from "../utils/i18n";
           [attr.href]="sourcesHref ?? '/sources'"
           (click)="handleSourcesClick($event)"
           >{{t('footer.about.sources')}}</a
-        >
-        <br />
-        <a
-          class="rdp-banner-about__outer-link"
-          data-testid="view-button"
-          data-view="discuter"
-          [attr.href]="discuterHref ?? '/discuter'"
-          (click)="handleDiscuterClick($event)"
-          >{{t('footer.about.discuter')}}</a
         >
         <br />
       </p>
@@ -292,13 +281,11 @@ export default class BannerAbout {
   @Input() contactHref!: BannerAboutProps["contactHref"];
   @Input() supportHref!: BannerAboutProps["supportHref"];
   @Input() sourcesHref!: BannerAboutProps["sourcesHref"];
-  @Input() discuterHref!: BannerAboutProps["discuterHref"];
   @Output() onLegalNoticeClick = new EventEmitter<any>();
   @Output() onTermsOfServiceClick = new EventEmitter<any>();
   @Output() onContactClick = new EventEmitter<any>();
   @Output() onSupportClick = new EventEmitter<any>();
   @Output() onSourcesClick = new EventEmitter<any>();
-  @Output() onDiscuterClick = new EventEmitter<any>();
 
   get year() {
     return new Date().getFullYear();
@@ -331,12 +318,6 @@ export default class BannerAbout {
     if (this.onSourcesClick) {
       event.preventDefault();
       this.onSourcesClick.emit();
-    }
-  }
-  handleDiscuterClick(event: any) {
-    if (this.onDiscuterClick) {
-      event.preventDefault();
-      this.onDiscuterClick.emit();
     }
   }
 }

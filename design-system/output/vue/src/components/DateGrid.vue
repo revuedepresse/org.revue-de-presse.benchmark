@@ -32,9 +32,7 @@
                 }
               "
             >
-              <template v-if="!isDisabled(d)">
-                {{ d.getDate() }}
-              </template>
+              <template v-if="!isDisabled(d)">{{ d.getDate() }}</template>
             </td>
           </template>
         </tr>

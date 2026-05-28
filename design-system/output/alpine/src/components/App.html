@@ -7,9 +7,7 @@
     <div class="rdp-app__header-inner">
       <AppHeader
         x-bind:layout="layout ?? 'desktop'"
-        x-bind:authenticated="authenticated ?? false"
-        x-on:account-click="onAccountClick?.()"
-        x-on:my-space-click="onMySpaceClick?.()"
+        x-bind:authenticated="false"
         x-on:logo-click="goHome()"
       ></AppHeader>
     </div>
@@ -35,7 +33,6 @@
             x-on:contact-click="goTo('contact')"
             x-on:support-click="goTo('support')"
             x-on:sources-click="goTo('sources')"
-            x-on:discuter-click="goTo('discuter')"
           ></Sidebar>
         </aside>
       </template>
@@ -193,24 +190,6 @@
         <template x-if="currentView === 'sources'">
           <SourcesPage></SourcesPage>
         </template>
-        <template x-if="currentView === 'discuter'">
-          <DiscuterPage
-            x-bind:status="discuterStatus ?? 'unauthenticated'"
-            x-bind:turns="discuterTurns"
-            x-bind:citations="discuterCitations"
-            x-bind:errorCode="discuterErrorCode"
-            x-bind:draft="discuterDraft"
-            x-bind:handleDraft="discuterHandleDraft"
-            x-bind:handleErrorCode="discuterHandleErrorCode"
-            x-on:login="onDiscuterLogin?.(handle)"
-            x-on:handle-draft-change="onDiscuterHandleDraftChange?.(next)"
-            x-on:draft-change="onDiscuterDraftChange?.(next)"
-            x-on:send="onDiscuterSend?.(text)"
-            x-on:cancel="onDiscuterCancel?.()"
-            x-on:clear="onDiscuterClear?.()"
-            x-on:retry="onDiscuterRetry?.()"
-          ></DiscuterPage>
-        </template>
       </main>
     </div>
   </template>
@@ -263,21 +242,6 @@
       <template x-if="currentView === 'sources'">
         <SourcesPage></SourcesPage>
       </template>
-      <template x-if="currentView === 'discuter'">
-        <DiscuterPage
-          x-bind:status="discuterStatus ?? 'unauthenticated'"
-          x-bind:turns="discuterTurns"
-          x-bind:citations="discuterCitations"
-          x-bind:errorCode="discuterErrorCode"
-          x-bind:draft="discuterDraft"
-          x-on:login="onDiscuterLogin?.()"
-          x-on:draft-change="onDiscuterDraftChange?.(next)"
-          x-on:send="onDiscuterSend?.(text)"
-          x-on:cancel="onDiscuterCancel?.()"
-          x-on:clear="onDiscuterClear?.()"
-          x-on:retry="onDiscuterRetry?.()"
-        ></DiscuterPage>
-      </template>
       <template x-if="!captureMode">
         <BannerAbout
           x-on:legal-notice-click="goTo('legal')"
@@ -285,7 +249,6 @@
           x-on:contact-click="goTo('contact')"
           x-on:support-click="goTo('support')"
           x-on:sources-click="goTo('sources')"
-          x-on:discuter-click="goTo('discuter')"
         ></BannerAbout>
       </template>
     </main>

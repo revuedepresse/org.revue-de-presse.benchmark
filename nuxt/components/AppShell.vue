@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import App from '@design-system/components/App.vue';
-import { BlueskyLoginError, type BlueskyHandleErrorCode } from '../composables/useBluesky';
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter';
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
 
 const props = defineProps<{
   initialView?: ViewKey;
@@ -84,7 +83,6 @@ function urlForView(view: ViewKey): string {
     case 'contact': return '/nous-contacter';
     case 'support': return '/nous-soutenir';
     case 'sources': return '/sources';
-    case 'discuter': return '/discuter';
     case 'main':
     default:
       return urlForDate(pickedDate.value);
@@ -116,83 +114,6 @@ function onViewChange(view: ViewKey) {
 
 function onLogoClick() {
   pickedDate.value = yesterday();
-}
-
-// --- Bluesky chat session ----------------------------------------------------
-const { isAuthenticated, refresh: refreshBsky, login: loginBsky } = useBluesky();
-const chat = useChat();
-
-const handleDraft = ref('');
-const handleErrorCode = ref<BlueskyHandleErrorCode | undefined>(undefined);
-
-// Hydrate on mount so the discuter page knows the current session.
-onMounted(() => {
-  void refreshBsky();
-});
-
-// Mirror auth state into the chat status (unauthenticated / idle).
-// Streaming + error states are owned by useChat().
-watch(
-  isAuthenticated,
-  (logged) => {
-    if (chat.status.value === 'streaming') return;
-    if (logged) {
-      if (chat.status.value === 'unauthenticated') chat.status.value = 'idle';
-    } else {
-      chat.status.value = 'unauthenticated';
-    }
-  },
-  { immediate: true },
-);
-
-async function onDiscuterLogin(handle: string) {
-  if (!import.meta.client) return;
-  chat.status.value = 'authenticating';
-  try {
-    await loginBsky(handle);
-    // loginBsky redirects the browser to the PDS — we won't reach this line
-    // in the happy path. If we do, hydrate.
-    await refreshBsky();
-  } catch (err) {
-    if (err instanceof BlueskyLoginError && err.code !== 'unknown') {
-      handleErrorCode.value = err.code;
-      chat.status.value = 'unauthenticated';
-      return;
-    }
-    console.error('bluesky login failed', err);
-    chat.status.value = 'error';
-    chat.errorCode.value = 'bluesky_login_failed';
-  }
-}
-
-function onDiscuterHandleDraftChange(next: string) {
-  handleDraft.value = next;
-  handleErrorCode.value = undefined;
-}
-
-function onDiscuterRetry() {
-  chat.errorCode.value = undefined;
-  handleErrorCode.value = undefined;
-  chat.status.value = isAuthenticated.value ? 'idle' : 'unauthenticated';
-}
-
-function onDiscuterSend(text: string) {
-  void chat.send(text);
-}
-
-function onDiscuterCancel() {
-  chat.cancel();
-}
-
-function onDiscuterClear() {
-  // Cancel any in-flight stream first — otherwise reset() drops the
-  // message refs but tokens keep arriving and re-populate them.
-  chat.cancel();
-  chat.reset();
-}
-
-function onDiscuterDraftChange(next: string) {
-  chat.setDraft(next);
 }
 
 // --- Day-page Publications / Synthèse toggle ---------------------------------
@@ -255,7 +176,6 @@ function onMainSubViewChange(next: MainSubView) {
   <App
     :layout="layout"
     :capture-mode="isCaptureModeActive"
-    :authenticated="isAuthenticated"
     :posts="posts"
     :picked-date="pickedDate"
     :lists="lists"
@@ -269,20 +189,6 @@ function onMainSubViewChange(next: MainSubView) {
     :on-date-select="onDateSelect"
     :on-view-change="onViewChange"
     :on-logo-click="onLogoClick"
-    :discuter-status="chat.status.value"
-    :discuter-turns="chat.messages.value"
-    :discuter-citations="chat.citations.value"
-    :discuter-error-code="chat.errorCode.value"
-    :discuter-draft="chat.draft.value"
-    :discuter-handle-draft="handleDraft"
-    :discuter-handle-error-code="handleErrorCode"
-    :on-discuter-login="onDiscuterLogin"
-    :on-discuter-retry="onDiscuterRetry"
-    :on-discuter-send="onDiscuterSend"
-    :on-discuter-cancel="onDiscuterCancel"
-    :on-discuter-clear="onDiscuterClear"
-    :on-discuter-draft-change="onDiscuterDraftChange"
-    :on-discuter-handle-draft-change="onDiscuterHandleDraftChange"
     :main-sub-view="mainSubView"
     :initial-main-sub-view="props.initialMainSubView"
     :summary-loading="summaryLoading"

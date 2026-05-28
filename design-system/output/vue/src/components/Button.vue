@@ -15,13 +15,9 @@
 
     <template v-if="variant !== 'scrollTop' && variant !== 'avatar'">
       <span class="rdp-button__label">
-        <template v-if="labelKey">
-          {{ t(labelKey) }}
-        </template>
+        <template v-if="labelKey">{{ t(labelKey) }}</template>
 
-        <template v-else>
-          {{ label ?? "" }}
-        </template>
+        <template v-else>{{ label ?? "" }}</template>
       </span>
     </template>
 

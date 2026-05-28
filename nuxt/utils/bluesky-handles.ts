@@ -140,6 +140,24 @@ const ALIASES_SORTED: ReadonlyArray<[string, string]> = Array.from(
   BLUESKY_HANDLE_ALIASES.entries(),
 ).sort(([a], [b]) => b.length - a.length);
 
+/**
+ * Drop redundant `(handle.tld)` parenthetical citations when the handle is
+ * already in the allowlist. Mistral often writes both the brand name AND a
+ * parenthetical handle for the same outlet ("Mediapart.fr a rapporté X
+ * (mediapart.fr)") — after the brand-name normalisation above turns the
+ * inline mention into a canonical handle, the parenthetical is pure
+ * redundancy. Leading whitespace is consumed so we don't leave " ." or
+ * " ," dangling after the strip.
+ */
+export function dropParentheticalHandleCitations(markdown: string): string {
+  const HANDLE = '[a-z][a-z0-9-]*(?:\\.[a-z0-9-]+)+';
+  const re = new RegExp(`\\s*\\(\\s*(${HANDLE})\\s*\\)`, 'gi');
+  return markdown.replace(re, (match, raw: string) => {
+    if (KNOWN_BLUESKY_HANDLES.has(raw.toLowerCase())) return '';
+    return match;
+  });
+}
+
 export function normalizeBrandNamesToHandles(markdown: string): string {
   let out = markdown;
   for (const [alias, handle] of ALIASES_SORTED) {

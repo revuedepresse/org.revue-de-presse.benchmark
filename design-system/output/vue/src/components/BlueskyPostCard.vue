@@ -53,9 +53,7 @@
       </header>
       <p class="rdp-bsky-post__body">
         <template :key="index" v-for="(seg, index) in bodySegments">
-          <template v-if="seg.kind === 'text'">
-            {{ seg.value }}
-          </template>
+          <template v-if="seg.kind === 'text'">{{ seg.value }}</template>
 
           <template v-if="seg.kind === 'mention'">
             <a

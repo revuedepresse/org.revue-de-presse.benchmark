@@ -7,13 +7,9 @@
       :disabled="disabled"
       @change="async (event) => onChange?.(event.target.checked)"
     /><span class="rdp-checkbox__label">
-      <template v-if="labelKey">
-        {{ t(labelKey) }}
-      </template>
+      <template v-if="labelKey">{{ t(labelKey) }}</template>
 
-      <template v-else>
-        {{ label ?? "" }}
-      </template>
+      <template v-else>{{ label ?? "" }}</template>
       {{ labelChildren }}</span
     ></label
   >
