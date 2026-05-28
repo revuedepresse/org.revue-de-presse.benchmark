@@ -1,6 +1,9 @@
 package org.revue_2_presse.ios
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeUIViewController
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
@@ -28,12 +31,14 @@ fun mainViewController(): UIViewController = ComposeUIViewController {
         )
     }) {
         RdpTheme {
-            Scaffold { _ ->
-                val nav = rememberRdpNavController()
-                val highlights = koinInject<HighlightsRepository>()
-                val sources = koinInject<SourcesRepository>()
-                RdpApp(nav.currentRoutePath(), onNavigate = {}) {
-                    NavGraph(nav, highlights, sources)
+            Scaffold { padding ->
+                Box(Modifier.padding(padding)) {
+                    val nav = rememberRdpNavController()
+                    val highlights = koinInject<HighlightsRepository>()
+                    val sources = koinInject<SourcesRepository>()
+                    RdpApp(nav.currentRoutePath(), onNavigate = { path -> nav.navigateToPath(path) }) {
+                        NavGraph(nav, highlights, sources)
+                    }
                 }
             }
         }

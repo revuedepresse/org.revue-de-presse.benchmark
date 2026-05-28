@@ -1,6 +1,8 @@
 package org.revue_2_presse.desktop
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -35,17 +37,19 @@ fun main() = application {
             )
         }) {
             RdpTheme {
-                Scaffold { _ ->
-                    val nav = rememberRdpNavController()
-                    val highlights = koinInject<HighlightsRepository>()
-                    val sources = koinInject<SourcesRepository>()
+                Scaffold { padding ->
+                    Box(Modifier.padding(padding)) {
+                        val nav = rememberRdpNavController()
+                        val highlights = koinInject<HighlightsRepository>()
+                        val sources = koinInject<SourcesRepository>()
 
-                    RdpApp(
-                        currentRoute = nav.currentRoutePath(),
-                        onNavigate = { /* hooked up via NavGraph internally */ },
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        NavGraph(nav = nav, highlights = highlights, sources = sources)
+                        RdpApp(
+                            currentRoute = nav.currentRoutePath(),
+                            onNavigate = { path -> nav.navigateToPath(path) },
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            NavGraph(nav = nav, highlights = highlights, sources = sources)
+                        }
                     }
                 }
             }

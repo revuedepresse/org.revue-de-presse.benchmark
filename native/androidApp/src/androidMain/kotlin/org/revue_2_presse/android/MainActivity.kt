@@ -3,7 +3,9 @@ package org.revue_2_presse.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -23,15 +25,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RdpTheme {
-                Scaffold(modifier = Modifier.semantics { testTagsAsResourceId = true }) { _ ->
-                    val nav = rememberRdpNavController()
-                    val highlights = koinInject<HighlightsRepository>()
-                    val sources = koinInject<SourcesRepository>()
-                    RdpApp(
-                        currentRoute = nav.currentRoutePath(),
-                        onNavigate = {},
-                        modifier = Modifier.fillMaxSize(),
-                    ) { NavGraph(nav = nav, highlights = highlights, sources = sources) }
+                Scaffold(modifier = Modifier.semantics { testTagsAsResourceId = true }) { padding ->
+                    Box(Modifier.padding(padding)) {
+                        val nav = rememberRdpNavController()
+                        val highlights = koinInject<HighlightsRepository>()
+                        val sources = koinInject<SourcesRepository>()
+                        RdpApp(
+                            currentRoute = nav.currentRoutePath(),
+                            onNavigate = { path -> nav.navigateToPath(path) },
+                            modifier = Modifier.fillMaxSize(),
+                        ) { NavGraph(nav = nav, highlights = highlights, sources = sources) }
+                    }
                 }
             }
         }

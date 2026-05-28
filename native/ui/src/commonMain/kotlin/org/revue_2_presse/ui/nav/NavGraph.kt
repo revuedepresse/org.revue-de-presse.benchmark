@@ -14,7 +14,7 @@ fun NavGraph(
 ) {
     when (val screen = nav.current) {
         is HomeRoute -> HomeScreen(repo = highlights, onNavigate = { path ->
-            navigateToPath(nav, path)
+            nav.navigateToPath(path)
         })
         is DayRoute -> {
             val parsed = runCatching { LocalDate.parse(screen.day) }.getOrNull()
@@ -32,29 +32,5 @@ fun NavGraph(
         is SupportRoute -> SupportScreen(onDonateClick = {})
         is NotFoundRoute -> NotFoundScreen(onBackToHome = { nav.navigate(HomeRoute) })
         else -> NotFoundScreen(onBackToHome = { nav.navigate(HomeRoute) })
-    }
-}
-
-private fun navigateToPath(nav: RdpNavController, path: String) {
-    when (path) {
-        "/" -> nav.navigate(HomeRoute)
-        "/sources" -> nav.navigate(SourcesRoute)
-        "/mentions-legales" -> nav.navigate(LegalNoticeRoute)
-        "/conditions-utilisation" -> nav.navigate(TermsOfServiceRoute)
-        "/nous-contacter" -> nav.navigate(ContactRoute)
-        "/nous-soutenir" -> nav.navigate(SupportRoute)
-        "/contenu-introuvable" -> nav.navigate(NotFoundRoute)
-        else -> {
-            if (path.startsWith("/source/")) {
-                nav.navigate(SourceRoute(path.removePrefix("/source/")))
-            } else if (path.startsWith("/")) {
-                val candidate = path.removePrefix("/")
-                if (runCatching { LocalDate.parse(candidate) }.isSuccess) {
-                    nav.navigate(DayRoute(candidate))
-                } else {
-                    nav.navigate(NotFoundRoute)
-                }
-            }
-        }
     }
 }
