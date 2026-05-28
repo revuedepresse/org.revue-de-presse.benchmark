@@ -24,6 +24,7 @@ export class Sidebar {
   @Event() contactClick: any;
   @Event() supportClick: any;
   @Event() sourcesClick: any;
+  @Event() discuterClick: any;
 
   componentDidLoad() {}
 
@@ -42,6 +43,7 @@ export class Sidebar {
           onContactClick={() => this.contactClick.emit()}
           onSupportClick={() => this.supportClick.emit()}
           onSourcesClick={() => this.sourcesClick.emit()}
+          onDiscuterClick={() => this.discuterClick.emit()}
         ></banner-about>
         <style>{`
         .rdp-sidebar {

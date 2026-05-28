@@ -95,6 +95,7 @@ import type { Locale } from "../utils/i18n";
                 (contactClick)="goTo('contact')"
                 (supportClick)="goTo('support')"
                 (sourcesClick)="goTo('sources')"
+                (discuterClick)="goTo('discuter')"
               ></sidebar></aside
           ></ng-container>
           <main
@@ -231,6 +232,7 @@ import type { Locale } from "../utils/i18n";
               (contactClick)="goTo('contact')"
               (supportClick)="goTo('support')"
               (sourcesClick)="goTo('sources')"
+              (discuterClick)="goTo('discuter')"
             ></banner-about
           ></ng-container>
         </main>
