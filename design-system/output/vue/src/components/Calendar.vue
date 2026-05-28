@@ -66,7 +66,8 @@
         ></YearPicker>
       </template>
     </div>
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-calendar { font-family: Roboto, sans-serif; }
         .rdp-calendar--inline {
           background: var(--color-white);
@@ -82,7 +83,8 @@
           padding: var(--separation-2);
           border-radius: var(--radius-default) var(--radius-default) 0 0;
         }
-      `"></component>
+      `
+    }}</component>
   </div>
 </template>
 

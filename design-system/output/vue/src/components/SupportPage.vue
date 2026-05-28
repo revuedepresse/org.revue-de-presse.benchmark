@@ -52,7 +52,8 @@
         référencés
       </li>
     </ul>
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-support-page {
           background: var(--color-white);
           border-radius: var(--radius-default);
@@ -75,6 +76,7 @@
         .rdp-support-page a { color: var(--color-brand); }
         .rdp-support-page ul { padding-left: var(--separation-3); margin: var(--separation-1) 0; }
         .rdp-support-page li { margin: 0 0 var(--separation-1); }
-      `"></component>
+      `
+    }}</component>
   </article>
 </template>

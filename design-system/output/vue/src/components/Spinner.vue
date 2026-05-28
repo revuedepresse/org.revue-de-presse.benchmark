@@ -2,7 +2,8 @@
   <div class="rdp-spinner" role="status" aria-live="polite" aria-busy="true">
     <span class="rdp-spinner__ring" aria-hidden="true"></span
     ><span class="rdp-spinner__label">{{ label ?? "Chargement…" }}</span
-    ><component :is="'style'" v-html="`
+    ><component :is="'style'">{{
+      `
         .rdp-spinner {
           display: flex;
           flex-direction: column;
@@ -31,7 +32,8 @@
         @media (prefers-reduced-motion: reduce) {
           .rdp-spinner__ring { animation-duration: 2.4s; }
         }
-      `"></component>
+      `
+    }}</component>
   </div>
 </template>
 

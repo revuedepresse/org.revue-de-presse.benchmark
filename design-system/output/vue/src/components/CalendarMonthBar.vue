@@ -62,7 +62,8 @@
         </svg>
       </button>
     </div>
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-calendar-month-bar {
           display: flex;
           gap: var(--separation-1);
@@ -117,7 +118,8 @@
           cursor: not-allowed;
           opacity: 0.5;
         }
-      `"></component>
+      `
+    }}</component>
   </div>
 </template>
 

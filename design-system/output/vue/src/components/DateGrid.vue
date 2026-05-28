@@ -40,7 +40,8 @@
         </tr>
       </template>
     </tbody>
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-date-grid {
           width: calc(100% - 2 * var(--separation-2));
           margin: 0 var(--separation-2) var(--separation-2);
@@ -82,7 +83,8 @@
           color: var(--color-white);
           border-color: var(--color-brand);
         }
-      `"></component>
+      `
+    }}</component>
   </table>
 </template>
 

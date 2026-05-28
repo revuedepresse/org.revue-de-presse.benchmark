@@ -15,7 +15,8 @@
       :onSourcesClick="(event) => onSourcesClick()"
       :onDiscuterClick="(event) => onDiscuterClick()"
     ></BannerAbout
-    ><component :is="'style'" v-html="`
+    ><component :is="'style'">{{
+      `
         .rdp-sidebar {
           width: 336px;
           max-width: 100%;
@@ -26,7 +27,8 @@
           min-width: 0;
         }
         .rdp-sidebar > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
-      `"></component>
+      `
+    }}</component>
   </aside>
 </template>
 

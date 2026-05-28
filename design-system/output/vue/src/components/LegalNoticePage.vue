@@ -88,7 +88,8 @@
         >&nbsp;contact@revue-de-presse.org</a
       >.
     </p>
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-legal-notice {
           background: var(--color-white);
           border-radius: var(--radius-default);
@@ -123,7 +124,8 @@
           color: var(--color-brand);
           text-decoration: underline;
         }
-      `"></component>
+      `
+    }}</component>
   </article>
 </template>
 

@@ -25,7 +25,8 @@
         stroke="var(--color-light-grey)"
         strokeWidth="1"
       ></line></svg
-    ><component :is="'style'" v-html="`
+    ><component :is="'style'">{{
+      `
         .rdp-media-placeholder {
           display: block;
           background: #b0c4d4;
@@ -34,7 +35,8 @@
           max-width: 270px;
         }
         .rdp-media-placeholder svg { width: 100%; height: 100%; display: block; }
-      `"></component>
+      `
+    }}</component>
   </div>
 </template>
 

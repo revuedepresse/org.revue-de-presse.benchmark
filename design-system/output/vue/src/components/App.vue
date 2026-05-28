@@ -401,7 +401,8 @@
       </div>
     </template>
 
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-app {
           background: var(--color-taupe-grey);
           min-height: 100vh;
@@ -598,7 +599,8 @@
           max-width: 480px;
           bottom: var(--rdp-mobile-dock-height);
         }
-      `"></component>
+      `
+    }}</component>
   </div>
 </template>
 

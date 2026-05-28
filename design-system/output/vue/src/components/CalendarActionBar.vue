@@ -44,7 +44,8 @@
         <Icon name="next-item" :size="32" :decorative="true"></Icon>
       </button>
     </div>
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-calendar-action-bar {
           display: flex;
           gap: var(--separation-1);
@@ -103,7 +104,8 @@
           cursor: not-allowed;
           opacity: 0.5;
         }
-      `"></component>
+      `
+    }}</component>
   </div>
 </template>
 

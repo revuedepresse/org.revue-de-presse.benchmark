@@ -8,7 +8,8 @@
       <template v-else>
         {{ message ?? "" }}
       </template>
-      <component :is="'style'" v-html="`
+      <component :is="'style'">{{
+        `
           .rdp-field-error {
             font-size: var(--font-size-publication-date);
             color: var(--form-error-fg);
@@ -16,7 +17,8 @@
             padding-left: var(--separation-1);
             font-family: Roboto, sans-serif;
           }
-        `"></component>
+        `
+      }}</component>
     </p>
   </template>
 </template>

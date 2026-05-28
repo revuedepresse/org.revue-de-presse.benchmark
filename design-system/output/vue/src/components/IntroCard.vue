@@ -13,7 +13,8 @@
       toute personne curieuse de l'actualité et de l'influence des médias sur
       l'opinion.
     </p>
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-intro-card {
           background: var(--color-content-background);
           color: var(--color-content-font);
@@ -45,7 +46,8 @@
           font-size: var(--font-size-publication-date);
         }
         .rdp-intro-card__body { margin: 0; }
-      `"></component>
+      `
+    }}</component>
   </article>
 </template>
 

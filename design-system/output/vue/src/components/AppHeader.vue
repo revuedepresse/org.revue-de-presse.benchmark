@@ -40,7 +40,8 @@
       </button>
     </template>
 
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-app-header {
           display: flex;
           align-items: center;
@@ -83,7 +84,8 @@
           color: var(--color-content-text);
         }
         .rdp-app-header--desktop .rdp-app-header__account { margin-left: 0; }
-      `"></component>
+      `
+    }}</component>
   </header>
 </template>
 

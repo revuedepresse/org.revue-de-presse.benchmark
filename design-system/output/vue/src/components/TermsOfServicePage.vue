@@ -160,7 +160,8 @@
       Les présentes CGU sont soumises au droit français. À défaut de résolution
       amiable, tout litige sera porté devant les tribunaux français compétents.
     </p>
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-terms-of-service {
           background: var(--color-white);
           border-radius: var(--radius-default);
@@ -195,7 +196,8 @@
           color: var(--color-brand);
           text-decoration: underline;
         }
-      `"></component>
+      `
+    }}</component>
   </article>
 </template>
 

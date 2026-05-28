@@ -12,7 +12,8 @@
     <template v-else>
       {{ label ?? "" }}
     </template>
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-link {
           color: var(--color-brand-active);
           text-decoration: none;
@@ -21,7 +22,8 @@
         .rdp-link--underline { text-decoration: underline; }
         .rdp-link--plain { color: inherit; }
         .rdp-link:hover { color: var(--color-brand); }
-      `"></component></a
+      `
+    }}</component></a
   >
 </template>
 

@@ -217,7 +217,8 @@
       </div>
     </template>
 
-    <component :is="'style'" v-html="`
+    <component :is="'style'">{{
+      `
         .rdp-discuter {
           background: var(--color-white);
           border-radius: var(--radius-default);
@@ -484,7 +485,8 @@
         }
         .rdp-discuter__panel--error { background: var(--color-white); border: 1px solid var(--color-brand); }
         .rdp-discuter__error-body { margin: 0; }
-      `"></component>
+      `
+    }}</component>
   </section>
 </template>
 
