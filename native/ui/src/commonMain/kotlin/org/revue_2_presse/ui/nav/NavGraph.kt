@@ -28,6 +28,7 @@ fun NavGraph(
         is SourceRoute -> SourceScreen(slug = screen.slug, repo = sources)
         is LegalNoticeRoute -> LegalNoticeScreen()
         is TermsOfServiceRoute -> TermsOfServiceScreen()
+        is ContactRoute -> ContactScreen()
         is SupportRoute -> SupportScreen(onDonateClick = {})
         is NotFoundRoute -> NotFoundScreen(onBackToHome = { nav.navigate(HomeRoute) })
         else -> NotFoundScreen(onBackToHome = { nav.navigate(HomeRoute) })

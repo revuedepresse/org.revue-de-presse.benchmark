@@ -24,6 +24,7 @@ class RdpNavController(start: Any = HomeRoute) {
             "/sources" -> navigate(SourcesRoute)
             "/mentions-legales" -> navigate(LegalNoticeRoute)
             "/conditions-utilisation" -> navigate(TermsOfServiceRoute)
+            "/nous-contacter" -> navigate(ContactRoute)
             "/nous-soutenir" -> navigate(SupportRoute)
             "/contenu-introuvable" -> navigate(NotFoundRoute)
             else -> {
@@ -48,6 +49,7 @@ class RdpNavController(start: Any = HomeRoute) {
         is SourceRoute -> "/source/${c.slug}"
         is LegalNoticeRoute -> "/mentions-legales"
         is TermsOfServiceRoute -> "/conditions-utilisation"
+        is ContactRoute -> "/nous-contacter"
         is SupportRoute -> "/nous-soutenir"
         is NotFoundRoute -> "/contenu-introuvable"
         else -> "/contenu-introuvable"
