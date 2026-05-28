@@ -151,8 +151,23 @@ submit()"
           x-bind:disabled="status === 'streaming'"
           x-bind:placeholder="t('discuter.composer.placeholder')"
           x-on:input="onDraftChange?.($event.target.value)"
+          x-on:key-down="// Ctrl/⌘+Enter submits. Plain Enter still inserts a newline
+// so users can compose multi-line questions.
+if ($event.key === 'Enter' && ($event.ctrlKey || $event.metaKey)) {
+  $event.preventDefault();
+  submit();
+}"
         ></textarea>
         <div class="rdp-discuter__composer-actions">
+          <template x-if="(turns ?? []).length > 0 && status !== 'streaming'">
+            <button
+              type="button"
+              class="rdp-discuter__clear"
+              x-on:click="onClear?.()"
+            >
+              <span x-html="t('discuter.clear')"></span>
+            </button>
+          </template>
           <template x-if="status === 'streaming'">
             <button
               type="button"
@@ -196,6 +211,20 @@ submit()"
               gap: var(--separation-2);
             }
             .rdp-discuter__header { display: flex; flex-direction: column; gap: var(--separation-1); }
+            .rdp-discuter__clear {
+              appearance: none;
+              background: transparent;
+              border: 1px solid var(--color-border);
+              border-radius: var(--radius-default);
+              color: var(--color-content-text);
+              font-family: inherit;
+              font-size: var(--font-size-status-text);
+              padding: 4px 10px;
+              cursor: pointer;
+              line-height: 1.2;
+            }
+            .rdp-discuter__clear:hover { background: var(--color-taupe-grey); }
+            .rdp-discuter__clear:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
             .rdp-discuter__title {
               font-family: 'Signika', sans-serif;
               color: var(--color-brand);

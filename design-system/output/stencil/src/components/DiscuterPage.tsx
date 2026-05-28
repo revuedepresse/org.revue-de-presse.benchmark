@@ -28,6 +28,7 @@ export class DiscuterPage {
   @Prop() citations: any;
   @Prop() locale: any;
   @Event() draftChange: any;
+  @Event() clear: any;
   @Event() cancel: any;
   @Event() retry: any;
 
@@ -258,8 +259,29 @@ export class DiscuterPage {
                     (event.target as HTMLTextAreaElement).value
                   )
                 }
+                onKeyDown={(event) => {
+                  // Ctrl/⌘+Enter submits. Plain Enter still inserts a newline
+                  // so users can compose multi-line questions.
+                  if (
+                    event.key === "Enter" &&
+                    (event.ctrlKey || event.metaKey)
+                  ) {
+                    event.preventDefault();
+                    this.submit();
+                  }
+                }}
               ></textarea>
               <div class="rdp-discuter__composer-actions">
+                {(this.turns ?? []).length > 0 &&
+                this.status !== "streaming" ? (
+                  <button
+                    class="rdp-discuter__clear"
+                    type="button"
+                    onClick={() => this.clear?.()}
+                  >
+                    {t("discuter.clear")}
+                  </button>
+                ) : null}
                 {this.status === "streaming" ? (
                   <button
                     class="rdp-discuter__composer-cancel"
@@ -305,6 +327,20 @@ export class DiscuterPage {
           gap: var(--separation-2);
         }
         .rdp-discuter__header { display: flex; flex-direction: column; gap: var(--separation-1); }
+        .rdp-discuter__clear {
+          appearance: none;
+          background: transparent;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-default);
+          color: var(--color-content-text);
+          font-family: inherit;
+          font-size: var(--font-size-status-text);
+          padding: 4px 10px;
+          cursor: pointer;
+          line-height: 1.2;
+        }
+        .rdp-discuter__clear:hover { background: var(--color-taupe-grey); }
+        .rdp-discuter__clear:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
         .rdp-discuter__title {
           font-family: 'Signika', sans-serif;
           color: var(--color-brand);

@@ -177,6 +177,13 @@ function onDiscuterCancel() {
   chat.cancel();
 }
 
+function onDiscuterClear() {
+  // Cancel any in-flight stream first — otherwise reset() drops the
+  // message refs but tokens keep arriving and re-populate them.
+  chat.cancel();
+  chat.reset();
+}
+
 function onDiscuterDraftChange(next: string) {
   chat.setDraft(next);
 }
@@ -211,6 +218,7 @@ function onDiscuterDraftChange(next: string) {
     :on-discuter-retry="onDiscuterRetry"
     :on-discuter-send="onDiscuterSend"
     :on-discuter-cancel="onDiscuterCancel"
+    :on-discuter-clear="onDiscuterClear"
     :on-discuter-draft-change="onDiscuterDraftChange"
     :on-discuter-handle-draft-change="onDiscuterHandleDraftChange"
   />

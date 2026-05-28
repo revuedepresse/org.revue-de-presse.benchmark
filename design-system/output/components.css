@@ -639,6 +639,20 @@
           gap: var(--separation-2);
         }
         .rdp-discuter__header { display: flex; flex-direction: column; gap: var(--separation-1); }
+        .rdp-discuter__clear {
+          appearance: none;
+          background: transparent;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-default);
+          color: var(--color-content-text);
+          font-family: inherit;
+          font-size: var(--font-size-status-text);
+          padding: 4px 10px;
+          cursor: pointer;
+          line-height: 1.2;
+        }
+        .rdp-discuter__clear:hover { background: var(--color-taupe-grey); }
+        .rdp-discuter__clear:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
         .rdp-discuter__title {
           font-family: 'Signika', sans-serif;
           color: var(--color-brand);

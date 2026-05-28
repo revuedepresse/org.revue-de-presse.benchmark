@@ -51,6 +51,8 @@ type DiscuterPageProps = {
   onSend?: (text: string) => void;
   onCancel?: () => void;
   onRetry?: () => void;
+  /** Wipe the conversation locally: clears turns, citations, error, draft, conversation id. */
+  onClear?: () => void;
 };
 
 import { t } from "../utils/i18n";
@@ -214,8 +216,26 @@ import type { Locale } from "../utils/i18n";
               [attr.disabled]="status === 'streaming'"
               [attr.placeholder]="t('discuter.composer.placeholder')"
               (input)="onDraftChange?.(($event.target as HTMLTextAreaElement).value)"
+              (keydown)="
+          // Ctrl/⌘+Enter submits. Plain Enter still inserts a newline
+          // so users can compose multi-line questions.
+          if ($event.key === 'Enter' && ($event.ctrlKey || $event.metaKey)) {
+            $event.preventDefault();
+            submit();
+          }
+        "
             ></textarea>
             <div class="rdp-discuter__composer-actions">
+              <ng-container
+                *ngIf="(turns ?? []).length > 0 && status !== 'streaming'"
+                ><button
+                  type="button"
+                  class="rdp-discuter__clear"
+                  (click)="onClear?.()"
+                >
+                  {{t('discuter.clear')}}
+                </button></ng-container
+              >
               <ng-container *ngIf="status === 'streaming'"
                 ><button
                   type="button"
@@ -262,6 +282,20 @@ import type { Locale } from "../utils/i18n";
                   gap: var(--separation-2);
                 }
                 .rdp-discuter__header { display: flex; flex-direction: column; gap: var(--separation-1); }
+                .rdp-discuter__clear {
+                  appearance: none;
+                  background: transparent;
+                  border: 1px solid var(--color-border);
+                  border-radius: var(--radius-default);
+                  color: var(--color-content-text);
+                  font-family: inherit;
+                  font-size: var(--font-size-status-text);
+                  padding: 4px 10px;
+                  cursor: pointer;
+                  line-height: 1.2;
+                }
+                .rdp-discuter__clear:hover { background: var(--color-taupe-grey); }
+                .rdp-discuter__clear:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
                 .rdp-discuter__title {
                   font-family: 'Signika', sans-serif;
                   color: var(--color-brand);
@@ -521,6 +555,7 @@ export default class DiscuterPage {
   @Input() citations!: DiscuterPageProps["citations"];
   @Input() locale!: DiscuterPageProps["locale"];
   @Input() onDraftChange!: DiscuterPageProps["onDraftChange"];
+  @Input() onClear!: DiscuterPageProps["onClear"];
   @Input() onCancel!: DiscuterPageProps["onCancel"];
   @Input() onRetry!: DiscuterPageProps["onRetry"];
 

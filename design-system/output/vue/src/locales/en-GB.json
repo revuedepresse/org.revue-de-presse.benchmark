@@ -140,6 +140,7 @@
   "discuter.composer.placeholder": "For example: how did Le Monde cover the pension reform in March?",
   "discuter.composer.send": "Send",
   "discuter.composer.cancel": "Cancel",
+  "discuter.clear": "Clear conversation",
   "discuter.sources.title": "Cited sources",
   "discuter.error.rate_limited_user": "You've reached the question limit for this hour. Try again in a few minutes.",
   "discuter.error.rate_limited_global": "The press digest has reached today's quota. The chat resumes tomorrow.",

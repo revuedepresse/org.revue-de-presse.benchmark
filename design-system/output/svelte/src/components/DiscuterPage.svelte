@@ -42,6 +42,8 @@ onDraftChange?: (next: string) => void;
 onSend?: (text: string) => void;
 onCancel?: () => void;
 onRetry?: () => void;
+/** Wipe the conversation locally: clears turns, citations, error, draft, conversation id. */
+onClear?: () => void;
 }
 
     </script>
@@ -74,6 +76,7 @@ export let turns: DiscuterPageProps['turns']= undefined;
 export let citations: DiscuterPageProps['citations']= undefined;
 export let locale: DiscuterPageProps['locale']= undefined;
 export let onDraftChange: DiscuterPageProps['onDraftChange']= undefined;
+export let onClear: DiscuterPageProps['onClear']= undefined;
 export let onCancel: DiscuterPageProps['onCancel']= undefined;
 export let onRetry: DiscuterPageProps['onRetry']= undefined;
 
@@ -185,7 +188,19 @@ submitHandle();
 {/if}<form  class="rdp-discuter__composer"  on:submit="{(event) => {
 event.preventDefault();
 submit();
-}}" ><label  class="rdp-discuter__composer-label"  for="rdp-discuter-input" >{t('discuter.composer.label')}</label><textarea  id="rdp-discuter-input"  class="rdp-discuter__composer-input"  rows={3}  value={draft ?? ''}  disabled={status === 'streaming'}  placeholder={t('discuter.composer.placeholder')}  on:input="{(event) => {onDraftChange?.(event.target.value)}}" ></textarea><div  class="rdp-discuter__composer-actions" >
+}}" ><label  class="rdp-discuter__composer-label"  for="rdp-discuter-input" >{t('discuter.composer.label')}</label><textarea  id="rdp-discuter-input"  class="rdp-discuter__composer-input"  rows={3}  value={draft ?? ''}  disabled={status === 'streaming'}  placeholder={t('discuter.composer.placeholder')}  on:input="{(event) => {onDraftChange?.(event.target.value)}}"  on:keydown="{(event) => {
+// Ctrl/⌘+Enter submits. Plain Enter still inserts a newline
+// so users can compose multi-line questions.
+if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+  event.preventDefault();
+  submit();
+}
+}}" ></textarea><div  class="rdp-discuter__composer-actions" >
+{#if (turns ?? []).length > 0 && status !== 'streaming' }
+<button  type="button"  class="rdp-discuter__clear"  on:click="{(event) => {onClear?.()}}" >{t('discuter.clear')}</button>
+
+
+{/if}
 {#if status === 'streaming' }
 <button  type="button"  class="rdp-discuter__composer-cancel"  on:click="{(event) => {onCancel?.()}}" >{t('discuter.composer.cancel')}</button>
 

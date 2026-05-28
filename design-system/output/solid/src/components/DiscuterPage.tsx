@@ -48,6 +48,8 @@ type DiscuterPageProps = {
   onSend?: (text: string) => void;
   onCancel?: () => void;
   onRetry?: () => void;
+  /** Wipe the conversation locally: clears turns, citations, error, draft, conversation id. */
+  onClear?: () => void;
 };
 
 import { t } from "../utils/i18n";
@@ -300,8 +302,33 @@ function DiscuterPage(props: DiscuterPageProps) {
                     (event.target as HTMLTextAreaElement).value
                   )
                 }
+                onKeyDown={(event) => {
+                  // Ctrl/⌘+Enter submits. Plain Enter still inserts a newline
+                  // so users can compose multi-line questions.
+                  if (
+                    event.key === "Enter" &&
+                    (event.ctrlKey || event.metaKey)
+                  ) {
+                    event.preventDefault();
+                    submit();
+                  }
+                }}
               ></textarea>
               <div class="rdp-discuter__composer-actions">
+                <Show
+                  when={
+                    (props.turns ?? []).length > 0 &&
+                    props.status !== "streaming"
+                  }
+                >
+                  <button
+                    class="rdp-discuter__clear"
+                    type="button"
+                    onClick={(event) => props.onClear?.()}
+                  >
+                    {t("discuter.clear")}
+                  </button>
+                </Show>
                 <Show when={props.status === "streaming"}>
                   <button
                     class="rdp-discuter__composer-cancel"
@@ -347,6 +374,20 @@ function DiscuterPage(props: DiscuterPageProps) {
           gap: var(--separation-2);
         }
         .rdp-discuter__header { display: flex; flex-direction: column; gap: var(--separation-1); }
+        .rdp-discuter__clear {
+          appearance: none;
+          background: transparent;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-default);
+          color: var(--color-content-text);
+          font-family: inherit;
+          font-size: var(--font-size-status-text);
+          padding: 4px 10px;
+          cursor: pointer;
+          line-height: 1.2;
+        }
+        .rdp-discuter__clear:hover { background: var(--color-taupe-grey); }
+        .rdp-discuter__clear:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
         .rdp-discuter__title {
           font-family: 'Signika', sans-serif;
           color: var(--color-brand);

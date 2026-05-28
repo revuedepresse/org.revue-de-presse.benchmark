@@ -140,6 +140,7 @@
   "discuter.composer.placeholder": "Par exemple : comment Le Monde a-t-il couvert la réforme des retraites en mars ?",
   "discuter.composer.send": "Envoyer",
   "discuter.composer.cancel": "Interrompre",
+  "discuter.clear": "Effacer la conversation",
   "discuter.sources.title": "Sources citées",
   "discuter.error.rate_limited_user": "Vous avez atteint la limite de questions pour cette heure. Réessayez dans quelques minutes.",
   "discuter.error.rate_limited_global": "La revue de presse a atteint son quota du jour. La discussion reprend demain.",

@@ -46,6 +46,8 @@ type DiscuterPageProps = {
  onSend?: (text: string) => void;
  onCancel?: () => void;
  onRetry?: () => void;
+ /** Wipe the conversation locally: clears turns, citations, error, draft, conversation id. */
+ onClear?: () => void;
 }
 
 
@@ -74,6 +76,7 @@ type DiscuterPageProps = {
 @property() citations: any
 @property() locale: any
 @property() onDraftChange: any
+@property() onClear: any
 @property() onCancel: any
 @property() onRetry: any
 
@@ -174,8 +177,18 @@ citationToPost(citation: DiscuterCitation) {
          event.preventDefault();
          this.submit();
        }} ><label  for="rdp-discuter-input" >${t('discuter.composer.label')}</label>
-       <textarea  id="rdp-discuter-input"  .rows=${3}  .value=${this.draft ?? ''}  .disabled=${this.status === 'streaming'}  .placeholder=${t('discuter.composer.placeholder')}  @input=${(event) => this.onDraftChange?.((event.target as HTMLTextAreaElement).value)} ></textarea>
-       <div >${this.status === 'streaming' ?
+       <textarea  id="rdp-discuter-input"  .rows=${3}  .value=${this.draft ?? ''}  .disabled=${this.status === 'streaming'}  .placeholder=${t('discuter.composer.placeholder')}  @input=${(event) => this.onDraftChange?.((event.target as HTMLTextAreaElement).value)}  @keydown=${(event) => {
+         // Ctrl/⌘+Enter submits. Plain Enter still inserts a newline
+         // so users can compose multi-line questions.
+         if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+           event.preventDefault();
+           this.submit();
+         }
+       }} ></textarea>
+       <div >${(this.turns ?? []).length > 0 && this.status !== 'streaming' ?
+             html`<button  type="button"  @click=${(event) => this.onClear?.()} >${t('discuter.clear')}</button>`
+           : null}
+       ${this.status === 'streaming' ?
              html`<button  type="button"  @click=${(event) => this.onCancel?.()} >${t('discuter.composer.cancel')}</button>`
            : null}
        ${this.status === 'idle' ?
@@ -198,6 +211,20 @@ citationToPost(citation: DiscuterCitation) {
                  gap: var(--separation-2);
                }
                .rdp-discuter__header { display: flex; flex-direction: column; gap: var(--separation-1); }
+               .rdp-discuter__clear {
+                 appearance: none;
+                 background: transparent;
+                 border: 1px solid var(--color-border);
+                 border-radius: var(--radius-default);
+                 color: var(--color-content-text);
+                 font-family: inherit;
+                 font-size: var(--font-size-status-text);
+                 padding: 4px 10px;
+                 cursor: pointer;
+                 line-height: 1.2;
+               }
+               .rdp-discuter__clear:hover { background: var(--color-taupe-grey); }
+               .rdp-discuter__clear:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
                .rdp-discuter__title {
                  font-family: 'Signika', sans-serif;
                  color: var(--color-brand);
