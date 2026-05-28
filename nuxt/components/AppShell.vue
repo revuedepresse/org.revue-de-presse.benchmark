@@ -121,14 +121,27 @@ import { parseSummaryMarkdown, type SummaryBlock } from '../utils/parse-summary-
 
 type MainSubView = 'publications' | 'summary';
 
-// The URL is source of truth for the sub-view: the synthese-des-actus-du-… page
-// passes initialMainSubView="summary", the actualites-du-… page leaves it
-// undefined ⇒ "publications".
-const mainSubView = ref<MainSubView>(props.initialMainSubView ?? 'publications');
+// The URL is the source of truth for the sub-view. We derive mainSubView
+// from route.path (rather than from the page's initialMainSubView prop)
+// so SSR + hydration always agree with what the user navigated to — a
+// page-prop dance was unreliable on hard reload of /synthese-des-actus-…
+// and left the toggle showing "Publications" even though the URL said
+// synthesis. The initialMainSubView prop is still accepted for API
+// compatibility but is treated as a fallback hint only.
+const SYNTHESE_PREFIX = '/synthese-des-actus-du-';
+function inferSubViewFromPath(path: string): MainSubView {
+  return path.includes(SYNTHESE_PREFIX) ? 'summary' : 'publications';
+}
+const mainSubView = ref<MainSubView>(
+  inferSubViewFromPath(route.path) === 'summary' ||
+    props.initialMainSubView === 'summary'
+    ? 'summary'
+    : 'publications',
+);
 watch(
-  () => props.initialMainSubView,
-  (next) => {
-    if (next !== undefined && next !== mainSubView.value) mainSubView.value = next;
+  () => route.path,
+  (path) => {
+    mainSubView.value = inferSubViewFromPath(path);
   },
 );
 
