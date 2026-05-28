@@ -78,6 +78,19 @@
         .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
         .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
         .rdp-app__summary-ul li { margin-bottom: 4px; }
+        .rdp-app__summary-handle {
+          color: var(--color-brand);
+          text-decoration: none;
+          border-bottom: 1px solid currentColor;
+        }
+        .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+        .rdp-app__synthesis-title {
+          font-family: Signika, sans-serif;
+          font-size: 1.6rem;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+          line-height: 1.2;
+        }
         /* The header ribbon stays full-viewport-wide so the white band
            reaches both edges of the page; only the inner row + the content
            grid honour the legacy max-width. Mobile mirrors the same pattern

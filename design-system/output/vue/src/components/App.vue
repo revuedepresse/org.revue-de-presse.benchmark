@@ -14,7 +14,7 @@
         ></AppHeader>
       </div>
     </div>
-    <template v-if="showPopularNews === true">
+    <template v-if="showPopularNews === true && mainSubView !== 'summary'">
       <p class="rdp-app__popular-news">{{ popularNewsLine }}</p>
     </template>
 
@@ -120,6 +120,8 @@
             </template>
 
             <template v-if="mainSubView === 'summary'">
+              <h1 class="rdp-app__synthesis-title">{{ synthesisHeadline }}</h1>
+
               <template v-if="!!summaryLoading">
                 <Spinner></Spinner>
               </template>
@@ -138,63 +140,6 @@
                     :key="index"
                     v-for="(block, index) in summaryBlocks ?? []"
                   >
-                    <template
-                      v-if="block.kind === 'heading' && block.level === 1"
-                    >
-                      <h2 class="rdp-app__summary-h1">
-                        <template
-                          :key="index"
-                          v-for="(seg, index) in block.segments"
-                        >
-                          <template v-if="seg.kind === 'text'">
-                            {{ seg.value }}
-                          </template>
-
-                          <template v-if="seg.kind === 'bold'">
-                            <strong>{{ seg.value }}</strong>
-                          </template>
-                        </template>
-                      </h2>
-                    </template>
-
-                    <template
-                      v-if="block.kind === 'heading' && block.level === 2"
-                    >
-                      <h3 class="rdp-app__summary-h2">
-                        <template
-                          :key="index"
-                          v-for="(seg, index) in block.segments"
-                        >
-                          <template v-if="seg.kind === 'text'">
-                            {{ seg.value }}
-                          </template>
-
-                          <template v-if="seg.kind === 'bold'">
-                            <strong>{{ seg.value }}</strong>
-                          </template>
-                        </template>
-                      </h3>
-                    </template>
-
-                    <template
-                      v-if="block.kind === 'heading' && block.level === 3"
-                    >
-                      <h4 class="rdp-app__summary-h3">
-                        <template
-                          :key="index"
-                          v-for="(seg, index) in block.segments"
-                        >
-                          <template v-if="seg.kind === 'text'">
-                            {{ seg.value }}
-                          </template>
-
-                          <template v-if="seg.kind === 'bold'">
-                            <strong>{{ seg.value }}</strong>
-                          </template>
-                        </template>
-                      </h4>
-                    </template>
-
                     <template v-if="block.kind === 'paragraph'">
                       <p class="rdp-app__summary-p">
                         <template
@@ -207,6 +152,16 @@
 
                           <template v-if="seg.kind === 'bold'">
                             <strong>{{ seg.value }}</strong>
+                          </template>
+
+                          <template v-if="seg.kind === 'handle'">
+                            <a
+                              class="rdp-app__summary-handle"
+                              target="_blank"
+                              rel="noreferrer noopener"
+                              :href="`https://bsky.app/profile/${seg.value}`"
+                              >{{ seg.value }}</a
+                            >
                           </template>
                         </template>
                       </p>
@@ -226,6 +181,16 @@
 
                               <template v-if="seg.kind === 'bold'">
                                 <strong>{{ seg.value }}</strong>
+                              </template>
+
+                              <template v-if="seg.kind === 'handle'">
+                                <a
+                                  class="rdp-app__summary-handle"
+                                  target="_blank"
+                                  rel="noreferrer noopener"
+                                  :href="`https://bsky.app/profile/${seg.value}`"
+                                  >{{ seg.value }}</a
+                                >
                               </template>
                             </template>
                           </li>
@@ -440,10 +405,26 @@ import type {
 } from "./DiscuterPage.vue";
 
 type MainSubView = "publications" | "summary";
+
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+type InitialMainSubView = MainSubView;
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type SnapshotItem = {
   id: string;
   label: string;
 };
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type ViewKey =
   | "main"
   | "legal"
@@ -452,6 +433,10 @@ type ViewKey =
   | "support"
   | "sources"
   | "discuter";
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -492,6 +477,9 @@ type AppProps = {
   onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
+  /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+   *  AppShell uses it to set mainSubView on mount + when the prop changes. */
+  initialMainSubView?: InitialMainSubView;
   /** Whether the summary fetch is in flight for the current date. */
   summaryLoading?: boolean;
   /** Pre-parsed summary blocks; empty array when the day has no summary. */
@@ -516,6 +504,15 @@ onMounted(() => {
 const popularNewsLine = computed(() => {
   return t(
     "header.popular-news",
+    {
+      date: formatLegacyShortDay(props.pickedDate, props.locale ?? "fr-FR"),
+    },
+    props.locale ?? "fr-FR"
+  );
+});
+const synthesisHeadline = computed(() => {
+  return t(
+    "header.synthesis",
     {
       date: formatLegacyShortDay(props.pickedDate, props.locale ?? "fr-FR"),
     },

@@ -85,6 +85,7 @@
   "header.my-space": "Mon espace",
   "header.my-account.aria-label": "Mon compte",
   "header.popular-news": "Les 3 actus les + relayées le {date}",
+  "header.synthesis": "Synthèse du {date}",
   "footer.about.heading": "À propos",
   "footer.social.heading": "@revue-de-presse.org",
   "footer.about.body": "Revue de presse s'appuie sur l'API de Bluesky et relaie des brèves de presse en provenance exclusive de médias français d'après le succès rencontré par ses brèves auprès du public.",

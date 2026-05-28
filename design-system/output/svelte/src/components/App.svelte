@@ -1,64 +1,88 @@
 <script context='module' lang='ts'>
-      type MainSubView = 'publications' | 'summary'
+       type MainSubView = 'publications' | 'summary';
+
+/** Initial sub-view for the day-page, when entered via a URL like
+*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  Nuxt so the route is the source of truth. */
+
+/** Initial sub-view for the day-page, when entered via a URL like
+*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  Nuxt so the route is the source of truth. */
+type InitialMainSubView = MainSubView
+
+/** Initial sub-view for the day-page, when entered via a URL like
+*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  Nuxt so the route is the source of truth. */
 
 type SnapshotItem = {
-id: string;
-label: string;
+ id: string;
+ label: string;
 }
+
+/** Initial sub-view for the day-page, when entered via a URL like
+*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  Nuxt so the route is the source of truth. */
 
 type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter'
 
+/** Initial sub-view for the day-page, when entered via a URL like
+*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  Nuxt so the route is the source of truth. */
+
 type AppProps = {
-layout?: 'mobile' | 'desktop';
-authenticated?: boolean;
-posts: BlueskyPost[];
-pickedDate: Date;
-lists: SnapshotItem[];
-selectedListId?: string;
-yearRange: {
-  min: number;
-  max: number;
-};
-minDate?: Date;
-loading?: boolean;
-emptyMessageKey?: string;
-showPopularNews?: boolean;
-locale?: Locale;
-initialView?: ViewKey;
-onAccountClick?: () => void;
-onMySpaceClick?: () => void;
-onListSelect?: (id: string) => void;
-onDateSelect?: (date: Date) => void;
-onLogoClick?: () => void;
-onViewChange?: (view: ViewKey) => void;
-captureMode?: boolean;
-discuterStatus?: DiscuterStatus;
-discuterTurns?: DiscuterTurn[];
-discuterCitations?: DiscuterCitation[];
-discuterErrorCode?: DiscuterErrorCode;
-discuterDraft?: string;
-discuterHandleDraft?: string;
-discuterHandleErrorCode?: DiscuterHandleErrorCode;
-onDiscuterLogin?: (handle: string) => void;
-onDiscuterHandleDraftChange?: (next: string) => void;
-onDiscuterDraftChange?: (next: string) => void;
-onDiscuterSend?: (text: string) => void;
-onDiscuterCancel?: () => void;
-onDiscuterClear?: () => void;
-onDiscuterRetry?: () => void;
-/** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
-mainSubView?: MainSubView;
-/** Whether the summary fetch is in flight for the current date. */
-summaryLoading?: boolean;
-/** Pre-parsed summary blocks; empty array when the day has no summary. */
-summaryBlocks?: SummaryBlock[];
-onMainSubViewChange?: (next: MainSubView) => void;
+ layout?: 'mobile' | 'desktop';
+ authenticated?: boolean;
+ posts: BlueskyPost[];
+ pickedDate: Date;
+ lists: SnapshotItem[];
+ selectedListId?: string;
+ yearRange: {
+   min: number;
+   max: number;
+ };
+ minDate?: Date;
+ loading?: boolean;
+ emptyMessageKey?: string;
+ showPopularNews?: boolean;
+ locale?: Locale;
+ initialView?: ViewKey;
+ onAccountClick?: () => void;
+ onMySpaceClick?: () => void;
+ onListSelect?: (id: string) => void;
+ onDateSelect?: (date: Date) => void;
+ onLogoClick?: () => void;
+ onViewChange?: (view: ViewKey) => void;
+ captureMode?: boolean;
+ discuterStatus?: DiscuterStatus;
+ discuterTurns?: DiscuterTurn[];
+ discuterCitations?: DiscuterCitation[];
+ discuterErrorCode?: DiscuterErrorCode;
+ discuterDraft?: string;
+ discuterHandleDraft?: string;
+ discuterHandleErrorCode?: DiscuterHandleErrorCode;
+ onDiscuterLogin?: (handle: string) => void;
+ onDiscuterHandleDraftChange?: (next: string) => void;
+ onDiscuterDraftChange?: (next: string) => void;
+ onDiscuterSend?: (text: string) => void;
+ onDiscuterCancel?: () => void;
+ onDiscuterClear?: () => void;
+ onDiscuterRetry?: () => void;
+ /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
+ mainSubView?: MainSubView;
+ /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+  *  AppShell uses it to set mainSubView on mount + when the prop changes. */
+ initialMainSubView?: InitialMainSubView;
+ /** Whether the summary fetch is in flight for the current date. */
+ summaryLoading?: boolean;
+ /** Pre-parsed summary blocks; empty array when the day has no summary. */
+ summaryBlocks?: SummaryBlock[];
+ onMainSubViewChange?: (next: MainSubView) => void;
 }
 
-    </script>
-    
+     </script>
+     
 
-    
+     
 <script lang='ts'>
     import { onMount } from 'svelte'
 
@@ -102,6 +126,7 @@ export let authenticated: AppProps['authenticated']= undefined;
 export let onAccountClick: AppProps['onAccountClick']= undefined;
 export let onMySpaceClick: AppProps['onMySpaceClick']= undefined;
 export let showPopularNews: AppProps['showPopularNews']= undefined;
+export let mainSubView: AppProps['mainSubView']= undefined;
 export let captureMode: AppProps['captureMode']= undefined;
 export let lists: AppProps['lists'];
 export let selectedListId: AppProps['selectedListId']= undefined;
@@ -110,7 +135,6 @@ export let onListSelect: AppProps['onListSelect']= undefined;
 export let loading: AppProps['loading']= undefined;
 export let posts: AppProps['posts'];
 export let emptyMessageKey: AppProps['emptyMessageKey']= undefined;
-export let mainSubView: AppProps['mainSubView']= undefined;
 export let onMainSubViewChange: AppProps['onMainSubViewChange']= undefined;
 export let summaryLoading: AppProps['summaryLoading']= undefined;
 export let summaryBlocks: AppProps['summaryBlocks']= undefined;
@@ -185,6 +209,11 @@ return t('header.popular-news', {
   date: formatLegacyShortDay(pickedDate, locale ?? 'fr-FR')
 }, locale ?? 'fr-FR');
 };
+$: synthesisHeadline = () => {
+return t('header.synthesis', {
+  date: formatLegacyShortDay(pickedDate, locale ?? 'fr-FR')
+}, locale ?? 'fr-FR');
+};
 $: prevDayDisabled = () => {
 if (!minDate) return false;
 const cur = new Date(focusedDate.getFullYear(), focusedDate.getMonth(), focusedDate.getDate());
@@ -221,7 +250,7 @@ initialised = true; });
   </script>
 
   <div  data-testid="app-shell"  class={`rdp-app rdp-app--${layout ?? 'desktop'}`} ><div  class="rdp-app__header-ribbon" ><div  class="rdp-app__header-inner" ><AppHeader  layout={layout ?? 'desktop'}  authenticated={authenticated ?? false}  onAccountClick={(event) => onAccountClick?.()} onMySpaceClick={(event) => onMySpaceClick?.()} onLogoClick={(event) => goHome()}></AppHeader></div></div>
-{#if showPopularNews === true }
+{#if showPopularNews === true && mainSubView !== 'summary' }
 <p  class="rdp-app__popular-news" >{popularNewsLine()}</p>
 
 
@@ -269,6 +298,7 @@ initialised = true; });
 {/if}
 
 {#if mainSubView === 'summary' }
+<h1  class="rdp-app__synthesis-title" >{synthesisHeadline()}</h1>
 
 {#if !!summaryLoading }
 <Spinner ></Spinner>
@@ -286,69 +316,6 @@ initialised = true; });
 <article  class="rdp-app__summary" >
 {#each summaryBlocks ?? [] as block }
 
-{#if block.kind === 'heading' && block.level === 1 }
-<h2  class="rdp-app__summary-h1" >
-{#each block.segments as seg }
-
-{#if seg.kind === 'text' }
-{seg.value}
-
-
-{/if}
-
-{#if seg.kind === 'bold' }
-<strong >{seg.value}</strong>
-
-
-{/if}
-{/each}
-</h2>
-
-
-{/if}
-
-{#if block.kind === 'heading' && block.level === 2 }
-<h3  class="rdp-app__summary-h2" >
-{#each block.segments as seg }
-
-{#if seg.kind === 'text' }
-{seg.value}
-
-
-{/if}
-
-{#if seg.kind === 'bold' }
-<strong >{seg.value}</strong>
-
-
-{/if}
-{/each}
-</h3>
-
-
-{/if}
-
-{#if block.kind === 'heading' && block.level === 3 }
-<h4  class="rdp-app__summary-h3" >
-{#each block.segments as seg }
-
-{#if seg.kind === 'text' }
-{seg.value}
-
-
-{/if}
-
-{#if seg.kind === 'bold' }
-<strong >{seg.value}</strong>
-
-
-{/if}
-{/each}
-</h4>
-
-
-{/if}
-
 {#if block.kind === 'paragraph' }
 <p  class="rdp-app__summary-p" >
 {#each block.segments as seg }
@@ -361,6 +328,12 @@ initialised = true; });
 
 {#if seg.kind === 'bold' }
 <strong >{seg.value}</strong>
+
+
+{/if}
+
+{#if seg.kind === 'handle' }
+<a  class="rdp-app__summary-handle"  target="_blank"  rel="noreferrer noopener"  href={`https://bsky.app/profile/${seg.value}`} >{seg.value}</a>
 
 
 {/if}
@@ -384,6 +357,12 @@ initialised = true; });
 
 {#if seg.kind === 'bold' }
 <strong >{seg.value}</strong>
+
+
+{/if}
+
+{#if seg.kind === 'handle' }
+<a  class="rdp-app__summary-handle"  target="_blank"  rel="noreferrer noopener"  href={`https://bsky.app/profile/${seg.value}`} >{seg.value}</a>
 
 
 {/if}

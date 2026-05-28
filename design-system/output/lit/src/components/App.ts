@@ -25,12 +25,32 @@ import './DiscuterPage.ts';
    import { LitElement, html, css } from 'lit';
    import { customElement, property, state, query } from 'lit/decorators';
 
-   type MainSubView = 'publications' | 'summary'
+   type MainSubView = 'publications' | 'summary';
+
+/** Initial sub-view for the day-page, when entered via a URL like
+*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  Nuxt so the route is the source of truth. */
+/** Initial sub-view for the day-page, when entered via a URL like
+*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  Nuxt so the route is the source of truth. */
+type InitialMainSubView = MainSubView
+/** Initial sub-view for the day-page, when entered via a URL like
+*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  Nuxt so the route is the source of truth. */
+
 type SnapshotItem = {
  id: string;
  label: string;
 }
+/** Initial sub-view for the day-page, when entered via a URL like
+*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  Nuxt so the route is the source of truth. */
+
 type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter'
+/** Initial sub-view for the day-page, when entered via a URL like
+*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  Nuxt so the route is the source of truth. */
+
 type AppProps = {
  layout?: 'mobile' | 'desktop';
  authenticated?: boolean;
@@ -71,6 +91,9 @@ type AppProps = {
  onDiscuterRetry?: () => void;
  /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
  mainSubView?: MainSubView;
+ /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+  *  AppShell uses it to set mainSubView on mount + when the prop changes. */
+ initialMainSubView?: InitialMainSubView;
  /** Whether the summary fetch is in flight for the current date. */
  summaryLoading?: boolean;
  /** Pre-parsed summary blocks; empty array when the day has no summary. */
@@ -104,6 +127,7 @@ type AppProps = {
 @property() onAccountClick: any
 @property() onMySpaceClick: any
 @property() showPopularNews: any
+@property() mainSubView: any
 @property() captureMode: any
 @property() lists: any
 @property() selectedListId: any
@@ -112,7 +136,6 @@ type AppProps = {
 @property() loading: any
 @property() posts: any
 @property() emptyMessageKey: any
-@property() mainSubView: any
 @property() onMainSubViewChange: any
 @property() summaryLoading: any
 @property() summaryBlocks: any
@@ -138,6 +161,11 @@ type AppProps = {
 
         get popularNewsLine() {
  return t('header.popular-news', {
+   date: formatLegacyShortDay(this.pickedDate, this.locale ?? 'fr-FR')
+ }, this.locale ?? 'fr-FR');
+}
+get synthesisHeadline() {
+ return t('header.synthesis', {
    date: formatLegacyShortDay(this.pickedDate, this.locale ?? 'fr-FR')
  }, this.locale ?? 'fr-FR');
 }
@@ -217,7 +245,7 @@ this.initialised = true }
        return html`
 
           <div  class={`rdp-app rdp-app--${props.layout ?? 'desktop'}`}  data-testid="app-shell" ><div ><div ><app-header  .layout=${this.layout ?? 'desktop'}  .authenticated=${this.authenticated ?? false}  @accountclick=${(event) => this.onAccountClick?.()}  @myspaceclick=${(event) => this.onMySpaceClick?.()}  @logoclick=${(event) => this.goHome()} ></app-header></div></div>
-        ${this.showPopularNews === true ?
+        ${this.showPopularNews === true && this.mainSubView !== 'summary' ?
               html`<p >${this.popularNewsLine}</p>`
             : null}
         ${(this.layout ?? 'desktop') === 'desktop' ?
@@ -247,7 +275,8 @@ this.initialised = true }
            ))}</ol>`
             : null}
         ${this.mainSubView === 'summary' ?
-              html`${!!this.summaryLoading ?
+              html`<h1 >${this.synthesisHeadline}</h1>
+       ${!!this.summaryLoading ?
              html`<my-spinner ></my-spinner>`
            : null}
        ${!this.summaryLoading && (this.summaryBlocks ?? []).length === 0 ?
@@ -255,43 +284,16 @@ this.initialised = true }
            : null}
        ${!this.summaryLoading && (this.summaryBlocks ?? []).length > 0 ?
              html`<article >${this.summaryBlocks ?? []?.map((block, index) => (
-              html`<my-fragment >${block.kind === 'heading' && block.level === 1 ?
-             html`<h2 >${block.segments?.map((seg, index) => (
-              html`<my-fragment >${seg.kind === 'text' ?
-             html`${seg.value}`
-           : null}
-       ${seg.kind === 'bold' ?
-             html`<strong >${seg.value}</strong>`
-           : null}</my-fragment>`
-            ))}</h2>`
-           : null}
-       ${block.kind === 'heading' && block.level === 2 ?
-             html`<h3 >${block.segments?.map((seg, index) => (
-              html`<my-fragment >${seg.kind === 'text' ?
-             html`${seg.value}`
-           : null}
-       ${seg.kind === 'bold' ?
-             html`<strong >${seg.value}</strong>`
-           : null}</my-fragment>`
-            ))}</h3>`
-           : null}
-       ${block.kind === 'heading' && block.level === 3 ?
-             html`<h4 >${block.segments?.map((seg, index) => (
-              html`<my-fragment >${seg.kind === 'text' ?
-             html`${seg.value}`
-           : null}
-       ${seg.kind === 'bold' ?
-             html`<strong >${seg.value}</strong>`
-           : null}</my-fragment>`
-            ))}</h4>`
-           : null}
-       ${block.kind === 'paragraph' ?
+              html`<my-fragment >${block.kind === 'paragraph' ?
              html`<p >${block.segments?.map((seg, index) => (
               html`<my-fragment >${seg.kind === 'text' ?
              html`${seg.value}`
            : null}
        ${seg.kind === 'bold' ?
              html`<strong >${seg.value}</strong>`
+           : null}
+       ${seg.kind === 'handle' ?
+             html`<a  target="_blank"  rel="noreferrer noopener"  .href=${`https://bsky.app/profile/${seg.value}`} >${seg.value}</a>`
            : null}</my-fragment>`
             ))}</p>`
            : null}
@@ -303,6 +305,9 @@ this.initialised = true }
             : null}
         ${seg.kind === 'bold' ?
               html`<strong >${seg.value}</strong>`
+            : null}
+        ${seg.kind === 'handle' ?
+              html`<a  target="_blank"  rel="noreferrer noopener"  .href=${`https://bsky.app/profile/${seg.value}`} >${seg.value}</a>`
             : null}</my-fragment>`
            ))}</li>`
             ))}</ul>`
@@ -439,6 +444,19 @@ this.initialised = true }
                .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
                .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
                .rdp-app__summary-ul li { margin-bottom: 4px; }
+               .rdp-app__summary-handle {
+                 color: var(--color-brand);
+                 text-decoration: none;
+                 border-bottom: 1px solid currentColor;
+               }
+               .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+               .rdp-app__synthesis-title {
+                 font-family: Signika, sans-serif;
+                 font-size: 1.6rem;
+                 color: var(--color-brand);
+                 margin: 0 0 var(--separation-2);
+                 line-height: 1.2;
+               }
                /* The header ribbon stays full-viewport-wide so the white band
                   reaches both edges of the page; only the inner row + the content
                   grid honour the legacy max-width. Mobile mirrors the same pattern

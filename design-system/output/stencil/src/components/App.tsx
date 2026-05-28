@@ -55,6 +55,7 @@ export class App {
   @Event() accountClick: any;
   @Event() mySpaceClick: any;
   @Prop() showPopularNews: any;
+  @Prop() mainSubView: any;
   @Prop() captureMode: any;
   @Prop() lists: any;
   @Prop() selectedListId: any;
@@ -63,7 +64,6 @@ export class App {
   @Prop() loading: any;
   @Prop() posts: any;
   @Prop() emptyMessageKey: any;
-  @Prop() mainSubView: any;
   @Event() mainSubViewChange: any;
   @Prop() summaryLoading: any;
   @Prop() summaryBlocks: any;
@@ -89,6 +89,15 @@ export class App {
   get popularNewsLine() {
     return t(
       "header.popular-news",
+      {
+        date: formatLegacyShortDay(this.pickedDate, this.locale ?? "fr-FR"),
+      },
+      this.locale ?? "fr-FR"
+    );
+  }
+  get synthesisHeadline() {
+    return t(
+      "header.synthesis",
       {
         date: formatLegacyShortDay(this.pickedDate, this.locale ?? "fr-FR"),
       },
@@ -195,7 +204,7 @@ export class App {
             ></app-header>
           </div>
         </div>
-        {this.showPopularNews === true ? (
+        {this.showPopularNews === true && this.mainSubView !== "summary" ? (
           <p class="rdp-app__popular-news">{this.popularNewsLine}</p>
         ) : null}
         {(this.layout ?? "desktop") === "desktop" ? (
@@ -301,6 +310,9 @@ export class App {
                   ) : null}
                   {this.mainSubView === "summary" ? (
                     <Fragment>
+                      <h1 class="rdp-app__synthesis-title">
+                        {this.synthesisHeadline}
+                      </h1>
                       {!!this.summaryLoading ? <spinner></spinner> : null}
                       {!this.summaryLoading &&
                       (this.summaryBlocks ?? []).length === 0 ? (
@@ -315,45 +327,6 @@ export class App {
                           {this.summaryBlocks ??
                             []?.map((block) => (
                               <Fragment>
-                                {block.kind === "heading" &&
-                                block.level === 1 ? (
-                                  <h2 class="rdp-app__summary-h1">
-                                    {block.segments?.map((seg) => (
-                                      <Fragment>
-                                        {seg.kind === "text" ? seg.value : null}
-                                        {seg.kind === "bold" ? (
-                                          <strong>{seg.value}</strong>
-                                        ) : null}
-                                      </Fragment>
-                                    ))}
-                                  </h2>
-                                ) : null}
-                                {block.kind === "heading" &&
-                                block.level === 2 ? (
-                                  <h3 class="rdp-app__summary-h2">
-                                    {block.segments?.map((seg) => (
-                                      <Fragment>
-                                        {seg.kind === "text" ? seg.value : null}
-                                        {seg.kind === "bold" ? (
-                                          <strong>{seg.value}</strong>
-                                        ) : null}
-                                      </Fragment>
-                                    ))}
-                                  </h3>
-                                ) : null}
-                                {block.kind === "heading" &&
-                                block.level === 3 ? (
-                                  <h4 class="rdp-app__summary-h3">
-                                    {block.segments?.map((seg) => (
-                                      <Fragment>
-                                        {seg.kind === "text" ? seg.value : null}
-                                        {seg.kind === "bold" ? (
-                                          <strong>{seg.value}</strong>
-                                        ) : null}
-                                      </Fragment>
-                                    ))}
-                                  </h4>
-                                ) : null}
                                 {block.kind === "paragraph" ? (
                                   <p class="rdp-app__summary-p">
                                     {block.segments?.map((seg) => (
@@ -361,6 +334,16 @@ export class App {
                                         {seg.kind === "text" ? seg.value : null}
                                         {seg.kind === "bold" ? (
                                           <strong>{seg.value}</strong>
+                                        ) : null}
+                                        {seg.kind === "handle" ? (
+                                          <a
+                                            class="rdp-app__summary-handle"
+                                            target="_blank"
+                                            rel="noreferrer noopener"
+                                            href={`https://bsky.app/profile/${seg.value}`}
+                                          >
+                                            {seg.value}
+                                          </a>
                                         ) : null}
                                       </Fragment>
                                     ))}
@@ -377,6 +360,16 @@ export class App {
                                               : null}
                                             {seg.kind === "bold" ? (
                                               <strong>{seg.value}</strong>
+                                            ) : null}
+                                            {seg.kind === "handle" ? (
+                                              <a
+                                                class="rdp-app__summary-handle"
+                                                target="_blank"
+                                                rel="noreferrer noopener"
+                                                href={`https://bsky.app/profile/${seg.value}`}
+                                              >
+                                                {seg.value}
+                                              </a>
                                             ) : null}
                                           </Fragment>
                                         ))}
@@ -604,6 +597,19 @@ export class App {
         .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
         .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
         .rdp-app__summary-ul li { margin-bottom: 4px; }
+        .rdp-app__summary-handle {
+          color: var(--color-brand);
+          text-decoration: none;
+          border-bottom: 1px solid currentColor;
+        }
+        .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+        .rdp-app__synthesis-title {
+          font-family: Signika, sans-serif;
+          font-size: 1.6rem;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+          line-height: 1.2;
+        }
         /* The header ribbon stays full-viewport-wide so the white band
            reaches both edges of the page; only the inner row + the content
            grid honour the legacy max-width. Mobile mirrors the same pattern

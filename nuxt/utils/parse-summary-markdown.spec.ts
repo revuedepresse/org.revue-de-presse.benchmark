@@ -7,32 +7,14 @@ describe('parseSummaryMarkdown', () => {
     expect(parseSummaryMarkdown('   \n\n  ')).toEqual([]);
   });
 
-  it('parses ## headings into a heading block at the right level', () => {
-    const out = parseSummaryMarkdown('## Politique\n');
-    expect(out).toHaveLength(1);
-    expect(out[0]).toMatchObject({ kind: 'heading', level: 2 });
-    if (out[0]?.kind === 'heading') {
-      expect(out[0].segments).toEqual([{ kind: 'text', value: 'Politique' }]);
-    }
-  });
-
-  it('parses # and ### too, capped at level 3', () => {
-    const out = parseSummaryMarkdown('# Top\n### Deep');
-    expect(out.map((b) => ('level' in b ? b.level : undefined))).toEqual([1, 3]);
-  });
-
-  it('clamps ####+ headings to level 3 (defensive against prompt violations)', () => {
-    const out = parseSummaryMarkdown('#### Santé\n##### Encore plus profond');
-    expect(out.map((b) => ('level' in b ? b.level : undefined))).toEqual([3, 3]);
-    if (out[0]?.kind === 'heading') {
-      expect(out[0].segments[0]).toEqual({ kind: 'text', value: 'Santé' });
-    }
+  it('drops heading lines entirely (page provides its own H1)', () => {
+    const md = '## Politique\n\nUn paragraphe.\n\n### Sous-section\n\nUn autre.';
+    const blocks = parseSummaryMarkdown(md);
+    expect(blocks.map((b) => b.kind)).toEqual(['paragraph', 'paragraph']);
   });
 
   it('parses bullet groups as one block with multiple items', () => {
-    const md = `- Premier point
-- Deuxième point
-- Troisième point`;
+    const md = '- Premier point\n- Deuxième point\n- Troisième point';
     const out = parseSummaryMarkdown(md);
     expect(out).toHaveLength(1);
     expect(out[0]?.kind).toBe('bullets');
@@ -43,8 +25,7 @@ describe('parseSummaryMarkdown', () => {
   });
 
   it('parses paragraph runs collapsed to one space-joined string', () => {
-    const md = `Un paragraphe
-qui s'étale sur deux lignes.`;
+    const md = "Un paragraphe\nqui s'étale sur deux lignes.";
     const out = parseSummaryMarkdown(md);
     expect(out).toHaveLength(1);
     expect(out[0]?.kind).toBe('paragraph');
@@ -57,34 +38,65 @@ qui s'étale sur deux lignes.`;
   });
 
   it('parses **bold** inline segments', () => {
-    const out = parseSummaryMarkdown('Selon **Le Monde** et Mediapart.');
+    const out = parseSummaryMarkdown('Selon Mediapart, **un titre**, voilà.');
     if (out[0]?.kind === 'paragraph') {
-      expect(out[0].segments).toEqual([
-        { kind: 'text', value: 'Selon ' },
-        { kind: 'bold', value: 'Le Monde' },
-        { kind: 'text', value: ' et Mediapart.' },
-      ]);
+      const kinds = out[0].segments.map((s) => s.kind);
+      expect(kinds).toContain('bold');
     }
   });
 
-  it('separates heading / paragraph / bullets correctly', () => {
-    const md = `## Politique
+  it('turns a known Bluesky handle into a handle segment (lowercase)', () => {
+    const out = parseSummaryMarkdown('Selon lemonde.fr, un papier.');
+    if (out[0]?.kind === 'paragraph') {
+      const handle = out[0].segments.find((s) => s.kind === 'handle');
+      expect(handle).toEqual({ kind: 'handle', value: 'lemonde.fr' });
+    }
+  });
 
-Un premier paragraphe.
+  it('strips italics around a known handle and emits a single handle segment', () => {
+    const out = parseSummaryMarkdown('Selon *liberation.fr*, un papier.');
+    if (out[0]?.kind === 'paragraph') {
+      const handles = out[0].segments.filter((s) => s.kind === 'handle');
+      expect(handles).toHaveLength(1);
+      expect(handles[0]).toEqual({ kind: 'handle', value: 'liberation.fr' });
+      // No raw asterisks should leak into plain text segments.
+      const joined = out[0].segments
+        .filter((s) => s.kind === 'text')
+        .map((s) => (s as { value: string }).value)
+        .join('|');
+      expect(joined).not.toContain('*');
+    }
+  });
 
-- bullet A
-- bullet B
+  it('does NOT linkify an unknown dotted token — keeps it as plain text', () => {
+    // 'verite.fr' is not in the allowlist; Mistral cited a fake outlet.
+    const out = parseSummaryMarkdown('Selon verite.fr, mensonge.');
+    if (out[0]?.kind === 'paragraph') {
+      const handles = out[0].segments.filter((s) => s.kind === 'handle');
+      expect(handles).toEqual([]);
+      const joined = out[0].segments.map((s) => (s as { value: string }).value).join('');
+      expect(joined).toContain('verite.fr');
+    }
+  });
 
-### Sous-section
+  it('does NOT linkify p.ex or similar abbreviations', () => {
+    // p.ex isn't in the allowlist so it should stay plain text.
+    const out = parseSummaryMarkdown('Plusieurs outlets, p.ex un autre.');
+    if (out[0]?.kind === 'paragraph') {
+      const handles = out[0].segments.filter((s) => s.kind === 'handle');
+      expect(handles).toEqual([]);
+    }
+  });
 
-Autre paragraphe.`;
-    const blocks = parseSummaryMarkdown(md);
-    expect(blocks.map((b) => b.kind)).toEqual([
-      'heading',
-      'paragraph',
-      'bullets',
-      'heading',
-      'paragraph',
-    ]);
+  it('parses bullets with mixed plain text + handle', () => {
+    const md = '- Selon lemonde.fr, une dépêche.\n- Selon afp.com, autre.';
+    const out = parseSummaryMarkdown(md);
+    if (out[0]?.kind === 'bullets') {
+      const allHandles = out[0].items.flat().filter((s) => s.kind === 'handle');
+      expect(allHandles).toEqual([
+        { kind: 'handle', value: 'lemonde.fr' },
+        { kind: 'handle', value: 'afp.com' },
+      ]);
+    }
   });
 });

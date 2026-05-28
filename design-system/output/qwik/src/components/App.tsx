@@ -52,10 +52,26 @@ import {
 } from "@builder.io/qwik";
 
 type MainSubView = "publications" | "summary";
+
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+type InitialMainSubView = MainSubView;
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type SnapshotItem = {
   id: string;
   label: string;
 };
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type ViewKey =
   | "main"
   | "legal"
@@ -64,6 +80,10 @@ type ViewKey =
   | "support"
   | "sources"
   | "discuter";
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -104,6 +124,9 @@ type AppProps = {
   onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
+  /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+   *  AppShell uses it to set mainSubView on mount + when the prop changes. */
+  initialMainSubView?: InitialMainSubView;
   /** Whether the summary fetch is in flight for the current date. */
   summaryLoading?: boolean;
   /** Pre-parsed summary blocks; empty array when the day has no summary. */
@@ -114,6 +137,7 @@ export const prevDay = function prevDay(
   props,
   state,
   popularNewsLine,
+  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled
 ) {
@@ -128,6 +152,7 @@ export const nextDay = function nextDay(
   props,
   state,
   popularNewsLine,
+  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled
 ) {
@@ -142,6 +167,7 @@ export const openCalendar = function openCalendar(
   props,
   state,
   popularNewsLine,
+  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled
 ) {
@@ -151,6 +177,7 @@ export const closeCalendar = function closeCalendar(
   props,
   state,
   popularNewsLine,
+  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled
 ) {
@@ -160,6 +187,7 @@ export const pickFromCalendar = function pickFromCalendar(
   props,
   state,
   popularNewsLine,
+  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled,
   d: Date
@@ -174,6 +202,7 @@ export const selectFromSidebar = function selectFromSidebar(
   props,
   state,
   popularNewsLine,
+  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled,
   d: Date
@@ -187,6 +216,7 @@ export const goTo = function goTo(
   props,
   state,
   popularNewsLine,
+  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled,
   view: ViewKey
@@ -198,6 +228,7 @@ export const goHome = function goHome(
   props,
   state,
   popularNewsLine,
+  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled
 ) {
@@ -214,6 +245,15 @@ export const App = component$((props: AppProps) => {
   const popularNewsLine = useComputed$(() => {
     return t(
       "header.popular-news",
+      {
+        date: formatLegacyShortDay(props.pickedDate, props.locale ?? "fr-FR"),
+      },
+      props.locale ?? "fr-FR"
+    );
+  });
+  const synthesisHeadline = useComputed$(() => {
+    return t(
+      "header.synthesis",
       {
         date: formatLegacyShortDay(props.pickedDate, props.locale ?? "fr-FR"),
       },
@@ -276,6 +316,7 @@ export const App = component$((props: AppProps) => {
                 props,
                 state,
                 popularNewsLine,
+                synthesisHeadline,
                 prevDayDisabled,
                 nextDayDisabled
               )
@@ -283,7 +324,7 @@ export const App = component$((props: AppProps) => {
           ></AppHeader>
         </div>
       </div>
-      {props.showPopularNews === true ? (
+      {props.showPopularNews === true && props.mainSubView !== "summary" ? (
         <p class="rdp-app__popular-news">{popularNewsLine.value}</p>
       ) : null}
       {(props.layout ?? "desktop") === "desktop" ? (
@@ -303,6 +344,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     d
@@ -313,6 +355,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "legal"
@@ -323,6 +366,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "terms"
@@ -333,6 +377,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "contact"
@@ -343,6 +388,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "support"
@@ -353,6 +399,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "sources"
@@ -363,6 +410,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "discuter"
@@ -384,6 +432,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "main"
@@ -469,6 +518,9 @@ export const App = component$((props: AppProps) => {
                 ) : null}
                 {props.mainSubView === "summary" ? (
                   <>
+                    <h1 class="rdp-app__synthesis-title">
+                      {synthesisHeadline.value}
+                    </h1>
                     {!!props.summaryLoading ? <Spinner></Spinner> : null}
                     {!props.summaryLoading &&
                     (props.summaryBlocks ?? []).length === 0 ? (
@@ -483,54 +535,6 @@ export const App = component$((props: AppProps) => {
                         {(props.summaryBlocks ?? ([] || [])).map((block) => {
                           return (
                             <Fragment>
-                              {block.kind === "heading" && block.level === 1 ? (
-                                <h2 class="rdp-app__summary-h1">
-                                  {(block.segments || []).map((seg) => {
-                                    return (
-                                      <Fragment>
-                                        {seg.kind === "text" ? (
-                                          <>{seg.value}</>
-                                        ) : null}
-                                        {seg.kind === "bold" ? (
-                                          <strong>{seg.value}</strong>
-                                        ) : null}
-                                      </Fragment>
-                                    );
-                                  })}
-                                </h2>
-                              ) : null}
-                              {block.kind === "heading" && block.level === 2 ? (
-                                <h3 class="rdp-app__summary-h2">
-                                  {(block.segments || []).map((seg) => {
-                                    return (
-                                      <Fragment>
-                                        {seg.kind === "text" ? (
-                                          <>{seg.value}</>
-                                        ) : null}
-                                        {seg.kind === "bold" ? (
-                                          <strong>{seg.value}</strong>
-                                        ) : null}
-                                      </Fragment>
-                                    );
-                                  })}
-                                </h3>
-                              ) : null}
-                              {block.kind === "heading" && block.level === 3 ? (
-                                <h4 class="rdp-app__summary-h3">
-                                  {(block.segments || []).map((seg) => {
-                                    return (
-                                      <Fragment>
-                                        {seg.kind === "text" ? (
-                                          <>{seg.value}</>
-                                        ) : null}
-                                        {seg.kind === "bold" ? (
-                                          <strong>{seg.value}</strong>
-                                        ) : null}
-                                      </Fragment>
-                                    );
-                                  })}
-                                </h4>
-                              ) : null}
                               {block.kind === "paragraph" ? (
                                 <p class="rdp-app__summary-p">
                                   {(block.segments || []).map((seg) => {
@@ -541,6 +545,16 @@ export const App = component$((props: AppProps) => {
                                         ) : null}
                                         {seg.kind === "bold" ? (
                                           <strong>{seg.value}</strong>
+                                        ) : null}
+                                        {seg.kind === "handle" ? (
+                                          <a
+                                            class="rdp-app__summary-handle"
+                                            target="_blank"
+                                            rel="noreferrer noopener"
+                                            href={`https://bsky.app/profile/${seg.value}`}
+                                          >
+                                            {seg.value}
+                                          </a>
                                         ) : null}
                                       </Fragment>
                                     );
@@ -560,6 +574,16 @@ export const App = component$((props: AppProps) => {
                                               ) : null}
                                               {seg.kind === "bold" ? (
                                                 <strong>{seg.value}</strong>
+                                              ) : null}
+                                              {seg.kind === "handle" ? (
+                                                <a
+                                                  class="rdp-app__summary-handle"
+                                                  target="_blank"
+                                                  rel="noreferrer noopener"
+                                                  href={`https://bsky.app/profile/${seg.value}`}
+                                                >
+                                                  {seg.value}
+                                                </a>
                                               ) : null}
                                             </Fragment>
                                           );
@@ -633,6 +657,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "main"
@@ -713,6 +738,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "legal"
@@ -723,6 +749,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "terms"
@@ -733,6 +760,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "contact"
@@ -743,6 +771,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "support"
@@ -753,6 +782,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "sources"
@@ -763,6 +793,7 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
+                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "discuter"
@@ -783,6 +814,7 @@ export const App = component$((props: AppProps) => {
                   props,
                   state,
                   popularNewsLine,
+                  synthesisHeadline,
                   prevDayDisabled,
                   nextDayDisabled,
                   d
@@ -793,6 +825,7 @@ export const App = component$((props: AppProps) => {
                   props,
                   state,
                   popularNewsLine,
+                  synthesisHeadline,
                   prevDayDisabled,
                   nextDayDisabled
                 )
@@ -809,6 +842,7 @@ export const App = component$((props: AppProps) => {
                   props,
                   state,
                   popularNewsLine,
+                  synthesisHeadline,
                   prevDayDisabled,
                   nextDayDisabled
                 )
@@ -818,6 +852,7 @@ export const App = component$((props: AppProps) => {
                   props,
                   state,
                   popularNewsLine,
+                  synthesisHeadline,
                   prevDayDisabled,
                   nextDayDisabled
                 )
@@ -827,6 +862,7 @@ export const App = component$((props: AppProps) => {
                   props,
                   state,
                   popularNewsLine,
+                  synthesisHeadline,
                   prevDayDisabled,
                   nextDayDisabled
                 )
@@ -900,6 +936,19 @@ export const App = component$((props: AppProps) => {
         .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
         .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
         .rdp-app__summary-ul li { margin-bottom: 4px; }
+        .rdp-app__summary-handle {
+          color: var(--color-brand);
+          text-decoration: none;
+          border-bottom: 1px solid currentColor;
+        }
+        .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+        .rdp-app__synthesis-title {
+          font-family: Signika, sans-serif;
+          font-size: 1.6rem;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+          line-height: 1.2;
+        }
         /* The header ribbon stays full-viewport-wide so the white band
            reaches both edges of the page; only the inner row + the content
            grid honour the legacy max-width. Mobile mirrors the same pattern

@@ -3,10 +3,26 @@ import { h, Fragment } from "preact";
 import { useState, useEffect } from "preact/hooks";
 
 type MainSubView = "publications" | "summary";
+
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+type InitialMainSubView = MainSubView;
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type SnapshotItem = {
   id: string;
   label: string;
 };
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type ViewKey =
   | "main"
   | "legal"
@@ -15,6 +31,10 @@ type ViewKey =
   | "support"
   | "sources"
   | "discuter";
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -55,6 +75,9 @@ type AppProps = {
   onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
+  /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+   *  AppShell uses it to set mainSubView on mount + when the prop changes. */
+  initialMainSubView?: InitialMainSubView;
   /** Whether the summary fetch is in flight for the current date. */
   summaryLoading?: boolean;
   /** Pre-parsed summary blocks; empty array when the day has no summary. */
@@ -104,6 +127,16 @@ function App(props: AppProps) {
   function popularNewsLine() {
     return t(
       "header.popular-news",
+      {
+        date: formatLegacyShortDay(props.pickedDate, props.locale ?? "fr-FR"),
+      },
+      props.locale ?? "fr-FR"
+    );
+  }
+
+  function synthesisHeadline() {
+    return t(
+      "header.synthesis",
       {
         date: formatLegacyShortDay(props.pickedDate, props.locale ?? "fr-FR"),
       },
@@ -219,7 +252,7 @@ function App(props: AppProps) {
           />
         </div>
       </div>
-      {props.showPopularNews === true ? (
+      {props.showPopularNews === true && props.mainSubView !== "summary" ? (
         <p className="rdp-app__popular-news">{popularNewsLine()}</p>
       ) : null}
       {(props.layout ?? "desktop") === "desktop" ? (
@@ -324,6 +357,9 @@ function App(props: AppProps) {
                 ) : null}
                 {props.mainSubView === "summary" ? (
                   <Fragment>
+                    <h1 className="rdp-app__synthesis-title">
+                      {synthesisHeadline()}
+                    </h1>
                     {!!props.summaryLoading ? <Spinner /> : null}
                     {!props.summaryLoading &&
                     (props.summaryBlocks ?? []).length === 0 ? (
@@ -335,48 +371,6 @@ function App(props: AppProps) {
                         {props.summaryBlocks ??
                           []?.map((block) => (
                             <Fragment>
-                              {block.kind === "heading" && block.level === 1 ? (
-                                <h2 className="rdp-app__summary-h1">
-                                  {block.segments?.map((seg) => (
-                                    <Fragment>
-                                      {seg.kind === "text" ? (
-                                        <Fragment>{seg.value}</Fragment>
-                                      ) : null}
-                                      {seg.kind === "bold" ? (
-                                        <strong>{seg.value}</strong>
-                                      ) : null}
-                                    </Fragment>
-                                  ))}
-                                </h2>
-                              ) : null}
-                              {block.kind === "heading" && block.level === 2 ? (
-                                <h3 className="rdp-app__summary-h2">
-                                  {block.segments?.map((seg) => (
-                                    <Fragment>
-                                      {seg.kind === "text" ? (
-                                        <Fragment>{seg.value}</Fragment>
-                                      ) : null}
-                                      {seg.kind === "bold" ? (
-                                        <strong>{seg.value}</strong>
-                                      ) : null}
-                                    </Fragment>
-                                  ))}
-                                </h3>
-                              ) : null}
-                              {block.kind === "heading" && block.level === 3 ? (
-                                <h4 className="rdp-app__summary-h3">
-                                  {block.segments?.map((seg) => (
-                                    <Fragment>
-                                      {seg.kind === "text" ? (
-                                        <Fragment>{seg.value}</Fragment>
-                                      ) : null}
-                                      {seg.kind === "bold" ? (
-                                        <strong>{seg.value}</strong>
-                                      ) : null}
-                                    </Fragment>
-                                  ))}
-                                </h4>
-                              ) : null}
                               {block.kind === "paragraph" ? (
                                 <p className="rdp-app__summary-p">
                                   {block.segments?.map((seg) => (
@@ -386,6 +380,16 @@ function App(props: AppProps) {
                                       ) : null}
                                       {seg.kind === "bold" ? (
                                         <strong>{seg.value}</strong>
+                                      ) : null}
+                                      {seg.kind === "handle" ? (
+                                        <a
+                                          className="rdp-app__summary-handle"
+                                          target="_blank"
+                                          rel="noreferrer noopener"
+                                          href={`https://bsky.app/profile/${seg.value}`}
+                                        >
+                                          {seg.value}
+                                        </a>
                                       ) : null}
                                     </Fragment>
                                   ))}
@@ -402,6 +406,16 @@ function App(props: AppProps) {
                                           ) : null}
                                           {seg.kind === "bold" ? (
                                             <strong>{seg.value}</strong>
+                                          ) : null}
+                                          {seg.kind === "handle" ? (
+                                            <a
+                                              className="rdp-app__summary-handle"
+                                              target="_blank"
+                                              rel="noreferrer noopener"
+                                              href={`https://bsky.app/profile/${seg.value}`}
+                                            >
+                                              {seg.value}
+                                            </a>
                                           ) : null}
                                         </Fragment>
                                       ))}
@@ -606,6 +620,19 @@ function App(props: AppProps) {
         .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
         .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
         .rdp-app__summary-ul li { margin-bottom: 4px; }
+        .rdp-app__summary-handle {
+          color: var(--color-brand);
+          text-decoration: none;
+          border-bottom: 1px solid currentColor;
+        }
+        .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+        .rdp-app__synthesis-title {
+          font-family: Signika, sans-serif;
+          font-size: 1.6rem;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+          line-height: 1.2;
+        }
         /* The header ribbon stays full-viewport-wide so the white band
            reaches both edges of the page; only the inner row + the content
            grid honour the legacy max-width. Mobile mirrors the same pattern

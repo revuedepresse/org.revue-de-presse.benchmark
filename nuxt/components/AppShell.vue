@@ -8,6 +8,9 @@ const props = defineProps<{
   initialView?: ViewKey;
   initialDate?: Date;
   emptyMessageKey?: string;
+  /** Day-page sub-view from the URL: 'publications' (default) for
+   *  /YYYY-MM-DD/actualites-du-… and 'summary' for /YYYY-MM-DD/synthese-du-…. */
+  initialMainSubView?: 'publications' | 'summary';
 }>();
 
 const router = useRouter();
@@ -68,6 +71,10 @@ function ymd(d: Date): string {
 
 function urlForDate(d: Date): string {
   return `/${ymd(d)}/actualites-du-${localizeDay(d)}`;
+}
+
+function urlForSynthese(d: Date): string {
+  return `/${ymd(d)}/synthese-du-${localizeDay(d)}`;
 }
 
 function urlForView(view: ViewKey): string {
@@ -193,34 +200,54 @@ import { parseSummaryMarkdown, type SummaryBlock } from '../utils/parse-summary-
 
 type MainSubView = 'publications' | 'summary';
 
-const mainSubView = ref<MainSubView>('publications');
+// The URL is source of truth for the sub-view: the synthese-du-… page
+// passes initialMainSubView="summary", the actualites-du-… page leaves it
+// undefined ⇒ "publications".
+const mainSubView = ref<MainSubView>(props.initialMainSubView ?? 'publications');
+watch(
+  () => props.initialMainSubView,
+  (next) => {
+    if (next !== undefined && next !== mainSubView.value) mainSubView.value = next;
+  },
+);
+
 const summaryLoading = ref(false);
-// Per-date cache so re-toggling doesn't re-fetch (and so a date change resets
-// to publications cleanly).
 const summaryCache = ref<Record<string, SummaryBlock[]>>({});
 const summaryBlocks = computed<SummaryBlock[]>(
   () => summaryCache.value[ymd(pickedDate.value)] ?? [],
 );
 
-// When the user picks a different day, drop back to publications so they
-// don't see yesterday's synthesis still on screen.
-watch(pickedDate, () => {
-  mainSubView.value = 'publications';
-});
-
-async function onMainSubViewChange(next: MainSubView) {
-  mainSubView.value = next;
-  if (next !== 'summary') return;
-  const key = ymd(pickedDate.value);
-  if (summaryCache.value[key]) return; // already cached
+async function fetchSummaryFor(d: Date) {
+  const key = ymd(d);
+  if (summaryCache.value[key]) return;
   summaryLoading.value = true;
   try {
-    const url = `/api/days/${key}/summary`;
-    const resp = await $fetch<{ date: string; markdown: string }>(url).catch(() => null);
+    const resp = await $fetch<{ date: string; markdown: string }>(
+      `/api/days/${key}/summary`,
+    ).catch(() => null);
     summaryCache.value[key] = resp?.markdown ? parseSummaryMarkdown(resp.markdown) : [];
   } finally {
     summaryLoading.value = false;
   }
+}
+
+// Fetch lazily whenever the sub-view is "summary" — covers initial mount
+// from /synthese-du-… AND date changes while in synthesis mode.
+watch(
+  [mainSubView, pickedDate],
+  ([sub, d]) => {
+    if (sub === 'summary') void fetchSummaryFor(d);
+  },
+  { immediate: true },
+);
+
+function onMainSubViewChange(next: MainSubView) {
+  mainSubView.value = next;
+  if (!import.meta.client) return;
+  const target = next === 'summary'
+    ? urlForSynthese(pickedDate.value)
+    : urlForDate(pickedDate.value);
+  if (route.path !== target) router.push(target);
 }
 </script>
 
@@ -257,6 +284,7 @@ async function onMainSubViewChange(next: MainSubView) {
     :on-discuter-draft-change="onDiscuterDraftChange"
     :on-discuter-handle-draft-change="onDiscuterHandleDraftChange"
     :main-sub-view="mainSubView"
+    :initial-main-sub-view="props.initialMainSubView"
     :summary-loading="summaryLoading"
     :summary-blocks="summaryBlocks"
     :on-main-sub-view-change="onMainSubViewChange"

@@ -20,6 +20,11 @@ import type { BlueskyPost } from './BlueskyPostCard.lite';
 import type { SummaryBlock, SummaryInlineSegment } from '../utils/summary-blocks';
 
 type MainSubView = 'publications' | 'summary';
+
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+type InitialMainSubView = MainSubView;
 import type { Locale } from '../utils/i18n';
 import type {
   DiscuterStatus,
@@ -70,6 +75,9 @@ type AppProps = {
   onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
+  /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+   *  AppShell uses it to set mainSubView on mount + when the prop changes. */
+  initialMainSubView?: InitialMainSubView;
   /** Whether the summary fetch is in flight for the current date. */
   summaryLoading?: boolean;
   /** Pre-parsed summary blocks; empty array when the day has no summary. */
@@ -86,6 +94,15 @@ export default function App(props: AppProps) {
     get popularNewsLine(): string {
       return t(
         'header.popular-news',
+        { date: formatLegacyShortDay(props.pickedDate, props.locale ?? 'fr-FR') },
+        props.locale ?? 'fr-FR'
+      );
+    },
+    /** "Synthèse du {long-date}" — shown in the popular-news strip when the
+     *  day-page sub-view is "summary" (URL pattern /YYYY-MM-DD/synthese-du-…). */
+    get synthesisHeadline(): string {
+      return t(
+        'header.synthesis',
         { date: formatLegacyShortDay(props.pickedDate, props.locale ?? 'fr-FR') },
         props.locale ?? 'fr-FR'
       );
@@ -187,7 +204,7 @@ export default function App(props: AppProps) {
           />
         </div>
       </div>
-      <Show when={props.showPopularNews === true}>
+      <Show when={props.showPopularNews === true && props.mainSubView !== 'summary'}>
         <p class="rdp-app__popular-news">{state.popularNewsLine}</p>
       </Show>
 
@@ -279,6 +296,7 @@ export default function App(props: AppProps) {
               </Show>
 
               <Show when={props.mainSubView === 'summary'}>
+                <h1 class="rdp-app__synthesis-title">{state.synthesisHeadline}</h1>
                 <Show when={!!props.summaryLoading}>
                   <Spinner />
                 </Show>
@@ -290,42 +308,6 @@ export default function App(props: AppProps) {
                     <For each={props.summaryBlocks ?? []}>
                       {(block) => (
                         <>
-                          <Show when={block.kind === 'heading' && block.level === 1}>
-                            <h2 class="rdp-app__summary-h1">
-                              <For each={block.segments}>
-                                {(seg: SummaryInlineSegment) => (
-                                  <>
-                                    <Show when={seg.kind === 'text'}>{seg.value}</Show>
-                                    <Show when={seg.kind === 'bold'}><strong>{seg.value}</strong></Show>
-                                  </>
-                                )}
-                              </For>
-                            </h2>
-                          </Show>
-                          <Show when={block.kind === 'heading' && block.level === 2}>
-                            <h3 class="rdp-app__summary-h2">
-                              <For each={block.segments}>
-                                {(seg: SummaryInlineSegment) => (
-                                  <>
-                                    <Show when={seg.kind === 'text'}>{seg.value}</Show>
-                                    <Show when={seg.kind === 'bold'}><strong>{seg.value}</strong></Show>
-                                  </>
-                                )}
-                              </For>
-                            </h3>
-                          </Show>
-                          <Show when={block.kind === 'heading' && block.level === 3}>
-                            <h4 class="rdp-app__summary-h3">
-                              <For each={block.segments}>
-                                {(seg: SummaryInlineSegment) => (
-                                  <>
-                                    <Show when={seg.kind === 'text'}>{seg.value}</Show>
-                                    <Show when={seg.kind === 'bold'}><strong>{seg.value}</strong></Show>
-                                  </>
-                                )}
-                              </For>
-                            </h4>
-                          </Show>
                           <Show when={block.kind === 'paragraph'}>
                             <p class="rdp-app__summary-p">
                               <For each={block.segments}>
@@ -333,6 +315,16 @@ export default function App(props: AppProps) {
                                   <>
                                     <Show when={seg.kind === 'text'}>{seg.value}</Show>
                                     <Show when={seg.kind === 'bold'}><strong>{seg.value}</strong></Show>
+                                    <Show when={seg.kind === 'handle'}>
+                                      <a
+                                        class="rdp-app__summary-handle"
+                                        href={`https://bsky.app/profile/${seg.value}`}
+                                        target="_blank"
+                                        rel="noreferrer noopener"
+                                      >
+                                        {seg.value}
+                                      </a>
+                                    </Show>
                                   </>
                                 )}
                               </For>
@@ -348,6 +340,16 @@ export default function App(props: AppProps) {
                                         <>
                                           <Show when={seg.kind === 'text'}>{seg.value}</Show>
                                           <Show when={seg.kind === 'bold'}><strong>{seg.value}</strong></Show>
+                                          <Show when={seg.kind === 'handle'}>
+                                            <a
+                                              class="rdp-app__summary-handle"
+                                              href={`https://bsky.app/profile/${seg.value}`}
+                                              target="_blank"
+                                              rel="noreferrer noopener"
+                                            >
+                                              {seg.value}
+                                            </a>
+                                          </Show>
                                         </>
                                       )}
                                     </For>
@@ -563,6 +565,19 @@ export default function App(props: AppProps) {
         .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
         .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
         .rdp-app__summary-ul li { margin-bottom: 4px; }
+        .rdp-app__summary-handle {
+          color: var(--color-brand);
+          text-decoration: none;
+          border-bottom: 1px solid currentColor;
+        }
+        .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+        .rdp-app__synthesis-title {
+          font-family: Signika, sans-serif;
+          font-size: 1.6rem;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+          line-height: 1.2;
+        }
         /* The header ribbon stays full-viewport-wide so the white band
            reaches both edges of the page; only the inner row + the content
            grid honour the legacy max-width. Mobile mirrors the same pattern

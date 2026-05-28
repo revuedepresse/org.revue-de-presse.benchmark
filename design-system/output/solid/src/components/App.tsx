@@ -1,10 +1,26 @@
 import { Show, For, onMount, createSignal, createMemo } from "solid-js";
 
 type MainSubView = "publications" | "summary";
+
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+type InitialMainSubView = MainSubView;
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type SnapshotItem = {
   id: string;
   label: string;
 };
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type ViewKey =
   | "main"
   | "legal"
@@ -13,6 +29,10 @@ type ViewKey =
   | "support"
   | "sources"
   | "discuter";
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -53,6 +73,9 @@ type AppProps = {
   onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
+  /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+   *  AppShell uses it to set mainSubView on mount + when the prop changes. */
+  initialMainSubView?: InitialMainSubView;
   /** Whether the summary fetch is in flight for the current date. */
   summaryLoading?: boolean;
   /** Pre-parsed summary blocks; empty array when the day has no summary. */
@@ -103,6 +126,16 @@ function App(props: AppProps) {
   const popularNewsLine = createMemo(() => {
     return t(
       "header.popular-news",
+      {
+        date: formatLegacyShortDay(props.pickedDate, props.locale ?? "fr-FR"),
+      },
+      props.locale ?? "fr-FR"
+    );
+  });
+
+  const synthesisHeadline = createMemo(() => {
+    return t(
+      "header.synthesis",
       {
         date: formatLegacyShortDay(props.pickedDate, props.locale ?? "fr-FR"),
       },
@@ -219,7 +252,11 @@ function App(props: AppProps) {
             ></AppHeader>
           </div>
         </div>
-        <Show when={props.showPopularNews === true}>
+        <Show
+          when={
+            props.showPopularNews === true && props.mainSubView !== "summary"
+          }
+        >
           <p class="rdp-app__popular-news">{popularNewsLine()}</p>
         </Show>
         <Show when={(props.layout ?? "desktop") === "desktop"}>
@@ -342,6 +379,9 @@ function App(props: AppProps) {
                   </ol>
                 </Show>
                 <Show when={props.mainSubView === "summary"}>
+                  <h1 class="rdp-app__synthesis-title">
+                    {synthesisHeadline()}
+                  </h1>
                   <Show when={!!props.summaryLoading}>
                     <Spinner></Spinner>
                   </Show>
@@ -368,75 +408,6 @@ function App(props: AppProps) {
                           const index = _index();
                           return (
                             <>
-                              <Show
-                                when={
-                                  block.kind === "heading" && block.level === 1
-                                }
-                              >
-                                <h2 class="rdp-app__summary-h1">
-                                  <For each={block.segments}>
-                                    {(seg, _index) => {
-                                      const index = _index();
-                                      return (
-                                        <>
-                                          <Show when={seg.kind === "text"}>
-                                            {seg.value}
-                                          </Show>
-                                          <Show when={seg.kind === "bold"}>
-                                            <strong>{seg.value}</strong>
-                                          </Show>
-                                        </>
-                                      );
-                                    }}
-                                  </For>
-                                </h2>
-                              </Show>
-                              <Show
-                                when={
-                                  block.kind === "heading" && block.level === 2
-                                }
-                              >
-                                <h3 class="rdp-app__summary-h2">
-                                  <For each={block.segments}>
-                                    {(seg, _index) => {
-                                      const index = _index();
-                                      return (
-                                        <>
-                                          <Show when={seg.kind === "text"}>
-                                            {seg.value}
-                                          </Show>
-                                          <Show when={seg.kind === "bold"}>
-                                            <strong>{seg.value}</strong>
-                                          </Show>
-                                        </>
-                                      );
-                                    }}
-                                  </For>
-                                </h3>
-                              </Show>
-                              <Show
-                                when={
-                                  block.kind === "heading" && block.level === 3
-                                }
-                              >
-                                <h4 class="rdp-app__summary-h3">
-                                  <For each={block.segments}>
-                                    {(seg, _index) => {
-                                      const index = _index();
-                                      return (
-                                        <>
-                                          <Show when={seg.kind === "text"}>
-                                            {seg.value}
-                                          </Show>
-                                          <Show when={seg.kind === "bold"}>
-                                            <strong>{seg.value}</strong>
-                                          </Show>
-                                        </>
-                                      );
-                                    }}
-                                  </For>
-                                </h4>
-                              </Show>
                               <Show when={block.kind === "paragraph"}>
                                 <p class="rdp-app__summary-p">
                                   <For each={block.segments}>
@@ -449,6 +420,16 @@ function App(props: AppProps) {
                                           </Show>
                                           <Show when={seg.kind === "bold"}>
                                             <strong>{seg.value}</strong>
+                                          </Show>
+                                          <Show when={seg.kind === "handle"}>
+                                            <a
+                                              class="rdp-app__summary-handle"
+                                              target="_blank"
+                                              rel="noreferrer noopener"
+                                              href={`https://bsky.app/profile/${seg.value}`}
+                                            >
+                                              {seg.value}
+                                            </a>
                                           </Show>
                                         </>
                                       );
@@ -477,6 +458,18 @@ function App(props: AppProps) {
                                                     when={seg.kind === "bold"}
                                                   >
                                                     <strong>{seg.value}</strong>
+                                                  </Show>
+                                                  <Show
+                                                    when={seg.kind === "handle"}
+                                                  >
+                                                    <a
+                                                      class="rdp-app__summary-handle"
+                                                      target="_blank"
+                                                      rel="noreferrer noopener"
+                                                      href={`https://bsky.app/profile/${seg.value}`}
+                                                    >
+                                                      {seg.value}
+                                                    </a>
                                                   </Show>
                                                 </>
                                               );
@@ -719,6 +712,19 @@ function App(props: AppProps) {
         .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
         .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
         .rdp-app__summary-ul li { margin-bottom: 4px; }
+        .rdp-app__summary-handle {
+          color: var(--color-brand);
+          text-decoration: none;
+          border-bottom: 1px solid currentColor;
+        }
+        .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+        .rdp-app__synthesis-title {
+          font-family: Signika, sans-serif;
+          font-size: 1.6rem;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+          line-height: 1.2;
+        }
         /* The header ribbon stays full-viewport-wide so the white band
            reaches both edges of the page; only the inner row + the content
            grid honour the legacy max-width. Mobile mirrors the same pattern

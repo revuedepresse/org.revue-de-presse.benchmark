@@ -4,10 +4,26 @@ import { CommonModule } from "@angular/common";
 import { Component, Input } from "@angular/core";
 
 type MainSubView = "publications" | "summary";
+
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+type InitialMainSubView = MainSubView;
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type SnapshotItem = {
   id: string;
   label: string;
 };
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type ViewKey =
   | "main"
   | "legal"
@@ -16,6 +32,10 @@ type ViewKey =
   | "support"
   | "sources"
   | "discuter";
+/** Initial sub-view for the day-page, when entered via a URL like
+ *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  Nuxt so the route is the source of truth. */
+
 type AppProps = {
   layout?: "mobile" | "desktop";
   authenticated?: boolean;
@@ -56,6 +76,9 @@ type AppProps = {
   onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
+  /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+   *  AppShell uses it to set mainSubView on mount + when the prop changes. */
+  initialMainSubView?: InitialMainSubView;
   /** Whether the summary fetch is in flight for the current date. */
   summaryLoading?: boolean;
   /** Pre-parsed summary blocks; empty array when the day has no summary. */
@@ -89,7 +112,8 @@ import type { Locale } from "../utils/i18n";
           ></app-header>
         </div>
       </div>
-      <ng-container *ngIf="showPopularNews === true"
+      <ng-container
+        *ngIf="showPopularNews === true && mainSubView !== 'summary'"
         ><p class="rdp-app__popular-news">{{popularNewsLine}}</p></ng-container
       >
       <ng-container *ngIf="(layout ?? 'desktop') === 'desktop'"
@@ -177,7 +201,8 @@ import type { Locale } from "../utils/i18n";
                   ></ng-container></ol
               ></ng-container>
               <ng-container *ngIf="mainSubView === 'summary'"
-                ><ng-container *ngIf="!!summaryLoading"
+                ><h1 class="rdp-app__synthesis-title">{{synthesisHeadline}}</h1>
+                <ng-container *ngIf="!!summaryLoading"
                   ><spinner></spinner
                 ></ng-container>
                 <ng-container
@@ -189,55 +214,7 @@ import type { Locale } from "../utils/i18n";
                   ><article class="rdp-app__summary">
                     <ng-container *ngFor="let block of summaryBlocks ?? []"
                       ><ng-container
-                        ><ng-container
-                          *ngIf="block.kind === 'heading' && block.level === 1"
-                          ><h2 class="rdp-app__summary-h1">
-                            <ng-container *ngFor="let seg of block.segments"
-                              ><ng-container
-                                ><ng-container
-                                  *ngIf="seg.kind === 'text'"
-                                  >{{seg.value}}</ng-container
-                                >
-                                <ng-container *ngIf="seg.kind === 'bold'"
-                                  ><strong>{{seg.value}}</strong></ng-container
-                                ></ng-container
-                              ></ng-container
-                            >
-                          </h2></ng-container
-                        >
-                        <ng-container
-                          *ngIf="block.kind === 'heading' && block.level === 2"
-                          ><h3 class="rdp-app__summary-h2">
-                            <ng-container *ngFor="let seg of block.segments"
-                              ><ng-container
-                                ><ng-container
-                                  *ngIf="seg.kind === 'text'"
-                                  >{{seg.value}}</ng-container
-                                >
-                                <ng-container *ngIf="seg.kind === 'bold'"
-                                  ><strong>{{seg.value}}</strong></ng-container
-                                ></ng-container
-                              ></ng-container
-                            >
-                          </h3></ng-container
-                        >
-                        <ng-container
-                          *ngIf="block.kind === 'heading' && block.level === 3"
-                          ><h4 class="rdp-app__summary-h3">
-                            <ng-container *ngFor="let seg of block.segments"
-                              ><ng-container
-                                ><ng-container
-                                  *ngIf="seg.kind === 'text'"
-                                  >{{seg.value}}</ng-container
-                                >
-                                <ng-container *ngIf="seg.kind === 'bold'"
-                                  ><strong>{{seg.value}}</strong></ng-container
-                                ></ng-container
-                              ></ng-container
-                            >
-                          </h4></ng-container
-                        >
-                        <ng-container *ngIf="block.kind === 'paragraph'"
+                        ><ng-container *ngIf="block.kind === 'paragraph'"
                           ><p class="rdp-app__summary-p">
                             <ng-container *ngFor="let seg of block.segments"
                               ><ng-container
@@ -247,6 +224,15 @@ import type { Locale } from "../utils/i18n";
                                 >
                                 <ng-container *ngIf="seg.kind === 'bold'"
                                   ><strong>{{seg.value}}</strong></ng-container
+                                >
+                                <ng-container *ngIf="seg.kind === 'handle'"
+                                  ><a
+                                    class="rdp-app__summary-handle"
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                    [attr.href]="\`https://bsky.app/profile/\${seg.value}\`"
+                                    >{{seg.value}}</a
+                                  ></ng-container
                                 ></ng-container
                               ></ng-container
                             >
@@ -265,6 +251,15 @@ import type { Locale } from "../utils/i18n";
                                     <ng-container *ngIf="seg.kind === 'bold'"
                                       ><strong
                                         >{{seg.value}}</strong
+                                      ></ng-container
+                                    >
+                                    <ng-container *ngIf="seg.kind === 'handle'"
+                                      ><a
+                                        class="rdp-app__summary-handle"
+                                        target="_blank"
+                                        rel="noreferrer noopener"
+                                        [attr.href]="\`https://bsky.app/profile/\${seg.value}\`"
+                                        >{{seg.value}}</a
                                       ></ng-container
                                     ></ng-container
                                   ></ng-container
@@ -476,6 +471,19 @@ import type { Locale } from "../utils/i18n";
                 .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
                 .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
                 .rdp-app__summary-ul li { margin-bottom: 4px; }
+                .rdp-app__summary-handle {
+                  color: var(--color-brand);
+                  text-decoration: none;
+                  border-bottom: 1px solid currentColor;
+                }
+                .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+                .rdp-app__synthesis-title {
+                  font-family: Signika, sans-serif;
+                  font-size: 1.6rem;
+                  color: var(--color-brand);
+                  margin: 0 0 var(--separation-2);
+                  line-height: 1.2;
+                }
                 /* The header ribbon stays full-viewport-wide so the white band
                    reaches both edges of the page; only the inner row + the content
                    grid honour the legacy max-width. Mobile mirrors the same pattern
@@ -637,6 +645,7 @@ export default class App {
   @Input() onAccountClick!: AppProps["onAccountClick"];
   @Input() onMySpaceClick!: AppProps["onMySpaceClick"];
   @Input() showPopularNews!: AppProps["showPopularNews"];
+  @Input() mainSubView!: AppProps["mainSubView"];
   @Input() captureMode!: AppProps["captureMode"];
   @Input() lists!: AppProps["lists"];
   @Input() selectedListId!: AppProps["selectedListId"];
@@ -645,7 +654,6 @@ export default class App {
   @Input() loading!: AppProps["loading"];
   @Input() posts!: AppProps["posts"];
   @Input() emptyMessageKey!: AppProps["emptyMessageKey"];
-  @Input() mainSubView!: AppProps["mainSubView"];
   @Input() onMainSubViewChange!: AppProps["onMainSubViewChange"];
   @Input() summaryLoading!: AppProps["summaryLoading"];
   @Input() summaryBlocks!: AppProps["summaryBlocks"];
@@ -672,6 +680,15 @@ export default class App {
   get popularNewsLine() {
     return t(
       "header.popular-news",
+      {
+        date: formatLegacyShortDay(this.pickedDate, this.locale ?? "fr-FR"),
+      },
+      this.locale ?? "fr-FR"
+    );
+  }
+  get synthesisHeadline() {
+    return t(
+      "header.synthesis",
       {
         date: formatLegacyShortDay(this.pickedDate, this.locale ?? "fr-FR"),
       },

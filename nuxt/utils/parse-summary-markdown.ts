@@ -1,18 +1,31 @@
 // Tiny structural parser for the constrained markdown the daily-summary
-// generator emits: # / ## / ### headings, paragraphs, "- " bullet lists,
-// and inline **bold**. No tables, no code, no links — the system prompt
-// forbids them and they'd need a real lib (marked/markdown-it) to handle.
+// generator emits: paragraphs, "- " bullet lists, and inline **bold**.
+// Bluesky-style outlet handles (e.g. `lemonde.fr`) become linkified
+// `handle` segments — but only when the candidate appears in the curated
+// allowlist (KNOWN_BLUESKY_HANDLES) so no link can ever point at a profile
+// Mistral hallucinated.
+//
+// Heading blocks (#, ##, ###, …) are intentionally dropped: the system
+// prompt forbids them, the page provides its own H1 ("Synthèse du …"),
+// and Mistral's thematic labels (« Économie », « Culture », …) tend to
+// mis-categorise (a canicule paper isn't economy news).
 //
 // Output is a typed block list so the renderer in the design-system can
 // loop block-by-block without doing any string parsing of its own
 // (Mitosis JSX struggles with that).
 
+import { isKnownBlueskyHandle } from './bluesky-handles';
+
 export type SummaryInlineSegment =
   | { kind: 'text'; value: string }
-  | { kind: 'bold'; value: string };
+  | { kind: 'bold'; value: string }
+  /** Bluesky-style outlet handle, e.g. `lemonde.fr`. Rendered as a link to
+   *  https://bsky.app/profile/{value}. The asterisks Mistral sometimes wraps
+   *  around handles (`*lemonde.fr*`, used as French-press citation style)
+   *  are stripped — the link itself signals the citation visually. */
+  | { kind: 'handle'; value: string };
 
 export type SummaryBlock =
-  | { kind: 'heading'; level: 1 | 2 | 3; segments: SummaryInlineSegment[] }
   | { kind: 'paragraph'; segments: SummaryInlineSegment[] }
   | { kind: 'bullets'; items: SummaryInlineSegment[][] };
 
@@ -36,15 +49,9 @@ export function parseSummaryMarkdown(markdown: string): SummaryBlock[] {
       continue;
     }
 
-    // Headings — # / ## / ###. Deeper levels (####, #####, …) are clamped
-    // to ### so the markdown still renders as a styled heading rather than
-    // a raw "#### Politique" paragraph (the system prompt forbids them but
-    // we stay defensive).
-    const headingMatch = line.match(/^(#+)\s+(.+)$/);
-    if (headingMatch) {
-      const raw = headingMatch[1]!.length;
-      const level = Math.min(raw, 3) as 1 | 2 | 3;
-      blocks.push({ kind: 'heading', level, segments: parseInline(headingMatch[2]!) });
+    // Headings are dropped — the system prompt forbids them and the page
+    // provides its own H1 above the summary content. See file-level note.
+    if (/^#+\s/.test(line)) {
       i++;
       continue;
     }
@@ -82,16 +89,42 @@ export function parseSummaryMarkdown(markdown: string): SummaryBlock[] {
 }
 
 function parseInline(text: string): SummaryInlineSegment[] {
-  // Inline grammar: **bold** spans, anything else is plain text.
+  // Inline grammar (matched in this priority order):
+  //   1. `**bold**`
+  //   2. `*handle.tld*` — italicised Bluesky handles (citation-style); the
+  //      asterisks are stripped, the handle becomes a link.
+  //   3. `handle.tld` — bare Bluesky-style dotted handles.
+  // Everything else stays plain text.
+  //
+  // The handle regex is intentionally strict (lowercase, at least one dot,
+  // tail >= 2 chars) to avoid linkifying random words like "p.ex" or
+  // sentence-ending abbreviations.
   const out: SummaryInlineSegment[] = [];
-  const re = /\*\*([^*]+)\*\*/g;
+  const HANDLE = '[a-z][a-z0-9-]*(?:\\.[a-z0-9-]+)+';
+  const re = new RegExp(
+    `\\*\\*([^*]+)\\*\\*|\\*(${HANDLE})\\*|(${HANDLE})`,
+    'gi',
+  );
   let last = 0;
   let m: RegExpExecArray | null = re.exec(text);
   while (m !== null) {
     if (m.index > last) {
       out.push({ kind: 'text', value: text.slice(last, m.index) });
     }
-    out.push({ kind: 'bold', value: m[1]! });
+    if (m[1] !== undefined) {
+      out.push({ kind: 'bold', value: m[1] });
+    } else if (m[2] !== undefined || m[3] !== undefined) {
+      const raw = (m[2] ?? m[3])!.toLowerCase();
+      if (isKnownBlueskyHandle(raw)) {
+        out.push({ kind: 'handle', value: raw });
+      } else {
+        // Looks like a handle (dotted lowercase) but isn't in our allowlist —
+        // keep it as plain text so no broken link is rendered. Include the
+        // wrapping asterisks for italic-style hits so the original prose
+        // stays visually intact.
+        out.push({ kind: 'text', value: m[0]! });
+      }
+    }
     last = m.index + m[0]!.length;
     m = re.exec(text);
   }

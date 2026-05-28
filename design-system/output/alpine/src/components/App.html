@@ -14,7 +14,7 @@
       ></AppHeader>
     </div>
   </div>
-  <template x-if="showPopularNews === true">
+  <template x-if="showPopularNews === true && mainSubView !== 'summary'">
     <p class="rdp-app__popular-news"><span x-html="popularNewsLine"></span></p>
   </template>
   <template x-if="(layout ?? 'desktop') === 'desktop'">
@@ -100,6 +100,9 @@
             </ol>
           </template>
           <template x-if="mainSubView === 'summary'">
+            <h1 class="rdp-app__synthesis-title">
+              <span x-html="synthesisHeadline"></span>
+            </h1>
             <template x-if="!!summaryLoading">
               <Spinner></Spinner>
             </template>
@@ -114,54 +117,6 @@
               <article class="rdp-app__summary">
                 <template x-for="block in summaryBlocks ?? []">
                   <div>
-                    <template
-                      x-if="block.kind === 'heading' && block.level === 1"
-                    >
-                      <h2 class="rdp-app__summary-h1">
-                        <template x-for="seg in block.segments">
-                          <div>
-                            <template x-if="seg.kind === 'text'">
-                              <span x-html="seg.value"></span>
-                            </template>
-                            <template x-if="seg.kind === 'bold'">
-                              <strong><span x-html="seg.value"></span></strong>
-                            </template>
-                          </div>
-                        </template>
-                      </h2>
-                    </template>
-                    <template
-                      x-if="block.kind === 'heading' && block.level === 2"
-                    >
-                      <h3 class="rdp-app__summary-h2">
-                        <template x-for="seg in block.segments">
-                          <div>
-                            <template x-if="seg.kind === 'text'">
-                              <span x-html="seg.value"></span>
-                            </template>
-                            <template x-if="seg.kind === 'bold'">
-                              <strong><span x-html="seg.value"></span></strong>
-                            </template>
-                          </div>
-                        </template>
-                      </h3>
-                    </template>
-                    <template
-                      x-if="block.kind === 'heading' && block.level === 3"
-                    >
-                      <h4 class="rdp-app__summary-h3">
-                        <template x-for="seg in block.segments">
-                          <div>
-                            <template x-if="seg.kind === 'text'">
-                              <span x-html="seg.value"></span>
-                            </template>
-                            <template x-if="seg.kind === 'bold'">
-                              <strong><span x-html="seg.value"></span></strong>
-                            </template>
-                          </div>
-                        </template>
-                      </h4>
-                    </template>
                     <template x-if="block.kind === 'paragraph'">
                       <p class="rdp-app__summary-p">
                         <template x-for="seg in block.segments">
@@ -171,6 +126,16 @@
                             </template>
                             <template x-if="seg.kind === 'bold'">
                               <strong><span x-html="seg.value"></span></strong>
+                            </template>
+                            <template x-if="seg.kind === 'handle'">
+                              <a
+                                class="rdp-app__summary-handle"
+                                target="_blank"
+                                rel="noreferrer noopener"
+                                x-bind:href="`https://bsky.app/profile/${seg.value}`"
+                              >
+                                <span x-html="seg.value"></span>
+                              </a>
                             </template>
                           </div>
                         </template>
@@ -189,6 +154,16 @@
                                   <strong>
                                     <span x-html="seg.value"></span>
                                   </strong>
+                                </template>
+                                <template x-if="seg.kind === 'handle'">
+                                  <a
+                                    class="rdp-app__summary-handle"
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                    x-bind:href="`https://bsky.app/profile/${seg.value}`"
+                                  >
+                                    <span x-html="seg.value"></span>
+                                  </a>
                                 </template>
                               </div>
                             </template>
@@ -401,6 +376,19 @@
             .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
             .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
             .rdp-app__summary-ul li { margin-bottom: 4px; }
+            .rdp-app__summary-handle {
+              color: var(--color-brand);
+              text-decoration: none;
+              border-bottom: 1px solid currentColor;
+            }
+            .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+            .rdp-app__synthesis-title {
+              font-family: Signika, sans-serif;
+              font-size: 1.6rem;
+              color: var(--color-brand);
+              margin: 0 0 var(--separation-2);
+              line-height: 1.2;
+            }
             /* The header ribbon stays full-viewport-wide so the white band
                reaches both edges of the page; only the inner row + the content
                grid honour the legacy max-width. Mobile mirrors the same pattern
@@ -548,6 +536,18 @@
       get popularNewsLine() {
         return t(
           "header.popular-news",
+          {
+            date: formatLegacyShortDay(
+              props.pickedDate,
+              props.locale ?? "fr-FR"
+            ),
+          },
+          props.locale ?? "fr-FR"
+        );
+      },
+      get synthesisHeadline() {
+        return t(
+          "header.synthesis",
           {
             date: formatLegacyShortDay(
               props.pickedDate,
