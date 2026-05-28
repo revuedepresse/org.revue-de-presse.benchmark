@@ -195,8 +195,8 @@ native-android-release:  ## Build native Android release AAB (signed)
 native-ios-framework:    ## Compile native iOS Kotlin (link smoke; full framework needs macOS+Xcode)
 	cd native && ./gradlew :iosApp:compileKotlinIosX64
 
-native-desktop-release:  ## Build native desktop uber jar for the current OS
-	cd native && ./gradlew :desktopApp:packageReleaseUberJarForCurrentOS
+native-desktop-release:  ## Build native desktop uber jar for the current OS (skips ProGuard — 7.2.2 bundled with Compose 1.7.1 can't read Java 21 bytecode)
+	cd native && ./gradlew :desktopApp:packageUberJarForCurrentOS
 
 native-release: native-android-release native-ios-framework  ## Build the two distributable native targets (Android + iOS) per spec §9
 
