@@ -27,3 +27,14 @@ kotlin {
 kover {
     reports { verify { rule { minBound(90) } } }
 }
+
+val emitComposeStrings = tasks.register<Exec>("emitComposeStrings") {
+    workingDir = rootDir.resolve("../design-system")
+    val outDir = layout.buildDirectory.dir("generated/kotlin").get().asFile
+    commandLine("node", "scripts/emit-compose-strings.mjs", "--out", outDir.path)
+    inputs.dir(rootDir.resolve("../design-system/output/vue/src/locales"))
+    inputs.file(rootDir.resolve("../design-system/scripts/emit-compose-strings.mjs"))
+    outputs.dir(outDir)
+}
+
+kotlin.sourceSets["commonMain"].kotlin.srcDir(emitComposeStrings)
