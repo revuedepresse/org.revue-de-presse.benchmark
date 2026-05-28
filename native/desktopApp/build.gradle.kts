@@ -16,10 +16,13 @@ kotlin {
         jvmMain.dependencies {
             implementation(project(":domain"))
             implementation(project(":design"))
+            implementation(project(":data"))
             implementation(project(":ui"))
             implementation(compose.desktop.currentOs)
             implementation(compose.material3)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
         }
     }
 }
