@@ -1,0 +1,10 @@
+appId: org.revue_2_presse
+name: Calendar navigates to a prior day
+---
+- launchApp: { clearState: true }
+- assertVisible: { id: "HomeScreen.root" }
+- tapOn: { id: "Sidebar.item./" }
+- tapOn: { id: "Calendar.root" }
+- tapOn: { id: "CalendarActionBar.prev" }
+- tapOn: { id: "DateGrid.cell.2026-04-15" }
+- assertVisible: { id: "DayScreen.root" }

@@ -1,0 +1,11 @@
+appId: org.revue_2_presse
+name: Home loads yesterday's highlights
+---
+- launchApp:
+    clearState: true
+- assertVisible: { id: "HomeScreen.root" }
+- assertVisible: { id: "Logo.image" }
+- extendedWaitUntil:
+    visible: { id: "BlueskyPostCard.root" }
+    timeout: 10000
+- assertVisible: { id: "MetricsBar.root" }

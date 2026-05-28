@@ -1,0 +1,13 @@
+appId: org.revue_2_presse
+name: Source page shows a publication detail
+---
+- launchApp: { clearState: true }
+- tapOn: { id: "Sidebar.item./sources" }
+- extendedWaitUntil:
+    visible: { id: "SourcesPage.row.franceculture.fr" }
+    timeout: 10000
+- tapOn: { id: "SourcesPage.row.franceculture.fr" }
+- assertVisible: { id: "SourceScreen.root" }
+- extendedWaitUntil:
+    visible: { id: "BlueskyPostCard.root" }
+    timeout: 10000

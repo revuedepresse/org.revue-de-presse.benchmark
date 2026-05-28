@@ -1,0 +1,9 @@
+appId: org.revue_2_presse
+name: Sources page shows the publication list
+---
+- launchApp: { clearState: true }
+- tapOn: { id: "Sidebar.item./sources" }
+- assertVisible: { id: "SourcesScreen.root" }
+- extendedWaitUntil:
+    visible: { id: "SourcesPage.row.franceculture.fr" }
+    timeout: 10000
