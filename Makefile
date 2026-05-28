@@ -13,8 +13,9 @@ SHELL:=/bin/bash
         linkedin-install linkedin-bootstrap linkedin-post linkedin-post-dry linkedin-test linkedin-typecheck \
         tiktok-install tiktok-bootstrap tiktok-post tiktok-post-dry tiktok-test tiktok-typecheck \
         bluesky-install bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck \
-        native-desktop-run \
-        native-android-debug native-android-release native-ios-framework native-release
+        native-desktop-run native-desktop-release \
+        native-android-debug native-android-release native-ios-framework \
+        native-release native-build-all
 
 NUXT_DIR     := nuxt
 NEXT_DIR     := next
@@ -202,10 +203,21 @@ native-desktop-run:  ## Run the native desktop app via Gradle
 native-codegen-test: ## Run design-system codegen script tests
 	cd design-system && pnpm test:scripts
 
-native-android-debug:   ; cd native && ./gradlew :androidApp:assembleDebug
-native-android-release: ; cd native && ./gradlew :androidApp:bundleRelease
-native-ios-framework:   ; cd native && ./gradlew :iosApp:compileKotlinIosX64
-native-release:         native-android-release native-ios-framework
+native-android-debug:    ## Build native Android debug APK
+	cd native && ./gradlew :androidApp:assembleDebug
+
+native-android-release:  ## Build native Android release AAB (signed)
+	cd native && ./gradlew :androidApp:bundleRelease
+
+native-ios-framework:    ## Compile native iOS Kotlin (link smoke; full framework needs macOS+Xcode)
+	cd native && ./gradlew :iosApp:compileKotlinIosX64
+
+native-desktop-release:  ## Build native desktop uber jar for the current OS
+	cd native && ./gradlew :desktopApp:packageReleaseUberJarForCurrentOS
+
+native-release: native-android-release native-ios-framework  ## Build the two distributable native targets (Android + iOS) per spec §9
+
+native-build-all: native-android-release native-ios-framework native-desktop-release  ## Build all three native targets: Android AAB + iOS framework + Desktop uber jar
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
