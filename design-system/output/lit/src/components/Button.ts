@@ -72,7 +72,7 @@ onClick?: () => void;
                 gap: var(--separation-1);
                 border: none;
                 cursor: pointer;
-                font-family: 'Roboto', sans-serif;
+                font-family: "Roboto", sans-serif;
                 font-size: var(--font-size-content);
                 padding: var(--separation-1) var(--separation-2);
                 border-radius: var(--radius-default);

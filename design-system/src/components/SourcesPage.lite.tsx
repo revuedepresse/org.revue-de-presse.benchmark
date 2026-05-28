@@ -17,11 +17,11 @@ export default function SourcesPage() {
           background: var(--color-white);
           border-radius: var(--radius-default);
           padding: var(--separation-3);
-          font-family: 'Roboto', sans-serif;
+          font-family: "Roboto", sans-serif;
           color: var(--color-content-text);
         }
         .rdp-sources-page h1 {
-          font-family: 'Signika', sans-serif;
+          font-family: "Signika", sans-serif;
           color: var(--color-brand);
           margin: 0 0 var(--separation-2);
         }

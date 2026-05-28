@@ -37,7 +37,7 @@ export const PasswordField = component$((props: PasswordFieldProps) => {
         </p>
       ) : null}
       <style>{`
-        .rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: 'Roboto', sans-serif; }
+        .rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: "Roboto", sans-serif; }
         .rdp-textfield__label {
           font-size: var(--font-size-publication-date);
           color: var(--color-content-text);

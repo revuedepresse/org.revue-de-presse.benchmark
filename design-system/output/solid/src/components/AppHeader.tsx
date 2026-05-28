@@ -66,7 +66,7 @@ function AppHeader(props: AppHeaderProps) {
           padding: var(--separation-1) var(--separation-2);
           background: var(--color-white);
           border-bottom: 1px solid var(--color-border);
-          font-family: 'Signika', sans-serif;
+          font-family: "Signika", sans-serif;
         }
         .rdp-app-header--desktop { padding: var(--separation-1) var(--separation-3); }
         .rdp-app-header__home {
@@ -83,7 +83,7 @@ function AppHeader(props: AppHeaderProps) {
           margin-left: auto;
           color: var(--color-brand-active);
           text-decoration: none;
-          font-family: 'Roboto', sans-serif;
+          font-family: "Roboto", sans-serif;
           font-size: var(--font-size-content);
         }
         .rdp-app-header__myspace[aria-disabled="true"] {

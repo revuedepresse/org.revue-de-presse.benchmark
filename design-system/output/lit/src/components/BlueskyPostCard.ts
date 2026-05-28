@@ -259,7 +259,7 @@ export default class BlueskyPostCard extends LitElement {
                      border: 1px solid var(--color-border);
                      border-radius: var(--radius-default);
                      padding: var(--separation-2);
-                     font-family: 'Roboto', sans-serif;
+                     font-family: "Roboto", sans-serif;
                      color: var(--color-content-text);
                      display: flex;
                      flex-direction: column;

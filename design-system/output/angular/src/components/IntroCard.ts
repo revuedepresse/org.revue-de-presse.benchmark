@@ -28,7 +28,7 @@ import { Component } from "@angular/core";
                   color: var(--color-content-font);
                   border-radius: var(--radius-default);
                   padding: var(--separation-2);
-                  font-family: 'Roboto', sans-serif;
+                  font-family: &quot;Roboto&quot;, sans-serif;
                   font-size: var(--font-size-status-text);
                   display: flex;
                   flex-direction: column;

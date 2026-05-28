@@ -24,7 +24,7 @@ function IntroCard(props: any) {
           color: var(--color-content-font);
           border-radius: var(--radius-default);
           padding: var(--separation-2);
-          font-family: 'Roboto', sans-serif;
+          font-family: "Roboto", sans-serif;
           font-size: var(--font-size-status-text);
           display: flex;
           flex-direction: column;

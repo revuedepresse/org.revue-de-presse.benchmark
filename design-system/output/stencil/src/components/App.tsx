@@ -545,7 +545,7 @@ export class App {
         .rdp-app {
           background: var(--color-taupe-grey);
           min-height: 100vh;
-          font-family: 'Roboto', sans-serif;
+          font-family: "Roboto", sans-serif;
           color: var(--color-content-text);
         }
         .rdp-app__main-toggle {
@@ -584,19 +584,19 @@ export class App {
           line-height: var(--line-height-base);
         }
         .rdp-app__summary-h1 {
-          font-family: 'Signika', sans-serif;
+          font-family: "Signika", sans-serif;
           font-size: 1.5rem;
           color: var(--color-brand);
           margin: 0 0 var(--separation-2);
         }
         .rdp-app__summary-h2 {
-          font-family: 'Signika', sans-serif;
+          font-family: "Signika", sans-serif;
           font-size: 1.2rem;
           color: var(--color-brand);
           margin: var(--separation-2) 0 var(--separation-1);
         }
         .rdp-app__summary-h3 {
-          font-family: 'Signika', sans-serif;
+          font-family: "Signika", sans-serif;
           font-size: 1.05rem;
           color: var(--color-content-text);
           margin: var(--separation-2) 0 var(--separation-1);
@@ -634,7 +634,7 @@ export class App {
         .rdp-app__popular-news {
           margin: 0;
           padding: var(--separation-1) var(--separation-2);
-          font-family: 'Signika', sans-serif;
+          font-family: "Signika", sans-serif;
           font-size: var(--font-size-content);
           color: var(--color-brand);
           background: var(--color-white);
@@ -689,7 +689,7 @@ export class App {
           border-radius: var(--radius-default);
           color: var(--color-brand);
           padding: var(--separation-1) var(--separation-2);
-          font-family: 'Roboto', sans-serif;
+          font-family: "Roboto", sans-serif;
           font-size: var(--font-size-content);
           cursor: pointer;
         }

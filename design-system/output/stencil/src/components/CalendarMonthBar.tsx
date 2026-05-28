@@ -119,7 +119,7 @@ export class CalendarMonthBar {
           gap: var(--separation-1);
           align-items: center;
           padding: var(--separation-1) var(--separation-2);
-          font-family: 'Roboto', sans-serif;
+          font-family: "Roboto", sans-serif;
         }
         .rdp-calendar-month-bar__pill {
           flex: 0 0 auto;

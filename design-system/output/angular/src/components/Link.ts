@@ -28,7 +28,7 @@ import { t } from "../utils/i18n";
                 .rdp-link {
                   color: var(--color-brand-active);
                   text-decoration: none;
-                  font-family: 'Roboto', sans-serif;
+                  font-family: &quot;Roboto&quot;, sans-serif;
                 }
                 .rdp-link--underline { text-decoration: underline; }
                 .rdp-link--plain { color: inherit; }

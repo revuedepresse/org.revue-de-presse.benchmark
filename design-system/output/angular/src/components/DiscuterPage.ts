@@ -275,7 +275,7 @@ import type { Locale } from "../utils/i18n";
                   background: var(--color-white);
                   border-radius: var(--radius-default);
                   padding: var(--separation-3);
-                  font-family: 'Roboto', sans-serif;
+                  font-family: &quot;Roboto&quot;, sans-serif;
                   color: var(--color-content-text);
                   display: flex;
                   flex-direction: column;
@@ -306,7 +306,7 @@ import type { Locale } from "../utils/i18n";
                   outline-offset: 2px;
                 }
                 .rdp-discuter__title {
-                  font-family: 'Signika', sans-serif;
+                  font-family: &quot;Signika&quot;, sans-serif;
                   color: var(--color-brand);
                   margin: 0;
                 }
@@ -341,7 +341,7 @@ import type { Locale } from "../utils/i18n";
                   flex: 1 1 240px;
                   min-width: 0;
                   padding: var(--separation-1);
-                  font-family: 'Roboto', sans-serif;
+                  font-family: &quot;Roboto&quot;, sans-serif;
                   font-size: var(--font-size-content);
                   line-height: var(--line-height-base);
                   border: 1px solid var(--color-border);
@@ -369,7 +369,7 @@ import type { Locale } from "../utils/i18n";
                   border: none;
                   border-radius: var(--radius-default);
                   padding: var(--separation-1) var(--separation-2);
-                  font-family: 'Roboto', sans-serif;
+                  font-family: &quot;Roboto&quot;, sans-serif;
                   font-size: var(--font-size-content);
                   cursor: pointer;
                   transition: filter 160ms ease, background 160ms ease;
@@ -395,7 +395,7 @@ import type { Locale } from "../utils/i18n";
                   border: 1px solid var(--button-border-secondary);
                   border-radius: var(--radius-default);
                   padding: var(--separation-1) var(--separation-2);
-                  font-family: 'Roboto', sans-serif;
+                  font-family: &quot;Roboto&quot;, sans-serif;
                   font-size: var(--font-size-content);
                   cursor: pointer;
                 }
@@ -481,7 +481,7 @@ import type { Locale } from "../utils/i18n";
                   gap: var(--separation-1);
                 }
                 .rdp-discuter__sources-title {
-                  font-family: 'Signika', sans-serif;
+                  font-family: &quot;Signika&quot;, sans-serif;
                   font-size: var(--font-size-status-text);
                   color: var(--color-brand);
                   margin: 0;
@@ -502,7 +502,7 @@ import type { Locale } from "../utils/i18n";
                 .rdp-discuter__source-n {
                   font-weight: bold;
                   color: var(--color-brand);
-                  font-family: 'Signika', sans-serif;
+                  font-family: &quot;Signika&quot;, sans-serif;
                   font-size: var(--font-size-status-text);
                 }
                 .rdp-discuter__composer {
@@ -517,7 +517,7 @@ import type { Locale } from "../utils/i18n";
                 .rdp-discuter__composer-input {
                   width: 100%;
                   padding: var(--separation-1);
-                  font-family: 'Roboto', sans-serif;
+                  font-family: &quot;Roboto&quot;, sans-serif;
                   font-size: var(--font-size-content);
                   line-height: var(--line-height-base);
                   border: 1px solid var(--color-border);

@@ -186,7 +186,7 @@ this.focusedMonth = this.selectedDate.getMonth()
               html`<year-picker  .yearRange=${this.yearRange}  .selectedYear=${this.focusedYear}  @select=${(y) => this.selectYear(y)} ></year-picker>`
             : null}</div>
         <style >${`
-               .rdp-calendar { font-family: 'Roboto', sans-serif; }
+               .rdp-calendar { font-family: "Roboto", sans-serif; }
                .rdp-calendar--inline {
                  background: var(--color-white);
                  border: 1px solid var(--color-border);

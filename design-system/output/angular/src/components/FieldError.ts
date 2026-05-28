@@ -25,7 +25,7 @@ import { t } from "../utils/i18n";
                       color: var(--form-error-fg);
                       margin: 0;
                       padding-left: var(--separation-1);
-                      font-family: 'Roboto', sans-serif;
+                      font-family: &quot;Roboto&quot;, sans-serif;
                     }
                   \`}}
         </style>

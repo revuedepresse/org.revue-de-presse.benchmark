@@ -55,7 +55,7 @@
           /* Square bottom corners so the band visually merges with the
              month bar / day grid below it. */
           border-radius: var(--radius-default) var(--radius-default) 0 0;
-          font-family: 'Roboto', sans-serif;
+          font-family: "Roboto", sans-serif;
         }
         .rdp-calendar-action-bar--bottom {
           border-radius: 0;

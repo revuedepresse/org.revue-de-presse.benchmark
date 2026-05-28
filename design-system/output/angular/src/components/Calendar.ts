@@ -86,7 +86,7 @@ import type { Locale } from "../utils/i18n";
       </div>
       <style>
         {{\`
-                .rdp-calendar { font-family: 'Roboto', sans-serif; }
+                .rdp-calendar { font-family: &quot;Roboto&quot;, sans-serif; }
                 .rdp-calendar--inline {
                   background: var(--color-white);
                   border: 1px solid var(--color-border);

@@ -143,7 +143,7 @@ export const DateGrid = component$((props: DateGridProps) => {
           table-layout: fixed;
           border-collapse: separate;
           border-spacing: 2px;
-          font-family: 'Roboto', sans-serif;
+          font-family: "Roboto", sans-serif;
           font-size: var(--font-size-calendar-month-day-cell);
         }
         .rdp-date-grid__weekday {
