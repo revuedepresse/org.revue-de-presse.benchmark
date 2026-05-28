@@ -1,5 +1,0 @@
-import AppShellClient from '@/components/AppShellClient';
-
-export default function LegalPage() {
-  return <AppShellClient initialView="legal" />;
-}

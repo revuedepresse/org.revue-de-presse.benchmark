@@ -13,10 +13,6 @@ updates:
       - dependency-name: "@angular/compiler"
         versions: ["11.x"]
   - package-ecosystem: npm
-    directory: /next
-    schedule:
-      interval: weekly
-  - package-ecosystem: npm
     directory: /social/linkedin
     schedule:
       interval: weekly

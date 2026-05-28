@@ -4,8 +4,6 @@ SHELL:=/bin/bash
         nuxt-dev nuxt-dev-tls nuxt-certs nuxt-build nuxt-prod nuxt-test \
         nuxt-install-bubblewrap nuxt-update-twa nuxt-build-twa \
         chat-jwt-secret \
-        next-dev next-build next-prod next-test \
-        next-install-bubblewrap next-update-twa next-build-twa \
         install-bubblewrap update-twa build-twa \
         e2e-install e2e-install-browsers e2e-build-apps \
         e2e-test e2e-test-functional e2e-test-perf e2e-show-report \
@@ -15,7 +13,6 @@ SHELL:=/bin/bash
         bluesky-install bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck
 
 NUXT_DIR     := nuxt
-NEXT_DIR     := next
 E2E_DIR      := e2e
 LINKEDIN_DIR := social/linkedin
 TIKTOK_DIR   := social/tiktok
@@ -23,9 +20,8 @@ BLUESKY_DIR  := social/bluesky
 
 # -- Install --------------------------------------------------------------
 
-install: ## Install dependencies for nuxt, next, e2e, and social/{linkedin,tiktok,bluesky} workspaces
+install: ## Install dependencies for nuxt, e2e, and social/{linkedin,tiktok,bluesky} workspaces
 	@$(MAKE) -C $(NUXT_DIR) install
-	@$(MAKE) -C $(NEXT_DIR) install
 	@cd $(E2E_DIR)  && pnpm install
 	@$(MAKE) -C $(LINKEDIN_DIR) install
 	@$(MAKE) -C $(TIKTOK_DIR) install
@@ -63,43 +59,20 @@ nuxt-build-twa: ## Compile and sign the Nuxt Android TWA (APK)
 chat-jwt-secret: ## Generate a fresh 256-bit API_JWT_SECRET (delegates to nuxt/)
 	@$(MAKE) -C $(NUXT_DIR) chat-jwt-secret
 
-# -- Next -----------------------------------------------------------------
+# -- TWA ------------------------------------------------------------------
 
-next-dev: ## Start the Next dev server
-	@$(MAKE) -C $(NEXT_DIR) dev
+install-bubblewrap: nuxt-install-bubblewrap ## Install bubblewrap CLI for the nuxt TWA
 
-next-build: ## Build the Next app for production
-	@$(MAKE) -C $(NEXT_DIR) build
+update-twa: nuxt-update-twa ## Regenerate the nuxt Android project from twa-manifest.json
 
-next-prod: ## Start the Next production server (requires `next-build` first)
-	@$(MAKE) -C $(NEXT_DIR) preview
-
-next-test: ## Run Next unit tests (Vitest)
-	@cd $(NEXT_DIR) && pnpm test:run
-
-next-install-bubblewrap: ## Install bubblewrap CLI for the Next TWA
-	@$(MAKE) -C $(NEXT_DIR) install-bubblewrap
-
-next-update-twa: ## Regenerate the Next Android project from twa-manifest.json
-	@$(MAKE) -C $(NEXT_DIR) update-twa
-
-next-build-twa: ## Compile and sign the Next Android TWA (APK)
-	@$(MAKE) -C $(NEXT_DIR) build-twa
-
-# -- TWA (aggregates, delegate to nuxt + next) ----------------------------
-
-install-bubblewrap: nuxt-install-bubblewrap next-install-bubblewrap ## Install bubblewrap CLI for both nuxt + next TWAs
-
-update-twa: nuxt-update-twa next-update-twa ## Regenerate both nuxt + next Android projects from twa-manifest.json
-
-build-twa: nuxt-build-twa next-build-twa ## Compile and sign both nuxt + next Android TWAs (APK)
+build-twa: nuxt-build-twa ## Compile and sign the nuxt Android TWA (APK)
 
 # -- E2E (Playwright) -----------------------------------------------------
 #
-# Playwright spawns `nuxt preview` + `next start` as `webServer` entries, so
-# the suite cannot run unless BOTH apps are built. The e2e-test* targets
-# below depend on e2e-build-apps to guarantee that — running them against a
-# fresh checkout produces a working test run, not a "missing .next" error.
+# Playwright spawns `nuxt preview` as a `webServer` entry, so the suite
+# cannot run unless the app is built. The e2e-test* targets below depend on
+# e2e-build-apps to guarantee that — running them against a fresh checkout
+# produces a working test run, not a "missing .output" error.
 
 e2e-install: ## Install e2e Node dependencies (Playwright + helpers)
 	@cd $(E2E_DIR) && pnpm install
@@ -107,7 +80,7 @@ e2e-install: ## Install e2e Node dependencies (Playwright + helpers)
 e2e-install-browsers: e2e-install ## Install Playwright browsers (chromium + system deps)
 	@cd $(E2E_DIR) && pnpm install-browsers
 
-e2e-build-apps: nuxt-build next-build ## Build nuxt + next so the Playwright webServer can start
+e2e-build-apps: nuxt-build ## Build nuxt so the Playwright webServer can start
 
 e2e-test: e2e-build-apps ## Run the full Playwright suite (functional + perf)
 	@cd $(E2E_DIR) && pnpm test
@@ -123,7 +96,7 @@ e2e-show-report: ## Open the last Playwright HTML report in a browser
 
 # -- Aggregates -----------------------------------------------------------
 
-test: nuxt-test next-test linkedin-test tiktok-test bluesky-test e2e-test ## Run all tests (nuxt unit + next unit + linkedin unit + tiktok unit + bluesky unit + e2e)
+test: nuxt-test linkedin-test tiktok-test bluesky-test e2e-test ## Run all tests (nuxt unit + linkedin unit + tiktok unit + bluesky unit + e2e)
 
 # -- LinkedIn -------------------------------------------------------------
 

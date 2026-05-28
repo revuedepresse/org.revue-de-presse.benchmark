@@ -39,8 +39,6 @@ jobs:
     env:
       NUXT_API_BASE_URL: http://localhost:4000
       NUXT_API_CLIENT_SECRET: mock-client-secret
-      API_BASE_URL: http://localhost:4000
-      API_CLIENT_SECRET: mock-client-secret
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -52,23 +50,16 @@ jobs:
           cache: pnpm
           cache-dependency-path: |
             nuxt/pnpm-lock.yaml
-            next/pnpm-lock.yaml
             e2e/pnpm-lock.yaml
       - name: Install nuxt deps
         run: pnpm install --frozen-lockfile
         working-directory: nuxt
-      - name: Install next deps
-        run: pnpm install --frozen-lockfile
-        working-directory: next
       - name: Install e2e deps
         run: pnpm install --frozen-lockfile
         working-directory: e2e
       - name: Build Nuxt app
         run: pnpm build
         working-directory: nuxt
-      - name: Build Next app
-        run: pnpm build
-        working-directory: next
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
         working-directory: e2e
@@ -93,8 +84,6 @@ jobs:
     env:
       NUXT_API_BASE_URL: http://localhost:4000
       NUXT_API_CLIENT_SECRET: mock-client-secret
-      API_BASE_URL: http://localhost:4000
-      API_CLIENT_SECRET: mock-client-secret
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -106,15 +95,11 @@ jobs:
           cache: pnpm
           cache-dependency-path: |
             nuxt/pnpm-lock.yaml
-            next/pnpm-lock.yaml
             e2e/pnpm-lock.yaml
             social/tiktok/pnpm-lock.yaml
       - name: Install nuxt deps
         run: pnpm install --frozen-lockfile
         working-directory: nuxt
-      - name: Install next deps
-        run: pnpm install --frozen-lockfile
-        working-directory: next
       - name: Install e2e deps
         run: pnpm install --frozen-lockfile
         working-directory: e2e
@@ -124,9 +109,6 @@ jobs:
       - name: Build Nuxt app
         run: pnpm build
         working-directory: nuxt
-      - name: Build Next app
-        run: pnpm build
-        working-directory: next
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
         working-directory: e2e
