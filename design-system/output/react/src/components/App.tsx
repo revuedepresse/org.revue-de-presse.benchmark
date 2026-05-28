@@ -2,6 +2,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 
+type MainSubView = "publications" | "summary";
 type SnapshotItem = {
   id: string;
   label: string;
@@ -52,6 +53,13 @@ type AppProps = {
   onDiscuterCancel?: () => void;
   onDiscuterClear?: () => void;
   onDiscuterRetry?: () => void;
+  /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
+  mainSubView?: MainSubView;
+  /** Whether the summary fetch is in flight for the current date. */
+  summaryLoading?: boolean;
+  /** Pre-parsed summary blocks; empty array when the day has no summary. */
+  summaryBlocks?: SummaryBlock[];
+  onMainSubViewChange?: (next: MainSubView) => void;
 };
 import { t } from "../utils/i18n";
 import { formatLegacyShortDay } from "../utils/intl";
@@ -71,6 +79,10 @@ import DiscuterPage from "./DiscuterPage";
 import IntroCard from "./IntroCard";
 import Spinner from "./Spinner";
 import type { BlueskyPost } from "./BlueskyPostCard";
+import type {
+  SummaryBlock,
+  SummaryInlineSegment,
+} from "../utils/summary-blocks";
 import type { Locale } from "../utils/i18n";
 import type {
   DiscuterStatus,
@@ -264,13 +276,146 @@ function App(props: AppProps) {
             {currentView === "main" &&
             !props.loading &&
             props.posts.length > 0 ? (
-              <ol className="rdp-app__post-list">
-                {props.posts?.map((post) => (
-                  <li className="rdp-app__post-item">
-                    <BlueskyPostCard post={post} locale={props.locale} />
-                  </li>
-                ))}
-              </ol>
+              <>
+                <div
+                  className="rdp-app__main-toggle"
+                  role="tablist"
+                  aria-label={t("day.toggle.ariaLabel")}
+                >
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={
+                      (props.mainSubView ?? "publications") === "publications"
+                    }
+                    className={
+                      (props.mainSubView ?? "publications") === "publications"
+                        ? "rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active"
+                        : "rdp-app__main-toggle-btn"
+                    }
+                    onClick={(event) =>
+                      props.onMainSubViewChange?.("publications")
+                    }
+                  >
+                    {t("day.toggle.publications")}
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={props.mainSubView === "summary"}
+                    className={
+                      props.mainSubView === "summary"
+                        ? "rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active"
+                        : "rdp-app__main-toggle-btn"
+                    }
+                    onClick={(event) => props.onMainSubViewChange?.("summary")}
+                  >
+                    {t("day.toggle.summary")}
+                  </button>
+                </div>
+                {(props.mainSubView ?? "publications") === "publications" ? (
+                  <ol className="rdp-app__post-list">
+                    {props.posts?.map((post) => (
+                      <li className="rdp-app__post-item">
+                        <BlueskyPostCard post={post} locale={props.locale} />
+                      </li>
+                    ))}
+                  </ol>
+                ) : null}
+                {props.mainSubView === "summary" ? (
+                  <>
+                    {!!props.summaryLoading ? <Spinner /> : null}
+                    {!props.summaryLoading &&
+                    (props.summaryBlocks ?? []).length === 0 ? (
+                      <Alert variant="empty" messageKey="day.summary.empty" />
+                    ) : null}
+                    {!props.summaryLoading &&
+                    (props.summaryBlocks ?? []).length > 0 ? (
+                      <article className="rdp-app__summary">
+                        {props.summaryBlocks ??
+                          []?.map((block) => (
+                            <>
+                              {block.kind === "heading" && block.level === 1 ? (
+                                <h2 className="rdp-app__summary-h1">
+                                  {block.segments?.map((seg) => (
+                                    <>
+                                      {seg.kind === "text" ? (
+                                        <>{seg.value}</>
+                                      ) : null}
+                                      {seg.kind === "bold" ? (
+                                        <strong>{seg.value}</strong>
+                                      ) : null}
+                                    </>
+                                  ))}
+                                </h2>
+                              ) : null}
+                              {block.kind === "heading" && block.level === 2 ? (
+                                <h3 className="rdp-app__summary-h2">
+                                  {block.segments?.map((seg) => (
+                                    <>
+                                      {seg.kind === "text" ? (
+                                        <>{seg.value}</>
+                                      ) : null}
+                                      {seg.kind === "bold" ? (
+                                        <strong>{seg.value}</strong>
+                                      ) : null}
+                                    </>
+                                  ))}
+                                </h3>
+                              ) : null}
+                              {block.kind === "heading" && block.level === 3 ? (
+                                <h4 className="rdp-app__summary-h3">
+                                  {block.segments?.map((seg) => (
+                                    <>
+                                      {seg.kind === "text" ? (
+                                        <>{seg.value}</>
+                                      ) : null}
+                                      {seg.kind === "bold" ? (
+                                        <strong>{seg.value}</strong>
+                                      ) : null}
+                                    </>
+                                  ))}
+                                </h4>
+                              ) : null}
+                              {block.kind === "paragraph" ? (
+                                <p className="rdp-app__summary-p">
+                                  {block.segments?.map((seg) => (
+                                    <>
+                                      {seg.kind === "text" ? (
+                                        <>{seg.value}</>
+                                      ) : null}
+                                      {seg.kind === "bold" ? (
+                                        <strong>{seg.value}</strong>
+                                      ) : null}
+                                    </>
+                                  ))}
+                                </p>
+                              ) : null}
+                              {block.kind === "bullets" ? (
+                                <ul className="rdp-app__summary-ul">
+                                  {block.items?.map((item) => (
+                                    <li>
+                                      {item?.map((seg) => (
+                                        <>
+                                          {seg.kind === "text" ? (
+                                            <>{seg.value}</>
+                                          ) : null}
+                                          {seg.kind === "bold" ? (
+                                            <strong>{seg.value}</strong>
+                                          ) : null}
+                                        </>
+                                      ))}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : null}
+                            </>
+                          ))}
+                      </article>
+                    ) : null}
+                  </>
+                ) : null}
+              </>
             ) : null}
             {currentView === "legal" ? <LegalNoticePage /> : null}
             {currentView === "terms" ? <TermsOfServicePage /> : null}
@@ -405,6 +550,62 @@ function App(props: AppProps) {
           font-family: 'Roboto', sans-serif;
           color: var(--color-content-text);
         }
+        .rdp-app__main-toggle {
+          display: flex;
+          gap: 0;
+          margin: 0 0 var(--separation-2);
+          border: 1.5px solid var(--color-brand);
+          border-radius: var(--radius-default);
+          overflow: hidden;
+          width: fit-content;
+        }
+        .rdp-app__main-toggle-btn {
+          appearance: none;
+          background: var(--color-white);
+          border: 0;
+          color: var(--color-brand);
+          font-family: inherit;
+          font-size: var(--font-size-status-text);
+          font-weight: 600;
+          padding: 8px 18px;
+          cursor: pointer;
+          line-height: 1.2;
+        }
+        .rdp-app__main-toggle-btn--active {
+          background: var(--color-brand);
+          color: var(--color-white);
+        }
+        .rdp-app__main-toggle-btn:not(.rdp-app__main-toggle-btn--active):hover {
+          background: var(--color-taupe-grey);
+        }
+        .rdp-app__summary {
+          background: var(--color-white);
+          border-radius: var(--radius-default);
+          padding: var(--separation-2);
+          font-size: var(--font-size-content);
+          line-height: var(--line-height-base);
+        }
+        .rdp-app__summary-h1 {
+          font-family: 'Signika', sans-serif;
+          font-size: 1.5rem;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-app__summary-h2 {
+          font-family: 'Signika', sans-serif;
+          font-size: 1.2rem;
+          color: var(--color-brand);
+          margin: var(--separation-2) 0 var(--separation-1);
+        }
+        .rdp-app__summary-h3 {
+          font-family: 'Signika', sans-serif;
+          font-size: 1.05rem;
+          color: var(--color-content-text);
+          margin: var(--separation-2) 0 var(--separation-1);
+        }
+        .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
+        .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
+        .rdp-app__summary-ul li { margin-bottom: 4px; }
         /* The header ribbon stays full-viewport-wide so the white band
            reaches both edges of the page; only the inner row + the content
            grid honour the legacy max-width. Mobile mirrors the same pattern

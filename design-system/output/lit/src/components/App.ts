@@ -16,6 +16,7 @@ import './DiscuterPage.ts';
 import './IntroCard.ts';
 import './Spinner.ts';
 import './BlueskyPostCard.ts';
+import type { SummaryBlock, SummaryInlineSegment } from '../utils/summary-blocks';
 import type { Locale } from '../utils/i18n';
 import './DiscuterPage.ts';
 
@@ -24,7 +25,8 @@ import './DiscuterPage.ts';
    import { LitElement, html, css } from 'lit';
    import { customElement, property, state, query } from 'lit/decorators';
 
-   type SnapshotItem = {
+   type MainSubView = 'publications' | 'summary'
+type SnapshotItem = {
  id: string;
  label: string;
 }
@@ -67,6 +69,13 @@ type AppProps = {
  onDiscuterCancel?: () => void;
  onDiscuterClear?: () => void;
  onDiscuterRetry?: () => void;
+ /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
+ mainSubView?: MainSubView;
+ /** Whether the summary fetch is in flight for the current date. */
+ summaryLoading?: boolean;
+ /** Pre-parsed summary blocks; empty array when the day has no summary. */
+ summaryBlocks?: SummaryBlock[];
+ onMainSubViewChange?: (next: MainSubView) => void;
 }
 
 
@@ -103,6 +112,10 @@ type AppProps = {
 @property() loading: any
 @property() posts: any
 @property() emptyMessageKey: any
+@property() mainSubView: any
+@property() onMainSubViewChange: any
+@property() summaryLoading: any
+@property() summaryBlocks: any
 @property() discuterStatus: any
 @property() discuterTurns: any
 @property() discuterCitations: any
@@ -226,9 +239,77 @@ this.initialised = true }
              html`<my-alert  variant="empty"  .messageKey=${this.emptyMessageKey ?? 'alert.empty.no-content-for-date'} ></my-alert>`
            : null}
        ${this.currentView === 'main' && !this.loading && this.posts.length > 0 ?
-             html`<ol >${this.posts?.map((post, index) => (
-              html`<li ><bluesky-post-card  .post=${post}  .locale=${this.locale} ></bluesky-post-card></li>`
-            ))}</ol>`
+             html`<div  role="tablist"  aria-label=${t('day.toggle.ariaLabel')} ><button  class={(props.mainSubView ?? 'publications') === 'publications' ? 'rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active' : 'rdp-app__main-toggle-btn'}  type="button"  role="tab"  aria-selected=${(this.mainSubView ?? 'publications') === 'publications'}  @click=${(event) => this.onMainSubViewChange?.('publications')} >${t('day.toggle.publications')}</button>
+        <button  class={props.mainSubView === 'summary' ? 'rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active' : 'rdp-app__main-toggle-btn'}  type="button"  role="tab"  aria-selected=${this.mainSubView === 'summary'}  @click=${(event) => this.onMainSubViewChange?.('summary')} >${t('day.toggle.summary')}</button></div>
+        ${(this.mainSubView ?? 'publications') === 'publications' ?
+              html`<ol >${this.posts?.map((post, index) => (
+             html`<li ><bluesky-post-card  .post=${post}  .locale=${this.locale} ></bluesky-post-card></li>`
+           ))}</ol>`
+            : null}
+        ${this.mainSubView === 'summary' ?
+              html`${!!this.summaryLoading ?
+             html`<my-spinner ></my-spinner>`
+           : null}
+       ${!this.summaryLoading && (this.summaryBlocks ?? []).length === 0 ?
+             html`<my-alert  variant="empty"  messageKey="day.summary.empty" ></my-alert>`
+           : null}
+       ${!this.summaryLoading && (this.summaryBlocks ?? []).length > 0 ?
+             html`<article >${this.summaryBlocks ?? []?.map((block, index) => (
+              html`<my-fragment >${block.kind === 'heading' && block.level === 1 ?
+             html`<h2 >${block.segments?.map((seg, index) => (
+              html`<my-fragment >${seg.kind === 'text' ?
+             html`${seg.value}`
+           : null}
+       ${seg.kind === 'bold' ?
+             html`<strong >${seg.value}</strong>`
+           : null}</my-fragment>`
+            ))}</h2>`
+           : null}
+       ${block.kind === 'heading' && block.level === 2 ?
+             html`<h3 >${block.segments?.map((seg, index) => (
+              html`<my-fragment >${seg.kind === 'text' ?
+             html`${seg.value}`
+           : null}
+       ${seg.kind === 'bold' ?
+             html`<strong >${seg.value}</strong>`
+           : null}</my-fragment>`
+            ))}</h3>`
+           : null}
+       ${block.kind === 'heading' && block.level === 3 ?
+             html`<h4 >${block.segments?.map((seg, index) => (
+              html`<my-fragment >${seg.kind === 'text' ?
+             html`${seg.value}`
+           : null}
+       ${seg.kind === 'bold' ?
+             html`<strong >${seg.value}</strong>`
+           : null}</my-fragment>`
+            ))}</h4>`
+           : null}
+       ${block.kind === 'paragraph' ?
+             html`<p >${block.segments?.map((seg, index) => (
+              html`<my-fragment >${seg.kind === 'text' ?
+             html`${seg.value}`
+           : null}
+       ${seg.kind === 'bold' ?
+             html`<strong >${seg.value}</strong>`
+           : null}</my-fragment>`
+            ))}</p>`
+           : null}
+       ${block.kind === 'bullets' ?
+             html`<ul >${block.items?.map((item, index) => (
+              html`<li >${item?.map((seg, index) => (
+             html`<my-fragment >${seg.kind === 'text' ?
+              html`${seg.value}`
+            : null}
+        ${seg.kind === 'bold' ?
+              html`<strong >${seg.value}</strong>`
+            : null}</my-fragment>`
+           ))}</li>`
+            ))}</ul>`
+           : null}</my-fragment>`
+            ))}</article>`
+           : null}`
+            : null}`
            : null}
        ${this.currentView === 'legal' ?
              html`<legal-notice-page ></legal-notice-page>`
@@ -302,6 +383,62 @@ this.initialised = true }
                  font-family: 'Roboto', sans-serif;
                  color: var(--color-content-text);
                }
+               .rdp-app__main-toggle {
+                 display: flex;
+                 gap: 0;
+                 margin: 0 0 var(--separation-2);
+                 border: 1.5px solid var(--color-brand);
+                 border-radius: var(--radius-default);
+                 overflow: hidden;
+                 width: fit-content;
+               }
+               .rdp-app__main-toggle-btn {
+                 appearance: none;
+                 background: var(--color-white);
+                 border: 0;
+                 color: var(--color-brand);
+                 font-family: inherit;
+                 font-size: var(--font-size-status-text);
+                 font-weight: 600;
+                 padding: 8px 18px;
+                 cursor: pointer;
+                 line-height: 1.2;
+               }
+               .rdp-app__main-toggle-btn--active {
+                 background: var(--color-brand);
+                 color: var(--color-white);
+               }
+               .rdp-app__main-toggle-btn:not(.rdp-app__main-toggle-btn--active):hover {
+                 background: var(--color-taupe-grey);
+               }
+               .rdp-app__summary {
+                 background: var(--color-white);
+                 border-radius: var(--radius-default);
+                 padding: var(--separation-2);
+                 font-size: var(--font-size-content);
+                 line-height: var(--line-height-base);
+               }
+               .rdp-app__summary-h1 {
+                 font-family: 'Signika', sans-serif;
+                 font-size: 1.5rem;
+                 color: var(--color-brand);
+                 margin: 0 0 var(--separation-2);
+               }
+               .rdp-app__summary-h2 {
+                 font-family: 'Signika', sans-serif;
+                 font-size: 1.2rem;
+                 color: var(--color-brand);
+                 margin: var(--separation-2) 0 var(--separation-1);
+               }
+               .rdp-app__summary-h3 {
+                 font-family: 'Signika', sans-serif;
+                 font-size: 1.05rem;
+                 color: var(--color-content-text);
+                 margin: var(--separation-2) 0 var(--separation-1);
+               }
+               .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
+               .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
+               .rdp-app__summary-ul li { margin-bottom: 4px; }
                /* The header ribbon stays full-viewport-wide so the white band
                   reaches both edges of the page; only the inner row + the content
                   grid honour the legacy max-width. Mobile mirrors the same pattern

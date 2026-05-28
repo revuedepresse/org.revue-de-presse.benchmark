@@ -187,6 +187,41 @@ function onDiscuterClear() {
 function onDiscuterDraftChange(next: string) {
   chat.setDraft(next);
 }
+
+// --- Day-page Publications / Synthèse toggle ---------------------------------
+import { parseSummaryMarkdown, type SummaryBlock } from '../utils/parse-summary-markdown';
+
+type MainSubView = 'publications' | 'summary';
+
+const mainSubView = ref<MainSubView>('publications');
+const summaryLoading = ref(false);
+// Per-date cache so re-toggling doesn't re-fetch (and so a date change resets
+// to publications cleanly).
+const summaryCache = ref<Record<string, SummaryBlock[]>>({});
+const summaryBlocks = computed<SummaryBlock[]>(
+  () => summaryCache.value[ymd(pickedDate.value)] ?? [],
+);
+
+// When the user picks a different day, drop back to publications so they
+// don't see yesterday's synthesis still on screen.
+watch(pickedDate, () => {
+  mainSubView.value = 'publications';
+});
+
+async function onMainSubViewChange(next: MainSubView) {
+  mainSubView.value = next;
+  if (next !== 'summary') return;
+  const key = ymd(pickedDate.value);
+  if (summaryCache.value[key]) return; // already cached
+  summaryLoading.value = true;
+  try {
+    const url = `/api/days/${key}/summary`;
+    const resp = await $fetch<{ date: string; markdown: string }>(url).catch(() => null);
+    summaryCache.value[key] = resp?.markdown ? parseSummaryMarkdown(resp.markdown) : [];
+  } finally {
+    summaryLoading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -221,5 +256,9 @@ function onDiscuterDraftChange(next: string) {
     :on-discuter-clear="onDiscuterClear"
     :on-discuter-draft-change="onDiscuterDraftChange"
     :on-discuter-handle-draft-change="onDiscuterHandleDraftChange"
+    :main-sub-view="mainSubView"
+    :summary-loading="summaryLoading"
+    :summary-blocks="summaryBlocks"
+    :on-main-sub-view-change="onMainSubViewChange"
   />
 </template>

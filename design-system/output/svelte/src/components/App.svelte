@@ -1,5 +1,7 @@
 <script context='module' lang='ts'>
-      type SnapshotItem = {
+      type MainSubView = 'publications' | 'summary'
+
+type SnapshotItem = {
 id: string;
 label: string;
 }
@@ -44,6 +46,13 @@ onDiscuterSend?: (text: string) => void;
 onDiscuterCancel?: () => void;
 onDiscuterClear?: () => void;
 onDiscuterRetry?: () => void;
+/** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
+mainSubView?: MainSubView;
+/** Whether the summary fetch is in flight for the current date. */
+summaryLoading?: boolean;
+/** Pre-parsed summary blocks; empty array when the day has no summary. */
+summaryBlocks?: SummaryBlock[];
+onMainSubViewChange?: (next: MainSubView) => void;
 }
 
     </script>
@@ -73,6 +82,7 @@ import  DiscuterPage from './DiscuterPage.svelte';
 import  IntroCard from './IntroCard.svelte';
 import  Spinner from './Spinner.svelte';
 import type { BlueskyPost } from './BlueskyPostCard.svelte';
+import type { SummaryBlock, SummaryInlineSegment } from '../utils/summary-blocks';
 import type { Locale } from '../utils/i18n';
 import type { DiscuterStatus, DiscuterTurn, DiscuterCitation, DiscuterErrorCode, DiscuterHandleErrorCode } from './DiscuterPage.svelte';
 
@@ -100,6 +110,10 @@ export let onListSelect: AppProps['onListSelect']= undefined;
 export let loading: AppProps['loading']= undefined;
 export let posts: AppProps['posts'];
 export let emptyMessageKey: AppProps['emptyMessageKey']= undefined;
+export let mainSubView: AppProps['mainSubView']= undefined;
+export let onMainSubViewChange: AppProps['onMainSubViewChange']= undefined;
+export let summaryLoading: AppProps['summaryLoading']= undefined;
+export let summaryBlocks: AppProps['summaryBlocks']= undefined;
 export let discuterStatus: AppProps['discuterStatus']= undefined;
 export let discuterTurns: AppProps['discuterTurns']= undefined;
 export let discuterCitations: AppProps['discuterCitations']= undefined;
@@ -242,11 +256,152 @@ initialised = true; });
 
 {/if}
 {#if currentView === 'main' && !loading && posts.length > 0 }
+<div  class="rdp-app__main-toggle"  role="tablist"  aria-label={t('day.toggle.ariaLabel')} ><button  type="button"  role="tab"  aria-selected={(mainSubView ?? 'publications') === 'publications'}  class={(mainSubView ?? 'publications') === 'publications' ? 'rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active' : 'rdp-app__main-toggle-btn'}  on:click="{(event) => {onMainSubViewChange?.('publications')}}" >{t('day.toggle.publications')}</button><button  type="button"  role="tab"  aria-selected={mainSubView === 'summary'}  class={mainSubView === 'summary' ? 'rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active' : 'rdp-app__main-toggle-btn'}  on:click="{(event) => {onMainSubViewChange?.('summary')}}" >{t('day.toggle.summary')}</button></div>
+
+{#if (mainSubView ?? 'publications') === 'publications' }
 <ol  class="rdp-app__post-list" >
 {#each posts as post }
 <li  class="rdp-app__post-item" ><BlueskyPostCard  post={post}  locale={locale} ></BlueskyPostCard></li>
 {/each}
 </ol>
+
+
+{/if}
+
+{#if mainSubView === 'summary' }
+
+{#if !!summaryLoading }
+<Spinner ></Spinner>
+
+
+{/if}
+
+{#if !summaryLoading && (summaryBlocks ?? []).length === 0 }
+<Alert  variant="empty"  messageKey="day.summary.empty" ></Alert>
+
+
+{/if}
+
+{#if !summaryLoading && (summaryBlocks ?? []).length > 0 }
+<article  class="rdp-app__summary" >
+{#each summaryBlocks ?? [] as block }
+
+{#if block.kind === 'heading' && block.level === 1 }
+<h2  class="rdp-app__summary-h1" >
+{#each block.segments as seg }
+
+{#if seg.kind === 'text' }
+{seg.value}
+
+
+{/if}
+
+{#if seg.kind === 'bold' }
+<strong >{seg.value}</strong>
+
+
+{/if}
+{/each}
+</h2>
+
+
+{/if}
+
+{#if block.kind === 'heading' && block.level === 2 }
+<h3  class="rdp-app__summary-h2" >
+{#each block.segments as seg }
+
+{#if seg.kind === 'text' }
+{seg.value}
+
+
+{/if}
+
+{#if seg.kind === 'bold' }
+<strong >{seg.value}</strong>
+
+
+{/if}
+{/each}
+</h3>
+
+
+{/if}
+
+{#if block.kind === 'heading' && block.level === 3 }
+<h4  class="rdp-app__summary-h3" >
+{#each block.segments as seg }
+
+{#if seg.kind === 'text' }
+{seg.value}
+
+
+{/if}
+
+{#if seg.kind === 'bold' }
+<strong >{seg.value}</strong>
+
+
+{/if}
+{/each}
+</h4>
+
+
+{/if}
+
+{#if block.kind === 'paragraph' }
+<p  class="rdp-app__summary-p" >
+{#each block.segments as seg }
+
+{#if seg.kind === 'text' }
+{seg.value}
+
+
+{/if}
+
+{#if seg.kind === 'bold' }
+<strong >{seg.value}</strong>
+
+
+{/if}
+{/each}
+</p>
+
+
+{/if}
+
+{#if block.kind === 'bullets' }
+<ul  class="rdp-app__summary-ul" >
+{#each block.items as item }
+<li >
+{#each item as seg }
+
+{#if seg.kind === 'text' }
+{seg.value}
+
+
+{/if}
+
+{#if seg.kind === 'bold' }
+<strong >{seg.value}</strong>
+
+
+{/if}
+{/each}
+</li>
+{/each}
+</ul>
+
+
+{/if}
+{/each}
+</article>
+
+
+{/if}
+
+
+{/if}
 
 
 {/if}

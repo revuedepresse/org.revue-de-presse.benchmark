@@ -17,6 +17,9 @@ import DiscuterPage from './DiscuterPage.lite';
 import IntroCard from './IntroCard.lite';
 import Spinner from './Spinner.lite';
 import type { BlueskyPost } from './BlueskyPostCard.lite';
+import type { SummaryBlock, SummaryInlineSegment } from '../utils/summary-blocks';
+
+type MainSubView = 'publications' | 'summary';
 import type { Locale } from '../utils/i18n';
 import type {
   DiscuterStatus,
@@ -65,6 +68,13 @@ type AppProps = {
   onDiscuterCancel?: () => void;
   onDiscuterClear?: () => void;
   onDiscuterRetry?: () => void;
+  /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
+  mainSubView?: MainSubView;
+  /** Whether the summary fetch is in flight for the current date. */
+  summaryLoading?: boolean;
+  /** Pre-parsed summary blocks; empty array when the day has no summary. */
+  summaryBlocks?: SummaryBlock[];
+  onMainSubViewChange?: (next: MainSubView) => void;
 };
 
 export default function App(props: AppProps) {
@@ -227,15 +237,131 @@ export default function App(props: AppProps) {
               />
             </Show>
             <Show when={state.currentView === 'main' && !props.loading && props.posts.length > 0}>
-              <ol class="rdp-app__post-list">
-                <For each={props.posts}>
-                  {(post) => (
-                    <li class="rdp-app__post-item">
-                      <BlueskyPostCard post={post} locale={props.locale} />
-                    </li>
-                  )}
-                </For>
-              </ol>
+              <div class="rdp-app__main-toggle" role="tablist" aria-label={t('day.toggle.ariaLabel')}>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={(props.mainSubView ?? 'publications') === 'publications'}
+                  class={
+                    (props.mainSubView ?? 'publications') === 'publications'
+                      ? 'rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active'
+                      : 'rdp-app__main-toggle-btn'
+                  }
+                  onClick={() => props.onMainSubViewChange?.('publications')}
+                >
+                  {t('day.toggle.publications')}
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={props.mainSubView === 'summary'}
+                  class={
+                    props.mainSubView === 'summary'
+                      ? 'rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active'
+                      : 'rdp-app__main-toggle-btn'
+                  }
+                  onClick={() => props.onMainSubViewChange?.('summary')}
+                >
+                  {t('day.toggle.summary')}
+                </button>
+              </div>
+
+              <Show when={(props.mainSubView ?? 'publications') === 'publications'}>
+                <ol class="rdp-app__post-list">
+                  <For each={props.posts}>
+                    {(post) => (
+                      <li class="rdp-app__post-item">
+                        <BlueskyPostCard post={post} locale={props.locale} />
+                      </li>
+                    )}
+                  </For>
+                </ol>
+              </Show>
+
+              <Show when={props.mainSubView === 'summary'}>
+                <Show when={!!props.summaryLoading}>
+                  <Spinner />
+                </Show>
+                <Show when={!props.summaryLoading && (props.summaryBlocks ?? []).length === 0}>
+                  <Alert variant="empty" messageKey="day.summary.empty" />
+                </Show>
+                <Show when={!props.summaryLoading && (props.summaryBlocks ?? []).length > 0}>
+                  <article class="rdp-app__summary">
+                    <For each={props.summaryBlocks ?? []}>
+                      {(block) => (
+                        <>
+                          <Show when={block.kind === 'heading' && block.level === 1}>
+                            <h2 class="rdp-app__summary-h1">
+                              <For each={block.segments}>
+                                {(seg: SummaryInlineSegment) => (
+                                  <>
+                                    <Show when={seg.kind === 'text'}>{seg.value}</Show>
+                                    <Show when={seg.kind === 'bold'}><strong>{seg.value}</strong></Show>
+                                  </>
+                                )}
+                              </For>
+                            </h2>
+                          </Show>
+                          <Show when={block.kind === 'heading' && block.level === 2}>
+                            <h3 class="rdp-app__summary-h2">
+                              <For each={block.segments}>
+                                {(seg: SummaryInlineSegment) => (
+                                  <>
+                                    <Show when={seg.kind === 'text'}>{seg.value}</Show>
+                                    <Show when={seg.kind === 'bold'}><strong>{seg.value}</strong></Show>
+                                  </>
+                                )}
+                              </For>
+                            </h3>
+                          </Show>
+                          <Show when={block.kind === 'heading' && block.level === 3}>
+                            <h4 class="rdp-app__summary-h3">
+                              <For each={block.segments}>
+                                {(seg: SummaryInlineSegment) => (
+                                  <>
+                                    <Show when={seg.kind === 'text'}>{seg.value}</Show>
+                                    <Show when={seg.kind === 'bold'}><strong>{seg.value}</strong></Show>
+                                  </>
+                                )}
+                              </For>
+                            </h4>
+                          </Show>
+                          <Show when={block.kind === 'paragraph'}>
+                            <p class="rdp-app__summary-p">
+                              <For each={block.segments}>
+                                {(seg: SummaryInlineSegment) => (
+                                  <>
+                                    <Show when={seg.kind === 'text'}>{seg.value}</Show>
+                                    <Show when={seg.kind === 'bold'}><strong>{seg.value}</strong></Show>
+                                  </>
+                                )}
+                              </For>
+                            </p>
+                          </Show>
+                          <Show when={block.kind === 'bullets'}>
+                            <ul class="rdp-app__summary-ul">
+                              <For each={block.items}>
+                                {(item: SummaryInlineSegment[]) => (
+                                  <li>
+                                    <For each={item}>
+                                      {(seg: SummaryInlineSegment) => (
+                                        <>
+                                          <Show when={seg.kind === 'text'}>{seg.value}</Show>
+                                          <Show when={seg.kind === 'bold'}><strong>{seg.value}</strong></Show>
+                                        </>
+                                      )}
+                                    </For>
+                                  </li>
+                                )}
+                              </For>
+                            </ul>
+                          </Show>
+                        </>
+                      )}
+                    </For>
+                  </article>
+                </Show>
+              </Show>
             </Show>
             <Show when={state.currentView === 'legal'}>
               <LegalNoticePage />
@@ -381,6 +507,62 @@ export default function App(props: AppProps) {
           font-family: 'Roboto', sans-serif;
           color: var(--color-content-text);
         }
+        .rdp-app__main-toggle {
+          display: flex;
+          gap: 0;
+          margin: 0 0 var(--separation-2);
+          border: 1.5px solid var(--color-brand);
+          border-radius: var(--radius-default);
+          overflow: hidden;
+          width: fit-content;
+        }
+        .rdp-app__main-toggle-btn {
+          appearance: none;
+          background: var(--color-white);
+          border: 0;
+          color: var(--color-brand);
+          font-family: inherit;
+          font-size: var(--font-size-status-text);
+          font-weight: 600;
+          padding: 8px 18px;
+          cursor: pointer;
+          line-height: 1.2;
+        }
+        .rdp-app__main-toggle-btn--active {
+          background: var(--color-brand);
+          color: var(--color-white);
+        }
+        .rdp-app__main-toggle-btn:not(.rdp-app__main-toggle-btn--active):hover {
+          background: var(--color-taupe-grey);
+        }
+        .rdp-app__summary {
+          background: var(--color-white);
+          border-radius: var(--radius-default);
+          padding: var(--separation-2);
+          font-size: var(--font-size-content);
+          line-height: var(--line-height-base);
+        }
+        .rdp-app__summary-h1 {
+          font-family: 'Signika', sans-serif;
+          font-size: 1.5rem;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-app__summary-h2 {
+          font-family: 'Signika', sans-serif;
+          font-size: 1.2rem;
+          color: var(--color-brand);
+          margin: var(--separation-2) 0 var(--separation-1);
+        }
+        .rdp-app__summary-h3 {
+          font-family: 'Signika', sans-serif;
+          font-size: 1.05rem;
+          color: var(--color-content-text);
+          margin: var(--separation-2) 0 var(--separation-1);
+        }
+        .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
+        .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
+        .rdp-app__summary-ul li { margin-bottom: 4px; }
         /* The header ribbon stays full-viewport-wide so the white band
            reaches both edges of the page; only the inner row + the content
            grid honour the legacy max-width. Mobile mirrors the same pattern
