@@ -16,7 +16,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(project(":domain"))
             implementation(project(":design"))
-            // ui added in Plan 04/06
+            implementation(project(":ui"))
             implementation(compose.desktop.currentOs)
             implementation(compose.material3)
         }
