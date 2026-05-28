@@ -14,7 +14,10 @@
 // loop block-by-block without doing any string parsing of its own
 // (Mitosis JSX struggles with that).
 
-import { isKnownBlueskyHandle } from './bluesky-handles';
+import {
+  normalizeBrandNamesToHandles,
+  resolveBlueskyHandle,
+} from './bluesky-handles';
 
 export type SummaryInlineSegment =
   | { kind: 'text'; value: string }
@@ -32,10 +35,15 @@ export type SummaryBlock =
 export function parseSummaryMarkdown(markdown: string): SummaryBlock[] {
   if (!markdown.trim()) return [];
 
+  // Pre-normalize brand-name variations (e.g. "Le Monde", "L'AFP",
+  // "Mediapart.fr") into their canonical handles before any parsing —
+  // covers Mistral's tendency to expand acronyms or capitalise handles.
+  const normalized = normalizeBrandNamesToHandles(markdown);
+
   const blocks: SummaryBlock[] = [];
   // Split into "block-level" chunks on blank lines, but treat consecutive
   // bullet lines as one block.
-  const lines = markdown.replace(/\r\n/g, '\n').split('\n');
+  const lines = normalized.replace(/\r\n/g, '\n').split('\n');
   let i = 0;
   while (i < lines.length) {
     const raw = lines[i];
@@ -114,14 +122,18 @@ function parseInline(text: string): SummaryInlineSegment[] {
     if (m[1] !== undefined) {
       out.push({ kind: 'bold', value: m[1] });
     } else if (m[2] !== undefined || m[3] !== undefined) {
-      const raw = (m[2] ?? m[3])!.toLowerCase();
-      if (isKnownBlueskyHandle(raw)) {
-        out.push({ kind: 'handle', value: raw });
+      const raw = (m[2] ?? m[3])!;
+      // Resolve runs both the allowlist and the alias map — picks up
+      // canonical handles directly and rewrites aliased capitalisations
+      // (e.g. "AFP.fr" the dotted-form route would otherwise miss).
+      const resolved = resolveBlueskyHandle(raw);
+      if (resolved !== null) {
+        out.push({ kind: 'handle', value: resolved });
       } else {
-        // Looks like a handle (dotted lowercase) but isn't in our allowlist —
-        // keep it as plain text so no broken link is rendered. Include the
-        // wrapping asterisks for italic-style hits so the original prose
-        // stays visually intact.
+        // Looks like a handle (dotted lowercase) but neither the allowlist
+        // nor the alias map recognise it — keep as plain text so no broken
+        // link is rendered. Include the wrapping asterisks for italic-
+        // style hits so the original prose stays visually intact.
         out.push({ kind: 'text', value: m[0]! });
       }
     }

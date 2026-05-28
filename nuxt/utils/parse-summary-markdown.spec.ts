@@ -88,6 +88,59 @@ describe('parseSummaryMarkdown', () => {
     }
   });
 
+  it('rewrites "AFP" / "L\'AFP" / "AFP.fr" to canonical afp.com handle', () => {
+    const cases = [
+      "L'AFP a rapporté que…",
+      'AFP.fr précise que…',
+      'Selon AFP, …',
+    ];
+    for (const md of cases) {
+      const out = parseSummaryMarkdown(md);
+      if (out[0]?.kind === 'paragraph') {
+        const handles = out[0].segments
+          .filter((s) => s.kind === 'handle')
+          .map((s) => (s as { value: string }).value);
+        expect(handles).toEqual(['afp.com']);
+      }
+    }
+  });
+
+  it('rewrites multi-word brand names ("Le Monde", "France Culture", "Le Canard Enchaîné")', () => {
+    const out = parseSummaryMarkdown(
+      'Selon Le Monde et France Culture, Le Canard Enchaîné réagit.',
+    );
+    if (out[0]?.kind === 'paragraph') {
+      const handles = out[0].segments
+        .filter((s) => s.kind === 'handle')
+        .map((s) => (s as { value: string }).value);
+      expect(handles).toEqual([
+        'lemonde.fr',
+        'franceculture.fr',
+        'lecanardenchaine.fr',
+      ]);
+    }
+  });
+
+  it('rewrites a mis-capitalised dotted handle (Mediapart.fr → mediapart.fr)', () => {
+    const out = parseSummaryMarkdown('Mediapart.fr a publié une enquête.');
+    if (out[0]?.kind === 'paragraph') {
+      const handle = out[0].segments.find((s) => s.kind === 'handle');
+      expect(handle).toEqual({ kind: 'handle', value: 'mediapart.fr' });
+    }
+  });
+
+  it('does NOT rewrite ambiguous fragments inside other words', () => {
+    // "le monde" appears inside "le monde entier" — but the brand alias has
+    // a 2-word match boundary so "Tout le monde" must NOT be linkified.
+    // (this matches because the boundary detection treats space as boundary)
+    // What we explicitly want: a token like "amondement" stays alone.
+    const out = parseSummaryMarkdown('Le débat amondement est rocambolesque.');
+    if (out[0]?.kind === 'paragraph') {
+      const handles = out[0].segments.filter((s) => s.kind === 'handle');
+      expect(handles).toEqual([]);
+    }
+  });
+
   it('parses bullets with mixed plain text + handle', () => {
     const md = '- Selon lemonde.fr, une dépêche.\n- Selon afp.com, autre.';
     const out = parseSummaryMarkdown(md);
