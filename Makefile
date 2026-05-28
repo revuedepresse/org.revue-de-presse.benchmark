@@ -8,7 +8,8 @@ SHELL:=/bin/bash
         install-bubblewrap update-twa build-twa \
         e2e-install e2e-install-browsers e2e-build-apps \
         e2e-test e2e-test-functional e2e-test-perf e2e-show-report \
-        test \
+        test test-all \
+        maestro-android maestro-ios \
         linkedin-install linkedin-bootstrap linkedin-post linkedin-post-dry linkedin-test linkedin-typecheck \
         tiktok-install tiktok-bootstrap tiktok-post tiktok-post-dry tiktok-test tiktok-typecheck \
         bluesky-install bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck \
@@ -113,9 +114,19 @@ e2e-test-perf: e2e-build-apps ## Run only the Playwright perf projects
 e2e-show-report: ## Open the last Playwright HTML report in a browser
 	@cd $(E2E_DIR) && pnpm exec playwright show-report
 
+# -- Maestro (Mobile App E2E) ------------------------------------------------
+
+maestro-android: ## Run Maestro tests on Android emulator
+	@cd $(E2E_DIR) && pnpm maestro:android
+
+maestro-ios: ## Run Maestro tests on iOS simulator
+	@cd $(E2E_DIR) && pnpm maestro:ios
+
 # -- Aggregates -----------------------------------------------------------
 
 test: nuxt-test next-test linkedin-test tiktok-test bluesky-test e2e-test native-test native-codegen-test ## Run all tests (nuxt unit + next unit + linkedin unit + tiktok unit + bluesky unit + e2e)
+
+test-all: test maestro-android ## Run all tests including Maestro (assumes Android emulator is up)
 
 # -- LinkedIn -------------------------------------------------------------
 
