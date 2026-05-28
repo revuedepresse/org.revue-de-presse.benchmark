@@ -31,20 +31,7 @@
       <span class="rdp-logo__wordmark">Revue de presse</span>
     </template>
 
-    <component :is="'style'">{{
-      `
-        .rdp-logo {
-          display: inline-flex;
-          align-items: center;
-          gap: var(--separation-1);
-        }
-        .rdp-logo__wordmark {
-          font-family: 'Signika', sans-serif;
-          font-size: 24px;
-          color: var(--color-brand);
-        }
-      `
-    }}</component></span
+    </span
   >
 </template>
 

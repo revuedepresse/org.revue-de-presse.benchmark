@@ -1,4 +1,7 @@
 import { getApiToken, refreshApiToken } from '../utils/apiToken';
+import { logger } from '../utils/logger';
+
+const log = logger.child({ route: '/api/highlights' });
 
 // Browser → Nitro → API Platform upstream proxy. Mints a short-lived bearer
 // via POST /api/token and forwards GET /api/highlights with Authorization: Bearer.
@@ -39,6 +42,7 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig();
   if (!config.apiBaseUrl) {
+    log.error('NUXT_API_BASE_URL is not configured');
     throw createError({
       statusCode: 500,
       statusMessage: 'NUXT_API_BASE_URL is not configured',
@@ -63,8 +67,13 @@ export default defineEventHandler(async (event) => {
     body = await callOnce(await getApiToken());
   } catch (err: any) {
     if (err?.statusCode === 401) {
+      log.info({ startDate, endDate }, 'upstream highlights returned 401 — refreshing token');
       body = await callOnce(await refreshApiToken());
     } else {
+      log.warn(
+        { startDate, endDate, status: err?.statusCode, err: err?.message },
+        'upstream highlights fetch failed',
+      );
       throw createError({
         statusCode: err?.statusCode ?? 502,
         statusMessage: `Upstream highlights fetch failed: ${err?.message ?? 'unknown error'}`,

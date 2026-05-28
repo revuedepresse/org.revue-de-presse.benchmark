@@ -66,25 +66,7 @@
         ></YearPicker>
       </template>
     </div>
-    <component :is="'style'">{{
-      `
-        .rdp-calendar { font-family: 'Roboto', sans-serif; }
-        .rdp-calendar--inline {
-          background: var(--color-white);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-default);
-          padding: 0;
-        }
-        .rdp-calendar--sheet { position: fixed; inset: 0; display: grid; align-items: end; }
-        .rdp-calendar__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }
-        .rdp-calendar--sheet .rdp-calendar__panel {
-          position: relative;
-          background: var(--color-white);
-          padding: var(--separation-2);
-          border-radius: var(--radius-default) var(--radius-default) 0 0;
-        }
-      `
-    }}</component>
+    
   </div>
 </template>
 

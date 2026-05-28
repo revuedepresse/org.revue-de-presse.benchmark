@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nuxt dev",
+    "dev": "nuxt cleanup && nuxt dev",
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
@@ -14,6 +14,7 @@
   "dependencies": {
     "linkifyjs": "^4.3.3",
     "nuxt": "^3.21.6",
+    "pino": "^9.5.0",
     "vue": "^3.5.0",
     "vue-router": "^4.4.0"
   },

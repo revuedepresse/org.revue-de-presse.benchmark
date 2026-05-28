@@ -1,0 +1,20 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID0000.org.revue-de-presse.app"],
+        "components": [
+          { "/": "/",                       "comment": "home" },
+          { "/": "/sources",                "comment": "sources index" },
+          { "/": "/source/*",               "comment": "source detail" },
+          { "/": "/mentions-legales",       "comment": "legal notice" },
+          { "/": "/conditions-utilisation", "comment": "terms of service" },
+          { "/": "/nous-contacter",         "comment": "contact" },
+          { "/": "/nous-soutenir",          "comment": "support" },
+          { "/": "/contenu-introuvable",    "comment": "404" },
+          { "/": "/????-??-??",             "comment": "yyyy-MM-dd day view" }
+        ]
+      }
+    ]
+  }
+}

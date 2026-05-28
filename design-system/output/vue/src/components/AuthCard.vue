@@ -109,25 +109,7 @@
       </div>
     </template>
 
-    <component :is="'style'">{{
-      `
-        .rdp-auth-card { display: grid; gap: var(--separation-2); }
-        .rdp-auth-card__panel {
-          background: var(--color-white);
-          padding: var(--separation-3);
-          border-radius: var(--radius-default);
-          display: grid;
-          gap: var(--separation-1);
-          font-family: 'Roboto', sans-serif;
-        }
-        .rdp-auth-card__title {
-          margin: 0;
-          font-family: 'Signika', sans-serif;
-          color: var(--color-content-text);
-          text-align: center;
-        }
-      `
-    }}</component>
+    
   </section>
 </template>
 

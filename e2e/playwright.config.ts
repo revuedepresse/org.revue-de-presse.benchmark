@@ -1,9 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const NUXT_PORT = 3001;
-const NEXT_PORT = 3002;
 const NUXT_URL = `http://localhost:${NUXT_PORT}`;
-const NEXT_URL = `http://localhost:${NEXT_PORT}`;
 
 // Lighthouse needs a Chrome whose DevTools `/json/*` HTTP API is exposed;
 // Playwright's fixture browser always runs with `--remote-debugging-pipe`,
@@ -39,16 +37,6 @@ export default defineConfig({
       use: { ...devices['Pixel 5'], baseURL: NUXT_URL },
     },
     {
-      name: 'next-desktop-functional',
-      testDir: './tests',
-      use: { ...devices['Desktop Chrome'], baseURL: NEXT_URL },
-    },
-    {
-      name: 'next-mobile-functional',
-      testDir: './tests',
-      use: { ...devices['Pixel 5'], baseURL: NEXT_URL },
-    },
-    {
       name: 'nuxt-desktop-perf',
       testDir: './perf',
       use: { ...devices['Desktop Chrome'], baseURL: NUXT_URL },
@@ -59,14 +47,13 @@ export default defineConfig({
       use: { ...devices['Pixel 5'], baseURL: NUXT_URL },
     },
     {
-      name: 'next-desktop-perf',
-      testDir: './perf',
-      use: { ...devices['Desktop Chrome'], baseURL: NEXT_URL },
-    },
-    {
-      name: 'next-mobile-perf',
-      testDir: './perf',
-      use: { ...devices['Pixel 5'], baseURL: NEXT_URL },
+      name: 'nuxt-desktop-parity',
+      testDir: './parity',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: NUXT_URL,
+        viewport: { width: 1280, height: 800 },
+      },
     },
   ],
   webServer: [
@@ -83,18 +70,6 @@ export default defineConfig({
       env: {
         NUXT_API_BASE_URL: 'http://localhost:4000',
         NUXT_API_CLIENT_SECRET: 'mock-client-secret',
-      },
-    },
-    {
-      // Next reads API_BASE_URL directly via process.env (from next/lib/apiToken.ts).
-      command: `PORT=${NEXT_PORT} pnpm start`,
-      cwd: '../next',
-      port: NEXT_PORT,
-      timeout: 120_000,
-      reuseExistingServer: !process.env.CI,
-      env: {
-        API_BASE_URL: 'http://localhost:4000',
-        API_CLIENT_SECRET: 'mock-client-secret',
       },
     },
   ],

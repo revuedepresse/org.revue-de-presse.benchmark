@@ -8,7 +8,7 @@
           padding: var(--separation-1) var(--separation-2);
           background: var(--alert-bg-empty);
           color: var(--alert-fg-empty);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
           border-radius: var(--radius-default);
         }
@@ -19,7 +19,7 @@
 .rdp-app {
           background: var(--color-taupe-grey);
           min-height: 100vh;
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           color: var(--color-content-text);
         }
         /* The header ribbon stays full-viewport-wide so the white band
@@ -37,7 +37,7 @@
         .rdp-app--mobile .rdp-app__header-inner {
           max-width: 480px;
         }
-        /* Drop AppHeader's own white bg + border so the ribbon's full-width
+        /* Drop AppHeader’s own white bg + border so the ribbon’s full-width
            band shows through on both sides of the inner row. */
         .rdp-app__header-ribbon .rdp-app-header {
           background: transparent;
@@ -52,7 +52,7 @@
         .rdp-app__popular-news {
           margin: 0;
           padding: var(--separation-1) var(--separation-2);
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           font-size: var(--font-size-content);
           color: var(--color-brand);
           background: var(--color-white);
@@ -107,7 +107,7 @@
           border-radius: var(--radius-default);
           color: var(--color-brand);
           padding: var(--separation-1) var(--separation-2);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
           cursor: pointer;
         }
@@ -165,7 +165,7 @@
           padding: var(--separation-1) var(--separation-2);
           background: var(--color-white);
           border-bottom: 1px solid var(--color-border);
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
         }
         .rdp-app-header--desktop { padding: var(--separation-1) var(--separation-3); }
         .rdp-app-header__home {
@@ -182,10 +182,10 @@
           margin-left: auto;
           color: var(--color-brand-active);
           text-decoration: none;
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
         }
-        .rdp-app-header__myspace[aria-disabled="true"] {
+        .rdp-app-header__myspace[aria-disabled=true] {
           color: var(--color-light-grey);
           cursor: not-allowed;
           pointer-events: none;
@@ -209,11 +209,11 @@
           border-radius: var(--radius-default);
           display: grid;
           gap: var(--separation-1);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
         }
         .rdp-auth-card__title {
           margin: 0;
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           color: var(--color-content-text);
           text-align: center;
         }
@@ -229,7 +229,7 @@
           width: 100%;
           margin: 0;
           box-sizing: border-box;
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-footer-paragraph);
           line-height: var(--line-height-base);
           overflow: hidden;
@@ -239,7 +239,7 @@
           display: flex;
           align-items: center;
           gap: var(--separation-1);
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           font-size: var(--font-size-footer-title);
           line-height: 30px;
           margin: calc(3 * var(--separation-1)) 0 var(--separation-1);
@@ -325,7 +325,7 @@
           border: 1px solid var(--color-border);
           border-radius: var(--radius-default);
           padding: var(--separation-2);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           color: var(--color-content-text);
           display: flex;
           flex-direction: column;
@@ -399,7 +399,7 @@
           gap: var(--separation-1);
           border: none;
           cursor: pointer;
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
           padding: var(--separation-1) var(--separation-2);
           border-radius: var(--radius-default);
@@ -422,7 +422,7 @@
         .rdp-button--form { width: 100%; padding: var(--separation-2); }
 
 /* Calendar */
-.rdp-calendar { font-family: 'Roboto', sans-serif; }
+.rdp-calendar { font-family: Roboto, sans-serif; }
         .rdp-calendar--inline {
           background: var(--color-white);
           border: 1px solid var(--color-border);
@@ -448,7 +448,7 @@
           /* Square bottom corners so the band visually merges with the
              month bar / day grid below it. */
           border-radius: var(--radius-default) var(--radius-default) 0 0;
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
         }
         .rdp-calendar-action-bar--bottom {
           border-radius: 0;
@@ -493,7 +493,7 @@
            left/right instead of up/down. */
         .rdp-calendar-action-bar__btn--prev svg { transform: rotate(-90deg); }
         .rdp-calendar-action-bar__btn--next svg { transform: rotate(-90deg); }
-        .rdp-calendar-action-bar__btn[aria-disabled="true"] {
+        .rdp-calendar-action-bar__btn[aria-disabled=true] {
           cursor: not-allowed;
           opacity: 0.5;
         }
@@ -504,7 +504,7 @@
           gap: var(--separation-1);
           align-items: center;
           padding: var(--separation-1) var(--separation-2);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
         }
         .rdp-calendar-month-bar__pill {
           flex: 0 0 auto;
@@ -512,9 +512,9 @@
           align-items: center;
           gap: var(--separation-1);
           width: auto;
-          /* Negative margin compensates for the pill's 1px outline so the
-             pill's left edge aligns with the bar-content edge; combined with
-             the pill's own internal padding the icon ends up matching the
+          /* Negative margin compensates for the pill’s 1px outline so the
+             pill’s left edge aligns with the bar-content edge; combined with
+             the pill’s own internal padding the icon ends up matching the
              action-bar icon above (both at +var(--separation-2) inside). */
           margin-left: -1px;
           background: var(--color-white);
@@ -548,7 +548,7 @@
           justify-content: center;
         }
         .rdp-calendar-month-bar__btn:hover { color: var(--color-brand-active); }
-        .rdp-calendar-month-bar__btn[aria-disabled="true"] {
+        .rdp-calendar-month-bar__btn[aria-disabled=true] {
           color: var(--color-light-grey);
           cursor: not-allowed;
           opacity: 0.5;
@@ -559,7 +559,7 @@
           display: inline-flex;
           align-items: center;
           gap: var(--separation-1);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
           color: var(--color-content-text);
           cursor: pointer;
@@ -573,11 +573,11 @@
           background: var(--color-white);
           border-radius: var(--radius-default);
           padding: var(--separation-3);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           color: var(--color-content-text);
         }
         .rdp-contact-page h1 {
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           color: var(--color-brand);
           margin: 0 0 var(--separation-2);
         }
@@ -591,7 +591,7 @@
           table-layout: fixed;
           border-collapse: separate;
           border-spacing: 2px;
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-calendar-month-day-cell);
         }
         .rdp-date-grid__weekday {
@@ -612,11 +612,11 @@
           text-align: center;
           box-sizing: border-box;
         }
-        .rdp-date-grid__cell[data-other-month="true"] {
+        .rdp-date-grid__cell[data-other-month=true] {
           background: var(--color-background-other-month);
           color: var(--color-light-grey);
         }
-        .rdp-date-grid__cell[data-future="true"] {
+        .rdp-date-grid__cell[data-future=true] {
           color: var(--color-light-grey);
           background: var(--color-background-future-date);
           cursor: not-allowed;
@@ -628,7 +628,7 @@
         }
 
 /* EmailField */
-.rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: 'Roboto', sans-serif; }
+.rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: Roboto, sans-serif; }
         .rdp-textfield__label {
           font-size: var(--font-size-publication-date);
           color: var(--color-content-text);
@@ -650,14 +650,14 @@
             color: var(--form-error-fg);
             margin: 0;
             padding-left: var(--separation-1);
-            font-family: 'Roboto', sans-serif;
+            font-family: Roboto, sans-serif;
           }
 
 /* FormError */
 .rdp-form-error {
             color: var(--form-error-fg);
             font-size: var(--font-size-publication-date);
-            font-family: 'Roboto', sans-serif;
+            font-family: Roboto, sans-serif;
             margin-top: var(--separation-1);
           }
           .rdp-form-error__item { margin: 0; }
@@ -671,7 +671,7 @@
           color: var(--color-content-font);
           border-radius: var(--radius-default);
           padding: var(--separation-2);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-status-text);
           display: flex;
           flex-direction: column;
@@ -703,16 +703,16 @@
           background: var(--color-white);
           border-radius: var(--radius-default);
           padding: var(--separation-3);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           color: var(--color-content-text);
         }
         .rdp-legal-notice h1 {
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           color: var(--color-brand);
           margin: 0 0 var(--separation-2);
         }
         .rdp-legal-notice h2 {
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           color: var(--color-brand);
           font-size: var(--font-size-status-text);
           margin: var(--separation-2) 0 var(--separation-1);
@@ -721,12 +721,24 @@
           margin: 0 0 var(--separation-2);
           line-height: var(--line-height-base);
         }
+        .rdp-legal-notice ul {
+          margin: 0 0 var(--separation-2);
+          padding-left: var(--separation-3);
+          line-height: var(--line-height-base);
+        }
+        .rdp-legal-notice li {
+          margin: 0 0 var(--separation-1);
+        }
+        .rdp-legal-notice a {
+          color: var(--color-brand);
+          text-decoration: underline;
+        }
 
 /* Link */
 .rdp-link {
           color: var(--color-brand-active);
           text-decoration: none;
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
         }
         .rdp-link--underline { text-decoration: underline; }
         .rdp-link--plain { color: inherit; }
@@ -739,7 +751,7 @@
           gap: var(--separation-1);
         }
         .rdp-logo__wordmark {
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           font-size: 24px;
           color: var(--color-brand);
         }
@@ -761,7 +773,7 @@
         .rdp-metrics-bar {
           display: inline-flex;
           gap: var(--separation-2);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-vanity-metric);
           line-height: var(--line-spacing-vanity-metric, 25px);
         }
@@ -798,7 +810,7 @@
           background: var(--color-white);
           border: 1px solid var(--color-brand);
           border-radius: var(--radius-default);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
         }
         .rdp-month-picker__item {
@@ -808,7 +820,7 @@
           border-bottom: 1px solid var(--color-brand);
         }
         .rdp-month-picker__item:last-child { border-bottom: none; }
-        .rdp-month-picker__item[data-future="true"] {
+        .rdp-month-picker__item[data-future=true] {
           color: var(--color-light-grey);
           background: var(--color-background-other-month);
           cursor: not-allowed;
@@ -823,20 +835,20 @@
           background: var(--color-white);
           padding: var(--separation-3);
           border-radius: var(--radius-default);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           color: var(--color-content-text);
           max-width: 360px;
         }
         .rdp-notice__headline {
           margin: 0 0 var(--separation-1);
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           font-size: var(--font-size-status-text);
           color: var(--color-vanity-metric-like);
         }
         .rdp-notice__body { margin: 0; font-size: var(--font-size-content); }
 
 /* PasswordField */
-.rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: 'Roboto', sans-serif; }
+.rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: Roboto, sans-serif; }
         .rdp-textfield__label {
           font-size: var(--font-size-publication-date);
           color: var(--color-content-text);
@@ -875,7 +887,7 @@
           background: var(--color-white);
           border: 1px solid var(--color-border);
           border-radius: var(--radius-default);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
         }
         .rdp-snapshots-list--sheet { position: fixed; inset: 0; display: grid; align-items: end; }
         .rdp-snapshots-list__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }
@@ -929,11 +941,11 @@
           background: var(--color-white);
           border-radius: var(--radius-default);
           padding: var(--separation-3);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           color: var(--color-content-text);
         }
         .rdp-sources-page h1 {
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           color: var(--color-brand);
           margin: 0 0 var(--separation-2);
         }
@@ -956,7 +968,7 @@
           gap: var(--separation-1);
           padding: calc(3 * var(--separation-2)) var(--separation-2);
           color: var(--color-light-grey);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
         }
         .rdp-spinner__ring {
@@ -982,16 +994,16 @@
           background: var(--color-white);
           border-radius: var(--radius-default);
           padding: var(--separation-3);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           color: var(--color-content-text);
         }
         .rdp-support-page h1 {
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           color: var(--color-brand);
           margin: 0 0 var(--separation-2);
         }
         .rdp-support-page h2 {
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           color: var(--color-brand);
           font-size: var(--font-size-status-text);
           margin: var(--separation-2) 0 var(--separation-1);
@@ -1001,8 +1013,44 @@
         .rdp-support-page ul { padding-left: var(--separation-3); margin: var(--separation-1) 0; }
         .rdp-support-page li { margin: 0 0 var(--separation-1); }
 
+/* TermsOfServicePage */
+.rdp-terms-of-service {
+          background: var(--color-white);
+          border-radius: var(--radius-default);
+          padding: var(--separation-3);
+          font-family: Roboto, sans-serif;
+          color: var(--color-content-text);
+        }
+        .rdp-terms-of-service h1 {
+          font-family: Signika, sans-serif;
+          color: var(--color-brand);
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-terms-of-service h2 {
+          font-family: Signika, sans-serif;
+          color: var(--color-brand);
+          font-size: var(--font-size-status-text);
+          margin: var(--separation-2) 0 var(--separation-1);
+        }
+        .rdp-terms-of-service p {
+          margin: 0 0 var(--separation-2);
+          line-height: var(--line-height-base);
+        }
+        .rdp-terms-of-service ul {
+          margin: 0 0 var(--separation-2);
+          padding-left: var(--separation-3);
+          line-height: var(--line-height-base);
+        }
+        .rdp-terms-of-service li {
+          margin: 0 0 var(--separation-1);
+        }
+        .rdp-terms-of-service a {
+          color: var(--color-brand);
+          text-decoration: underline;
+        }
+
 /* TextField */
-.rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: 'Roboto', sans-serif; }
+.rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: Roboto, sans-serif; }
         .rdp-textfield__label {
           font-size: var(--font-size-publication-date);
           color: var(--color-content-text);
@@ -1042,7 +1090,7 @@
           background: var(--color-white);
           border: 1px solid var(--color-brand);
           border-radius: var(--radius-default);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
         }
         .rdp-year-picker__item {

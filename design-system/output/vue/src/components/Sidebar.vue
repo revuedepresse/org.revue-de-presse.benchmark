@@ -9,24 +9,12 @@
     ></Calendar
     ><BannerAbout
       :onLegalNoticeClick="(event) => onLegalNoticeClick()"
+      :onTermsOfServiceClick="(event) => onTermsOfServiceClick()"
       :onContactClick="(event) => onContactClick()"
       :onSupportClick="(event) => onSupportClick()"
       :onSourcesClick="(event) => onSourcesClick()"
     ></BannerAbout
-    ><component :is="'style'">{{
-      `
-        .rdp-sidebar {
-          width: 336px;
-          max-width: 100%;
-          box-sizing: border-box;
-          display: flex;
-          flex-direction: column;
-          gap: var(--separation-2);
-          min-width: 0;
-        }
-        .rdp-sidebar > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
-      `
-    }}</component>
+    >
   </aside>
 </template>
 
@@ -52,6 +40,7 @@ type SidebarProps = {
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;

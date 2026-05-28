@@ -25,7 +25,7 @@ export default function EmailField(props: EmailFieldProps) {
         onInput={(event: any) => props.onChange?.(event.target.value)}
       />
       <style>{`
-        .rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: 'Roboto', sans-serif; }
+        .rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: Roboto, sans-serif; }
         .rdp-textfield__label {
           font-size: var(--font-size-publication-date);
           color: var(--color-content-text);

@@ -41,6 +41,13 @@
       ><br /><a
         class="rdp-banner-about__outer-link"
         data-testid="view-button"
+        data-view="terms"
+        :href="termsOfServiceHref ?? '/conditions-utilisation'"
+        @click="async (event) => handleTermsClick(event)"
+        >{{ t("footer.about.terms-of-service") }}</a
+      ><br /><a
+        class="rdp-banner-about__outer-link"
+        data-testid="view-button"
         data-view="contact"
         :href="contactHref ?? '/nous-contacter'"
         @click="async (event) => handleContactClick(event)"
@@ -120,98 +127,7 @@
         </a>
       </div>
     </div>
-    <component :is="'style'">{{
-      `
-        .rdp-banner-about {
-          background: var(--color-content-background);
-          color: var(--color-content-font);
-          border: none;
-          border-radius: var(--radius-default);
-          padding: var(--separation-2);
-          padding-bottom: var(--separation-3);
-          width: 100%;
-          margin: 0;
-          box-sizing: border-box;
-          font-family: 'Roboto', sans-serif;
-          font-size: var(--font-size-footer-paragraph);
-          line-height: var(--line-height-base);
-          overflow: hidden;
-        }
-        .rdp-banner-about__title {
-          color: var(--color-white);
-          display: flex;
-          align-items: center;
-          gap: var(--separation-1);
-          font-family: 'Signika', sans-serif;
-          font-size: var(--font-size-footer-title);
-          line-height: 30px;
-          margin: calc(3 * var(--separation-1)) 0 var(--separation-1);
-          white-space: nowrap;
-          min-width: 0;
-        }
-        .rdp-banner-about__title > span {
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .rdp-banner-about__title:first-child { margin-top: 0; }
-        .rdp-banner-about__paragraph { font-size: 1em; margin: 0 0 var(--separation-1); }
-        .rdp-banner-about__paragraph--sharing { margin-bottom: 0; }
-        .rdp-banner-about a {
-          color: var(--color-white);
-          text-decoration: underline;
-        }
-        .rdp-banner-about__subscribe-to {
-          display: inline-flex;
-          background: transparent;
-          border-radius: 4px;
-          padding: 5px var(--separation-0) 4px 0;
-          margin: var(--separation-0) 0 0 0;
-          font-size: var(--font-size-footer-outer-link);
-          line-height: var(--line-height-base);
-          letter-spacing: 0;
-          text-decoration: none;
-          color: var(--color-white);
-          font-weight: bold;
-        }
-        .rdp-banner-about__subscription-label { padding-left: 0; }
-        .rdp-banner-about__play-store {
-          display: inline-block;
-          margin-top: var(--separation-1);
-          line-height: 0;
-        }
-        .rdp-banner-about__play-store-badge {
-          display: block;
-          height: auto;
-          max-width: 193px;
-        }
-        .rdp-banner-about__netlify-mark {
-          display: inline-block;
-          vertical-align: middle;
-          width: 20px;
-          height: 20px;
-        }
-        .rdp-banner-about__copyright-footer {
-          color: var(--color-white);
-          display: flex;
-          width: 100%;
-          font-size: var(--font-size-footer-copyright);
-          line-height: var(--line-height-base);
-          text-align: center;
-          margin-top: calc(3 * var(--separation-1));
-        }
-        .rdp-banner-about__copyright {
-          margin: auto;
-          margin-bottom: var(--separation-2);
-        }
-        .rdp-banner-about__copyright .rdp-banner-about__outer-link,
-        .rdp-banner-about__copyright-footer .rdp-banner-about__outer-link {
-          display: inline-flex;
-          margin: auto;
-          align-self: center;
-          color: var(--color-white);
-        }
-      `
-    }}</component>
+    
   </footer>
 </template>
 
@@ -223,11 +139,13 @@ import Icon from "./Icon.vue";
 
 type BannerAboutProps = {
   legalNoticeHref?: string;
+  termsOfServiceHref?: string;
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -243,6 +161,12 @@ function handleLegalClick(event: any) {
   if (props.onLegalNoticeClick) {
     event.preventDefault();
     props.onLegalNoticeClick();
+  }
+}
+function handleTermsClick(event: any) {
+  if (props.onTermsOfServiceClick) {
+    event.preventDefault();
+    props.onTermsOfServiceClick();
   }
 }
 function handleContactClick(event: any) {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import App from '@design-system/components/App.vue';
 
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources';
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
 
 const props = defineProps<{
   initialView?: ViewKey;
@@ -72,6 +72,7 @@ function urlForDate(d: Date): string {
 function urlForView(view: ViewKey): string {
   switch (view) {
     case 'legal': return '/mentions-legales';
+    case 'terms': return '/conditions-utilisation';
     case 'contact': return '/nous-contacter';
     case 'support': return '/nous-soutenir';
     case 'sources': return '/sources';
@@ -113,7 +114,6 @@ function onLogoClick() {
   <App
     :layout="layout"
     :capture-mode="isCaptureModeActive"
-    :authenticated="false"
     :posts="posts"
     :picked-date="pickedDate"
     :lists="lists"

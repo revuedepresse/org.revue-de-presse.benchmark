@@ -86,13 +86,11 @@ async function main(): Promise<number> {
     return EXIT.OK;
   }
 
-  // Re-render with LinkedIn LITTLE_TEXT escaping applied to all
-  // user-controlled text (headline, screenName, URLs). Unescaped
-  // `()@[]{}<>*_~|\\` in the commentary cause LinkedIn's parser to either
-  // truncate the post (2026-05-25 05:30 Paris: `(J'ai du mal...)` dropped
-  // entries 2–10) or eat reserved chars as inline formatting (LinkedIn
-  // activity 7464597081169620992: `org.revue_2_presse` rendered as
-  // `org.revue2presse` because `_2_` was consumed as italic).
+  // Re-render with LinkedIn LITTLE_TEXT escaping applied to each entry's
+  // free-form text. Unescaped `()@[]{}<>*_~|\\` in the commentary cause
+  // LinkedIn's parser to truncate the post silently — see the 2026-05-25
+  // 05:30 Paris incident where only entry #1 rendered because of `(J'ai du
+  // mal...)` in the headline.
   const linkedinCommentary = renderPost(highlights, targetDate, {
     footerUrl: cfg.postFooterUrl,
     hashtag: cfg.postHashtag,

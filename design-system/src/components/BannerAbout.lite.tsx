@@ -4,11 +4,13 @@ import Icon from './Icon.lite';
 
 type BannerAboutProps = {
   legalNoticeHref?: string;
+  termsOfServiceHref?: string;
   contactHref?: string;
   supportHref?: string;
   sourcesHref?: string;
   subscribeHref?: string;
   onLegalNoticeClick?: () => void;
+  onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
@@ -23,6 +25,12 @@ export default function BannerAbout(props: BannerAboutProps) {
       if (props.onLegalNoticeClick) {
         event.preventDefault();
         props.onLegalNoticeClick();
+      }
+    },
+    handleTermsClick(event: any) {
+      if (props.onTermsOfServiceClick) {
+        event.preventDefault();
+        props.onTermsOfServiceClick();
       }
     },
     handleContactClick(event: any) {
@@ -92,6 +100,16 @@ export default function BannerAbout(props: BannerAboutProps) {
           data-view="legal"
         >
           {t('footer.about.privacy-policy')}
+        </a>
+        <br />
+        <a
+          class="rdp-banner-about__outer-link"
+          href={props.termsOfServiceHref ?? '/conditions-utilisation'}
+          onClick={(event: any) => state.handleTermsClick(event)}
+          data-testid="view-button"
+          data-view="terms"
+        >
+          {t('footer.about.terms-of-service')}
         </a>
         <br />
         <a
@@ -203,7 +221,7 @@ export default function BannerAbout(props: BannerAboutProps) {
           width: 100%;
           margin: 0;
           box-sizing: border-box;
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-footer-paragraph);
           line-height: var(--line-height-base);
           overflow: hidden;
@@ -213,7 +231,7 @@ export default function BannerAbout(props: BannerAboutProps) {
           display: flex;
           align-items: center;
           gap: var(--separation-1);
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           font-size: var(--font-size-footer-title);
           line-height: 30px;
           margin: calc(3 * var(--separation-1)) 0 var(--separation-1);

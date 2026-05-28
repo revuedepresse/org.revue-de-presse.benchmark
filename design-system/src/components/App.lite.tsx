@@ -9,6 +9,7 @@ import BannerAbout from './BannerAbout.lite';
 import Calendar from './Calendar.lite';
 import CalendarActionBar from './CalendarActionBar.lite';
 import LegalNoticePage from './LegalNoticePage.lite';
+import TermsOfServicePage from './TermsOfServicePage.lite';
 import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
@@ -19,11 +20,10 @@ import type { Locale } from '../utils/i18n';
 
 type SnapshotItem = { id: string; label: string };
 
-type ViewKey = 'main' | 'legal' | 'contact' | 'support' | 'sources';
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
 
 type AppProps = {
   layout?: 'mobile' | 'desktop';
-  authenticated?: boolean;
   posts: BlueskyPost[];
   pickedDate: Date;
   lists: SnapshotItem[];
@@ -35,8 +35,6 @@ type AppProps = {
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
-  onAccountClick?: () => void;
-  onMySpaceClick?: () => void;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
@@ -48,7 +46,7 @@ export default function App(props: AppProps) {
   const state = useStore({
     focusedDate: new Date(),
     isCalendarOpen: false,
-    currentView: 'main' as 'main' | 'legal' | 'contact' | 'support' | 'sources',
+    currentView: 'main' as 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources',
     initialised: false,
     get popularNewsLine(): string {
       return t(
@@ -147,9 +145,7 @@ export default function App(props: AppProps) {
         <div class="rdp-app__header-inner">
           <AppHeader
             layout={props.layout ?? 'desktop'}
-            authenticated={props.authenticated ?? false}
-            onAccountClick={() => props.onAccountClick?.()}
-            onMySpaceClick={() => props.onMySpaceClick?.()}
+            authenticated={false}
             onLogoClick={() => state.goHome()}
           />
         </div>
@@ -172,6 +168,7 @@ export default function App(props: AppProps) {
                 onListSelect={(id: string) => props.onListSelect?.(id)}
                 onDateSelect={(d: Date) => state.selectFromSidebar(d)}
                 onLegalNoticeClick={() => state.goTo('legal')}
+                onTermsOfServiceClick={() => state.goTo('terms')}
                 onContactClick={() => state.goTo('contact')}
                 onSupportClick={() => state.goTo('support')}
                 onSourcesClick={() => state.goTo('sources')}
@@ -214,6 +211,9 @@ export default function App(props: AppProps) {
             </Show>
             <Show when={state.currentView === 'legal'}>
               <LegalNoticePage />
+            </Show>
+            <Show when={state.currentView === 'terms'}>
+              <TermsOfServicePage />
             </Show>
             <Show when={state.currentView === 'contact'}>
               <ContactPage />
@@ -265,6 +265,9 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'legal'}>
             <LegalNoticePage />
           </Show>
+          <Show when={state.currentView === 'terms'}>
+            <TermsOfServicePage />
+          </Show>
           <Show when={state.currentView === 'contact'}>
             <ContactPage />
           </Show>
@@ -277,6 +280,7 @@ export default function App(props: AppProps) {
           <Show when={!props.captureMode}>
             <BannerAbout
               onLegalNoticeClick={() => state.goTo('legal')}
+              onTermsOfServiceClick={() => state.goTo('terms')}
               onContactClick={() => state.goTo('contact')}
               onSupportClick={() => state.goTo('support')}
               onSourcesClick={() => state.goTo('sources')}
@@ -312,7 +316,7 @@ export default function App(props: AppProps) {
         .rdp-app {
           background: var(--color-taupe-grey);
           min-height: 100vh;
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           color: var(--color-content-text);
         }
         /* The header ribbon stays full-viewport-wide so the white band
@@ -330,7 +334,7 @@ export default function App(props: AppProps) {
         .rdp-app--mobile .rdp-app__header-inner {
           max-width: 480px;
         }
-        /* Drop AppHeader's own white bg + border so the ribbon's full-width
+        /* Drop AppHeader’s own white bg + border so the ribbon’s full-width
            band shows through on both sides of the inner row. */
         .rdp-app__header-ribbon .rdp-app-header {
           background: transparent;
@@ -345,7 +349,7 @@ export default function App(props: AppProps) {
         .rdp-app__popular-news {
           margin: 0;
           padding: var(--separation-1) var(--separation-2);
-          font-family: 'Signika', sans-serif;
+          font-family: Signika, sans-serif;
           font-size: var(--font-size-content);
           color: var(--color-brand);
           background: var(--color-white);
@@ -400,7 +404,7 @@ export default function App(props: AppProps) {
           border-radius: var(--radius-default);
           color: var(--color-brand);
           padding: var(--separation-1) var(--separation-2);
-          font-family: 'Roboto', sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
           cursor: pointer;
         }

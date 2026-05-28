@@ -32,59 +32,13 @@
                 }
               "
             >
-              <template v-if="!isDisabled(d)">
-                {{ d.getDate() }}
-              </template>
+              <template v-if="!isDisabled(d)">{{ d.getDate() }}</template>
             </td>
           </template>
         </tr>
       </template>
     </tbody>
-    <component :is="'style'">{{
-      `
-        .rdp-date-grid {
-          width: calc(100% - 2 * var(--separation-2));
-          margin: 0 var(--separation-2) var(--separation-2);
-          table-layout: fixed;
-          border-collapse: separate;
-          border-spacing: 2px;
-          font-family: 'Roboto', sans-serif;
-          font-size: var(--font-size-calendar-month-day-cell);
-        }
-        .rdp-date-grid__weekday {
-          font-weight: normal;
-          font-size: var(--font-size-calendar-month-day);
-          color: var(--color-brand);
-          padding: 4px 0;
-          text-align: center;
-        }
-        .rdp-date-grid__cell {
-          padding: 6px 0;
-          height: 32px;
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-selectable);
-          color: var(--color-content-text);
-          background: var(--color-background-future-date);
-          cursor: pointer;
-          text-align: center;
-          box-sizing: border-box;
-        }
-        .rdp-date-grid__cell[data-other-month="true"] {
-          background: var(--color-background-other-month);
-          color: var(--color-light-grey);
-        }
-        .rdp-date-grid__cell[data-future="true"] {
-          color: var(--color-light-grey);
-          background: var(--color-background-future-date);
-          cursor: not-allowed;
-        }
-        .rdp-date-grid__cell--selected {
-          background: var(--color-brand);
-          color: var(--color-white);
-          border-color: var(--color-brand);
-        }
-      `
-    }}</component>
+    
   </table>
 </template>
 

@@ -100,3 +100,70 @@ export function cleanForFeed(text: string): string {
     .replace(/[ \t]{2,}/g, ' ')
     .trim();
 }
+
+// Defensive cleaner for chat-citation card bodies, run client-side so the
+// UI is hardened against backend hiccups (residual literal escapes, stray
+// quoting, locale-naive whitespace).
+//
+// Differences vs cleanText:
+//   - Citations are always rendered single-line — flatten ANY newline form
+//     (real LF/CR, literal `\n`) to a single space rather than preserving
+//     paragraph breaks.
+//   - Drop wrapping quotes (single OR double — Bluesky bodies sometimes
+//     get wrapped at one or both ends).
+//   - Insert NBSP (U+00A0) around French guillemets (« … ») per
+//     typographical convention. Preserves existing NBSP, never doubles.
+//
+// Safe to apply after cleanText output too (idempotent on already-clean input).
+export function cleanCitationText(text: string): string {
+  if (!text) return '';
+  let out = repairMojibake(text);
+
+  // 1. Strip wrapping quotes (single or double). Repeat for "'X'" / "\"X\"".
+  while (
+    (out.startsWith('"') && out.endsWith('"')) ||
+    (out.startsWith("'") && out.endsWith("'"))
+  ) {
+    const next = out.slice(1, -1);
+    if (next === out) break;
+    out = next;
+  }
+
+  // 2. Decode JSON-literal escapes that the backend's PHP TextCleaner
+  //    can't address (it only sees real bytes; literal `\n` / `\xNN`
+  //    in upstream Bluesky snapshots survive the embed pass intact).
+  out = out.replace(/\\n/g, '\n');
+  out = out.replace(/\\'/g, "'").replace(/\\"/g, '"');
+  out = out.replace(/\\x([0-9a-fA-F]{4})\\?/g, (_, hex) => {
+    const code = parseInt(hex, 16);
+    if (code === 0xa0 || code === 0x2007 || code === 0x202f) return ' ';
+    if (code < 0x20 || (code >= 0x7f && code < 0xa0)) return '';
+    try {
+      return String.fromCodePoint(code);
+    } catch {
+      return '';
+    }
+  });
+  out = out.replace(/\\x([0-9a-fA-F]{2})\\?/g, (_, hex) => {
+    const code = parseInt(hex, 16);
+    if (code === 0xa0) return ' ';
+    if (code >= 0x20 && code < 0x7f) return String.fromCodePoint(code);
+    return '';
+  });
+  out = out.replace(/\\/g, '');
+
+  // 3. Flatten ALL whitespace forms (newlines, tabs, real NBSP, narrow NBSP,
+  //    figure-space, BOM, zero-width) to a single regular space. Citation
+  //    cards are single-line by design.
+  out = out.replace(/[\s   ​-‍﻿]+/g, ' ').trim();
+
+  // 4. French typography: ensure « is followed by exactly one NBSP, and
+  //    » is preceded by exactly one NBSP. NBSP keeps the guillemet glued
+  //    to its content across line wraps. Idempotent: a citation already
+  //    formatted with NBSPs stays unchanged. Done after whitespace
+  //    collapse so we know what's actually adjacent.
+  out = out.replace(/«\s*/g, '« ');
+  out = out.replace(/\s*»/g, ' »');
+
+  return out;
+}

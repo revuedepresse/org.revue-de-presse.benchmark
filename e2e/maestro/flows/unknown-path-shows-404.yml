@@ -1,0 +1,8 @@
+appId: org.revue_2_presse
+name: Unknown path resolves to NotFound
+---
+- launchApp: { clearState: true }
+- openLink: "https://revue-de-presse.org/this-route-does-not-exist"
+- assertVisible: { id: "NotFoundScreen.root" }
+- tapOn: { text: "Retour à l'accueil" }
+- assertVisible: { id: "HomeScreen.root" }
