@@ -19,6 +19,7 @@ kotlin {
             implementation(project(":ui"))
             implementation(compose.desktop.currentOs)
             implementation(compose.material3)
+            implementation(libs.kotlinx.datetime)
         }
     }
 }
