@@ -3,14 +3,14 @@ import { Show, For, onMount, createSignal, createMemo } from "solid-js";
 type MainSubView = "publications" | "summary";
 
 /** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 /** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 type InitialMainSubView = MainSubView;
 /** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 
 type SnapshotItem = {
@@ -18,7 +18,7 @@ type SnapshotItem = {
   label: string;
 };
 /** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 
 type ViewKey =
@@ -30,7 +30,7 @@ type ViewKey =
   | "sources"
   | "discuter";
 /** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 
 type AppProps = {
@@ -73,7 +73,7 @@ type AppProps = {
   onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
-  /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+  /** Boot-time sub-view from the URL (synthese-des-actus-du-… vs actualites-du-…).
    *  AppShell uses it to set mainSubView on mount + when the prop changes. */
   initialMainSubView?: InitialMainSubView;
   /** Whether the summary fetch is in flight for the current date. */
@@ -428,7 +428,7 @@ function App(props: AppProps) {
                                               rel="noreferrer noopener"
                                               href={`https://bsky.app/profile/${seg.value}`}
                                             >
-                                              {seg.value}
+                                              @{seg.value}
                                             </a>
                                           </Show>
                                         </>
@@ -717,7 +717,14 @@ function App(props: AppProps) {
           text-decoration: none;
           border-bottom: 1px solid currentColor;
         }
-        .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+        /* Keep the colour fixed on hover; only the underline thickens
+           subtly to indicate interactivity. */
+        .rdp-app__summary-handle:hover,
+        .rdp-app__summary-handle:active,
+        .rdp-app__summary-handle:focus {
+          color: var(--color-brand);
+        }
+        .rdp-app__summary-handle:hover { border-bottom-width: 2px; }
         .rdp-app__synthesis-title {
           font-family: Signika, sans-serif;
           font-size: 1.6rem;

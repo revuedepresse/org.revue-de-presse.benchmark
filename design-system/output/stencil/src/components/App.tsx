@@ -342,7 +342,7 @@ export class App {
                                             rel="noreferrer noopener"
                                             href={`https://bsky.app/profile/${seg.value}`}
                                           >
-                                            {seg.value}
+                                            @{seg.value}
                                           </a>
                                         ) : null}
                                       </Fragment>
@@ -602,7 +602,14 @@ export class App {
           text-decoration: none;
           border-bottom: 1px solid currentColor;
         }
-        .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+        /* Keep the colour fixed on hover; only the underline thickens
+           subtly to indicate interactivity. */
+        .rdp-app__summary-handle:hover,
+        .rdp-app__summary-handle:active,
+        .rdp-app__summary-handle:focus {
+          color: var(--color-brand);
+        }
+        .rdp-app__summary-handle:hover { border-bottom-width: 2px; }
         .rdp-app__synthesis-title {
           font-family: Signika, sans-serif;
           font-size: 1.6rem;

@@ -2,16 +2,16 @@
        type MainSubView = 'publications' | 'summary';
 
 /** Initial sub-view for the day-page, when entered via a URL like
-*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
 *  Nuxt so the route is the source of truth. */
 
 /** Initial sub-view for the day-page, when entered via a URL like
-*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
 *  Nuxt so the route is the source of truth. */
 type InitialMainSubView = MainSubView
 
 /** Initial sub-view for the day-page, when entered via a URL like
-*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
 *  Nuxt so the route is the source of truth. */
 
 type SnapshotItem = {
@@ -20,13 +20,13 @@ type SnapshotItem = {
 }
 
 /** Initial sub-view for the day-page, when entered via a URL like
-*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
 *  Nuxt so the route is the source of truth. */
 
 type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'discuter'
 
 /** Initial sub-view for the day-page, when entered via a URL like
-*  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+*  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
 *  Nuxt so the route is the source of truth. */
 
 type AppProps = {
@@ -69,7 +69,7 @@ type AppProps = {
  onDiscuterRetry?: () => void;
  /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
  mainSubView?: MainSubView;
- /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+ /** Boot-time sub-view from the URL (synthese-des-actus-du-… vs actualites-du-…).
   *  AppShell uses it to set mainSubView on mount + when the prop changes. */
  initialMainSubView?: InitialMainSubView;
  /** Whether the summary fetch is in flight for the current date. */
@@ -333,7 +333,8 @@ initialised = true; });
 {/if}
 
 {#if seg.kind === 'handle' }
-<a  class="rdp-app__summary-handle"  target="_blank"  rel="noreferrer noopener"  href={`https://bsky.app/profile/${seg.value}`} >{seg.value}</a>
+<a  class="rdp-app__summary-handle"  target="_blank"  rel="noreferrer noopener"  href={`https://bsky.app/profile/${seg.value}`} >
+                                      @{seg.value}</a>
 
 
 {/if}

@@ -22,7 +22,7 @@ import type { SummaryBlock, SummaryInlineSegment } from '../utils/summary-blocks
 type MainSubView = 'publications' | 'summary';
 
 /** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
+ *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
  *  Nuxt so the route is the source of truth. */
 type InitialMainSubView = MainSubView;
 import type { Locale } from '../utils/i18n';
@@ -75,7 +75,7 @@ type AppProps = {
   onDiscuterRetry?: () => void;
   /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
   mainSubView?: MainSubView;
-  /** Boot-time sub-view from the URL (synthese-du-… vs actualites-du-…).
+  /** Boot-time sub-view from the URL (synthese-des-actus-du-… vs actualites-du-…).
    *  AppShell uses it to set mainSubView on mount + when the prop changes. */
   initialMainSubView?: InitialMainSubView;
   /** Whether the summary fetch is in flight for the current date. */
@@ -99,7 +99,7 @@ export default function App(props: AppProps) {
       );
     },
     /** "Synthèse du {long-date}" — shown in the popular-news strip when the
-     *  day-page sub-view is "summary" (URL pattern /YYYY-MM-DD/synthese-du-…). */
+     *  day-page sub-view is "summary" (URL pattern /YYYY-MM-DD/synthese-des-actus-du-…). */
     get synthesisHeadline(): string {
       return t(
         'header.synthesis',
@@ -322,7 +322,7 @@ export default function App(props: AppProps) {
                                         target="_blank"
                                         rel="noreferrer noopener"
                                       >
-                                        {seg.value}
+                                        @{seg.value}
                                       </a>
                                     </Show>
                                   </>
@@ -570,7 +570,14 @@ export default function App(props: AppProps) {
           text-decoration: none;
           border-bottom: 1px solid currentColor;
         }
-        .rdp-app__summary-handle:hover { color: var(--color-brand-active); }
+        /* Keep the colour fixed on hover; only the underline thickens
+           subtly to indicate interactivity. */
+        .rdp-app__summary-handle:hover,
+        .rdp-app__summary-handle:active,
+        .rdp-app__summary-handle:focus {
+          color: var(--color-brand);
+        }
+        .rdp-app__summary-handle:hover { border-bottom-width: 2px; }
         .rdp-app__synthesis-title {
           font-family: Signika, sans-serif;
           font-size: 1.6rem;

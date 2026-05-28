@@ -9,7 +9,7 @@ const props = defineProps<{
   initialDate?: Date;
   emptyMessageKey?: string;
   /** Day-page sub-view from the URL: 'publications' (default) for
-   *  /YYYY-MM-DD/actualites-du-… and 'summary' for /YYYY-MM-DD/synthese-du-…. */
+   *  /YYYY-MM-DD/actualites-du-… and 'summary' for /YYYY-MM-DD/synthese-des-actus-du-…. */
   initialMainSubView?: 'publications' | 'summary';
 }>();
 
@@ -74,7 +74,7 @@ function urlForDate(d: Date): string {
 }
 
 function urlForSynthese(d: Date): string {
-  return `/${ymd(d)}/synthese-du-${localizeDay(d)}`;
+  return `/${ymd(d)}/synthese-des-actus-du-${localizeDay(d)}`;
 }
 
 function urlForView(view: ViewKey): string {
@@ -200,7 +200,7 @@ import { parseSummaryMarkdown, type SummaryBlock } from '../utils/parse-summary-
 
 type MainSubView = 'publications' | 'summary';
 
-// The URL is source of truth for the sub-view: the synthese-du-… page
+// The URL is source of truth for the sub-view: the synthese-des-actus-du-… page
 // passes initialMainSubView="summary", the actualites-du-… page leaves it
 // undefined ⇒ "publications".
 const mainSubView = ref<MainSubView>(props.initialMainSubView ?? 'publications');
@@ -232,7 +232,7 @@ async function fetchSummaryFor(d: Date) {
 }
 
 // Fetch lazily whenever the sub-view is "summary" — covers initial mount
-// from /synthese-du-… AND date changes while in synthesis mode.
+// from /synthese-des-actus-du-… AND date changes while in synthesis mode.
 watch(
   [mainSubView, pickedDate],
   ([sub, d]) => {

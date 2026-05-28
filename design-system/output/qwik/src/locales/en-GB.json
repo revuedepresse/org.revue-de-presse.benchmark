@@ -68,6 +68,7 @@
   "snapshots-list.empty": "No list available.",
   "alert.empty.no-content-for-date": "There appears to be no content available for this list and/or for this date.",
   "day.summary.empty": "No synthesis is available for this date.",
+  "header.synthesis": "Synthesis of {date}",
   "day.toggle.ariaLabel": "Switch the day view",
   "day.toggle.publications": "Publications",
   "day.toggle.summary": "Synthesis",
