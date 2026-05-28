@@ -1,0 +1,7 @@
+appId: org.revue_2_presse
+name: Support page renders
+---
+- launchApp: { clearState: true }
+- tapOn: { id: "Sidebar.item./nous-soutenir" }
+- assertVisible: { id: "SupportScreen.root" }
+- assertVisible: { id: "SupportPage.donateLink" }

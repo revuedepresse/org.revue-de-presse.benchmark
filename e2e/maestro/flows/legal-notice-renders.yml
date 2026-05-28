@@ -1,0 +1,7 @@
+appId: org.revue_2_presse
+name: Legal notice renders
+---
+- launchApp: { clearState: true }
+- openLink: "https://revue-de-presse.org/mentions-legales"
+- assertVisible: { id: "LegalNoticeScreen.root" }
+- assertVisible: { id: "LegalNoticePage.heading" }

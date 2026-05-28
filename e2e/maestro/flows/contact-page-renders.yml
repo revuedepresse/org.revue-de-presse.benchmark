@@ -1,0 +1,8 @@
+appId: org.revue_2_presse
+name: Contact page renders
+---
+- launchApp: { clearState: true }
+- tapOn: { id: "Sidebar.item./nous-contacter" }
+- assertVisible: { id: "ContactScreen.root" }
+- assertVisible: { id: "ContactPage.root" }
+- assertVisible: { id: "EmailField.input" }

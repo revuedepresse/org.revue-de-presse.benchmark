@@ -1,0 +1,6 @@
+# Maestro global config — applies to every flow in this directory.
+# Per-app overrides go in the individual flow's `appId:` header.
+
+flows: ./flows
+includeTags: []
+excludeTags: []
