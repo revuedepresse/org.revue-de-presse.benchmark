@@ -11,7 +11,8 @@ SHELL:=/bin/bash
         test \
         linkedin-install linkedin-bootstrap linkedin-post linkedin-post-dry linkedin-test linkedin-typecheck \
         tiktok-install tiktok-bootstrap tiktok-post tiktok-post-dry tiktok-test tiktok-typecheck \
-        bluesky-install bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck
+        bluesky-install bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck \
+        native-desktop-run
 
 NUXT_DIR     := nuxt
 NEXT_DIR     := next
@@ -180,8 +181,11 @@ bluesky-typecheck: ## Typecheck social/bluesky
 native-install:      ## Install native KMP dependencies (Gradle bootstrap)
 	cd native && ./gradlew --no-daemon help
 
-native-test:         ## Run native :domain and :data unit tests (all targets)
-	cd native && ./gradlew :domain:allTests :data:allTests
+native-test:         ## Run native :domain, :data and :design unit tests (all targets)
+	cd native && ./gradlew :domain:allTests :data:allTests :design:allTests
+
+native-desktop-run:  ## Run the native desktop app via Gradle
+	cd native && ./gradlew :desktopApp:run
 
 native-codegen-test: ## Run design-system codegen script tests
 	cd design-system && pnpm test:scripts
