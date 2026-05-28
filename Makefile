@@ -113,7 +113,7 @@ e2e-show-report: ## Open the last Playwright HTML report in a browser
 
 # -- Aggregates -----------------------------------------------------------
 
-test: nuxt-test next-test linkedin-test tiktok-test bluesky-test e2e-test ## Run all tests (nuxt unit + next unit + linkedin unit + tiktok unit + bluesky unit + e2e)
+test: nuxt-test next-test linkedin-test tiktok-test bluesky-test e2e-test native-test native-codegen-test ## Run all tests (nuxt unit + next unit + linkedin unit + tiktok unit + bluesky unit + e2e)
 
 # -- LinkedIn -------------------------------------------------------------
 
@@ -174,6 +174,17 @@ bluesky-test: ## Run social/bluesky unit tests
 
 bluesky-typecheck: ## Typecheck social/bluesky
 	@$(MAKE) -C $(BLUESKY_DIR) typecheck
+
+# -- Native KMP -----------------------------------------------------------
+
+native-install:      ## Install native KMP dependencies (Gradle bootstrap)
+	cd native && ./gradlew --no-daemon help
+
+native-test:         ## Run native :domain unit tests (all targets)
+	cd native && ./gradlew :domain:allTests
+
+native-codegen-test: ## Run design-system codegen script tests
+	cd design-system && pnpm test:scripts
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
