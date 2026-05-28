@@ -154,5 +154,6 @@
   "pages.support.section-2.title": "Soyez partie prenante du projet",
   "pages.sources.title": "Sources des brèves",
   "pages.sources.intro": "Les sources des brèves de publications triées par popularité en fin de chaque journée proviennent des comptes Bluesky de médias Français.",
-  "pages.sources.footnote": "La popularité est déduite des partages des publications depuis Bluesky."
+  "pages.sources.footnote": "La popularité est déduite des partages des publications depuis Bluesky.",
+  "header.wordmark": "Revue de presse"
 }
