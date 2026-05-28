@@ -39,4 +39,17 @@ kotlin {
     }
 }
 
+// androidx.compose.material3.adaptive:adaptive:1.0.0 pulls in androidx.compose.*:1.6.5
+// which lacks MathHelpersKt.fastCbrt required by the JetBrains Compose 1.7.1 Oklab
+// colour-space converter (triggered by CheckboxDefaults.colors via animateColorAsState).
+// Force the JetBrains 1.7.1 ui-util on the JVM test classpath so fastCbrt resolves.
+configurations.named("jvmTestRuntimeClasspath") {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "androidx.compose.ui" && requested.name == "ui-util-desktop") {
+            useTarget("org.jetbrains.compose.ui:ui-util-desktop:1.7.1")
+            because("fastCbrt missing in androidx 1.6.5; replaced by JetBrains Compose 1.7.1")
+        }
+    }
+}
+
 kover { reports { verify { rule { minBound(75) } } } }
