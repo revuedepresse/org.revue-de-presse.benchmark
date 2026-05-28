@@ -50,7 +50,7 @@ export default class Checkbox extends LitElement {
                     display: inline-flex;
                     align-items: center;
                     gap: var(--separation-1);
-                    font-family: "Roboto", sans-serif;
+                    font-family: Roboto, sans-serif;
                     font-size: var(--font-size-content);
                     color: var(--color-content-text);
                     cursor: pointer;

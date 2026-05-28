@@ -40,7 +40,7 @@
         .rdp-metrics-bar {
           display: inline-flex;
           gap: var(--separation-2);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-vanity-metric);
           line-height: var(--line-spacing-vanity-metric, 25px);
         }

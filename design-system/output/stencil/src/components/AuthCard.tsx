@@ -173,11 +173,11 @@ export class AuthCard {
           border-radius: var(--radius-default);
           display: grid;
           gap: var(--separation-1);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
         }
         .rdp-auth-card__title {
           margin: 0;
-          font-family: "Signika", sans-serif;
+          font-family: Signika, sans-serif;
           color: var(--color-content-text);
           text-align: center;
         }

@@ -40,7 +40,7 @@ import { MIN_LENGTH_NO_MFA } from "../utils/password";
       >
       <style>
         {{\`
-                .rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: &quot;Roboto&quot;, sans-serif; }
+                .rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: Roboto, sans-serif; }
                 .rdp-textfield__label {
                   font-size: var(--font-size-publication-date);
                   color: var(--color-content-text);

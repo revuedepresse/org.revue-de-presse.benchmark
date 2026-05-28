@@ -49,7 +49,7 @@ import type { Locale } from "../utils/i18n";
                   background: var(--color-white);
                   border: 1px solid var(--color-brand);
                   border-radius: var(--radius-default);
-                  font-family: &quot;Roboto&quot;, sans-serif;
+                  font-family: Roboto, sans-serif;
                   font-size: var(--font-size-content);
                 }
                 .rdp-month-picker__item {
@@ -59,7 +59,7 @@ import type { Locale } from "../utils/i18n";
                   border-bottom: 1px solid var(--color-brand);
                 }
                 .rdp-month-picker__item:last-child { border-bottom: none; }
-                .rdp-month-picker__item[data-future=&quot;true&quot;] {
+                .rdp-month-picker__item[data-future=true] {
                   color: var(--color-light-grey);
                   background: var(--color-background-other-month);
                   cursor: not-allowed;

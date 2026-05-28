@@ -29,7 +29,7 @@ import { t } from "../utils/i18n";
                   padding: var(--separation-1) var(--separation-2);
                   background: var(--alert-bg-empty);
                   color: var(--alert-fg-empty);
-                  font-family: &quot;Roboto&quot;, sans-serif;
+                  font-family: Roboto, sans-serif;
                   font-size: var(--font-size-content);
                   border-radius: var(--radius-default);
                 }

@@ -117,16 +117,16 @@ type LegalNoticePageProps = {
                   background: var(--color-white);
                   border-radius: var(--radius-default);
                   padding: var(--separation-3);
-                  font-family: &quot;Roboto&quot;, sans-serif;
+                  font-family: Roboto, sans-serif;
                   color: var(--color-content-text);
                 }
                 .rdp-legal-notice h1 {
-                  font-family: &quot;Signika&quot;, sans-serif;
+                  font-family: Signika, sans-serif;
                   color: var(--color-brand);
                   margin: 0 0 var(--separation-2);
                 }
                 .rdp-legal-notice h2 {
-                  font-family: &quot;Signika&quot;, sans-serif;
+                  font-family: Signika, sans-serif;
                   color: var(--color-brand);
                   font-size: var(--font-size-status-text);
                   margin: var(--separation-2) 0 var(--separation-1);

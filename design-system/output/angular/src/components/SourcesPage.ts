@@ -29,11 +29,11 @@ import { Component } from "@angular/core";
                   background: var(--color-white);
                   border-radius: var(--radius-default);
                   padding: var(--separation-3);
-                  font-family: &quot;Roboto&quot;, sans-serif;
+                  font-family: Roboto, sans-serif;
                   color: var(--color-content-text);
                 }
                 .rdp-sources-page h1 {
-                  font-family: &quot;Signika&quot;, sans-serif;
+                  font-family: Signika, sans-serif;
                   color: var(--color-brand);
                   margin: 0 0 var(--separation-2);
                 }

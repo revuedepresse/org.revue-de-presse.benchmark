@@ -53,7 +53,7 @@ import { t } from "../utils/i18n";
                   gap: var(--separation-1);
                 }
                 .rdp-logo__wordmark {
-                  font-family: &quot;Signika&quot;, sans-serif;
+                  font-family: Signika, sans-serif;
                   font-size: 24px;
                   color: var(--color-brand);
                 }

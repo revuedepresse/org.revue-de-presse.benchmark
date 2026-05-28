@@ -12,7 +12,7 @@
           gap: var(--separation-1);
           padding: calc(3 * var(--separation-2)) var(--separation-2);
           color: var(--color-light-grey);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
         }
         .rdp-spinner__ring {

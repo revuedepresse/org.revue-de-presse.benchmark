@@ -25,7 +25,7 @@ import type { ErrorMessage } from "../types";
                     .rdp-form-error {
                       color: var(--form-error-fg);
                       font-size: var(--font-size-publication-date);
-                      font-family: &quot;Roboto&quot;, sans-serif;
+                      font-family: Roboto, sans-serif;
                       margin-top: var(--separation-1);
                     }
                     .rdp-form-error__item { margin: 0; }

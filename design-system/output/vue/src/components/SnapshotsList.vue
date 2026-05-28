@@ -49,7 +49,7 @@
           background: var(--color-white);
           border: 1px solid var(--color-border);
           border-radius: var(--radius-default);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
         }
         .rdp-snapshots-list--sheet { position: fixed; inset: 0; display: grid; align-items: end; }
         .rdp-snapshots-list__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }

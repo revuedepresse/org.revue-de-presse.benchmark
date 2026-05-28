@@ -119,7 +119,7 @@ export class CalendarMonthBar {
           gap: var(--separation-1);
           align-items: center;
           padding: var(--separation-1) var(--separation-2);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
         }
         .rdp-calendar-month-bar__pill {
           flex: 0 0 auto;
@@ -127,9 +127,9 @@ export class CalendarMonthBar {
           align-items: center;
           gap: var(--separation-1);
           width: auto;
-          /* Negative margin compensates for the pill's 1px outline so the
-             pill's left edge aligns with the bar-content edge; combined with
-             the pill's own internal padding the icon ends up matching the
+          /* Negative margin compensates for the pill’s 1px outline so the
+             pill’s left edge aligns with the bar-content edge; combined with
+             the pill’s own internal padding the icon ends up matching the
              action-bar icon above (both at +var(--separation-2) inside). */
           margin-left: -1px;
           background: var(--color-white);
@@ -163,7 +163,7 @@ export class CalendarMonthBar {
           justify-content: center;
         }
         .rdp-calendar-month-bar__btn:hover { color: var(--color-brand-active); }
-        .rdp-calendar-month-bar__btn[aria-disabled="true"] {
+        .rdp-calendar-month-bar__btn[aria-disabled=true] {
           color: var(--color-light-grey);
           cursor: not-allowed;
           opacity: 0.5;

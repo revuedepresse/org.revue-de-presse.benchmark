@@ -239,7 +239,7 @@ export default function BannerAbout(props: BannerAboutProps) {
           width: 100%;
           margin: 0;
           box-sizing: border-box;
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-footer-paragraph);
           line-height: var(--line-height-base);
           overflow: hidden;
@@ -249,7 +249,7 @@ export default function BannerAbout(props: BannerAboutProps) {
           display: flex;
           align-items: center;
           gap: var(--separation-1);
-          font-family: "Signika", sans-serif;
+          font-family: Signika, sans-serif;
           font-size: var(--font-size-footer-title);
           line-height: 30px;
           margin: calc(3 * var(--separation-1)) 0 var(--separation-1);

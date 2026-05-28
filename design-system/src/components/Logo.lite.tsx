@@ -44,7 +44,7 @@ export default function Logo(props: LogoProps) {
           gap: var(--separation-1);
         }
         .rdp-logo__wordmark {
-          font-family: "Signika", sans-serif;
+          font-family: Signika, sans-serif;
           font-size: 24px;
           color: var(--color-brand);
         }

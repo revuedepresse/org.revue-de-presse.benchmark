@@ -39,7 +39,7 @@ export default function YearPicker(props: YearPickerProps) {
           background: var(--color-white);
           border: 1px solid var(--color-brand);
           border-radius: var(--radius-default);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
         }
         .rdp-year-picker__item {

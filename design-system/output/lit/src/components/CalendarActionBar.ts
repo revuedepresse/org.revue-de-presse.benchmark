@@ -70,7 +70,7 @@ position?: 'top' | 'bottom';
                 /* Square bottom corners so the band visually merges with the
                    month bar / day grid below it. */
                 border-radius: var(--radius-default) var(--radius-default) 0 0;
-                font-family: "Roboto", sans-serif;
+                font-family: Roboto, sans-serif;
               }
               .rdp-calendar-action-bar--bottom {
                 border-radius: 0;
@@ -115,7 +115,7 @@ position?: 'top' | 'bottom';
                  left/right instead of up/down. */
               .rdp-calendar-action-bar__btn--prev svg { transform: rotate(-90deg); }
               .rdp-calendar-action-bar__btn--next svg { transform: rotate(-90deg); }
-              .rdp-calendar-action-bar__btn[aria-disabled="true"] {
+              .rdp-calendar-action-bar__btn[aria-disabled=true] {
                 cursor: not-allowed;
                 opacity: 0.5;
               }

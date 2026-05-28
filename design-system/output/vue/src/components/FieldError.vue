@@ -15,7 +15,7 @@
             color: var(--form-error-fg);
             margin: 0;
             padding-left: var(--separation-1);
-            font-family: "Roboto", sans-serif;
+            font-family: Roboto, sans-serif;
           }
         `
       }}</component>

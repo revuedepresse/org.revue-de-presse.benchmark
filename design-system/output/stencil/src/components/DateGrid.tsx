@@ -132,7 +132,7 @@ export class DateGrid {
           table-layout: fixed;
           border-collapse: separate;
           border-spacing: 2px;
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-calendar-month-day-cell);
         }
         .rdp-date-grid__weekday {
@@ -153,11 +153,11 @@ export class DateGrid {
           text-align: center;
           box-sizing: border-box;
         }
-        .rdp-date-grid__cell[data-other-month="true"] {
+        .rdp-date-grid__cell[data-other-month=true] {
           background: var(--color-background-other-month);
           color: var(--color-light-grey);
         }
-        .rdp-date-grid__cell[data-future="true"] {
+        .rdp-date-grid__cell[data-future=true] {
           color: var(--color-light-grey);
           background: var(--color-background-future-date);
           cursor: not-allowed;

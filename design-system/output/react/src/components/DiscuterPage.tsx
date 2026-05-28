@@ -351,7 +351,7 @@ function DiscuterPage(props: DiscuterPageProps) {
           background: var(--color-white);
           border-radius: var(--radius-default);
           padding: var(--separation-3);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
           color: var(--color-content-text);
           display: flex;
           flex-direction: column;
@@ -382,7 +382,7 @@ function DiscuterPage(props: DiscuterPageProps) {
           outline-offset: 2px;
         }
         .rdp-discuter__title {
-          font-family: "Signika", sans-serif;
+          font-family: Signika, sans-serif;
           color: var(--color-brand);
           margin: 0;
         }
@@ -417,7 +417,7 @@ function DiscuterPage(props: DiscuterPageProps) {
           flex: 1 1 240px;
           min-width: 0;
           padding: var(--separation-1);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
           line-height: var(--line-height-base);
           border: 1px solid var(--color-border);
@@ -445,7 +445,7 @@ function DiscuterPage(props: DiscuterPageProps) {
           border: none;
           border-radius: var(--radius-default);
           padding: var(--separation-1) var(--separation-2);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
           cursor: pointer;
           transition: filter 160ms ease, background 160ms ease;
@@ -471,7 +471,7 @@ function DiscuterPage(props: DiscuterPageProps) {
           border: 1px solid var(--button-border-secondary);
           border-radius: var(--radius-default);
           padding: var(--separation-1) var(--separation-2);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
           cursor: pointer;
         }
@@ -557,7 +557,7 @@ function DiscuterPage(props: DiscuterPageProps) {
           gap: var(--separation-1);
         }
         .rdp-discuter__sources-title {
-          font-family: "Signika", sans-serif;
+          font-family: Signika, sans-serif;
           font-size: var(--font-size-status-text);
           color: var(--color-brand);
           margin: 0;
@@ -578,7 +578,7 @@ function DiscuterPage(props: DiscuterPageProps) {
         .rdp-discuter__source-n {
           font-weight: bold;
           color: var(--color-brand);
-          font-family: "Signika", sans-serif;
+          font-family: Signika, sans-serif;
           font-size: var(--font-size-status-text);
         }
         .rdp-discuter__composer {
@@ -593,7 +593,7 @@ function DiscuterPage(props: DiscuterPageProps) {
         .rdp-discuter__composer-input {
           width: 100%;
           padding: var(--separation-1);
-          font-family: "Roboto", sans-serif;
+          font-family: Roboto, sans-serif;
           font-size: var(--font-size-content);
           line-height: var(--line-height-base);
           border: 1px solid var(--color-border);
