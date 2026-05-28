@@ -48,6 +48,7 @@ type AppProps = {
   onDiscuterDraftChange?: (next: string) => void;
   onDiscuterSend?: (text: string) => void;
   onDiscuterCancel?: () => void;
+  onDiscuterClear?: () => void;
   onDiscuterRetry?: () => void;
 };
 
@@ -318,6 +319,7 @@ function App(props: AppProps) {
                   onDraftChange={(next) => props.onDiscuterDraftChange?.(next)}
                   onSend={(text) => props.onDiscuterSend?.(text)}
                   onCancel={(event) => props.onDiscuterCancel?.()}
+                  onClear={(event) => props.onDiscuterClear?.()}
                   onRetry={(event) => props.onDiscuterRetry?.()}
                 ></DiscuterPage>
               </Show>
@@ -407,6 +409,7 @@ function App(props: AppProps) {
                 onDraftChange={(next) => props.onDiscuterDraftChange?.(next)}
                 onSend={(text) => props.onDiscuterSend?.(text)}
                 onCancel={(event) => props.onDiscuterCancel?.()}
+                onClear={(event) => props.onDiscuterClear?.()}
                 onRetry={(event) => props.onDiscuterRetry?.()}
               ></DiscuterPage>
             </Show>

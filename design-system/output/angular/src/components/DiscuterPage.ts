@@ -284,18 +284,27 @@ import type { Locale } from "../utils/i18n";
                 .rdp-discuter__header { display: flex; flex-direction: column; gap: var(--separation-1); }
                 .rdp-discuter__clear {
                   appearance: none;
-                  background: transparent;
-                  border: 1px solid var(--color-border);
+                  background: var(--color-white);
+                  border: 1.5px solid var(--color-brand);
                   border-radius: var(--radius-default);
-                  color: var(--color-content-text);
+                  color: var(--color-brand);
                   font-family: inherit;
                   font-size: var(--font-size-status-text);
-                  padding: 4px 10px;
+                  font-weight: 600;
+                  padding: 8px 14px;
                   cursor: pointer;
                   line-height: 1.2;
+                  transition: background-color 0.15s ease, color 0.15s ease;
                 }
-                .rdp-discuter__clear:hover { background: var(--color-taupe-grey); }
-                .rdp-discuter__clear:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+                .rdp-discuter__clear:hover,
+                .rdp-discuter__clear:focus-visible {
+                  background: var(--color-brand);
+                  color: var(--color-white);
+                }
+                .rdp-discuter__clear:focus-visible {
+                  outline: 2px solid var(--color-brand-active);
+                  outline-offset: 2px;
+                }
                 .rdp-discuter__title {
                   font-family: 'Signika', sans-serif;
                   color: var(--color-brand);

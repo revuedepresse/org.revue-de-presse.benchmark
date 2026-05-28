@@ -120,6 +120,7 @@
               :onDraftChange="(next) => onDiscuterDraftChange?.(next)"
               :onSend="(text) => onDiscuterSend?.(text)"
               :onCancel="(event) => onDiscuterCancel?.()"
+              :onClear="(event) => onDiscuterClear?.()"
               :onRetry="(event) => onDiscuterRetry?.()"
             ></DiscuterPage>
           </template>
@@ -203,6 +204,7 @@
             :onDraftChange="(next) => onDiscuterDraftChange?.(next)"
             :onSend="(text) => onDiscuterSend?.(text)"
             :onCancel="(event) => onDiscuterCancel?.()"
+            :onClear="(event) => onDiscuterClear?.()"
             :onRetry="(event) => onDiscuterRetry?.()"
           ></DiscuterPage>
         </template>
@@ -470,6 +472,7 @@ type AppProps = {
   onDiscuterDraftChange?: (next: string) => void;
   onDiscuterSend?: (text: string) => void;
   onDiscuterCancel?: () => void;
+  onDiscuterClear?: () => void;
   onDiscuterRetry?: () => void;
 };
 

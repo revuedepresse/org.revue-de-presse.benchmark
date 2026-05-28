@@ -71,6 +71,7 @@ export class App {
   @Event() discuterDraftChange: any;
   @Event() discuterSend: any;
   @Event() discuterCancel: any;
+  @Event() discuterClear: any;
   @Event() discuterRetry: any;
   @State() focusedDate = new Date();
   @State() isCalendarOpen = false;
@@ -285,6 +286,7 @@ export class App {
                   onDraftChange={(next) => this.discuterDraftChange?.(next)}
                   onSend={(text) => this.discuterSend?.(text)}
                   onCancel={() => this.discuterCancel?.()}
+                  onClear={() => this.discuterClear?.()}
                   onRetry={() => this.discuterRetry?.()}
                 ></discuter-page>
               ) : null}
@@ -362,6 +364,7 @@ export class App {
                   onDraftChange={(next) => this.discuterDraftChange?.(next)}
                   onSend={(text) => this.discuterSend?.(text)}
                   onCancel={() => this.discuterCancel?.()}
+                  onClear={() => this.discuterClear?.()}
                   onRetry={() => this.discuterRetry?.()}
                 ></discuter-page>
               ) : null}

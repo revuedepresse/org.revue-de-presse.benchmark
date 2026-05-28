@@ -42,6 +42,7 @@ onDiscuterHandleDraftChange?: (next: string) => void;
 onDiscuterDraftChange?: (next: string) => void;
 onDiscuterSend?: (text: string) => void;
 onDiscuterCancel?: () => void;
+onDiscuterClear?: () => void;
 onDiscuterRetry?: () => void;
 }
 
@@ -111,6 +112,7 @@ export let onDiscuterHandleDraftChange: AppProps['onDiscuterHandleDraftChange']=
 export let onDiscuterDraftChange: AppProps['onDiscuterDraftChange']= undefined;
 export let onDiscuterSend: AppProps['onDiscuterSend']= undefined;
 export let onDiscuterCancel: AppProps['onDiscuterCancel']= undefined;
+export let onDiscuterClear: AppProps['onDiscuterClear']= undefined;
 export let onDiscuterRetry: AppProps['onDiscuterRetry']= undefined;
 
 
@@ -274,7 +276,7 @@ initialised = true; });
 
 {/if}
 {#if currentView === 'discuter' }
-<DiscuterPage  status={discuterStatus ?? 'unauthenticated'}  turns={discuterTurns}  citations={discuterCitations}  errorCode={discuterErrorCode}  draft={discuterDraft}  handleDraft={discuterHandleDraft}  handleErrorCode={discuterHandleErrorCode}  onLogin={(handle) => onDiscuterLogin?.(handle)} onHandleDraftChange={(next) => onDiscuterHandleDraftChange?.(next)} onDraftChange={(next) => onDiscuterDraftChange?.(next)} onSend={(text) => onDiscuterSend?.(text)} onCancel={(event) => onDiscuterCancel?.()} onRetry={(event) => onDiscuterRetry?.()}></DiscuterPage>
+<DiscuterPage  status={discuterStatus ?? 'unauthenticated'}  turns={discuterTurns}  citations={discuterCitations}  errorCode={discuterErrorCode}  draft={discuterDraft}  handleDraft={discuterHandleDraft}  handleErrorCode={discuterHandleErrorCode}  onLogin={(handle) => onDiscuterLogin?.(handle)} onHandleDraftChange={(next) => onDiscuterHandleDraftChange?.(next)} onDraftChange={(next) => onDiscuterDraftChange?.(next)} onSend={(text) => onDiscuterSend?.(text)} onCancel={(event) => onDiscuterCancel?.()} onClear={(event) => onDiscuterClear?.()} onRetry={(event) => onDiscuterRetry?.()}></DiscuterPage>
 
 
 {/if}</main></div>
@@ -340,7 +342,7 @@ initialised = true; });
 
 {/if}
 {#if currentView === 'discuter' }
-<DiscuterPage  status={discuterStatus ?? 'unauthenticated'}  turns={discuterTurns}  citations={discuterCitations}  errorCode={discuterErrorCode}  draft={discuterDraft}  onLogin={(event) => onDiscuterLogin?.()} onDraftChange={(next) => onDiscuterDraftChange?.(next)} onSend={(text) => onDiscuterSend?.(text)} onCancel={(event) => onDiscuterCancel?.()} onRetry={(event) => onDiscuterRetry?.()}></DiscuterPage>
+<DiscuterPage  status={discuterStatus ?? 'unauthenticated'}  turns={discuterTurns}  citations={discuterCitations}  errorCode={discuterErrorCode}  draft={discuterDraft}  onLogin={(event) => onDiscuterLogin?.()} onDraftChange={(next) => onDiscuterDraftChange?.(next)} onSend={(text) => onDiscuterSend?.(text)} onCancel={(event) => onDiscuterCancel?.()} onClear={(event) => onDiscuterClear?.()} onRetry={(event) => onDiscuterRetry?.()}></DiscuterPage>
 
 
 {/if}

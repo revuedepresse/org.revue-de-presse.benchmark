@@ -97,6 +97,7 @@ type AppProps = {
   onDiscuterDraftChange?: (next: string) => void;
   onDiscuterSend?: (text: string) => void;
   onDiscuterCancel?: () => void;
+  onDiscuterClear?: () => void;
   onDiscuterRetry?: () => void;
 };
 export const prevDay = function prevDay(
@@ -447,6 +448,7 @@ export const App = component$((props: AppProps) => {
                 )}
                 onSend$={$((event) => props.onDiscuterSend?.(text))}
                 onCancel$={$((event) => props.onDiscuterCancel?.())}
+                onClear$={$((event) => props.onDiscuterClear?.())}
                 onRetry$={$((event) => props.onDiscuterRetry?.())}
               ></DiscuterPage>
             ) : null}
@@ -537,6 +539,7 @@ export const App = component$((props: AppProps) => {
                 )}
                 onSend$={$((event) => props.onDiscuterSend?.(text))}
                 onCancel$={$((event) => props.onDiscuterCancel?.())}
+                onClear$={$((event) => props.onDiscuterClear?.())}
                 onRetry$={$((event) => props.onDiscuterRetry?.())}
               ></DiscuterPage>
             ) : null}

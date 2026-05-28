@@ -51,6 +51,7 @@ type AppProps = {
   onDiscuterDraftChange?: (next: string) => void;
   onDiscuterSend?: (text: string) => void;
   onDiscuterCancel?: () => void;
+  onDiscuterClear?: () => void;
   onDiscuterRetry?: () => void;
 };
 
@@ -166,6 +167,7 @@ import type { Locale } from "../utils/i18n";
                 (draftChange)="onDiscuterDraftChange?.($event)"
                 (send)="onDiscuterSend?.($event)"
                 (cancel)="onDiscuterCancel?.()"
+                (clear)="onDiscuterClear?.()"
                 (retry)="onDiscuterRetry?.()"
               ></discuter-page
             ></ng-container>
@@ -231,6 +233,7 @@ import type { Locale } from "../utils/i18n";
               (draftChange)="onDiscuterDraftChange?.($event)"
               (send)="onDiscuterSend?.($event)"
               (cancel)="onDiscuterCancel?.()"
+              (clear)="onDiscuterClear?.()"
               (retry)="onDiscuterRetry?.()"
             ></discuter-page
           ></ng-container>
@@ -458,6 +461,7 @@ export default class App {
   @Input() onDiscuterDraftChange!: AppProps["onDiscuterDraftChange"];
   @Input() onDiscuterSend!: AppProps["onDiscuterSend"];
   @Input() onDiscuterCancel!: AppProps["onDiscuterCancel"];
+  @Input() onDiscuterClear!: AppProps["onDiscuterClear"];
   @Input() onDiscuterRetry!: AppProps["onDiscuterRetry"];
 
   focusedDate = new Date();

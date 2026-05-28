@@ -50,6 +50,7 @@ type AppProps = {
   onDiscuterDraftChange?: (next: string) => void;
   onDiscuterSend?: (text: string) => void;
   onDiscuterCancel?: () => void;
+  onDiscuterClear?: () => void;
   onDiscuterRetry?: () => void;
 };
 import { t } from "../utils/i18n";
@@ -292,6 +293,7 @@ function App(props: AppProps) {
                 onDraftChange={(next) => props.onDiscuterDraftChange?.(next)}
                 onSend={(text) => props.onDiscuterSend?.(text)}
                 onCancel={(event) => props.onDiscuterCancel?.()}
+                onClear={(event) => props.onDiscuterClear?.()}
                 onRetry={(event) => props.onDiscuterRetry?.()}
               />
             ) : null}
@@ -356,6 +358,7 @@ function App(props: AppProps) {
                 onDraftChange={(next) => props.onDiscuterDraftChange?.(next)}
                 onSend={(text) => props.onDiscuterSend?.(text)}
                 onCancel={(event) => props.onDiscuterCancel?.()}
+                onClear={(event) => props.onDiscuterClear?.()}
                 onRetry={(event) => props.onDiscuterRetry?.()}
               />
             ) : null}

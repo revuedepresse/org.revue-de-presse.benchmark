@@ -65,6 +65,7 @@ type AppProps = {
  onDiscuterDraftChange?: (next: string) => void;
  onDiscuterSend?: (text: string) => void;
  onDiscuterCancel?: () => void;
+ onDiscuterClear?: () => void;
  onDiscuterRetry?: () => void;
 }
 
@@ -114,6 +115,7 @@ type AppProps = {
 @property() onDiscuterDraftChange: any
 @property() onDiscuterSend: any
 @property() onDiscuterCancel: any
+@property() onDiscuterClear: any
 @property() onDiscuterRetry: any
 
        @state()  focusedDate= new Date()
@@ -244,7 +246,7 @@ this.initialised = true }
              html`<sources-page ></sources-page>`
            : null}
        ${this.currentView === 'discuter' ?
-             html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  .handleDraft=${this.discuterHandleDraft}  .handleErrorCode=${this.discuterHandleErrorCode}  @login=${(handle) => this.onDiscuterLogin?.(handle)}  @handledraftchange=${(next) => this.onDiscuterHandleDraftChange?.(next)}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
+             html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  .handleDraft=${this.discuterHandleDraft}  .handleErrorCode=${this.discuterHandleErrorCode}  @login=${(handle) => this.onDiscuterLogin?.(handle)}  @handledraftchange=${(next) => this.onDiscuterHandleDraftChange?.(next)}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @clear=${(event) => this.onDiscuterClear?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
            : null}</main></div>`
             : null}
         ${(this.layout ?? 'desktop') === 'mobile' ?
@@ -283,7 +285,7 @@ this.initialised = true }
              html`<sources-page ></sources-page>`
            : null}
        ${this.currentView === 'discuter' ?
-             html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  @login=${(event) => this.onDiscuterLogin?.()}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
+             html`<discuter-page  .status=${this.discuterStatus ?? 'unauthenticated'}  .turns=${this.discuterTurns}  .citations=${this.discuterCitations}  .errorCode=${this.discuterErrorCode}  .draft=${this.discuterDraft}  @login=${(event) => this.onDiscuterLogin?.()}  @draftchange=${(next) => this.onDiscuterDraftChange?.(next)}  @send=${(text) => this.onDiscuterSend?.(text)}  @cancel=${(event) => this.onDiscuterCancel?.()}  @clear=${(event) => this.onDiscuterClear?.()}  @retry=${(event) => this.onDiscuterRetry?.()} ></discuter-page>`
            : null}
        ${!this.captureMode ?
              html`<banner-about  @legalnoticeclick=${(event) => this.goTo('legal')}  @termsofserviceclick=${(event) => this.goTo('terms')}  @contactclick=${(event) => this.goTo('contact')}  @supportclick=${(event) => this.goTo('support')}  @sourcesclick=${(event) => this.goTo('sources')}  @discuterclick=${(event) => this.goTo('discuter')} ></banner-about>`
