@@ -163,7 +163,7 @@ jobs:
       - run: cd design-system && pnpm install --frozen-lockfile
       - run: cd design-system && pnpm test:scripts
       - run: cd native && ./gradlew :domain:compileKotlinJvm
-      - run: cd native && ./gradlew :domain:allTests :data:allTests :design:allTests :ui:jvmTest
+      - run: cd native && ./gradlew :domain:allTests :data:allTests :design:allTests :ui:allTests
 
   native-desktop-smoke:
     runs-on: ubuntu-latest
