@@ -37,7 +37,7 @@
     "@zxcvbn-ts/language-fr": "^3",
     "alpinejs": "^3",
     "histoire": "^0.17.17",
-    "lit": "^3.2.0",
+    "lit": "^3.3.3",
     "pixelmatch": "^7.2.0",
     "playwright": "^1.60.0",
     "pngjs": "^7.0.0",

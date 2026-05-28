@@ -64,8 +64,8 @@ importers:
         specifier: ^0.17.17
         version: 0.17.17(@types/node@25.9.1)(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))
       lit:
-        specifier: ^3.2.0
-        version: 3.3.2
+        specifier: ^3.3.3
+        version: 3.3.3
       pixelmatch:
         specifier: ^7.2.0
         version: 7.2.0
@@ -118,79 +118,6 @@ importers:
       vue-tsc:
         specifier: ^2.0.0
         version: 2.2.12(typescript@5.9.3)
-
-  apps/demo-react:
-    dependencies:
-      react:
-        specifier: ^19.0.0
-        version: 19.2.6
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.2.6(react@19.2.6)
-    devDependencies:
-      '@vitejs/plugin-react':
-        specifier: ^6.0.2
-        version: 6.0.2(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))
-      vite:
-        specifier: ^7.0.0
-        version: 7.3.3(@types/node@25.9.1)(jiti@1.21.7)
-
-  packages/provider-alpine:
-    dependencies:
-      alpinejs:
-        specifier: '>=3'
-        version: 3.15.12
-
-  packages/provider-angular:
-    dependencies:
-      '@angular/common':
-        specifier: '>=20'
-        version: 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)
-      '@angular/core':
-        specifier: '>=20'
-        version: 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)
-
-  packages/provider-lit:
-    dependencies:
-      lit:
-        specifier: '>=3'
-        version: 3.3.2
-
-  packages/provider-preact:
-    dependencies:
-      preact:
-        specifier: '>=10'
-        version: 10.29.1
-
-  packages/provider-qwik:
-    dependencies:
-      '@builder.io/qwik':
-        specifier: '>=1.5'
-        version: 1.19.2(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))
-
-  packages/provider-react:
-    dependencies:
-      react:
-        specifier: '>=18'
-        version: 19.2.6
-
-  packages/provider-solid:
-    dependencies:
-      solid-js:
-        specifier: '>=1'
-        version: 1.9.12
-
-  packages/provider-stencil:
-    dependencies:
-      '@stencil/core':
-        specifier: '>=4'
-        version: 4.43.4
-
-  packages/provider-svelte:
-    dependencies:
-      svelte:
-        specifier: ^5.55.9
-        version: 5.55.9
 
   packages/provider-vue:
     dependencies:
@@ -400,13 +327,6 @@ packages:
 
   '@builder.io/mitosis@0.13.0':
     resolution: {integrity: sha512-vuBOpduBnBdy9vL3VA65cuBIf7LPN9VoB4D4veMi/TQCdXDkeKdTgIhYeP7YioIEnINBmTWgoDBnj6wEARIwuw==}
-
-  '@builder.io/qwik@1.19.2':
-    resolution: {integrity: sha512-aLQIZm3BdX6jStSR6XdXhT9jQo5JN9bxuYJOD8p5IhZxBNgjQaRwIfZkXksgs6RkzdTsSpXo5+G6lkb/jMZQsg==}
-    engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
-    hasBin: true
-    peerDependencies:
-      vite: ^7.0.0
 
   '@builder.io/qwik@1.20.0':
     resolution: {integrity: sha512-mPnENUgyOGYQW9UNGGeGP67hg8rI/hi4WQ0z/rM3PAgQl3UjfreBxyj1njxvSLAz5nei6yD20/W/eywVIxOCIw==}
@@ -643,8 +563,8 @@ packages:
   '@lezer/lr@1.4.10':
     resolution: {integrity: sha512-rnCpTIBafOx4mRp43xOxDJbFipJm/c0cia/V5TiGlhmMa+wsSdoGmUN3w5Bqrks/09Q/D4tNAmWaT8p6NRi77A==}
 
-  '@lit-labs/ssr-dom-shim@1.5.1':
-    resolution: {integrity: sha512-Aou5UdlSpr5whQe8AA/bZG0jMj96CoJIWbGfZ91qieWu5AWUMKw8VR/pAkQkJYvBNhmCcWnZlyyk5oze8JIqYA==}
+  '@lit-labs/ssr-dom-shim@1.6.0':
+    resolution: {integrity: sha512-VHb0ALPMTlgKjM6yIxxoQNnpKyUKLD04VzeQdsiXkMqkvYlAHxq9glGLmgbb889/1GsohSOAjvQYoiBppXFqrQ==}
 
   '@lit/reactive-element@2.1.2':
     resolution: {integrity: sha512-pbCDiVMnne1lYUIaYNN5wrwQXDtHaYtg7YEFPeW+hws6U47WeFvISGUWekPGKWOP1ygrs0ef0o1VJMk1exos5A==}
@@ -1969,11 +1889,11 @@ packages:
   lit-element@4.2.2:
     resolution: {integrity: sha512-aFKhNToWxoyhkNDmWZwEva2SlQia+jfG0fjIWV//YeTaWrVnOxD89dPKfigCUspXFmjzOEUQpOkejH5Ly6sG0w==}
 
-  lit-html@3.3.2:
-    resolution: {integrity: sha512-Qy9hU88zcmaxBXcc10ZpdK7cOLXvXpRoBxERdtqV9QOrfpMZZ6pSYP91LhpPtap3sFMUiL7Tw2RImbe0Al2/kw==}
+  lit-html@3.3.3:
+    resolution: {integrity: sha512-el8M6jK2o3RXBnrSHX3ZKrsN8zEV63pSExTO1wYJz7QndGYZ8353e2a5PPX+qHe2aGayfnchQmkAojaWAREOIA==}
 
-  lit@3.3.2:
-    resolution: {integrity: sha512-NF9zbsP79l4ao2SNrH3NkfmFgN/hBYSQo90saIVI1o5GpjAdCPVstVzO1MrLOakHoEhYkrtRjPK6Ob521aoYWQ==}
+  lit@3.3.3:
+    resolution: {integrity: sha512-fycuvZg/hkpozL00lm1pEJH5nN/lr9ZXd6mJI2HSN4+Bzc+LDNdEApJ6HFbPkdFNHLvOplIIuJvxkS4XUxqirw==}
 
   load-tsconfig@0.2.5:
     resolution: {integrity: sha512-IXO6OCs9yg8tMKzfPZ1YmheJbZCiEsnBdcB03l0OcfK9prKnJb96siuHCr5Fl37/yo9DnKU+TLpxzTUspw9shg==}
@@ -2325,15 +2245,6 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
-  react-dom@19.2.6:
-    resolution: {integrity: sha512-0prMI+hvBbPjsWnxDLxlCGyM8PN6UuWjEUCYmZhO67xIV9Xasa/r/vDnq+Xyq4Lo27g8QSbO5YzARu0D1Sps3g==}
-    peerDependencies:
-      react: ^19.2.6
-
-  react@19.2.6:
-    resolution: {integrity: sha512-sfWGGfavi0xr8Pg0sVsyHMAOziVYKgPLNrS7ig+ivMNb3wbCBw3KxtflsGBAwD3gYQlE/AEZsTLgToRrSCjb0Q==}
-    engines: {node: '>=0.10.0'}
-
   readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
@@ -2396,9 +2307,6 @@ packages:
     resolution: {integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==}
     engines: {node: '>=v12.22.7'}
 
-  scheduler@0.27.0:
-    resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
-
   section-matter@1.0.0:
     resolution: {integrity: sha512-vfD3pmTzGpufjScBh50YHKzEu2lxBWhVEHsNGoEXmCmn2hKGfeNLYMzCJpe8cD7gqX7TJluOVpBkAequ6dgMmA==}
     engines: {node: '>=4'}
@@ -2457,9 +2365,6 @@ packages:
 
   snake-case@3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
-
-  solid-js@1.9.12:
-    resolution: {integrity: sha512-QzKaSJq2/iDrWR1As6MHZQ8fQkdOBf8GReYb7L5iKwMGceg7HxDcaOHk0at66tNgn9U2U7dXo8ZZpLIAmGMzgw==}
 
   solid-js@1.9.13:
     resolution: {integrity: sha512-6hJeJMOcEX8ktqjpDoJZEmld3ijvcvWBDtiXBm7f4332SiFN66QeAQI1REQshvyUoISsSeJ4PHDauKYbwao9JQ==}
@@ -3258,13 +3163,6 @@ snapshots:
       - sugarss
       - supports-color
 
-  '@builder.io/qwik@1.19.2(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))':
-    dependencies:
-      csstype: 3.2.3
-      launch-editor: 2.13.2
-      rollup: 4.60.3
-      vite: 7.3.3(@types/node@25.9.1)(jiti@1.21.7)
-
   '@builder.io/qwik@1.20.0(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))':
     dependencies:
       csstype: 3.2.3
@@ -3489,11 +3387,11 @@ snapshots:
     dependencies:
       '@lezer/common': 1.5.2
 
-  '@lit-labs/ssr-dom-shim@1.5.1': {}
+  '@lit-labs/ssr-dom-shim@1.6.0': {}
 
   '@lit/reactive-element@2.1.2':
     dependencies:
-      '@lit-labs/ssr-dom-shim': 1.5.1
+      '@lit-labs/ssr-dom-shim': 1.6.0
 
   '@marijn/find-cluster-break@1.0.2': {}
 
@@ -4844,19 +4742,19 @@ snapshots:
 
   lit-element@4.2.2:
     dependencies:
-      '@lit-labs/ssr-dom-shim': 1.5.1
+      '@lit-labs/ssr-dom-shim': 1.6.0
       '@lit/reactive-element': 2.1.2
-      lit-html: 3.3.2
+      lit-html: 3.3.3
 
-  lit-html@3.3.2:
+  lit-html@3.3.3:
     dependencies:
       '@types/trusted-types': 2.0.7
 
-  lit@3.3.2:
+  lit@3.3.3:
     dependencies:
       '@lit/reactive-element': 2.1.2
       lit-element: 4.2.2
-      lit-html: 3.3.2
+      lit-html: 3.3.3
 
   load-tsconfig@0.2.5: {}
 
@@ -5145,13 +5043,6 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  react-dom@19.2.6(react@19.2.6):
-    dependencies:
-      react: 19.2.6
-      scheduler: 0.27.0
-
-  react@19.2.6: {}
-
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.2
@@ -5262,8 +5153,6 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
-  scheduler@0.27.0: {}
-
   section-matter@1.0.0:
     dependencies:
       extend-shallow: 2.0.1
@@ -5311,12 +5200,6 @@ snapshots:
     dependencies:
       dot-case: 3.0.4
       tslib: 2.8.1
-
-  solid-js@1.9.12:
-    dependencies:
-      csstype: 3.2.3
-      seroval: 1.5.4
-      seroval-plugins: 1.5.4(seroval@1.5.4)
 
   solid-js@1.9.13:
     dependencies:
