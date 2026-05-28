@@ -25,8 +25,7 @@
       >
         {{ name }}
       </li> </template
-    ><component :is="'style'">{{
-      `
+    ><component :is="'style'" v-html="`
         .rdp-month-picker {
           list-style: none;
           margin: 0 var(--separation-2) var(--separation-2);
@@ -54,8 +53,7 @@
           background: var(--color-brand);
           color: var(--color-white);
         }
-      `
-    }}</component>
+      `"></component>
   </ul>
 </template>
 

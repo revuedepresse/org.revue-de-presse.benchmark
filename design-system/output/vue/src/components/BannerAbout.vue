@@ -134,8 +134,7 @@
         </a>
       </div>
     </div>
-    <component :is="'style'">{{
-      `
+    <component :is="'style'" v-html="`
         .rdp-banner-about {
           background: var(--color-content-background);
           color: var(--color-content-font);
@@ -224,8 +223,7 @@
           align-self: center;
           color: var(--color-white);
         }
-      `
-    }}</component>
+      `"></component>
   </footer>
 </template>
 

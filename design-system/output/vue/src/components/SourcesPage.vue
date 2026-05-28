@@ -14,8 +14,7 @@
     <p id="rdp-sources-page-footnote" class="rdp-sources-page__footnote">
       La popularité est déduite des partages des publications depuis Bluesky.
     </p>
-    <component :is="'style'">{{
-      `
+    <component :is="'style'" v-html="`
         .rdp-sources-page {
           background: var(--color-white);
           border-radius: var(--radius-default);
@@ -37,7 +36,6 @@
           padding-top: var(--separation-1);
           margin-top: var(--separation-2);
         }
-      `
-    }}</component>
+      `"></component>
   </article>
 </template>

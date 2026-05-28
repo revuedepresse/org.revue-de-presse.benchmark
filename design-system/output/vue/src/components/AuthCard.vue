@@ -109,8 +109,7 @@
       </div>
     </template>
 
-    <component :is="'style'">{{
-      `
+    <component :is="'style'" v-html="`
         .rdp-auth-card { display: grid; gap: var(--separation-2); }
         .rdp-auth-card__panel {
           background: var(--color-white);
@@ -126,8 +125,7 @@
           color: var(--color-content-text);
           text-align: center;
         }
-      `
-    }}</component>
+      `"></component>
   </section>
 </template>
 

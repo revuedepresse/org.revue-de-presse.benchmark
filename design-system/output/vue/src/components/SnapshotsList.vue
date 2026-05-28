@@ -43,8 +43,7 @@
         </ol>
       </template>
     </div>
-    <component :is="'style'">{{
-      `
+    <component :is="'style'" v-html="`
         .rdp-snapshots-list {
           background: var(--color-white);
           border: 1px solid var(--color-border);
@@ -97,8 +96,7 @@
           font-size: var(--font-size-content);
           margin: 0;
         }
-      `
-    }}</component>
+      `"></component>
   </div>
 </template>
 

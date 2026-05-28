@@ -31,8 +31,7 @@
       ></span>
     </template>
 
-    <component :is="'style'">{{
-      `
+    <component :is="'style'" v-html="`
         .rdp-button {
           display: inline-flex;
           align-items: center;
@@ -61,8 +60,7 @@
         .rdp-button--quit { background: transparent; color: var(--color-content-text); padding: 0; }
         .rdp-button--calendarNav { padding: 0; width: 32px; height: 32px; border-radius: 50%; }
         .rdp-button--form { width: 100%; padding: var(--separation-2); }
-      `
-    }}</component>
+      `"></component>
   </button>
 </template>
 

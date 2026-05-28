@@ -11,8 +11,7 @@
       :value="value"
       :required="required"
       @input="async (event) => onChange?.(event.target.value)"
-    /><component :is="'style'">{{
-      `
+    /><component :is="'style'" v-html="`
         .rdp-textfield { display: flex; flex-direction: column; gap: 4px; font-family: Roboto, sans-serif; }
         .rdp-textfield__label {
           font-size: var(--font-size-publication-date);
@@ -27,9 +26,8 @@
           border-radius: var(--radius-default);
           font-size: var(--font-size-content);
         }
-        .rdp-textfield[data-error="true"] input { border-color: var(--input-border-error); }
-      `
-    }}</component>
+        .rdp-textfield[data-error=&quot;true&quot;] input { border-color: var(--input-border-error); }
+      `"></component>
   </div>
 </template>
 

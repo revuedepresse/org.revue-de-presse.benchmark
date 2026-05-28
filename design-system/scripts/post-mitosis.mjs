@@ -52,6 +52,41 @@ for (const target of targets) {
   console.log(`post-mitosis: ${target} hydrated with utils/locales/types`);
 }
 
+// Patch Vue's inline-style emit so SSR hydration matches the client.
+// Mitosis 0.13 emits `<component :is="'style'">{{ `...CSS...` }}</component>`,
+// which routes the CSS through Vue's text interpolation. That HTML-escapes
+// any special character in the CSS (`>` -> `&gt;`, `"` -> `&quot;`, `'` ->
+// `&#39;`, `&` -> `&amp;`) on the server but not on the client, producing
+// "Hydration text mismatch" warnings in every browser console. Rewriting the
+// node to `<component :is="'style'" v-html="`...CSS...`"></component>`
+// makes Vue emit the CSS raw on both sides (innerHTML, not escaped text).
+//
+// The substitution is anchored on the exact Mitosis emit shape; if Mitosis
+// changes its template for `<style>` in a future release, this will silently
+// no-op and the count below will go to zero — at which point delete the block.
+const vueComponentsDir = join(outputDir, 'vue', 'src', 'components');
+if (existsSync(vueComponentsDir)) {
+  const STYLE_INTERP_RE = /<component :is="'style'">\{\{\s*\n?([\s\S]*?)\n?\s*\}\}<\/component>/g;
+  let patched = 0;
+  for (const file of readdirSync(vueComponentsDir).filter((f) => f.endsWith('.vue'))) {
+    const path = join(vueComponentsDir, file);
+    const original = readFileSync(path, 'utf8');
+    let touched = false;
+    const next = original.replace(STYLE_INTERP_RE, (_, body) => {
+      touched = true;
+      // The body is a JS expression that evaluates to the CSS string — usually
+      // a template literal. Quote-escape it for the attribute value.
+      const expr = body.trim().replace(/"/g, '&quot;');
+      return `<component :is="'style'" v-html="${expr}"></component>`;
+    });
+    if (touched) {
+      writeFileSync(path, next);
+      patched++;
+    }
+  }
+  if (patched > 0) console.log(`post-mitosis: rewrote ${patched} Vue style block(s) to v-html (fixes SSR hydration)`);
+}
+
 // Patch Svelte's broken inline-style emit.
 const svelteComponentsDir = join(outputDir, 'svelte', 'src', 'components');
 if (existsSync(svelteComponentsDir)) {

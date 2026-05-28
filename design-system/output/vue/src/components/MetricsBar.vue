@@ -32,8 +32,7 @@
       ><span class="rdp-metrics-bar__count rdp-metrics-bar__count--like">{{
         formatCount(likes, locale ?? "fr-FR")
       }}</span></span
-    ><component :is="'style'">{{
-      `
+    ><component :is="'style'" v-html="`
         /* Legacy vanity-metric pattern: a 24px tinted circle hosting the
            glyph, followed by a count rendered in the matching dark colour.
            No solid pill background — the post-card body shows through. */
@@ -67,8 +66,7 @@
         }
         .rdp-metrics-bar__count--repost { color: var(--color-vanity-metric-retweet); }
         .rdp-metrics-bar__count--like { color: var(--color-vanity-metric-like); }
-      `
-    }}</component>
+      `"></component>
   </div>
 </template>
 

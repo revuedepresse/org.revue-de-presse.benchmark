@@ -15,8 +15,7 @@
         {{ label ?? "" }}
       </template>
       {{ labelChildren }}</span
-    ><component :is="'style'">{{
-      `
+    ><component :is="'style'" v-html="`
         .rdp-checkbox {
           display: inline-flex;
           align-items: center;
@@ -29,8 +28,7 @@
         .rdp-checkbox__label { display: inline-flex; gap: 4px; align-items: baseline; }
         .rdp-checkbox input { accent-color: var(--color-brand-active); }
         .rdp-checkbox input:disabled + .rdp-checkbox__label { opacity: 0.5; }
-      `
-    }}</component></label
+      `"></component></label
   >
 </template>
 

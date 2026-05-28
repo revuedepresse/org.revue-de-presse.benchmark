@@ -9,8 +9,7 @@
         >{{ email ?? "contact@revue-de-presse.org" }}</a
       >
     </p>
-    <component :is="'style'">{{
-      `
+    <component :is="'style'" v-html="`
         .rdp-contact-page {
           background: var(--color-white);
           border-radius: var(--radius-default);
@@ -25,8 +24,7 @@
         }
         .rdp-contact-page p { margin: 0 0 var(--separation-1); }
         .rdp-contact-page__email { color: var(--color-brand); }
-      `
-    }}</component>
+      `"></component>
   </article>
 </template>
 

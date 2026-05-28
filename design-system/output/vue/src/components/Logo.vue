@@ -31,8 +31,7 @@
       <span class="rdp-logo__wordmark">Revue de presse</span>
     </template>
 
-    <component :is="'style'">{{
-      `
+    <component :is="'style'" v-html="`
         .rdp-logo {
           display: inline-flex;
           align-items: center;
@@ -43,8 +42,7 @@
           font-size: 24px;
           color: var(--color-brand);
         }
-      `
-    }}</component></span
+      `"></component></span
   >
 </template>
 

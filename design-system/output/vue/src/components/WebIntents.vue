@@ -28,8 +28,7 @@
       @click="async (event) => onShare?.(postId)"
     >
       <Icon name="share" :size="24" :decorative="true"></Icon></button
-    ><component :is="'style'">{{
-      `
+    ><component :is="'style'" v-html="`
         .rdp-web-intents { display: inline-flex; gap: var(--separation-2); }
         .rdp-web-intents__btn {
           display: inline-flex;
@@ -42,8 +41,7 @@
           border: none;
           cursor: pointer;
         }
-      `
-    }}</component>
+      `"></component>
   </div>
 </template>
 

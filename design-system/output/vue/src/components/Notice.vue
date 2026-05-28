@@ -2,8 +2,7 @@
   <div class="rdp-notice" role="status">
     <h2 class="rdp-notice__headline">{{ t(headlineKey, headlineVars) }}</h2>
     <p class="rdp-notice__body">{{ t(bodyKey, bodyVars) }}</p>
-    <component :is="'style'">{{
-      `
+    <component :is="'style'" v-html="`
         .rdp-notice {
           background: var(--color-white);
           padding: var(--separation-3);
@@ -19,8 +18,7 @@
           color: var(--color-vanity-metric-like);
         }
         .rdp-notice__body { margin: 0; font-size: var(--font-size-content); }
-      `
-    }}</component>
+      `"></component>
   </div>
 </template>
 

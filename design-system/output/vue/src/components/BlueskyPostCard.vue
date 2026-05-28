@@ -97,8 +97,7 @@
         >
       </footer>
     </article>
-    <component :is="'style'">{{
-      `
+    <component :is="'style'" v-html="`
         .rdp-bsky-post-frame {
           display: flex;
           flex-direction: column;
@@ -180,8 +179,7 @@
           text-decoration: none;
         }
         .rdp-bsky-post__timestamp-link:hover .rdp-bsky-post__timestamp { text-decoration: underline; }
-      `
-    }}</component>
+      `"></component>
   </div>
 </template>
 

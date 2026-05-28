@@ -5,8 +5,7 @@
         <p class="rdp-form-error__item">
           {{ prefix }}{{ item.text }}
         </p> </template
-      ><component :is="'style'">{{
-        `
+      ><component :is="'style'" v-html="`
           .rdp-form-error {
             color: var(--form-error-fg);
             font-size: var(--font-size-publication-date);
@@ -14,8 +13,7 @@
             margin-top: var(--separation-1);
           }
           .rdp-form-error__item { margin: 0; }
-        `
-      }}</component>
+        `"></component>
     </div>
   </template>
 </template>
