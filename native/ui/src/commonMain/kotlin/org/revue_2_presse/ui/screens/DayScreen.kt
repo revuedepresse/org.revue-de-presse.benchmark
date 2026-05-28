@@ -13,7 +13,10 @@ import org.revue_2_presse.ui.components.SnapshotsState
 
 @Composable
 fun DayScreen(day: LocalDate, repo: HighlightsRepository, modifier: Modifier = Modifier) {
-    var state by remember { mutableStateOf<SnapshotsState>(SnapshotsState.Loading) }
+    // Key on `day` so navigating to another day resets to Loading synchronously
+    // during composition — the spinner replaces the prior day's list with no
+    // stale frame, instead of lingering on the previous day's results.
+    var state by remember(day) { mutableStateOf<SnapshotsState>(SnapshotsState.Loading) }
     LaunchedEffect(day) {
         repo.forDay(day).collectLatest { result ->
             state = result.fold(
