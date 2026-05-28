@@ -31,24 +31,9 @@ export default function TermsOfServicePage(props: TermsOfServicePageProps) {
       <p>
         Le Site édite chaque jour une sélection des dix publications de presse les
         plus relayées sur le réseau social Bluesky et propose des fonctionnalités
-        complémentaires&nbsp;: archivage par date, consultation des sources, et une
-        synthèse quotidienne. L'ensemble des contenus est publié à titre
-        d'information et sans valeur contractuelle.
-      </p>
-      <p>
-        La synthèse quotidienne est générée automatiquement à partir des dix
-        publications retenues, par un modèle de langage open-source&nbsp;<a
-          href="https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3"
-          rel="noreferrer noopener"
-          target="_blank"
-        ><strong>Mistral 7B Instruct v0.3</strong></a>{' '}
-        (quantification Q5_K_M, exécuté
-        en local sur l'infrastructure de l'Éditeur — aucun appel à un service
-        d'inférence tiers, aucune donnée transmise hors du Site). Le modèle peut,
-        comme tout LLM, produire des inexactitudes&nbsp;; le texte généré est
-        publié à titre indicatif et ne saurait engager l'Éditeur. Les liens vers
-        les comptes Bluesky cités dans la synthèse sont restreints à une liste
-        d'éditeurs de presse vérifiés afin d'éviter toute redirection erronée.
+        complémentaires&nbsp;: archivage par date et consultation des sources.
+        L'ensemble des contenus est publié à titre d'information et sans valeur
+        contractuelle.
       </p>
 
       <h2>ARTICLE 2 – ACCÈS AU SERVICE</h2>

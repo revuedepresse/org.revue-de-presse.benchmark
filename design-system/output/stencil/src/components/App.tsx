@@ -15,10 +15,6 @@ import { SourcesPage } from "./SourcesPage";
 import { IntroCard } from "./IntroCard";
 import { Spinner } from "./Spinner";
 import type { BlueskyPost } from "./BlueskyPostCard";
-import type {
-  SummaryBlock,
-  SummaryInlineSegment,
-} from "../utils/summary-blocks";
 import type { Locale } from "../utils/i18n";
 
 import {
@@ -44,7 +40,6 @@ export class App {
   @Prop() minDate: any;
   @Prop() layout: any;
   @Prop() showPopularNews: any;
-  @Prop() mainSubView: any;
   @Prop() captureMode: any;
   @Prop() lists: any;
   @Prop() selectedListId: any;
@@ -53,9 +48,6 @@ export class App {
   @Prop() loading: any;
   @Prop() posts: any;
   @Prop() emptyMessageKey: any;
-  @Event() mainSubViewChange: any;
-  @Prop() summaryLoading: any;
-  @Prop() summaryBlocks: any;
   @State() focusedDate = new Date();
   @State() isCalendarOpen = false;
   @State() currentView = "main";
@@ -64,15 +56,6 @@ export class App {
   get popularNewsLine() {
     return t(
       "header.popular-news",
-      {
-        date: formatLegacyShortDay(this.pickedDate, this.locale ?? "fr-FR"),
-      },
-      this.locale ?? "fr-FR"
-    );
-  }
-  get synthesisHeadline() {
-    return t(
-      "header.synthesis",
       {
         date: formatLegacyShortDay(this.pickedDate, this.locale ?? "fr-FR"),
       },
@@ -177,7 +160,7 @@ export class App {
             ></app-header>
           </div>
         </div>
-        {this.showPopularNews === true && this.mainSubView !== "summary" ? (
+        {this.showPopularNews === true ? (
           <p class="rdp-app__popular-news">{this.popularNewsLine}</p>
         ) : null}
         {(this.layout ?? "desktop") === "desktop" ? (
@@ -233,129 +216,16 @@ export class App {
               {this.currentView === "main" &&
               !this.loading &&
               this.posts.length > 0 ? (
-                <Fragment>
-                  <div
-                    class="rdp-app__main-toggle"
-                    role="tablist"
-                    aria-label={t("day.toggle.ariaLabel")}
-                  >
-                    <button
-                      class={
-                        (this.mainSubView ?? "publications") === "publications"
-                          ? "rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active"
-                          : "rdp-app__main-toggle-btn"
-                      }
-                      type="button"
-                      role="tab"
-                      aria-selected={
-                        (this.mainSubView ?? "publications") === "publications"
-                      }
-                      onClick={() => this.mainSubViewChange?.("publications")}
-                    >
-                      {t("day.toggle.publications")}
-                    </button>
-                    <button
-                      class={
-                        this.mainSubView === "summary"
-                          ? "rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active"
-                          : "rdp-app__main-toggle-btn"
-                      }
-                      type="button"
-                      role="tab"
-                      aria-selected={this.mainSubView === "summary"}
-                      onClick={() => this.mainSubViewChange?.("summary")}
-                    >
-                      {t("day.toggle.summary")}
-                    </button>
-                  </div>
-                  {(this.mainSubView ?? "publications") === "publications" ? (
-                    <ol class="rdp-app__post-list">
-                      {this.posts?.map((post) => (
-                        <li class="rdp-app__post-item">
-                          <bluesky-post-card
-                            post={post}
-                            locale={this.locale}
-                          ></bluesky-post-card>
-                        </li>
-                      ))}
-                    </ol>
-                  ) : null}
-                  {this.mainSubView === "summary" ? (
-                    <Fragment>
-                      <h1 class="rdp-app__synthesis-title">
-                        {this.synthesisHeadline}
-                      </h1>
-                      {!!this.summaryLoading ? <spinner></spinner> : null}
-                      {!this.summaryLoading &&
-                      (this.summaryBlocks ?? []).length === 0 ? (
-                        <alert
-                          variant="empty"
-                          messageKey="day.summary.empty"
-                        ></alert>
-                      ) : null}
-                      {!this.summaryLoading &&
-                      (this.summaryBlocks ?? []).length > 0 ? (
-                        <article class="rdp-app__summary">
-                          {this.summaryBlocks ??
-                            []?.map((block) => (
-                              <Fragment>
-                                {block.kind === "paragraph" ? (
-                                  <p class="rdp-app__summary-p">
-                                    {block.segments?.map((seg) => (
-                                      <Fragment>
-                                        {seg.kind === "text" ? seg.value : null}
-                                        {seg.kind === "bold" ? (
-                                          <strong>{seg.value}</strong>
-                                        ) : null}
-                                        {seg.kind === "handle" ? (
-                                          <a
-                                            class="rdp-app__summary-handle"
-                                            target="_blank"
-                                            rel="noreferrer noopener"
-                                            href={`https://bsky.app/profile/${seg.value}`}
-                                          >
-                                            @{seg.value}
-                                          </a>
-                                        ) : null}
-                                      </Fragment>
-                                    ))}
-                                  </p>
-                                ) : null}
-                                {block.kind === "bullets" ? (
-                                  <ul class="rdp-app__summary-ul">
-                                    {block.items?.map((item) => (
-                                      <li>
-                                        {item?.map((seg) => (
-                                          <Fragment>
-                                            {seg.kind === "text"
-                                              ? seg.value
-                                              : null}
-                                            {seg.kind === "bold" ? (
-                                              <strong>{seg.value}</strong>
-                                            ) : null}
-                                            {seg.kind === "handle" ? (
-                                              <a
-                                                class="rdp-app__summary-handle"
-                                                target="_blank"
-                                                rel="noreferrer noopener"
-                                                href={`https://bsky.app/profile/${seg.value}`}
-                                              >
-                                                {seg.value}
-                                              </a>
-                                            ) : null}
-                                          </Fragment>
-                                        ))}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                ) : null}
-                              </Fragment>
-                            ))}
-                        </article>
-                      ) : null}
-                    </Fragment>
-                  ) : null}
-                </Fragment>
+                <ol class="rdp-app__post-list">
+                  {this.posts?.map((post) => (
+                    <li class="rdp-app__post-item">
+                      <bluesky-post-card
+                        post={post}
+                        locale={this.locale}
+                      ></bluesky-post-card>
+                    </li>
+                  ))}
+                </ol>
               ) : null}
               {this.currentView === "legal" ? (
                 <legal-notice-page></legal-notice-page>
@@ -476,82 +346,6 @@ export class App {
           min-height: 100vh;
           font-family: Roboto, sans-serif;
           color: var(--color-content-text);
-        }
-        .rdp-app__main-toggle {
-          display: flex;
-          gap: 0;
-          margin: 0 0 var(--separation-2);
-          border: 1.5px solid var(--color-brand);
-          border-radius: var(--radius-default);
-          overflow: hidden;
-          width: fit-content;
-        }
-        .rdp-app__main-toggle-btn {
-          appearance: none;
-          background: var(--color-white);
-          border: 0;
-          color: var(--color-brand);
-          font-family: inherit;
-          font-size: var(--font-size-status-text);
-          font-weight: 600;
-          padding: 8px 18px;
-          cursor: pointer;
-          line-height: 1.2;
-        }
-        .rdp-app__main-toggle-btn--active {
-          background: var(--color-brand);
-          color: var(--color-white);
-        }
-        .rdp-app__main-toggle-btn:not(.rdp-app__main-toggle-btn--active):hover {
-          background: var(--color-taupe-grey);
-        }
-        .rdp-app__summary {
-          background: var(--color-white);
-          border-radius: var(--radius-default);
-          padding: var(--separation-2);
-          font-size: var(--font-size-content);
-          line-height: var(--line-height-base);
-        }
-        .rdp-app__summary-h1 {
-          font-family: Signika, sans-serif;
-          font-size: 1.5rem;
-          color: var(--color-brand);
-          margin: 0 0 var(--separation-2);
-        }
-        .rdp-app__summary-h2 {
-          font-family: Signika, sans-serif;
-          font-size: 1.2rem;
-          color: var(--color-brand);
-          margin: var(--separation-2) 0 var(--separation-1);
-        }
-        .rdp-app__summary-h3 {
-          font-family: Signika, sans-serif;
-          font-size: 1.05rem;
-          color: var(--color-content-text);
-          margin: var(--separation-2) 0 var(--separation-1);
-        }
-        .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
-        .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
-        .rdp-app__summary-ul li { margin-bottom: 4px; }
-        .rdp-app__summary-handle {
-          color: var(--color-brand);
-          text-decoration: none;
-          border-bottom: 1px solid currentColor;
-        }
-        /* Keep the colour fixed on hover; only the underline thickens
-           subtly to indicate interactivity. */
-        .rdp-app__summary-handle:hover,
-        .rdp-app__summary-handle:active,
-        .rdp-app__summary-handle:focus {
-          color: var(--color-brand);
-        }
-        .rdp-app__summary-handle:hover { border-bottom-width: 2px; }
-        .rdp-app__synthesis-title {
-          font-family: Signika, sans-serif;
-          font-size: 1.6rem;
-          color: var(--color-brand);
-          margin: 0 0 var(--separation-2);
-          line-height: 1.2;
         }
         /* The header ribbon stays full-viewport-wide so the white band
            reaches both edges of the page; only the inner row + the content

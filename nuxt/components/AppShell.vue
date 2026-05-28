@@ -7,9 +7,6 @@ const props = defineProps<{
   initialView?: ViewKey;
   initialDate?: Date;
   emptyMessageKey?: string;
-  /** Day-page sub-view from the URL: 'publications' (default) for
-   *  /YYYY-MM-DD/actualites-du-… and 'summary' for /YYYY-MM-DD/synthese-des-actus-du-…. */
-  initialMainSubView?: 'publications' | 'summary';
 }>();
 
 const router = useRouter();
@@ -72,10 +69,6 @@ function urlForDate(d: Date): string {
   return `/${ymd(d)}/actualites-du-${localizeDay(d)}`;
 }
 
-function urlForSynthese(d: Date): string {
-  return `/${ymd(d)}/synthese-des-actus-du-${localizeDay(d)}`;
-}
-
 function urlForView(view: ViewKey): string {
   switch (view) {
     case 'legal': return '/mentions-legales';
@@ -115,74 +108,6 @@ function onViewChange(view: ViewKey) {
 function onLogoClick() {
   pickedDate.value = yesterday();
 }
-
-// --- Day-page Publications / Synthèse toggle ---------------------------------
-import { parseSummaryMarkdown, type SummaryBlock } from '../utils/parse-summary-markdown';
-
-type MainSubView = 'publications' | 'summary';
-
-// The URL is the source of truth for the sub-view. We derive mainSubView
-// from route.path (rather than from the page's initialMainSubView prop)
-// so SSR + hydration always agree with what the user navigated to — a
-// page-prop dance was unreliable on hard reload of /synthese-des-actus-…
-// and left the toggle showing "Publications" even though the URL said
-// synthesis. The initialMainSubView prop is still accepted for API
-// compatibility but is treated as a fallback hint only.
-const SYNTHESE_PREFIX = '/synthese-des-actus-du-';
-function inferSubViewFromPath(path: string): MainSubView {
-  return path.includes(SYNTHESE_PREFIX) ? 'summary' : 'publications';
-}
-const mainSubView = ref<MainSubView>(
-  inferSubViewFromPath(route.path) === 'summary' ||
-    props.initialMainSubView === 'summary'
-    ? 'summary'
-    : 'publications',
-);
-watch(
-  () => route.path,
-  (path) => {
-    mainSubView.value = inferSubViewFromPath(path);
-  },
-);
-
-const summaryLoading = ref(false);
-const summaryCache = ref<Record<string, SummaryBlock[]>>({});
-const summaryBlocks = computed<SummaryBlock[]>(
-  () => summaryCache.value[ymd(pickedDate.value)] ?? [],
-);
-
-async function fetchSummaryFor(d: Date) {
-  const key = ymd(d);
-  if (summaryCache.value[key]) return;
-  summaryLoading.value = true;
-  try {
-    const resp = await $fetch<{ date: string; markdown: string }>(
-      `/api/days/${key}/summary`,
-    ).catch(() => null);
-    summaryCache.value[key] = resp?.markdown ? parseSummaryMarkdown(resp.markdown) : [];
-  } finally {
-    summaryLoading.value = false;
-  }
-}
-
-// Fetch lazily whenever the sub-view is "summary" — covers initial mount
-// from /synthese-des-actus-du-… AND date changes while in synthesis mode.
-watch(
-  [mainSubView, pickedDate],
-  ([sub, d]) => {
-    if (sub === 'summary') void fetchSummaryFor(d);
-  },
-  { immediate: true },
-);
-
-function onMainSubViewChange(next: MainSubView) {
-  mainSubView.value = next;
-  if (!import.meta.client) return;
-  const target = next === 'summary'
-    ? urlForSynthese(pickedDate.value)
-    : urlForDate(pickedDate.value);
-  if (route.path !== target) router.push(target);
-}
 </script>
 
 <template>
@@ -202,10 +127,5 @@ function onMainSubViewChange(next: MainSubView) {
     :on-date-select="onDateSelect"
     :on-view-change="onViewChange"
     :on-logo-click="onLogoClick"
-    :main-sub-view="mainSubView"
-    :initial-main-sub-view="props.initialMainSubView"
-    :summary-loading="summaryLoading"
-    :summary-blocks="summaryBlocks"
-    :on-main-sub-view-change="onMainSubViewChange"
   />
 </template>

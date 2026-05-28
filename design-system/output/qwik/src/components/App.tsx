@@ -2,8 +2,6 @@ import { Locale, t } from "../utils/i18n";
 
 import { formatLegacyShortDay } from "../utils/intl";
 
-import { SummaryBlock, SummaryInlineSegment } from "../utils/summary-blocks";
-
 import Alert from "./Alert.jsx";
 
 import AppHeader from "./AppHeader.jsx";
@@ -42,32 +40,11 @@ import {
   useVisibleTask$,
 } from "@builder.io/qwik";
 
-type MainSubView = "publications" | "summary";
-
-/** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
- *  Nuxt so the route is the source of truth. */
-/** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
- *  Nuxt so the route is the source of truth. */
-type InitialMainSubView = MainSubView;
-/** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
- *  Nuxt so the route is the source of truth. */
-
 type SnapshotItem = {
   id: string;
   label: string;
 };
-/** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
- *  Nuxt so the route is the source of truth. */
-
 type ViewKey = "main" | "legal" | "terms" | "contact" | "support" | "sources";
-/** Initial sub-view for the day-page, when entered via a URL like
- *  /YYYY-MM-DD/synthese-des-actus-du-… vs /YYYY-MM-DD/actualites-du-…. Wired from
- *  Nuxt so the route is the source of truth. */
-
 type AppProps = {
   layout?: "mobile" | "desktop";
   posts: BlueskyPost[];
@@ -89,22 +66,11 @@ type AppProps = {
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
   captureMode?: boolean;
-  /** Day-page sub-view toggle: 'publications' (default) or 'summary'. */
-  mainSubView?: MainSubView;
-  /** Boot-time sub-view from the URL (synthese-des-actus-du-… vs actualites-du-…).
-   *  AppShell uses it to set mainSubView on mount + when the prop changes. */
-  initialMainSubView?: InitialMainSubView;
-  /** Whether the summary fetch is in flight for the current date. */
-  summaryLoading?: boolean;
-  /** Pre-parsed summary blocks; empty array when the day has no summary. */
-  summaryBlocks?: SummaryBlock[];
-  onMainSubViewChange?: (next: MainSubView) => void;
 };
 export const prevDay = function prevDay(
   props,
   state,
   popularNewsLine,
-  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled
 ) {
@@ -119,7 +85,6 @@ export const nextDay = function nextDay(
   props,
   state,
   popularNewsLine,
-  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled
 ) {
@@ -134,7 +99,6 @@ export const openCalendar = function openCalendar(
   props,
   state,
   popularNewsLine,
-  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled
 ) {
@@ -144,7 +108,6 @@ export const closeCalendar = function closeCalendar(
   props,
   state,
   popularNewsLine,
-  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled
 ) {
@@ -154,7 +117,6 @@ export const pickFromCalendar = function pickFromCalendar(
   props,
   state,
   popularNewsLine,
-  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled,
   d: Date
@@ -169,7 +131,6 @@ export const selectFromSidebar = function selectFromSidebar(
   props,
   state,
   popularNewsLine,
-  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled,
   d: Date
@@ -183,7 +144,6 @@ export const goTo = function goTo(
   props,
   state,
   popularNewsLine,
-  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled,
   view: ViewKey
@@ -195,7 +155,6 @@ export const goHome = function goHome(
   props,
   state,
   popularNewsLine,
-  synthesisHeadline,
   prevDayDisabled,
   nextDayDisabled
 ) {
@@ -212,15 +171,6 @@ export const App = component$((props: AppProps) => {
   const popularNewsLine = useComputed$(() => {
     return t(
       "header.popular-news",
-      {
-        date: formatLegacyShortDay(props.pickedDate, props.locale ?? "fr-FR"),
-      },
-      props.locale ?? "fr-FR"
-    );
-  });
-  const synthesisHeadline = useComputed$(() => {
-    return t(
-      "header.synthesis",
       {
         date: formatLegacyShortDay(props.pickedDate, props.locale ?? "fr-FR"),
       },
@@ -281,7 +231,6 @@ export const App = component$((props: AppProps) => {
                 props,
                 state,
                 popularNewsLine,
-                synthesisHeadline,
                 prevDayDisabled,
                 nextDayDisabled
               )
@@ -289,7 +238,7 @@ export const App = component$((props: AppProps) => {
           ></AppHeader>
         </div>
       </div>
-      {props.showPopularNews === true && props.mainSubView !== "summary" ? (
+      {props.showPopularNews === true ? (
         <p class="rdp-app__popular-news">{popularNewsLine.value}</p>
       ) : null}
       {(props.layout ?? "desktop") === "desktop" ? (
@@ -309,7 +258,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     d
@@ -320,7 +268,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "legal"
@@ -331,7 +278,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "terms"
@@ -342,7 +288,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "contact"
@@ -353,7 +298,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "support"
@@ -364,7 +308,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "sources"
@@ -386,7 +329,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "main"
@@ -415,146 +357,18 @@ export const App = component$((props: AppProps) => {
             {state.currentView === "main" &&
             !props.loading &&
             props.posts.length > 0 ? (
-              <>
-                <div
-                  class="rdp-app__main-toggle"
-                  role="tablist"
-                  aria-label={t("day.toggle.ariaLabel")}
-                >
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={(() => {
-                      (props.mainSubView ?? "publications") === "publications";
-                    })()}
-                    class={(() => {
-                      (props.mainSubView ?? "publications") === "publications"
-                        ? "rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active"
-                        : "rdp-app__main-toggle-btn";
-                    })()}
-                    onClick$={$((event) =>
-                      props.onMainSubViewChange?.("publications")
-                    )}
-                  >
-                    {t("day.toggle.publications")}
-                  </button>
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={(() => {
-                      props.mainSubView === "summary";
-                    })()}
-                    class={(() => {
-                      props.mainSubView === "summary"
-                        ? "rdp-app__main-toggle-btn rdp-app__main-toggle-btn--active"
-                        : "rdp-app__main-toggle-btn";
-                    })()}
-                    onClick$={$((event) =>
-                      props.onMainSubViewChange?.("summary")
-                    )}
-                  >
-                    {t("day.toggle.summary")}
-                  </button>
-                </div>
-                {(props.mainSubView ?? "publications") === "publications" ? (
-                  <ol class="rdp-app__post-list">
-                    {(props.posts || []).map((post) => {
-                      return (
-                        <li class="rdp-app__post-item">
-                          <BlueskyPostCard
-                            post={post}
-                            locale={props.locale}
-                          ></BlueskyPostCard>
-                        </li>
-                      );
-                    })}
-                  </ol>
-                ) : null}
-                {props.mainSubView === "summary" ? (
-                  <>
-                    <h1 class="rdp-app__synthesis-title">
-                      {synthesisHeadline.value}
-                    </h1>
-                    {!!props.summaryLoading ? <Spinner></Spinner> : null}
-                    {!props.summaryLoading &&
-                    (props.summaryBlocks ?? []).length === 0 ? (
-                      <Alert
-                        variant="empty"
-                        messageKey="day.summary.empty"
-                      ></Alert>
-                    ) : null}
-                    {!props.summaryLoading &&
-                    (props.summaryBlocks ?? []).length > 0 ? (
-                      <article class="rdp-app__summary">
-                        {(props.summaryBlocks ?? ([] || [])).map((block) => {
-                          return (
-                            <Fragment>
-                              {block.kind === "paragraph" ? (
-                                <p class="rdp-app__summary-p">
-                                  {(block.segments || []).map((seg) => {
-                                    return (
-                                      <Fragment>
-                                        {seg.kind === "text" ? (
-                                          <>{seg.value}</>
-                                        ) : null}
-                                        {seg.kind === "bold" ? (
-                                          <strong>{seg.value}</strong>
-                                        ) : null}
-                                        {seg.kind === "handle" ? (
-                                          <a
-                                            class="rdp-app__summary-handle"
-                                            target="_blank"
-                                            rel="noreferrer noopener"
-                                            href={`https://bsky.app/profile/${seg.value}`}
-                                          >
-                                            @{seg.value}
-                                          </a>
-                                        ) : null}
-                                      </Fragment>
-                                    );
-                                  })}
-                                </p>
-                              ) : null}
-                              {block.kind === "bullets" ? (
-                                <ul class="rdp-app__summary-ul">
-                                  {(block.items || []).map((item) => {
-                                    return (
-                                      <li>
-                                        {(item || []).map((seg) => {
-                                          return (
-                                            <Fragment>
-                                              {seg.kind === "text" ? (
-                                                <>{seg.value}</>
-                                              ) : null}
-                                              {seg.kind === "bold" ? (
-                                                <strong>{seg.value}</strong>
-                                              ) : null}
-                                              {seg.kind === "handle" ? (
-                                                <a
-                                                  class="rdp-app__summary-handle"
-                                                  target="_blank"
-                                                  rel="noreferrer noopener"
-                                                  href={`https://bsky.app/profile/${seg.value}`}
-                                                >
-                                                  {seg.value}
-                                                </a>
-                                              ) : null}
-                                            </Fragment>
-                                          );
-                                        })}
-                                      </li>
-                                    );
-                                  })}
-                                </ul>
-                              ) : null}
-                            </Fragment>
-                          );
-                        })}
-                      </article>
-                    ) : null}
-                  </>
-                ) : null}
-              </>
+              <ol class="rdp-app__post-list">
+                {(props.posts || []).map((post) => {
+                  return (
+                    <li class="rdp-app__post-item">
+                      <BlueskyPostCard
+                        post={post}
+                        locale={props.locale}
+                      ></BlueskyPostCard>
+                    </li>
+                  );
+                })}
+              </ol>
             ) : null}
             {state.currentView === "legal" ? (
               <LegalNoticePage></LegalNoticePage>
@@ -589,7 +403,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "main"
@@ -653,7 +466,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "legal"
@@ -664,7 +476,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "terms"
@@ -675,7 +486,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "contact"
@@ -686,7 +496,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "support"
@@ -697,7 +506,6 @@ export const App = component$((props: AppProps) => {
                     props,
                     state,
                     popularNewsLine,
-                    synthesisHeadline,
                     prevDayDisabled,
                     nextDayDisabled,
                     "sources"
@@ -718,7 +526,6 @@ export const App = component$((props: AppProps) => {
                   props,
                   state,
                   popularNewsLine,
-                  synthesisHeadline,
                   prevDayDisabled,
                   nextDayDisabled,
                   d
@@ -729,7 +536,6 @@ export const App = component$((props: AppProps) => {
                   props,
                   state,
                   popularNewsLine,
-                  synthesisHeadline,
                   prevDayDisabled,
                   nextDayDisabled
                 )
@@ -746,7 +552,6 @@ export const App = component$((props: AppProps) => {
                   props,
                   state,
                   popularNewsLine,
-                  synthesisHeadline,
                   prevDayDisabled,
                   nextDayDisabled
                 )
@@ -756,7 +561,6 @@ export const App = component$((props: AppProps) => {
                   props,
                   state,
                   popularNewsLine,
-                  synthesisHeadline,
                   prevDayDisabled,
                   nextDayDisabled
                 )
@@ -766,7 +570,6 @@ export const App = component$((props: AppProps) => {
                   props,
                   state,
                   popularNewsLine,
-                  synthesisHeadline,
                   prevDayDisabled,
                   nextDayDisabled
                 )
@@ -783,82 +586,6 @@ export const App = component$((props: AppProps) => {
           min-height: 100vh;
           font-family: Roboto, sans-serif;
           color: var(--color-content-text);
-        }
-        .rdp-app__main-toggle {
-          display: flex;
-          gap: 0;
-          margin: 0 0 var(--separation-2);
-          border: 1.5px solid var(--color-brand);
-          border-radius: var(--radius-default);
-          overflow: hidden;
-          width: fit-content;
-        }
-        .rdp-app__main-toggle-btn {
-          appearance: none;
-          background: var(--color-white);
-          border: 0;
-          color: var(--color-brand);
-          font-family: inherit;
-          font-size: var(--font-size-status-text);
-          font-weight: 600;
-          padding: 8px 18px;
-          cursor: pointer;
-          line-height: 1.2;
-        }
-        .rdp-app__main-toggle-btn--active {
-          background: var(--color-brand);
-          color: var(--color-white);
-        }
-        .rdp-app__main-toggle-btn:not(.rdp-app__main-toggle-btn--active):hover {
-          background: var(--color-taupe-grey);
-        }
-        .rdp-app__summary {
-          background: var(--color-white);
-          border-radius: var(--radius-default);
-          padding: var(--separation-2);
-          font-size: var(--font-size-content);
-          line-height: var(--line-height-base);
-        }
-        .rdp-app__summary-h1 {
-          font-family: Signika, sans-serif;
-          font-size: 1.5rem;
-          color: var(--color-brand);
-          margin: 0 0 var(--separation-2);
-        }
-        .rdp-app__summary-h2 {
-          font-family: Signika, sans-serif;
-          font-size: 1.2rem;
-          color: var(--color-brand);
-          margin: var(--separation-2) 0 var(--separation-1);
-        }
-        .rdp-app__summary-h3 {
-          font-family: Signika, sans-serif;
-          font-size: 1.05rem;
-          color: var(--color-content-text);
-          margin: var(--separation-2) 0 var(--separation-1);
-        }
-        .rdp-app__summary-p { margin: 0 0 var(--separation-1); }
-        .rdp-app__summary-ul { margin: 0 0 var(--separation-1); padding-left: 1.5em; }
-        .rdp-app__summary-ul li { margin-bottom: 4px; }
-        .rdp-app__summary-handle {
-          color: var(--color-brand);
-          text-decoration: none;
-          border-bottom: 1px solid currentColor;
-        }
-        /* Keep the colour fixed on hover; only the underline thickens
-           subtly to indicate interactivity. */
-        .rdp-app__summary-handle:hover,
-        .rdp-app__summary-handle:active,
-        .rdp-app__summary-handle:focus {
-          color: var(--color-brand);
-        }
-        .rdp-app__summary-handle:hover { border-bottom-width: 2px; }
-        .rdp-app__synthesis-title {
-          font-family: Signika, sans-serif;
-          font-size: 1.6rem;
-          color: var(--color-brand);
-          margin: 0 0 var(--separation-2);
-          line-height: 1.2;
         }
         /* The header ribbon stays full-viewport-wide so the white band
            reaches both edges of the page; only the inner row + the content
