@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.revue_2_presse.ui.components.AuthCardTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:22" hostname="io-marianne-libran.local" time="0.214">
-  <properties/>
-  <testcase name="renders_title_email_password_and_submit_button[jvm]" classname="org.revue_2_presse.ui.components.AuthCardTest" time="0.214"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

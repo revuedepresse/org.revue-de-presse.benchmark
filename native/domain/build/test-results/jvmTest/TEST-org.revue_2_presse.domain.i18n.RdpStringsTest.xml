@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.revue_2_presse.domain.i18n.RdpStringsTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:17" hostname="io-marianne-libran.local" time="0.008">
-  <properties/>
-  <testcase name="returns_en_for_EN_GB_locale[jvm]" classname="org.revue_2_presse.domain.i18n.RdpStringsTest" time="0.007"/>
-  <testcase name="returns_fr_for_FR_FR_locale[jvm]" classname="org.revue_2_presse.domain.i18n.RdpStringsTest" time="0.001"/>
-  <testcase name="interpolates_named_args[jvm]" classname="org.revue_2_presse.domain.i18n.RdpStringsTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

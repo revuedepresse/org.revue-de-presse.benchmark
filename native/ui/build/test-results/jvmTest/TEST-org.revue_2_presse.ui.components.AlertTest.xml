@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.revue_2_presse.ui.components.AlertTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:21" hostname="io-marianne-libran.local" time="0.701">
-  <properties/>
-  <testcase name="warning_variant_carries_distinct_tag[jvm]" classname="org.revue_2_presse.ui.components.AlertTest" time="0.678"/>
-  <testcase name="renders_message_in_info_variant[jvm]" classname="org.revue_2_presse.ui.components.AlertTest" time="0.022"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

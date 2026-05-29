@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.revue_2_presse.ui.components.BlueskyPostCardTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:23" hostname="io-marianne-libran.local" time="0.135">
-  <properties/>
-  <testcase name="bluesky_mark_emits_share_callback[jvm]" classname="org.revue_2_presse.ui.components.BlueskyPostCardTest" time="0.109"/>
-  <testcase name="renders_author_handle_body_and_metrics[jvm]" classname="org.revue_2_presse.ui.components.BlueskyPostCardTest" time="0.026"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
