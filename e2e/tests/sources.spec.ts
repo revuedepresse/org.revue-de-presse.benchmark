@@ -3,10 +3,9 @@ import { appShell } from '../support/selectors';
 
 // Canonical roster mirrored from
 //   design-system/src/components/SourcesPage.lite.tsx
-//   native/data/src/commonMain/.../repositories/BaselineSources.kt
-// Both files are the source of truth for the visible list; this test guards
-// against drift in either direction. If a handle, displayName, or external URL
-// changes, the failure here points the reader at the right file to update.
+// which is the source of truth for the visible list; this test guards against
+// drift. If a handle, displayName, or external URL changes there, the failure
+// here points the reader at the right file to update.
 const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'afp.com',                     displayName: 'Agence France-Presse' },
   { handle: 'bfmtv.com',                   displayName: 'BFMTV' },

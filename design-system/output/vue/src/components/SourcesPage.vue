@@ -205,9 +205,8 @@ const ROSTER: SourceRow[] = [
   },
 ];
 
-// Canonical roster of French press Bluesky accounts. Mirrors
-// native/data/src/commonMain/.../repositories/BaselineSources.kt — same handles,
-// same display names, same Bluesky CDN avatar URLs (resolved once via
+// Canonical roster of French press Bluesky accounts. Same handles, display
+// names, and Bluesky CDN avatar URLs as the upstream API (resolved once via
 // public.api.bsky.app/xrpc/app.bsky.actor.getProfile; CDN URLs are stable
 // because they include the content hash).
 type SourceRow = {
