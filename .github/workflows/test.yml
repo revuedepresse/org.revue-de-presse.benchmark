@@ -148,7 +148,11 @@ jobs:
       - name: native codegen compile
         run: cd native && ./gradlew :domain:compileKotlinJvm
       - name: native unit tests (:domain :data :design :ui)
-        run: cd native && ./gradlew :domain:allTests :data:allTests :design:allTests :ui:allTests
+        # jvmTest, not allTests: with an androidTarget present, allTests also runs
+        # the Android unit-test variant, which has no host for runComposeUiTest.
+        # On this Linux runner allTests already resolved to the JVM tests only
+        # (iOS sim tests need macOS), so this is behaviour-preserving.
+        run: cd native && ./gradlew :domain:jvmTest :data:jvmTest :design:jvmTest :ui:jvmTest
 
   native-android-build:
     runs-on: ubuntu-latest
