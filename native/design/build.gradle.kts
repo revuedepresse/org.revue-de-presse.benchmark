@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kover)
@@ -7,6 +8,9 @@ plugins {
 
 kotlin {
     jvm()
+    androidTarget {
+        compilations.all { kotlinOptions.jvmTarget = "21" }
+    }
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -41,6 +45,16 @@ val emitComposeTokens = tasks.register<Exec>("emitComposeTokens") {
     outputs.dir(outDir)
 }
 kotlin.sourceSets["commonMain"].kotlin.srcDir(emitComposeTokens)
+
+android {
+    namespace = "org.revue_2_presse.design"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig { minSdk = libs.versions.android.minSdk.get().toInt() }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+}
 
 kover {
     reports { verify { rule { minBound(60) } } }

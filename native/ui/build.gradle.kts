@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
@@ -8,6 +9,9 @@ plugins {
 
 kotlin {
     jvm()
+    androidTarget {
+        compilations.all { kotlinOptions.jvmTarget = "21" }
+    }
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -55,6 +59,16 @@ configurations.named("jvmTestRuntimeClasspath") {
             useTarget("org.jetbrains.compose.ui:ui-util-desktop:1.7.1")
             because("fastCbrt missing in androidx 1.6.5; replaced by JetBrains Compose 1.7.1")
         }
+    }
+}
+
+android {
+    namespace = "org.revue_2_presse.ui"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig { minSdk = libs.versions.android.minSdk.get().toInt() }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 
