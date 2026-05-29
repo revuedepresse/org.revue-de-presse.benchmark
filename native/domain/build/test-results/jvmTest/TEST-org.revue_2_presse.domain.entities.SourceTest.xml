@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.domain.entities.SourceTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:17" hostname="io-marianne-libran.local" time="0.012">
+  <properties/>
+  <testcase name="source_is_value_class[jvm]" classname="org.revue_2_presse.domain.entities.SourceTest" time="0.002"/>
+  <testcase name="source_detail_holds_recent_highlights[jvm]" classname="org.revue_2_presse.domain.entities.SourceTest" time="0.009"/>
+  <testcase name="screen_name_required[jvm]" classname="org.revue_2_presse.domain.entities.SourceTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

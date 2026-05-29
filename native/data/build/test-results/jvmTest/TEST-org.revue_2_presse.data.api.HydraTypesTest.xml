@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.data.api.HydraTypesTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:19" hostname="io-marianne-libran.local" time="0.148">
+  <properties/>
+  <testcase name="hydra_device_token_holds_fields[jvm]" classname="org.revue_2_presse.data.api.HydraTypesTest" time="0.12"/>
+  <testcase name="api_endpoints_sources_and_source[jvm]" classname="org.revue_2_presse.data.api.HydraTypesTest" time="0.008"/>
+  <testcase name="device_token_request_holds_fields[jvm]" classname="org.revue_2_presse.data.api.HydraTypesTest" time="0.006"/>
+  <testcase name="hydra_error_holds_fields[jvm]" classname="org.revue_2_presse.data.api.HydraTypesTest" time="0.002"/>
+  <testcase name="hydra_source_holds_fields[jvm]" classname="org.revue_2_presse.data.api.HydraTypesTest" time="0.008"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

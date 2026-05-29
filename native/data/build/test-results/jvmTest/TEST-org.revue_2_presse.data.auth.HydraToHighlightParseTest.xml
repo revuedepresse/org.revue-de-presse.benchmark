@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.data.auth.HydraToHighlightParseTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:20" hostname="io-marianne-libran.local" time="0.083">
+  <properties/>
+  <testcase name="maps_date_without_z_suffix_via_localDateTime_fallback[jvm]" classname="org.revue_2_presse.data.auth.HydraToHighlightParseTest" time="0.083"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

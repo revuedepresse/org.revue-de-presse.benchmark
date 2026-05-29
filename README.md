@@ -10,16 +10,12 @@ Bluesky, packaged as:
   Bluesky highlights API
 - a **Trusted Web Activity (TWA)** wrapper that ships the Nuxt app on the
   Google Play Store via Bubblewrap
-- a **Compose Multiplatform** native app (JVM desktop, Android, iOS) that
-  reimplements the Nuxt app from a single Kotlin source tree, reusing the
-  same design tokens and i18n
 
 ## Repository layout
 
 ```
 design-system/   Mitosis source + emitted Vue output + tests
 nuxt/            Nuxt 3 app, TWA tooling, Netlify deploy config
-native/          Compose Multiplatform app (JVM desktop, Android, iOS)
 e2e/             Playwright suite exercising the Nuxt app via a single webServer
 social/bluesky/  daily Bluesky thread CLI (lead + 3 replies, top 3 publications)
 social/linkedin/ daily LinkedIn auto-post CLI (top 10, organization page)

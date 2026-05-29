@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.data.auth.DeviceTokenStoreImplTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:20" hostname="io-marianne-libran.local" time="0.096">
+  <properties/>
+  <testcase name="current_mints_token_on_first_call[jvm]" classname="org.revue_2_presse.data.auth.DeviceTokenStoreImplTest" time="0.065"/>
+  <testcase name="current_returns_cached_token_on_second_call[jvm]" classname="org.revue_2_presse.data.auth.DeviceTokenStoreImplTest" time="0.007"/>
+  <testcase name="invalidate_clears_cached_token[jvm]" classname="org.revue_2_presse.data.auth.DeviceTokenStoreImplTest" time="0.012"/>
+  <testcase name="mint_rotates_install_id_and_retries_on_exception[jvm]" classname="org.revue_2_presse.data.auth.DeviceTokenStoreImplTest" time="0.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

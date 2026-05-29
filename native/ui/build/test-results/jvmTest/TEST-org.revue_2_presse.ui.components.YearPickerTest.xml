@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.ui.components.YearPickerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:24" hostname="io-marianne-libran.local" time="0.022">
+  <properties/>
+  <testcase name="emits_year_on_click[jvm]" classname="org.revue_2_presse.ui.components.YearPickerTest" time="0.022"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.domain.i18n.LocaleResolverTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:17" hostname="io-marianne-libran.local" time="0.001">
+  <properties/>
+  <testcase name="anything_else_maps_to_EN_GB[jvm]" classname="org.revue_2_presse.domain.i18n.LocaleResolverTest" time="0.001"/>
+  <testcase name="fr_FR_tag_maps_to_FR_FR[jvm]" classname="org.revue_2_presse.domain.i18n.LocaleResolverTest" time="0.0"/>
+  <testcase name="fr_anything_maps_to_FR_FR[jvm]" classname="org.revue_2_presse.domain.i18n.LocaleResolverTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

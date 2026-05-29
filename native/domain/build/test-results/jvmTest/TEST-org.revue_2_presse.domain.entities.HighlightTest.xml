@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.domain.entities.HighlightTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:17" hostname="io-marianne-libran.local" time="0.006">
+  <properties/>
+  <testcase name="metrics_default_to_zero[jvm]" classname="org.revue_2_presse.domain.entities.HighlightTest" time="0.001"/>
+  <testcase name="id_must_not_be_blank[jvm]" classname="org.revue_2_presse.domain.entities.HighlightTest" time="0.002"/>
+  <testcase name="equality_is_value_based[jvm]" classname="org.revue_2_presse.domain.entities.HighlightTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

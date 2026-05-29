@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.ui.components.SnapshotsListTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:23" hostname="io-marianne-libran.local" time="0.065">
+  <properties/>
+  <testcase name="error_state_shows_alert[jvm]" classname="org.revue_2_presse.ui.components.SnapshotsListTest" time="0.022"/>
+  <testcase name="empty_state_shows_notice[jvm]" classname="org.revue_2_presse.ui.components.SnapshotsListTest" time="0.019"/>
+  <testcase name="loading_state_shows_spinner[jvm]" classname="org.revue_2_presse.ui.components.SnapshotsListTest" time="0.024"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

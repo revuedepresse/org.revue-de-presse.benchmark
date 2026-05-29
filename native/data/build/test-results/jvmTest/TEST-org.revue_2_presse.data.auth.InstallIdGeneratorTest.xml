@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.data.auth.InstallIdGeneratorTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:20" hostname="io-marianne-libran.local" time="0.013">
+  <properties/>
+  <testcase name="distinct_at_same_instant[jvm]" classname="org.revue_2_presse.data.auth.InstallIdGeneratorTest" time="0.012"/>
+  <testcase name="sortable_by_timestamp[jvm]" classname="org.revue_2_presse.data.auth.InstallIdGeneratorTest" time="0.001"/>
+  <testcase name="shape_is_uuid_v7[jvm]" classname="org.revue_2_presse.data.auth.InstallIdGeneratorTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

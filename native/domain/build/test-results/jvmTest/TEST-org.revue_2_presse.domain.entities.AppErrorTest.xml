@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.domain.entities.AppErrorTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:17" hostname="io-marianne-libran.local" time="0.164">
+  <properties/>
+  <testcase name="from_maps_known_kinds[jvm]" classname="org.revue_2_presse.domain.entities.AppErrorTest" time="0.163"/>
+  <testcase name="upstream_failure_carries_status[jvm]" classname="org.revue_2_presse.domain.entities.AppErrorTest" time="0.0"/>
+  <testcase name="offline_has_no_payload[jvm]" classname="org.revue_2_presse.domain.entities.AppErrorTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

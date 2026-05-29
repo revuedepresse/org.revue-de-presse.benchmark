@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/thierrymarianne/repositories/deploying/org.revue-de-presse.benchmark/native/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest1993049421207102978.xml:2:13-83
+INJECTED from /Users/thierrymarianne/repositories/deploying/org.revue-de-presse.benchmark/native/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest1993049421207102978.xml:2:13-83
+	package
+		INJECTED from /Users/thierrymarianne/repositories/deploying/org.revue-de-presse.benchmark/native/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest1993049421207102978.xml
+	xmlns:android
+		ADDED from /Users/thierrymarianne/repositories/deploying/org.revue-de-presse.benchmark/native/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest1993049421207102978.xml:2:23-81
+uses-sdk
+INJECTED from /Users/thierrymarianne/repositories/deploying/org.revue-de-presse.benchmark/native/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest1993049421207102978.xml reason: use-sdk injection requested
+INJECTED from /Users/thierrymarianne/repositories/deploying/org.revue-de-presse.benchmark/native/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest1993049421207102978.xml
+INJECTED from /Users/thierrymarianne/repositories/deploying/org.revue-de-presse.benchmark/native/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest1993049421207102978.xml
+	android:targetSdkVersion
+		INJECTED from /Users/thierrymarianne/repositories/deploying/org.revue-de-presse.benchmark/native/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest1993049421207102978.xml
+	android:minSdkVersion
+		INJECTED from /Users/thierrymarianne/repositories/deploying/org.revue-de-presse.benchmark/native/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest1993049421207102978.xml

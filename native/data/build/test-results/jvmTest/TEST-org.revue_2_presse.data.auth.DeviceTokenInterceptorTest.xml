@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.data.auth.DeviceTokenInterceptorTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:19" hostname="io-marianne-libran.local" time="0.527">
+  <properties/>
+  <testcase name="surfaces_unauthorized_after_second_401[jvm]" classname="org.revue_2_presse.data.auth.DeviceTokenInterceptorTest" time="0.511"/>
+  <testcase name="retries_once_on_401_with_freshly_minted_token[jvm]" classname="org.revue_2_presse.data.auth.DeviceTokenInterceptorTest" time="0.011"/>
+  <testcase name="attaches_bearer_token_to_request[jvm]" classname="org.revue_2_presse.data.auth.DeviceTokenInterceptorTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[SLF4J(W): No SLF4J providers were found.
+SLF4J(W): Defaulting to no-operation (NOP) logger implementation
+SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+]]></system-err>
+</testsuite>

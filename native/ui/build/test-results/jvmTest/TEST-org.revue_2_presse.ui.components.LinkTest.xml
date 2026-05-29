@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.revue_2_presse.ui.components.LinkTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-29T14:35:23" hostname="io-marianne-libran.local" time="0.021">
+  <properties/>
+  <testcase name="fires_callback_on_click_with_url[jvm]" classname="org.revue_2_presse.ui.components.LinkTest" time="0.021"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
