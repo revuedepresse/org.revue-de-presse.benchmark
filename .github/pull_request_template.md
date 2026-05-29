@@ -2,6 +2,5 @@
 <!-- short summary -->
 
 ## Test plan
-- [ ] `make native-test` green
-- [ ] Maestro flow updated / added if behaviour changed
-- [ ] If touching distribution: signed AAB or XCFramework rebuilt locally and verified
+- [ ] `make test` green (nuxt unit + social units + e2e)
+- [ ] If touching the design system: `pnpm build` + `pnpm test` green in `design-system/`

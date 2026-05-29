@@ -150,8 +150,8 @@ for (const screen of SCREENS) {
     });
 
     // Focused element screenshots — scroll each into view and frame it tightly,
-    // so off-the-fold components (e.g. the sidebar BannerAbout) are usable as a
-    // 1:1 parity reference for the native port.
+    // so off-the-fold components (e.g. the sidebar BannerAbout) are captured as
+    // a usable reference image.
     for (const [shotName, selector] of Object.entries(screen.shots ?? {})) {
       const locator = page.locator(selector).first();
       if ((await locator.count()) === 0) continue;

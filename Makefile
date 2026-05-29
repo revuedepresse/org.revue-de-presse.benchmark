@@ -7,14 +7,10 @@ SHELL:=/bin/bash
         install-bubblewrap update-twa build-twa \
         e2e-install e2e-install-browsers e2e-build-apps \
         e2e-test e2e-test-functional e2e-test-perf e2e-show-report \
-        test test-all \
-        maestro-android maestro-ios \
+        test \
         linkedin-install linkedin-bootstrap linkedin-post linkedin-post-dry linkedin-test linkedin-typecheck \
         tiktok-install tiktok-bootstrap tiktok-post tiktok-post-dry tiktok-test tiktok-typecheck \
-        bluesky-install bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck \
-        native-desktop-run native-desktop-release \
-        native-android-debug native-android-release native-ios-framework \
-        native-release native-build-all
+        bluesky-install bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck
 
 NUXT_DIR     := nuxt
 E2E_DIR      := e2e
@@ -98,19 +94,9 @@ e2e-test-perf: e2e-build-apps ## Run only the Playwright perf projects
 e2e-show-report: ## Open the last Playwright HTML report in a browser
 	@cd $(E2E_DIR) && pnpm exec playwright show-report
 
-# -- Maestro (Mobile App E2E) ------------------------------------------------
-
-maestro-android: ## Run Maestro tests on Android emulator
-	@cd $(E2E_DIR) && pnpm maestro:android
-
-maestro-ios: ## Run Maestro tests on iOS simulator
-	@cd $(E2E_DIR) && pnpm maestro:ios
-
 # -- Aggregates -----------------------------------------------------------
 
-test: nuxt-test linkedin-test tiktok-test bluesky-test e2e-test native-test native-codegen-test ## Run all tests (nuxt unit + linkedin unit + tiktok unit + bluesky unit + e2e + native unit + native codegen)
-
-test-all: test maestro-android ## Run all tests including Maestro (assumes Android emulator is up)
+test: nuxt-test linkedin-test tiktok-test bluesky-test e2e-test ## Run all tests (nuxt unit + linkedin unit + tiktok unit + bluesky unit + e2e)
 
 # -- LinkedIn -------------------------------------------------------------
 
@@ -171,36 +157,6 @@ bluesky-test: ## Run social/bluesky unit tests
 
 bluesky-typecheck: ## Typecheck social/bluesky
 	@$(MAKE) -C $(BLUESKY_DIR) typecheck
-
-# -- Native KMP -----------------------------------------------------------
-
-native-install:      ## Install native KMP dependencies (Gradle bootstrap)
-	cd native && ./gradlew --no-daemon help
-
-native-test:         ## Run native :domain, :data, :design and :ui unit tests (all targets)
-	cd native && ./gradlew :domain:allTests :data:allTests :design:allTests :ui:allTests
-
-native-desktop-run:  ## Run the native desktop app via Gradle
-	cd native && ./gradlew :desktopApp:run
-
-native-codegen-test: ## Run design-system codegen script tests
-	cd design-system && pnpm test:scripts
-
-native-android-debug:    ## Build native Android debug APK
-	cd native && ./gradlew :androidApp:assembleDebug
-
-native-android-release:  ## Build native Android release AAB (signed)
-	cd native && ./gradlew :androidApp:bundleRelease
-
-native-ios-framework:    ## Compile native iOS Kotlin (link smoke; full framework needs macOS+Xcode)
-	cd native && ./gradlew :iosApp:compileKotlinIosX64
-
-native-desktop-release:  ## Build native desktop uber jar for the current OS (skips ProGuard — 7.2.2 bundled with Compose 1.7.1 can't read Java 21 bytecode)
-	cd native && ./gradlew :desktopApp:packageUberJarForCurrentOS
-
-native-release: native-android-release native-ios-framework  ## Build the two distributable native targets (Android + iOS) per spec §9
-
-native-build-all: native-android-release native-ios-framework native-desktop-release  ## Build all three native targets: Android AAB + iOS framework + Desktop uber jar
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'

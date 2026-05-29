@@ -7,3 +7,4 @@ legacy
 nuxt/.netlify
 nuxt/.session-store
 tmp/
+.DS_Store
