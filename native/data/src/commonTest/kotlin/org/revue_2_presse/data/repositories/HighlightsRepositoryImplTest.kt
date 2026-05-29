@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
 
 class HighlightsRepositoryImplTest {
 
-    @Test fun forDay_emits_empty_then_mapped() = runTest {
+    @Test fun forDay_emits_mapped_when_uncached() = runTest {
         val engine = MockEngine {
             respond(
                 content = HighlightsFixtures.json("hydra-highlights-fr-2026-05-01.json"),
@@ -30,11 +30,11 @@ class HighlightsRepositoryImplTest {
         val api = ApiClient(client, ApiEndpoints("https://api.example.test"))
         val repo = HighlightsRepositoryImpl(api)
 
+        // Uncached day: no empty-first emission — the only success carries the
+        // mapped results, so the UI stays on the spinner until the fetch lands.
         repo.forDay(LocalDate(2026, 5, 1)).test {
-            val first = awaitItem()
-            assertTrue(first.isSuccess); assertEquals(0, first.getOrThrow().size)
-            val second = awaitItem()
-            assertTrue(second.isSuccess); assertEquals(3, second.getOrThrow().size)
+            val item = awaitItem()
+            assertTrue(item.isSuccess); assertEquals(3, item.getOrThrow().size)
             awaitComplete()
         }
     }
@@ -46,12 +46,9 @@ class HighlightsRepositoryImplTest {
         val repo = HighlightsRepositoryImpl(api)
 
         repo.forDay(LocalDate(2026, 5, 1)).test {
-            // first emission is the empty cache hit (success)
-            val first = awaitItem()
-            assertTrue(first.isSuccess)
-            // second emission is the caught API error
-            val second = awaitItem()
-            assertTrue(second.isFailure)
+            // Uncached + API throws: the single emission is the caught failure.
+            val item = awaitItem()
+            assertTrue(item.isFailure)
             awaitComplete()
         }
     }

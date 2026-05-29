@@ -143,9 +143,12 @@ jobs:
       - uses: actions/setup-java@v4
         with: { java-version: '21', distribution: 'temurin' }
       - run: cd design-system && pnpm install --frozen-lockfile
-      - run: cd design-system && pnpm test:scripts
-      - run: cd native && ./gradlew :domain:compileKotlinJvm
-      - run: cd native && ./gradlew :domain:allTests :data:allTests :design:allTests :ui:allTests
+      - name: design-system codegen tests
+        run: cd design-system && pnpm test:scripts
+      - name: native codegen compile
+        run: cd native && ./gradlew :domain:compileKotlinJvm
+      - name: native unit tests (:domain :data :design :ui)
+        run: cd native && ./gradlew :domain:allTests :data:allTests :design:allTests :ui:allTests
 
   native-android-build:
     runs-on: ubuntu-latest

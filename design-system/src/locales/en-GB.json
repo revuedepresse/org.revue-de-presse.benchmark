@@ -154,5 +154,6 @@
   "pages.support.section-2.title": "Get involved in the project",
   "pages.sources.title": "News briefs sources",
   "pages.sources.intro": "The sources of news briefs ranked by popularity at the end of each day come from French media Bluesky accounts.",
-  "pages.sources.footnote": "Popularity is derived from how often posts are shared from Bluesky."
+  "pages.sources.footnote": "Popularity is derived from how often posts are shared from Bluesky.",
+  "header.wordmark": "Revue de presse"
 }

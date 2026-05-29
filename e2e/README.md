@@ -1,6 +1,6 @@
 # @revue-de-presse/e2e
 
-Cross-app Playwright Test suite covering both `nuxt/` and `next/`.
+Playwright Test suite exercising the `nuxt/` app.
 
 ## One-time setup
 
@@ -14,11 +14,10 @@ pnpm install-browsers
 
 ## Running
 
-Build both apps first (the suite runs against production builds, not dev):
+Build the app first (the suite runs against a production build, not dev):
 
 ```bash
 pnpm --filter @revue-de-presse/nuxt-app build
-pnpm --filter @revue-de-presse/next-app build
 ```
 
 Then from `e2e/`:
@@ -34,10 +33,9 @@ pnpm test:headed           # watch the browser
 Filtering by project:
 
 ```bash
-pnpm test --project='nuxt-*'        # Nuxt only
-pnpm test --project='next-*'        # Next only
-pnpm test --project='*-desktop-*'   # Desktop only
-pnpm test --project='*-mobile-*'    # Mobile only
+pnpm test --project='nuxt-*'        # all Nuxt projects
+pnpm test --project='*-desktop-*'   # desktop viewport only
+pnpm test --project='*-mobile-*'    # mobile viewport only
 ```
 
 Seed override for calendar traversal:
@@ -49,10 +47,10 @@ E2E_SEED=99 pnpm test:functional
 ## Env vars
 
 The mock intercepts `/api/highlights` in the browser before the apps reach
-upstream, so no real credentials are needed. Both apps still require
-`API_BASE_URL` and `API_CLIENT_SECRET` to be set at boot (Next refuses to
-start without them). The Playwright `webServer` config sets these to
-`http://unused.test` / `unused` automatically.
+upstream, so no real credentials are needed. The app still requires
+`API_BASE_URL` and `API_CLIENT_SECRET` to be set at boot. The Playwright
+`webServer` config sets these to `http://unused.test` / `unused`
+automatically.
 
 ## Design-system dependency
 

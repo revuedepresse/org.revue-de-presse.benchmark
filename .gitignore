@@ -1,5 +1,7 @@
+.env
 .env.local
 !.env.local.dist
+node_modules/
 docs/
 legacy
 nuxt/.netlify

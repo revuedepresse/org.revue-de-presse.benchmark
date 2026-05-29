@@ -14,6 +14,7 @@
     "build:mitosis": "mitosis build && node scripts/post-mitosis.mjs",
     "build": "pnpm build:tokens && pnpm build:mitosis",
     "test": "vitest run",
+    "test:scripts": "node --test scripts/__tests__/*.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
     "demo": "pnpm --filter @revue-de-presse/design-system-demo dev",
     "story": "histoire dev --config stories/histoire.config.ts",

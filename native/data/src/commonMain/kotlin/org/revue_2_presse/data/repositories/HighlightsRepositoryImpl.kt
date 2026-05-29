@@ -14,7 +14,10 @@ class HighlightsRepositoryImpl(private val api: ApiClient) : HighlightsRepositor
     private val cache = mutableMapOf<LocalDate, List<Highlight>>()
 
     override fun forDay(day: LocalDate): Flow<Result<List<Highlight>>> = flow {
-        emit(Result.success(cache[day] ?: emptyList()))
+        // Emit cached data only when we actually have it. Emitting an empty list
+        // for an uncached day would flip the UI to a "loaded, zero items" state
+        // and hide the loading spinner while the network call is still in flight.
+        cache[day]?.let { emit(Result.success(it)) }
         val resp = api.highlights(day, day)
         val mapped = HydraToHighlight.map(resp)
         cache[day] = mapped

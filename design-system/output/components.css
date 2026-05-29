@@ -951,6 +951,57 @@
         }
         .rdp-sources-page p { margin: 0 0 var(--separation-1); }
         .rdp-sources-page__internal-link { color: var(--color-brand); }
+
+        .rdp-sources-page__list {
+          list-style: none;
+          padding: 0;
+          margin: var(--separation-2) 0;
+          display: flex;
+          flex-direction: column;
+          gap: var(--separation-1);
+        }
+        .rdp-sources-page__row {
+          display: flex;
+          align-items: center;
+          gap: var(--separation-1);
+          padding: var(--separation-2);
+          background: var(--color-white);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-default);
+          text-decoration: none;
+          color: inherit;
+          cursor: pointer;
+          transition: background-color 120ms ease-in-out;
+        }
+        .rdp-sources-page__row:hover,
+        .rdp-sources-page__row:focus-visible {
+          background: var(--color-taupe-grey);
+        }
+        .rdp-sources-page__avatar {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: var(--color-light-grey);
+          object-fit: cover;
+          flex-shrink: 0;
+        }
+        .rdp-sources-page__meta {
+          display: flex;
+          flex-direction: column;
+          gap: var(--separation-0);
+          min-width: 0;
+        }
+        .rdp-sources-page__name {
+          font-weight: 700;
+          font-size: var(--font-size-status-text);
+          color: var(--color-content-text);
+          line-height: 1.2;
+        }
+        .rdp-sources-page__handle {
+          font-size: var(--font-size-publication-date);
+          color: var(--color-light-grey);
+        }
+
         .rdp-sources-page__footnote {
           font-size: var(--font-size-publication-date);
           color: var(--color-light-grey);
