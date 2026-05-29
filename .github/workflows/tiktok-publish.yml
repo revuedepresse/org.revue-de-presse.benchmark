@@ -22,22 +22,16 @@ concurrency:
   group: tiktok-publish
   cancel-in-progress: false
 
-# Run JavaScript actions on Node.js 24 (Node 20 is deprecated; forced from
-# 2026-06-02). Opting in here silences the deprecation warnings without
-# bumping versions — the org action allowlist pins pnpm/action-setup@v4.
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
         with:
           version: 9
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version-file: 'nuxt/.nvmrc'
           cache: 'pnpm'
@@ -74,7 +68,7 @@ jobs:
 
       - name: Upload MP4 as artifact (always)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: tiktok-${{ github.run_id }}.mp4
           path: social/tiktok/out/*.mp4
