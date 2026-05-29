@@ -5,6 +5,15 @@ on:
   pull_request:
     branches: [main]
 
+# Run JavaScript actions on Node.js 24. Node.js 20 is deprecated (forced to
+# Node 24 by default from 2026-06-02, removed 2026-09-16). Opting in here
+# silences the deprecation warnings for actions still declaring `node20`
+# (checkout, setup-node, upload-artifact, pnpm/action-setup) without bumping
+# versions — which matters because the org action allowlist pins
+# pnpm/action-setup@v4.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   test:
     name: ${{ matrix.workspace }}

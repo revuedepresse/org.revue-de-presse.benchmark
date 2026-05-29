@@ -22,6 +22,12 @@ concurrency:
   group: tiktok-publish
   cancel-in-progress: false
 
+# Run JavaScript actions on Node.js 24 (Node 20 is deprecated; forced from
+# 2026-06-02). Opting in here silences the deprecation warnings without
+# bumping versions — the org action allowlist pins pnpm/action-setup@v4.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   publish:
     runs-on: ubuntu-latest
