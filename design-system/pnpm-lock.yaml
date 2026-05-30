@@ -43,8 +43,8 @@ importers:
         specifier: ^6.0
         version: 6.0.2(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))
       '@vitejs/plugin-vue':
-        specifier: ^5.0.0
-        version: 5.2.4(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))(vue@3.5.35(typescript@5.9.3))
+        specifier: ^6.0.7
+        version: 6.0.7(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))(vue@3.5.35(typescript@5.9.3))
       '@zxcvbn-ts/core':
         specifier: ^3
         version: 3.0.4
@@ -107,7 +107,7 @@ importers:
         version: 3.5.35(typescript@5.9.3)
     devDependencies:
       '@vitejs/plugin-vue':
-        specifier: ^6.0.0
+        specifier: ^6.0.7
         version: 6.0.7(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))(vue@3.5.35(typescript@5.9.3))
       typescript:
         specifier: ^5.5.0
@@ -964,13 +964,6 @@ packages:
         optional: true
       babel-plugin-react-compiler:
         optional: true
-
-  '@vitejs/plugin-vue@5.2.4':
-    resolution: {integrity: sha512-7Yx/SXSOcQq5HiiV3orevHUFn+pmMB4cgbEkDYgnkUWb0WfeQ/wa2yFv6D5ICiCQOVpjA7vYDXrC7AGO8yjDHA==}
-    engines: {node: ^18.0.0 || >=20.0.0}
-    peerDependencies:
-      vite: ^7.0.0
-      vue: ^3.2.25
 
   '@vitejs/plugin-vue@6.0.7':
     resolution: {integrity: sha512-km+p+XdSz9Sxm5rqUbqcSfZYaAniKxWBj1KURl+Jr7UaPvvX7BmaWMdP69I5rrFDeQGyxAG7NXdc57vz+snhWg==}
@@ -3655,11 +3648,6 @@ snapshots:
     dependencies:
       '@rolldown/pluginutils': 1.0.1
       vite: 7.3.3(@types/node@25.9.1)(jiti@1.21.7)
-
-  '@vitejs/plugin-vue@5.2.4(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))(vue@3.5.35(typescript@5.9.3))':
-    dependencies:
-      vite: 7.3.3(@types/node@25.9.1)(jiti@1.21.7)
-      vue: 3.5.35(typescript@5.9.3)
 
   '@vitejs/plugin-vue@6.0.7(vite@7.3.3(@types/node@25.9.1)(jiti@1.21.7))(vue@3.5.35(typescript@5.9.3))':
     dependencies:

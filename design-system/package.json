@@ -31,7 +31,7 @@
     "@stencil/core": "^4",
     "@types/node": "^25.9.1",
     "@vitejs/plugin-react": "^6.0",
-    "@vitejs/plugin-vue": "^5.0.0",
+    "@vitejs/plugin-vue": "^6.0.7",
     "@zxcvbn-ts/core": "^3",
     "@zxcvbn-ts/language-common": "^3",
     "@zxcvbn-ts/language-en": "^3",
