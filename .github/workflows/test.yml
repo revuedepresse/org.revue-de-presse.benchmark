@@ -26,6 +26,9 @@ jobs:
           - workspace: social/linkedin
             test_script: test:run
             typecheck: true
+          - workspace: social/bluesky
+            test_script: test:run
+            typecheck: true
     defaults:
       run:
         working-directory: ${{ matrix.workspace }}
