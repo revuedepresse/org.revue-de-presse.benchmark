@@ -21,7 +21,7 @@
     "lighthouse": "^12.8.2",
     "playwright-lighthouse": "^4.0.0",
     "typescript": "^5.9.3",
-    "web-vitals": "^4.2.4"
+    "web-vitals": "^6.0.0"
   },
   "pnpm": {
     "overrides": {
