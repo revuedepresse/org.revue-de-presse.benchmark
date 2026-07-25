@@ -5,13 +5,19 @@ const authExchangeRefresh = vi.fn();
 const authExchangeCode = vi.fn();
 const authGenerateUrl = vi.fn();
 
+// createLinkedinClient calls `new RestliClient()` / `new AuthClient()`, so the
+// implementations must be constructible — arrow functions are not.
 vi.mock('linkedin-api-client', () => ({
-  RestliClient: vi.fn().mockImplementation(() => ({ create: restliCreate })),
-  AuthClient: vi.fn().mockImplementation(() => ({
-    exchangeRefreshTokenForAccessToken: authExchangeRefresh,
-    exchangeAuthCodeForAccessToken: authExchangeCode,
-    generateMemberAuthorizationUrl: authGenerateUrl,
-  })),
+  RestliClient: vi.fn().mockImplementation(function () {
+    return { create: restliCreate };
+  }),
+  AuthClient: vi.fn().mockImplementation(function () {
+    return {
+      exchangeRefreshTokenForAccessToken: authExchangeRefresh,
+      exchangeAuthCodeForAccessToken: authExchangeCode,
+      generateMemberAuthorizationUrl: authGenerateUrl,
+    };
+  }),
 }));
 
 beforeEach(() => {
