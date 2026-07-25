@@ -17,6 +17,7 @@ jobs:
             test_script: test:run
           - workspace: design-system
             test_script: test
+            typecheck: true
           - workspace: social/tiktok
             test_script: test:run
             typecheck: true
