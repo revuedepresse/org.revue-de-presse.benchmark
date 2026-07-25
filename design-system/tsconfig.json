@@ -3,10 +3,14 @@
   "compilerOptions": {
     "noEmit": true,
     "rootDir": ".",
-    "baseUrl": ".",
+    // No "baseUrl": it is removed in TypeScript 7. Since TS 4.1 "paths" entries
+    // resolve relative to the tsconfig that declares them, so they stand alone.
     "paths": {
-      "@design-system/*": ["src/*"]
-    }
+      "@design-system/*": ["./src/*"]
+    },
+    // tests/** import node: builtins. Without this, TS skips "node:fs" as an
+    // absolute URI and never loads the ambient declarations from @types/node.
+    "types": ["node"]
   },
   "include": ["src/**/*", "tests/**/*", "scripts/**/*"]
 }

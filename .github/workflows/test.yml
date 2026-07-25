@@ -17,6 +17,18 @@ jobs:
             test_script: test:run
           - workspace: design-system
             test_script: test
+            typecheck: true
+          - workspace: social/tiktok
+            test_script: test:run
+            typecheck: true
+            # test/transcode.spec.ts drives the real ffmpeg/ffprobe binaries.
+            needs_ffmpeg: true
+          - workspace: social/linkedin
+            test_script: test:run
+            typecheck: true
+          - workspace: social/bluesky
+            test_script: test:run
+            typecheck: true
     defaults:
       run:
         working-directory: ${{ matrix.workspace }}
@@ -31,6 +43,16 @@ jobs:
           cache: pnpm
           cache-dependency-path: ${{ matrix.workspace }}/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
+      - name: Install ffmpeg
+        if: matrix.needs_ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version | head -n1
+          ffprobe -version | head -n1
+      - name: Typecheck
+        if: matrix.typecheck
+        run: pnpm typecheck
       - run: pnpm ${{ matrix.test_script }}
 
   e2e:
@@ -56,6 +78,11 @@ jobs:
         working-directory: nuxt
       - name: Install e2e deps
         run: pnpm install --frozen-lockfile
+        working-directory: e2e
+      # Ahead of the build: a type error in the specs is cheaper to surface
+      # than after a full Nuxt build and a browser download.
+      - name: Typecheck
+        run: pnpm typecheck
         working-directory: e2e
       - name: Build Nuxt app
         run: pnpm build
