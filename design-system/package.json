@@ -25,7 +25,7 @@
     "@angular/common": "^20",
     "@angular/core": "^20",
     "@builder.io/mitosis": "^0.13.0",
-    "@builder.io/mitosis-cli": "^0.13.0",
+    "@builder.io/mitosis-cli": "^0.14.0",
     "@builder.io/qwik": "^1.20",
     "@histoire/plugin-vue": "^0.17.17",
     "@stencil/core": "^4",
