@@ -25,11 +25,11 @@
   },
   "pnpm": {
     "overrides": {
-      "brace-expansion@5.0.5": "5.0.6",
       "devalue@5.8.0": "5.8.1",
       "vite": "^7.0.0",
       "esbuild": "^0.25.0",
-      "tar": "^7.5.11"
+      "tar": "^7.5.11",
+      "brace-expansion": "^5.0.8"
     }
   }
 }
