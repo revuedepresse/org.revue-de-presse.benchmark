@@ -79,6 +79,11 @@ jobs:
       - name: Install e2e deps
         run: pnpm install --frozen-lockfile
         working-directory: e2e
+      # Ahead of the build: a type error in the specs is cheaper to surface
+      # than after a full Nuxt build and a browser download.
+      - name: Typecheck
+        run: pnpm typecheck
+        working-directory: e2e
       - name: Build Nuxt app
         run: pnpm build
         working-directory: nuxt
