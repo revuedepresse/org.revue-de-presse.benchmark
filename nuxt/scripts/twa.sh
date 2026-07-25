@@ -28,15 +28,27 @@ unset ANDROID_SDK_ROOT
 # back to that line. We need >=2.7.0 to clear the Play Console findings on
 # edge-to-edge handling and the deprecated setStatusBarColor /
 # setNavigationBarColor / getStatusBarColor APIs. Re-pin after every update.
-ABH_VERSION="2.7.1"
+ABH_VERSION="2.7.2"
 
-_pin_abh_version() {
+# Same story for the target API level: bubblewrap 1.24.1 (the latest release)
+# still emits `targetSdkVersion 35` from template_project/app/build.gradle, and
+# upstream main has not bumped it. Google Play requires API 36 (Android 16) for
+# new uploads from 31 Aug 2026, so re-pin this after every update too.
+# compileSdkVersion is already 36 in the template — only the target lags.
+TARGET_SDK_VERSION="36"
+
+_pin_gradle_overrides() {
   local gradle="app/build.gradle"
   [ -f "$gradle" ] || return 0
   if grep -qE "androidbrowserhelper:[0-9]+\\.[0-9]+\\.[0-9]+" "$gradle"; then
     sed -i.tmp -E "s|(androidbrowserhelper:)[0-9]+\\.[0-9]+\\.[0-9]+|\\1${ABH_VERSION}|" "$gradle"
     rm -f "${gradle}.tmp"
     printf '✓ pinned androidbrowserhelper to %s in %s\n' "${ABH_VERSION}" "$gradle"
+  fi
+  if grep -qE "targetSdkVersion [0-9]+" "$gradle"; then
+    sed -i.tmp -E "s|(targetSdkVersion )[0-9]+|\\1${TARGET_SDK_VERSION}|" "$gradle"
+    rm -f "${gradle}.tmp"
+    printf '✓ pinned targetSdkVersion to %s in %s\n' "${TARGET_SDK_VERSION}" "$gradle"
   fi
 }
 
@@ -87,7 +99,7 @@ update_twa() {
     printf 'Copied twa-manifest.json.dist → twa-manifest.json. Edit signingKey.path before signing.\n'
   fi
   _with_local_manifest bubblewrap update
-  _pin_abh_version
+  _pin_gradle_overrides
 }
 
 build_twa() {
@@ -104,8 +116,8 @@ build_twa() {
   _with_local_manifest bash -c "
     set -e
     bubblewrap update
-    $(declare -f _pin_abh_version)
-    ABH_VERSION='${ABH_VERSION}' _pin_abh_version
+    $(declare -f _pin_gradle_overrides)
+    ABH_VERSION='${ABH_VERSION}' TARGET_SDK_VERSION='${TARGET_SDK_VERSION}' _pin_gradle_overrides
     # Decline the 'twa-manifest.json changed' prompt — update just synced.
     printf 'n\n' | bubblewrap build --skipPwaValidation
   "
