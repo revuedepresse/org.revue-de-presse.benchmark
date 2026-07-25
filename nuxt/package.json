@@ -13,15 +13,15 @@
   },
   "dependencies": {
     "linkifyjs": "^4.3.3",
-    "nuxt": "^3.21.7",
-    "pino": "^9.5.0",
-    "vue": "^3.5.0",
-    "vue-router": "^4.4.0"
+    "nuxt": "^3.21.9",
+    "pino": "^9.14.0",
+    "vue": "^3.5.40",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
-    "@nuxtjs/sitemap": "^8.0.15",
+    "@nuxtjs/sitemap": "^8.3.0",
     "nuxt-module-feed": "^1.1.4",
-    "vitest": "^3.0.0"
+    "vitest": "^3.2.7"
   },
   "pnpm": {
     "overrides": {
