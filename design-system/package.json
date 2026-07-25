@@ -48,7 +48,7 @@
     "tsup": "^8.0.0",
     "typescript": "^6.0.3",
     "vite-plugin-solid": "^2.10",
-    "vitest": "^4.1.7",
+    "vitest": "^4.1.10",
     "vue": "^3.5.35"
   },
   "pnpm": {
