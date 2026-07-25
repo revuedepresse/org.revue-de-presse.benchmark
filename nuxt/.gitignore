@@ -9,7 +9,6 @@ dist
 .env
 .env.local
 .certs/
-twa-manifest.json
 *.apk
 *.aab
 *.idsig

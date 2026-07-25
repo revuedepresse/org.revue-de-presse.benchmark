@@ -3,9 +3,9 @@
 #
 #   install_bubblewrap   — pin Node to .nvmrc via asdf and install
 #                          @bubblewrap/cli globally.
-#   update_twa           — run `bubblewrap update` against the local
-#                          twa-manifest.json (copy from twa-manifest.json.dist
-#                          first if missing).
+#   update_twa           — run `bubblewrap update` against twa-manifest.json,
+#                          which is tracked in git (it carries appVersionCode,
+#                          the value Play requires to increase per upload).
 
 set -Eeuo pipefail
 
@@ -95,8 +95,8 @@ _with_local_manifest() {
 
 update_twa() {
   if [ ! -f ./twa-manifest.json ]; then
-    cp ./twa-manifest.json.dist ./twa-manifest.json
-    printf 'Copied twa-manifest.json.dist → twa-manifest.json. Edit signingKey.path before signing.\n'
+    printf 'twa-manifest.json missing — it is tracked in git; restore it with `git checkout -- twa-manifest.json`.\n' >&2
+    return 1
   fi
   _with_local_manifest bubblewrap update
   _pin_gradle_overrides

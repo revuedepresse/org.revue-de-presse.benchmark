@@ -57,20 +57,27 @@ Both are server-only — the secret never reaches the browser. Copy
 
 ## Trusted Web Activity (Android)
 
-`store_icon.png` (512×512) and `twa-manifest.json.dist` are the two
-inputs Bubblewrap needs to regenerate the Android app. The real
-`twa-manifest.json` lives outside git (see `.gitignore`).
+`store_icon.png` (512×512) and `twa-manifest.json` are the two inputs
+Bubblewrap needs to regenerate the Android app. Both are tracked: the
+manifest carries `appVersionCode`, which Play requires to increase on every
+upload, so it cannot live on one machine only. The generated `app/` project
+and the signing keystore stay out of git (see `.gitignore`).
+
+Bump `appVersionCode` **and** `appVersionName`/`appVersion` before each
+release.
 
 ```bash
 make install-bubblewrap   # npm i -g @bubblewrap/cli (one-time)
-make update-twa           # cp twa-manifest.json.dist → twa-manifest.json
-                          # (if missing) and run `bubblewrap update`
+make update-twa           # `bubblewrap update` from twa-manifest.json
 make build-twa            # compile + sign the APK
                           # (set BUBBLEWRAP_KEYSTORE_PASSWORD + BUBBLEWRAP_KEY_PASSWORD)
 ```
 
 `scripts/twa.sh` carries the `install_bubblewrap` / `update_twa` /
-`build_twa` helpers invoked by the Makefile targets above.
+`build_twa` helpers invoked by the Makefile targets above. It also re-pins
+`targetSdkVersion` and the `androidbrowserhelper` version into the generated
+`app/build.gradle` after every `bubblewrap update`, because Bubblewrap's
+template still emits older values than Play accepts.
 
 ## Deploying to Netlify
 
