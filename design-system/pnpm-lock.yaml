@@ -17,10 +17,10 @@ importers:
     devDependencies:
       '@angular/common':
         specifier: ^20
-        version: 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 20.3.21(@angular/core@20.3.25(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core':
         specifier: ^20
-        version: 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)
+        version: 20.3.25(rxjs@7.8.2)
       '@builder.io/mitosis':
         specifier: ^0.13.0
         version: 0.13.0(postcss@8.5.15)
@@ -142,11 +142,11 @@ packages:
     resolution: {integrity: sha512-XufWMAUS0gNKE29LkDFf21eTxdBN2WIcN/3ownqfYqKwDzMMpUAm5EEjPYfn0b/2/b5OYGNJrU4yeTHoz0Bt7g==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
-  '@angular/core@20.3.21':
-    resolution: {integrity: sha512-sZMWyxh6dkuT6F90epkM1F7E2WJeduHoA9PRHYChIIVFnBd0VKITxpfrwRQS44IPJAtR456/5twtrcCNBALweQ==}
+  '@angular/core@20.3.25':
+    resolution: {integrity: sha512-B4XnnR5jzikZDvZ4PjwjAWZMT14dxrKrmJdwa/n0yp7rMPkIJTKF6ZJMg4d1pLWLLSsc2oWHioN3UrWlGqIKnA==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
     peerDependencies:
-      '@angular/compiler': 20.3.21
+      '@angular/compiler': 20.3.25
       rxjs: ^6.5.3 || ^7.4.0
       zone.js: ~0.15.0
     peerDependenciesMeta:
@@ -3042,9 +3042,9 @@ snapshots:
 
   '@akryum/tinypool@0.3.1': {}
 
-  '@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@angular/common@20.3.21(@angular/core@20.3.25(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@angular/core': 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)
+      '@angular/core': 20.3.25(rxjs@7.8.2)
       rxjs: 7.8.2
       tslib: 2.8.1
 
@@ -3052,12 +3052,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)':
+  '@angular/core@20.3.25(rxjs@7.8.2)':
     dependencies:
       rxjs: 7.8.2
       tslib: 2.8.1
-    optionalDependencies:
-      '@angular/compiler': 20.3.21
 
   '@babel/code-frame@7.29.0':
     dependencies:
