@@ -34,7 +34,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atproto/api": "^0.13.35",
+    "@atproto/api": "^0.20.36",
     "@atproto/jwk-jose": "^0.1.11",
     "@atproto/oauth-client-node": "^0.2.24",
     "pino": "^10.3.1",
