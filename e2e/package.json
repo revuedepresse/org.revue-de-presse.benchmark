@@ -2,6 +2,7 @@
   "name": "@revue-de-presse/e2e",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.20.0",
   "scripts": {
     "test": "playwright test",
     "test:functional": "playwright test --project='*-functional'",

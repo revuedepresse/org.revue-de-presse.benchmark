@@ -27,3 +27,9 @@ allowBuilds:
 # pnpm 10 enforce it at *resolution* time, so a lockfile written locally or by
 # a dependency bump can never be one the deploy host will reject.
 minimumReleaseAge: 1440
+
+# Migrated from .npmrc, which pnpm 11 no longer consults for pnpm settings.
+# Nuxt needs the flat layout: server/plugins/feed.ts imports
+# nitropack/runtime/plugin, which Nuxt never declares as a direct dependency.
+# Without this the package is unresolvable and the feed tests fail to collect.
+shamefullyHoist: true

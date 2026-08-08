@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.20.0",
   "description": "CLI that posts a daily Revue de Presse top-3 thread to a Bluesky account once per day from cron.",
   "license": "GPL-3.0-only",
   "repository": {

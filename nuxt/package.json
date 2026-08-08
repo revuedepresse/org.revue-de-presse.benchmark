@@ -2,6 +2,7 @@
   "name": "@revue-de-presse/nuxt-app",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.20.0",
   "scripts": {
     "dev": "nuxt cleanup && nuxt dev",
     "build": "nuxt build",

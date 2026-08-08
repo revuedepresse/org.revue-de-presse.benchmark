@@ -34,9 +34,13 @@ jobs:
         working-directory: ${{ matrix.workspace }}
     steps:
       - uses: actions/checkout@v5
+      # No `version:` — the pnpm release comes from the workspace's
+      # "packageManager" pin, so CI, developer machines and the deploy host all
+      # run the same one. Hardcoding 10 here meant CI never exercised pnpm 11's
+      # strictDepBuilds or its lockfile supply-chain policies.
       - uses: pnpm/action-setup@v6
         with:
-          version: 10
+          package_json_file: ${{ matrix.workspace }}/package.json
       - uses: actions/setup-node@v5
         with:
           node-version-file: ${{ matrix.workspace }}/.nvmrc
@@ -63,9 +67,11 @@ jobs:
       NUXT_API_CLIENT_SECRET: mock-client-secret
     steps:
       - uses: actions/checkout@v5
+      # Version comes from the workspace "packageManager" pin — see the note in
+      # the `test` job above.
       - uses: pnpm/action-setup@v6
         with:
-          version: 10
+          package_json_file: e2e/package.json
       - uses: actions/setup-node@v5
         with:
           node-version-file: e2e/.nvmrc
@@ -113,9 +119,11 @@ jobs:
       NUXT_API_CLIENT_SECRET: mock-client-secret
     steps:
       - uses: actions/checkout@v5
+      # Version comes from the workspace "packageManager" pin — see the note in
+      # the `test` job above.
       - uses: pnpm/action-setup@v6
         with:
-          version: 10
+          package_json_file: e2e/package.json
       - uses: actions/setup-node@v5
         with:
           node-version-file: e2e/.nvmrc

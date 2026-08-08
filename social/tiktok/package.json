@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.20.0",
   "scripts": {
     "post": "tsx bin/post-daily-top10.ts",
     "post:dry": "DRY_RUN=true tsx bin/post-daily-top10.ts",
