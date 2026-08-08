@@ -52,6 +52,39 @@ export function createFileStateStore<T = unknown>(path: string): SimpleStore<T> 
   return createFileStore<T>(path, 0o600);
 }
 
+/**
+ * @atproto/oauth-client deletes the stored session whenever a refresh throws
+ * (`deleteOnError`). That is reasonable for a browser, but on a cron host it
+ * turns one bad refresh into an indefinite outage: the blob is gone, so every
+ * later run reports "The session was deleted by another process" — which reads
+ * like a concurrency bug rather than "you must re-authorise".
+ *
+ * We cannot opt out of that deletion, but we can make it observable. This
+ * wrapper copies the blob aside before letting the delete through, so the next
+ * operator can tell an expiry apart from a session that was never bootstrapped,
+ * and `onDelete` gets a chance to raise an alarm while the cause is still known.
+ */
+export function withDeletionAudit<T>(
+  inner: SimpleStore<T>,
+  auditPath: string,
+  onDelete?: (key: string, hadValue: boolean) => void,
+): SimpleStore<T> {
+  return {
+    get: (key) => inner.get(key),
+    set: (key, value) => inner.set(key, value),
+    async del(key) {
+      const doomed = await inner.get(key).catch(() => undefined);
+      if (doomed !== undefined) {
+        const record = { deletedAt: new Date().toISOString(), key, session: doomed };
+        // Never let a failed audit write block the delete the library asked for.
+        await writeJsonAtomic(auditPath, record as FileBacking, 0o600).catch(() => {});
+      }
+      onDelete?.(key, doomed !== undefined);
+      await inner.del(key);
+    },
+  };
+}
+
 export type EnvSessionStore<T = unknown> = SimpleStore<T> & {
   lastSet?: { did: string; value: T };
 };

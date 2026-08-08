@@ -95,7 +95,9 @@ export default defineNuxtConfig({
   sitemap: {
     // Suppress raw ':day' / ':twitterId' placeholders from auto-discovery and
     // the 404 page; concrete dated URLs come from urls() below.
-    exclude: ['/contenu-introuvable', '/source/**', '/[day]', '/[day]/**'],
+    // '/bluesky-callback' is the OAuth redirect target for social/bluesky; it
+    // is operational plumbing, not content.
+    exclude: ['/contenu-introuvable', '/source/**', '/[day]', '/[day]/**', '/bluesky-callback'],
     defaults: { changefreq: 'monthly', priority: 0.7 },
     urls: buildLegacySitemapUrls,
   },

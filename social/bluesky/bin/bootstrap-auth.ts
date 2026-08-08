@@ -9,24 +9,13 @@ import { NodeOAuthClient, type NodeSavedSession, type NodeSavedState } from '@at
 import { loadConfig, ConfigError } from '../src/config.ts';
 import { createFileSessionStore, createFileStateStore } from '../src/oauthStore.ts';
 import { parseCallbackParams } from '../src/oauthCallback.ts';
+import { buildClientMetadata, isConfidential, isLoopbackRedirect, SCOPE } from '../src/clientMetadata.ts';
+import { loadClientKeyset } from '../src/keyset.ts';
+import { createRequestLock, lockDirForSessionFile } from '../src/requestLock.ts';
+import { expiryStatus, writeBootstrappedAt } from '../src/sessionLifetime.ts';
 import { logger } from '../src/logger.ts';
 
 const EXIT = { OK: 0, CONFIG: 4, BLUESKY: 3 };
-
-function clientMetadata(cfg: ReturnType<typeof loadConfig>) {
-  return {
-    client_id: cfg.blueskyClientMetadataUrl,
-    client_name: 'Revue de Presse — daily Bluesky digest',
-    client_uri: new URL(cfg.blueskyClientMetadataUrl).origin,
-    redirect_uris: [cfg.blueskyRedirectUri] as [string],
-    grant_types: ['authorization_code', 'refresh_token'] as ['authorization_code', 'refresh_token'],
-    response_types: ['code'] as ['code'],
-    scope: 'atproto transition:generic',
-    token_endpoint_auth_method: 'none' as const,
-    application_type: 'native' as const,
-    dpop_bound_access_tokens: true as const,
-  };
-}
 
 function listenForCallback(redirect: URL, port: number): Promise<URLSearchParams> {
   return new Promise((resolve, reject) => {
@@ -125,19 +114,32 @@ async function main(): Promise<number> {
   const sessionStore = createFileSessionStore<NodeSavedSession>(cfg.blueskySessionFile);
   const stateStore = createFileStateStore<NodeSavedState>(`${cfg.blueskySessionFile}.state`);
 
+  const confidential = isConfidential(cfg);
   const client = new NodeOAuthClient({
-    clientMetadata: clientMetadata(cfg),
+    clientMetadata: buildClientMetadata(cfg),
+    keyset: await loadClientKeyset(cfg),
+    requestLock: createRequestLock({ dir: lockDirForSessionFile(cfg.blueskySessionFile) }),
     stateStore,
     sessionStore,
   });
 
   const redirect = new URL(cfg.blueskyRedirectUri);
   const port = Number(redirect.port) || 80;
-  const headless = isHeadless();
+  // A confidential client uses an HTTPS redirect on a host we do not control
+  // from here, so there is nothing to listen on — the browser lands on the real
+  // callback page and the operator copies the URL back. Loopback listening only
+  // ever applied to the public/native shape.
+  const canListen = isLoopbackRedirect(cfg.blueskyRedirectUri);
+  const headless = isHeadless() || !canListen;
 
-  const url = await client.authorize(cfg.blueskyHandle, {
-    scope: 'atproto transition:generic',
-  });
+  const url = await client.authorize(cfg.blueskyHandle, { scope: SCOPE });
+
+  process.stdout.write(
+    confidential
+      ? '\nConfidential client (private_key_jwt) — this session gets atproto\'s 2-year ceiling.\n'
+      : '\n⚠ PUBLIC client — atproto will expire this session after 14 days.\n' +
+        '  Set BLUESKY_PRIVATE_JWK (see `make bluesky-keygen`) to lift that to 2 years.\n',
+  );
 
   process.stdout.write(
     [
@@ -151,7 +153,12 @@ async function main(): Promise<number> {
 
   let params: URLSearchParams;
   if (headless) {
-    process.stdout.write('Headless mode (SSH_CONNECTION detected) — paste-back enabled.\n');
+    process.stdout.write(
+      canListen
+        ? 'Headless mode (SSH_CONNECTION detected) — paste-back enabled.\n'
+        : `Paste-back mode — ${redirect.origin} is not a loopback address, so this process ` +
+          'cannot receive the redirect itself.\n',
+    );
     params = await promptForCallback(cfg.blueskyRedirectUri);
   } else {
     process.stdout.write(
@@ -181,8 +188,23 @@ async function main(): Promise<number> {
   await chmod(tmp, 0o600);
   await rename(tmp, summaryPath);
 
-  logger.info({ did: session.did, sessionFile: cfg.blueskySessionFile }, 'bootstrap OK');
-  process.stdout.write(`\n✓ Session written for ${session.did}\n✓ You can now run \`make bluesky-post-dry\`\n`);
+  // The absolute session ceiling is not readable from the session blob (the
+  // refresh token is opaque), so record the start instant and let `post` count
+  // forward from it — that is what makes an ahead-of-time warning possible.
+  const bootstrappedAt = new Date();
+  await writeBootstrappedAt(cfg.blueskySessionFile, bootstrappedAt.toISOString());
+  const status = expiryStatus(bootstrappedAt, confidential);
+
+  logger.info(
+    { did: session.did, sessionFile: cfg.blueskySessionFile, confidential, expiresAt: status.expiresAt.toISOString() },
+    'bootstrap OK',
+  );
+  process.stdout.write(
+    `\n✓ Session written for ${session.did}\n` +
+      `✓ Absolute expiry: ${status.expiresAt.toISOString().slice(0, 10)} (${status.daysRemaining} days) — ` +
+      `${confidential ? 'confidential' : 'PUBLIC'} client\n` +
+      '✓ You can now run `make bluesky-post-dry`\n',
+  );
   return EXIT.OK;
 }
 

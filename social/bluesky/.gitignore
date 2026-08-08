@@ -8,8 +8,14 @@
 #   .bluesky-session.json.did    DID summary written after bootstrap
 #   .bluesky-session.json.tmp    atomic-rename leftover when a write crashes
 #   .bluesky-state.json[.tmp]    posting-dedupe state + its atomic-rename temp
+#   .bluesky-session.json.bootstrapped-at  when the session was authorised
+#   .bluesky-session.json.revoked          blob preserved before a forced purge
 .bluesky-session.*
 .bluesky-state.*
+
+# Advisory refresh locks written by src/requestLock.ts (released on exit,
+# reclaimed when stale, but a crash can leave one behind).
+.lock-*
 
 node_modules
 *.log
