@@ -99,17 +99,51 @@ Exit codes: `0` success / dry-run, `1` already-posted, `2` upstream failure,
 
 ## Cron
 
+`bluesky-post-cron` is a target of the **repository-root** Makefile, so `cd` to
+the checkout root, not to this directory:
+
 ```cron
-35 5 * * *  rdp-bluesky  cd /opt/rdp/social-bluesky && make bluesky-post >> /var/log/rdp-bluesky/post.log 2>&1
+# crontab of the account that owns the checkout.
+# PNPM_BIN is wherever `pnpm bin -g` points for that account; CHECKOUT is the
+# repository root, not this directory.
+PATH=/PNPM_BIN:/usr/local/bin:/usr/bin:/bin
+BLUESKY_LOG=/var/log/rdp-bluesky/post.log
+
+35 5 * * * cd /CHECKOUT && make bluesky-post-cron >> $BLUESKY_LOG 2>&1
 ```
 
 05:35 Europe/Paris posts the previous calendar day's top 3. Offset by 5
-minutes from the LinkedIn sibling's 05:30.
+minutes from the LinkedIn sibling's 05:30 — keep them apart, they contend for
+the same upstream API.
+
+Four things that silently break this entry:
+
+- **`PATH` must be set in the crontab.** cron runs with `/usr/bin:/bin` and
+  reads no shell profile. Both `node` (>=24) and `pnpm` must be reachable, or
+  the job dies before `make` starts. Check it the way cron will see it:
+  `env -i /bin/bash -c 'export PATH=…; node -v; pnpm -v'`.
+- **Only variables defined *in the crontab* expand.** `>> $SOME_LOG` picks up
+  crontab assignments like the one above; it does *not* see anything exported
+  from your login shell. An undefined name expands to nothing, leaving a bare
+  `>>`, and the shell then aborts the job with a redirection error that goes to
+  cron's mail rather than the log you meant to write.
+- **The log directory must already exist** (`mkdir -p /var/log/rdp-bluesky`),
+  otherwise the redirect fails for the same reason.
+- **Install at deploy time, not from cron.** `pnpm post` verifies the store
+  against the lockfile first and will run an install itself if they have
+  drifted. Run `make bluesky-install` when deploying so the 05:35 job never
+  has to — an install that fails there means the post is simply skipped.
 
 Two safety gates run before posting: a per-day check (via the PDS
 `getAuthorFeed` against our own DID) and a publication-IDs check (against
 the local state file's most-recent entry). A trip exits cleanly — `1` for
 the per-day gate, `5` for the content gate. Pass `--force` to bypass both.
+
+Both are routine outcomes rather than faults, which is the whole reason cron
+should call `bluesky-post-cron` instead of `bluesky-post`: it reports `1` and
+`5` as success and lets every other code fail. cron mails on any non-zero
+exit, and a job that cries wolf twice a week is a job whose mail nobody reads
+by the time a real `2`/`3`/`4` shows up.
 
 ## Files written
 
