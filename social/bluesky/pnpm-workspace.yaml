@@ -1,11 +1,19 @@
+# pnpm >=11 no longer reads the "pnpm" field of package.json, so every setting
+# lives here — keep it the single source of truth or the two majors resolve
+# different trees and fight over the lockfile.
 overrides:
-  vite: ^7.3.2
+  vite: ^7.3.6
   esbuild: ^0.25.0
 
-onlyBuiltDependencies:
-  - esbuild@0.25.12
-  - sharp
-
+# A dependency that ships a build script must be classified explicitly: pnpm
+# only warns about unclassified ones under 10.x, but `strictDepBuilds` defaults
+# to true in 11.x and aborts the install (ERR_PNPM_IGNORED_BUILDS). Use
+# `allowBuilds` rather than onlyBuiltDependencies/ignoredBuiltDependencies —
+# it is the only spelling both majors honour from this file.
 allowBuilds:
   esbuild: false
+  # prebuilt libvips binaries come from @img/sharp-* — nothing to compile
   sharp: false
+  # transitive via @atproto/oauth-client-node; its postinstall only prints a
+  # funding banner
+  core-js: false
