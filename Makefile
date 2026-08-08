@@ -10,7 +10,7 @@ SHELL:=/bin/bash
         test \
         linkedin-install linkedin-bootstrap linkedin-post linkedin-post-dry linkedin-test linkedin-typecheck \
         tiktok-install tiktok-bootstrap tiktok-post tiktok-post-dry tiktok-test tiktok-typecheck \
-        bluesky-install bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck
+        bluesky-install bluesky-keygen bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck
 
 NUXT_DIR     := nuxt
 E2E_DIR      := e2e
@@ -142,6 +142,9 @@ tiktok-typecheck: ## Typecheck social/tiktok
 
 bluesky-install: ## Install social/bluesky dependencies (seeds .env.local from template)
 	@$(MAKE) -C $(BLUESKY_DIR) install
+
+bluesky-keygen: ## Generate the ES256 OAuth client key (run locally; KID=<name> to rotate)
+	@$(MAKE) -C $(BLUESKY_DIR) keygen
 
 bluesky-bootstrap: ## Run the one-time atproto OAuth bootstrap for the Bluesky handle (interactive)
 	@$(MAKE) -C $(BLUESKY_DIR) bootstrap

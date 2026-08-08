@@ -5,6 +5,11 @@ SHELL:=/bin/bash
 install: ## Install Node dependencies (and seed .env.local from .env.local.dist if missing)
 	@pnpm install
 	@if [ ! -f .env.local ]; then cp .env.local.dist .env.local; echo "✓ created .env.local from template — fill in the missing values"; fi
+	@# .env.local carries the TikTok Login Kit credentials. `cp` inherits the
+	@# umask (0644 on the production host), so tighten unconditionally rather
+	@# than only on creation — that also repairs deploys seeded before this
+	@# line existed.
+	@chmod 600 .env.local
 
 bootstrap: ## Interactive: print TikTok Login Kit auth URL, complete OAuth, persist refresh_token
 	@pnpm bootstrap

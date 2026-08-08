@@ -9,7 +9,11 @@ import { renderThread, graphemeLength, truncateGraphemes } from '../src/renderTh
 import { createMentionResolver } from '../src/mentionResolver.ts';
 import { createEmbedBuilder } from '../src/embedBuilder.ts';
 import { postThread, BlueskyApiError } from '../src/blueskyClient.ts';
-import { createFileSessionStore, createFileStateStore, createEnvSessionStore } from '../src/oauthStore.ts';
+import { createFileSessionStore, createFileStateStore, createEnvSessionStore, withDeletionAudit } from '../src/oauthStore.ts';
+import { buildClientMetadata, isConfidential } from '../src/clientMetadata.ts';
+import { loadClientKeyset } from '../src/keyset.ts';
+import { createRequestLock, lockDirForSessionFile } from '../src/requestLock.ts';
+import { expiryStatus, readBootstrappedAt } from '../src/sessionLifetime.ts';
 import {
   previousPublicationIds,
   readStateFile,
@@ -33,21 +37,6 @@ function setEqualsStrings(a: string[], b: string[]): boolean {
   if (a.length !== b.length) return false;
   const sa = new Set(a);
   return b.every((v) => sa.has(v));
-}
-
-function clientMetadata(cfg: ReturnType<typeof loadConfig>) {
-  return {
-    client_id: cfg.blueskyClientMetadataUrl,
-    client_name: 'Revue de Presse — daily Bluesky digest',
-    client_uri: new URL(cfg.blueskyClientMetadataUrl).origin,
-    redirect_uris: [cfg.blueskyRedirectUri] as [string],
-    grant_types: ['authorization_code', 'refresh_token'] as ['authorization_code', 'refresh_token'],
-    response_types: ['code'] as ['code'],
-    scope: 'atproto transition:generic',
-    token_endpoint_auth_method: 'none' as const,
-    application_type: 'native' as const,
-    dpop_bound_access_tokens: true as const,
-  };
 }
 
 async function readDidSummary(sessionFile: string): Promise<string | null> {
@@ -74,9 +63,32 @@ async function main(): Promise<number> {
   const targetDate = values.date ?? previousDateInTz(cfg.tz);
   logger.info({ targetDate, dryRun: values['dry-run'], force: values.force, envMode }, 'starting');
 
-  const sessionStore = envMode
+  const confidential = isConfidential(cfg);
+  logger.info({ confidential }, confidential
+    ? 'confidential client — atproto grants this session a 2-year ceiling'
+    : 'PUBLIC client — atproto caps this session at 14 days; set BLUESKY_PRIVATE_JWK to lift it');
+
+  const rawSessionStore = envMode
     ? createEnvSessionStore<NodeSavedSession>(cfg.blueskyOauthSessionEnv!)
     : createFileSessionStore<NodeSavedSession>(cfg.blueskySessionFile);
+  // @atproto/oauth-client purges the session on any refresh error. Keep a copy
+  // so a later run can say *why* the session is missing instead of reporting
+  // the library's misleading "deleted by another process".
+  const sessionStore = envMode
+    ? rawSessionStore
+    : withDeletionAudit<NodeSavedSession>(
+        rawSessionStore,
+        `${cfg.blueskySessionFile}.revoked`,
+        (key, hadValue) => {
+          if (hadValue) {
+            logger.error(
+              { did: key, auditFile: `${cfg.blueskySessionFile}.revoked` },
+              'session PURGED by the OAuth client after a refresh failure — every later run will ' +
+                'fail until `make bluesky-bootstrap` is re-run',
+            );
+          }
+        },
+      );
   const stateStore = createFileStateStore<NodeSavedState>(`${cfg.blueskySessionFile}.state`);
 
   let did: string | null;
@@ -91,10 +103,38 @@ async function main(): Promise<number> {
     }
   }
 
+  if (!envMode) {
+    const bootstrappedAt = await readBootstrappedAt(cfg.blueskySessionFile);
+    if (bootstrappedAt) {
+      const status = expiryStatus(bootstrappedAt, confidential);
+      if (status.expired) {
+        logger.error({ expiresAt: status.expiresAt.toISOString(), bootstrappedAt: bootstrappedAt.toISOString() },
+          'session is past its absolute lifetime ceiling — re-run `make bluesky-bootstrap`');
+      } else if (status.shouldWarn) {
+        logger.warn({ expiresAt: status.expiresAt.toISOString(), daysRemaining: status.daysRemaining },
+          'session approaching its absolute lifetime ceiling — schedule `make bluesky-bootstrap`');
+      }
+    }
+  }
+
   let agent: Agent | null = null;
   if (!values['dry-run']) {
+    // Distinguish "never bootstrapped / purged" from "refresh rejected" before
+    // asking the library, which conflates both into "deleted by another process".
+    const stored = await sessionStore.get(did);
+    if (stored === undefined) {
+      logger.error({ did, sessionFile: cfg.blueskySessionFile },
+        'no stored session for this DID — it was never bootstrapped, or a previous refresh failure ' +
+          'purged it. Re-run `make bluesky-bootstrap`.');
+      return EXIT.CONFIG;
+    }
+
     const client = new NodeOAuthClient({
-      clientMetadata: clientMetadata(cfg),
+      clientMetadata: buildClientMetadata(cfg),
+      keyset: await loadClientKeyset(cfg),
+      // Without this the library warns "No lock mechanism provided. Credentials
+      // might get revoked." and falls back to a sleep-and-recheck heuristic.
+      requestLock: createRequestLock({ dir: lockDirForSessionFile(cfg.blueskySessionFile) }),
       stateStore,
       sessionStore,
     });
@@ -102,7 +142,7 @@ async function main(): Promise<number> {
     try {
       oauthSession = await client.restore(did);
     } catch (err) {
-      logger.error({ err, did }, 'OAuth restore failed — refresh token likely revoked; re-run `make bluesky-bootstrap`');
+      logger.error({ err, did, confidential }, 'OAuth restore failed — refresh rejected; re-run `make bluesky-bootstrap`');
       return EXIT.CONFIG;
     }
     agent = new Agent(oauthSession);

@@ -29,14 +29,15 @@
     "post": "node --env-file=.env.local --import tsx bin/post-daily-top3.ts",
     "post:dry": "node --env-file=.env.local --import tsx bin/post-daily-top3.ts --dry-run",
     "bootstrap": "node --env-file=.env.local --import tsx bin/bootstrap-auth.ts",
+    "keygen": "node --import tsx bin/generate-client-key.ts",
     "test": "vitest",
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atproto/api": "^0.13.35",
-    "@atproto/jwk-jose": "^0.1.11",
-    "@atproto/oauth-client-node": "^0.2.24",
+    "@atproto/api": "^0.20.36",
+    "@atproto/jwk-jose": "^0.2.4",
+    "@atproto/oauth-client-node": "^0.5.1",
     "pino": "^10.3.1",
     "sharp": "^0.35.0"
   },

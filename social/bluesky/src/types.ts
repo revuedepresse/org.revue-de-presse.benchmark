@@ -45,6 +45,13 @@ export type Config = {
   blueskyOauthSessionEnv: string | null;
   blueskyRotatedSessionFile: string | null;
   blueskyRotatedStateFile: string | null;
+  /**
+   * base64-encoded ES256 private JWK used to authenticate the OAuth client
+   * itself (`private_key_jwt`). Its presence is what promotes this client from
+   * public to confidential — see src/clientMetadata.ts.
+   */
+  blueskyPrivateJwk: string | null;
+  blueskyJwksUri: string | null;
   apiBaseUrl: string;
   apiClientSecret: string;
   logLevel: string;
