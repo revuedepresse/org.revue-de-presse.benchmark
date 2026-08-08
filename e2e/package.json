@@ -2,6 +2,7 @@
   "name": "@revue-de-presse/e2e",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.20.0",
   "scripts": {
     "test": "playwright test",
     "test:functional": "playwright test --project='*-functional'",
@@ -22,11 +23,5 @@
     "playwright-lighthouse": "^4.0.0",
     "typescript": "^7.0.2",
     "web-vitals": "^4.2.4"
-  },
-  "pnpm": {
-    "overrides": {
-      "brace-expansion": "^5.0.8",
-      "@opentelemetry/core": "^2.8.0"
-    }
   }
 }

@@ -28,9 +28,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
+      # Version comes from the workspace "packageManager" pin.
       - uses: pnpm/action-setup@v6
         with:
-          version: 10
+          package_json_file: social/tiktok/package.json
       - uses: actions/setup-node@v5
         with:
           node-version-file: 'nuxt/.nvmrc'

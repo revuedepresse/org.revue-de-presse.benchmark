@@ -5,18 +5,14 @@ overrides:
   vite: ^7.3.6
   esbuild: ^0.25.0
 
-# A dependency that ships a build script must be classified explicitly: pnpm
-# only warns about unclassified ones under 10.x, but `strictDepBuilds` defaults
-# to true in 11.x and aborts the install (ERR_PNPM_IGNORED_BUILDS). Use
-# `allowBuilds` rather than onlyBuiltDependencies/ignoredBuiltDependencies —
-# it is the only spelling both majors honour from this file.
+# A dependency that ships a build script must be classified explicitly:
+# `strictDepBuilds` defaults to true in pnpm 11 and aborts the install
+# (ERR_PNPM_IGNORED_BUILDS). `allowBuilds` is the only spelling both majors
+# honour from this file. esbuild is only reached through vite/vitest, which
+# load the platform binary from the @esbuild/* optional packages directly, so
+# its postinstall has nothing to contribute.
 allowBuilds:
   esbuild: false
-  # prebuilt libvips binaries come from @img/sharp-* — nothing to compile
-  sharp: false
-  # transitive via @atproto/oauth-client-node; its postinstall only prints a
-  # funding banner
-  core-js: false
 
 # pnpm 11 refuses to install a lockfile entry published less than 24h ago
 # (ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION) — a quarantine against compromised
