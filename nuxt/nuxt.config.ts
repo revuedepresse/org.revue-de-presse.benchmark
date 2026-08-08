@@ -14,6 +14,21 @@ const icon = '/logo-revue-de-presse.png';
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-01-01',
+
+  // Pin the source directory to the workspace root.
+  //
+  // This is a no-op under Nuxt 3, whose srcDir default is already '.', but it
+  // is load-bearing for the Nuxt 4 upgrade: Nuxt 4 changes the default srcDir
+  // to 'app/', and `app/` here is the bubblewrap-generated Android TWA project
+  // (see `make update-twa`). That directory is gitignored, so it is absent in
+  // CI and present on any machine that has built the TWA.
+  //
+  // Left implicit, Nuxt 4 would adopt the Android project as the application
+  // source: the build still exits 0, emits no error and no warning, and
+  // produces an app containing nothing but the 404/500 pages. CI cannot catch
+  // it, because the directory that triggers it never reaches CI.
+  srcDir: '.',
+
   devtools: { enabled: true },
   ssr: true,
 

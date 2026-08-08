@@ -93,6 +93,12 @@ jobs:
       - name: Build Nuxt app
         run: pnpm build
         working-directory: nuxt
+      # `nuxt build` exits 0 even when it resolved no pages at all, so a green
+      # build is not evidence that the app exists. Assert the routes were
+      # emitted before anything downstream trusts this output.
+      - name: Verify build output
+        run: pnpm verify:build
+        working-directory: nuxt
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
         working-directory: e2e
@@ -143,6 +149,12 @@ jobs:
         working-directory: social/tiktok
       - name: Build Nuxt app
         run: pnpm build
+        working-directory: nuxt
+      # `nuxt build` exits 0 even when it resolved no pages at all, so a green
+      # build is not evidence that the app exists. Assert the routes were
+      # emitted before anything downstream trusts this output.
+      - name: Verify build output
+        run: pnpm verify:build
         working-directory: nuxt
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
