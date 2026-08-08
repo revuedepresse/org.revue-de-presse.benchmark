@@ -18,8 +18,26 @@ import { fileURLToPath } from 'node:url';
 
 const nuxtDir = fileURLToPath(new URL('..', import.meta.url));
 const pagesDir = join(nuxtDir, 'pages');
-const chunkDir = join(nuxtDir, '.output/server/chunks/build');
-const publicDir = join(nuxtDir, '.output/public');
+
+// The output layout depends on the nitro preset, so this has to resolve it the
+// same way the build did or it inspects a tree nobody wrote. `make build` pins
+// NITRO_PRESET=netlify, which publishes to dist/ + .netlify/; a bare
+// `pnpm build` (what CI runs) takes the default preset and writes .output/.
+// Hardcoding .output/ meant the `make` path verified whatever stale directory
+// a previous build had left behind — including, on a fresh clone, nothing.
+const LAYOUTS = {
+  netlify: {
+    chunkDir: join(nuxtDir, '.netlify/functions-internal/server/chunks/build'),
+    publicDir: join(nuxtDir, 'dist'),
+  },
+  default: {
+    chunkDir: join(nuxtDir, '.output/server/chunks/build'),
+    publicDir: join(nuxtDir, '.output/public'),
+  },
+};
+
+const preset = process.env.NITRO_PRESET === 'netlify' ? 'netlify' : 'default';
+const { chunkDir, publicDir } = LAYOUTS[preset];
 
 /** Route params are directory-safe-ified: `[day].vue` -> `_day_-<hash>.mjs`. */
 const chunkPrefix = (vueFile) => basename(vueFile, '.vue').replaceAll('[', '_').replaceAll(']', '_');
@@ -35,11 +53,14 @@ async function walk(dir) {
 }
 
 async function main() {
-  for (const [label, dir] of [['pages/', pagesDir], ['.output/server/chunks/build/', chunkDir]]) {
+  for (const dir of [pagesDir, chunkDir]) {
     try {
       await access(dir);
     } catch {
-      throw new Error(`${label} not found at ${dir} — run \`pnpm build\` first`);
+      throw new Error(
+        `${relative(nuxtDir, dir)}/ not found — run \`pnpm build\` first ` +
+          `(looking for the ${preset} preset's layout; set NITRO_PRESET to match your build)`,
+      );
     }
   }
 
@@ -74,7 +95,7 @@ async function main() {
     try {
       await access(join(publicDir, asset));
     } catch {
-      problems.push(`.output/public/${asset} missing — public/ was not copied`);
+      problems.push(`${relative(nuxtDir, publicDir)}/${asset} missing — public/ was not copied`);
     }
   }
 
@@ -84,7 +105,8 @@ async function main() {
   }
 
   process.stdout.write(
-    `✓ build output verified — ${pages.length} pages, ${routeChunks.length} route chunks, public assets present\n`,
+    `✓ build output verified (${preset} preset) — ${pages.length} pages, ` +
+      `${routeChunks.length} route chunks, public assets present\n`,
   );
 }
 

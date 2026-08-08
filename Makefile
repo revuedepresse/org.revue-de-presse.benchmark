@@ -42,7 +42,9 @@ nuxt-build: ## Build the Nuxt app for production
 	@$(MAKE) -C $(NUXT_DIR) build
 
 nuxt-verify-build: ## Assert the last Nuxt build emitted every page (not just the error shell)
-	@cd $(NUXT_DIR) && pnpm verify:build
+	@# NITRO_PRESET must match what `nuxt-build` used, or this inspects an
+	@# output tree that build never wrote.
+	@cd $(NUXT_DIR) && NITRO_PRESET=netlify pnpm verify:build
 
 nuxt-prod: ## Preview the Nuxt production build locally
 	@$(MAKE) -C $(NUXT_DIR) preview
