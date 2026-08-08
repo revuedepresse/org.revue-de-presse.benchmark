@@ -14,6 +14,11 @@ install: ## Install Node deps (and seed .env.local from .env.local.dist if missi
 	@which node && node --version
 	@pnpm install
 	@if [ ! -f .env.local ]; then cp .env.local.dist .env.local; echo "✓ created .env.local from template — fill in the missing values"; fi
+	@# .env.local carries API_CLIENT_SECRET and the OAuth client signing key.
+	@# `cp` inherits the umask (0644 on the production host), so tighten
+	@# unconditionally rather than only on creation — that also repairs
+	@# deploys seeded before this line existed.
+	@chmod 600 .env.local
 
 bootstrap: ## Interactive: open atproto auth URL, listen on BLUESKY_REDIRECT_URI, write .bluesky-session.json
 	@pnpm bootstrap
