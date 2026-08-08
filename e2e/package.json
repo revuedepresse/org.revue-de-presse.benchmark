@@ -17,11 +17,11 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
-    "@types/node": "^20.19.43",
+    "@types/node": "^26.1.2",
     "chrome-launcher": "^1.2.1",
     "lighthouse": "^12.8.2",
     "playwright-lighthouse": "^4.0.0",
-    "typescript": "^5.9.3",
+    "typescript": "^7.0.2",
     "web-vitals": "^4.2.4"
   }
 }
