@@ -21,3 +21,13 @@ allowBuilds:
 # lowering the packageManager pin. Consequence worth knowing: a dependency bump
 # is not installable anywhere until its newest entry is a day old.
 minimumReleaseAge: 1440
+
+# nanoid@3.3.18 arrived with the dependabot batch on main while still inside
+# the 24h quarantine above. The release is a patch on the 3.x line, it is what
+# the bumped tree resolves to, and pnpm's own approval flow records exemptions
+# in exactly this name@version form — so it is pinned here rather than dodged
+# by regenerating the lockfile, which would drag ~70 lines of unrelated
+# transitives forward. Scoped to the one version: it goes inert the moment
+# nanoid moves on, and can be deleted outright any time after 2026-08-08T16:35Z.
+minimumReleaseAgeExclude:
+  - nanoid@3.3.18
