@@ -10,7 +10,7 @@ SHELL:=/bin/bash
         test \
         linkedin-install linkedin-bootstrap linkedin-post linkedin-post-dry linkedin-test linkedin-typecheck \
         tiktok-install tiktok-bootstrap tiktok-post tiktok-post-dry tiktok-test tiktok-typecheck \
-        bluesky-install bluesky-keygen bluesky-bootstrap bluesky-post bluesky-post-dry bluesky-test bluesky-typecheck
+        bluesky-install bluesky-keygen bluesky-bootstrap bluesky-post bluesky-post-cron bluesky-post-dry bluesky-test bluesky-typecheck
 
 NUXT_DIR     := nuxt
 E2E_DIR      := e2e
@@ -149,8 +149,11 @@ bluesky-keygen: ## Generate the ES256 OAuth client key (run locally; KID=<name> 
 bluesky-bootstrap: ## Run the one-time atproto OAuth bootstrap for the Bluesky handle (interactive)
 	@$(MAKE) -C $(BLUESKY_DIR) bootstrap
 
-bluesky-post: ## Cron entry: post yesterday's top 3 to Bluesky as a 4-post thread
+bluesky-post: ## Post yesterday's top 3 to Bluesky as a 4-post thread (raw exit codes)
 	@$(MAKE) -C $(BLUESKY_DIR) post
+
+bluesky-post-cron: ## Cron entry: as bluesky-post, but the benign gate exits (1, 5) report success
+	@$(MAKE) -C $(BLUESKY_DIR) post-cron
 
 bluesky-post-dry: ## Render the thread and log it without calling the PDS
 	@$(MAKE) -C $(BLUESKY_DIR) post-dry
