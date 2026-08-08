@@ -2,17 +2,8 @@
 # lives here — keep it the single source of truth or the two majors resolve
 # different trees and fight over the lockfile.
 overrides:
-  vite: ^7.3.6
-  esbuild: ^0.25.0
-
-# A dependency that ships a build script must be classified explicitly:
-# `strictDepBuilds` defaults to true in pnpm 11 and aborts the install
-# (ERR_PNPM_IGNORED_BUILDS). `allowBuilds` is the only spelling both majors
-# honour from this file. esbuild is only reached through vite/vitest, which
-# load the platform binary from the @esbuild/* optional packages directly, so
-# its postinstall has nothing to contribute.
-allowBuilds:
-  esbuild: false
+  brace-expansion: ^5.0.8
+  "@opentelemetry/core": ^2.8.0
 
 # pnpm 11 refuses to install a lockfile entry published less than 24h ago
 # (ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION) — a quarantine against compromised

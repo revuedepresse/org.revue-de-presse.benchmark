@@ -17,3 +17,10 @@ allowBuilds:
   # transitive via @atproto/oauth-client-node; its postinstall only prints a
   # funding banner
   core-js: false
+
+# pnpm 11 refuses to install a lockfile entry published less than 24h ago
+# (ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION) — a quarantine against compromised
+# releases that get yanked within hours. Declaring the same window here makes
+# pnpm 10 enforce it at *resolution* time, so a lockfile written locally or by
+# a dependency bump can never be one the deploy host will reject.
+minimumReleaseAge: 1440

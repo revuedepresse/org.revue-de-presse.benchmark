@@ -22,11 +22,5 @@
     "playwright-lighthouse": "^4.0.0",
     "typescript": "^5.9.3",
     "web-vitals": "^4.2.4"
-  },
-  "pnpm": {
-    "overrides": {
-      "brace-expansion": "^5.0.8",
-      "@opentelemetry/core": "^2.8.0"
-    }
   }
 }
