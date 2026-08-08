@@ -19,9 +19,10 @@ overrides:
 
 # pnpm 11 refuses to install a lockfile entry published less than 24h ago
 # (ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION) — a quarantine against compromised
-# releases that get yanked within hours. Declaring the same window here makes
-# pnpm enforce it at *resolution* time, so a lockfile written locally or by
-# a dependency bump can never be one the deploy host will reject.
+# releases that get yanked within hours. This restates pnpm 11's own default,
+# so the window stays visible next to the overrides and survives anyone
+# lowering the packageManager pin. Consequence worth knowing: a dependency bump
+# is not installable anywhere until its newest entry is a day old.
 minimumReleaseAge: 1440
 
 # Migrated from .npmrc, which pnpm 11 no longer consults for pnpm settings.
