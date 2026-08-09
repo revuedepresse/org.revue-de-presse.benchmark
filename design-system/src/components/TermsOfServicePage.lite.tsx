@@ -3,7 +3,6 @@ type TermsOfServicePageProps = {
   editor?: string;
   email?: string;
   effectiveAt?: string;
-  tiktokAccount?: string;
 };
 
 export default function TermsOfServicePage(props: TermsOfServicePageProps) {
@@ -60,83 +59,16 @@ export default function TermsOfServicePage(props: TermsOfServicePageProps) {
           >
             @revue-de-presse.org
           </a>
-          &nbsp;;
-        </li>
-        <li>
-          TikTok&nbsp;:{' '}
-          <a
-            href={`https://www.tiktok.com/@${(props.tiktokAccount ?? 'revue_2_presse').replace(/^@/, '')}`}
-            rel="noreferrer nofollow noopener"
-            target="_blank"
-          >
-            @{(props.tiktokAccount ?? 'revue_2_presse').replace(/^@/, '')}
-          </a>
           .
         </li>
       </ul>
       <p>
         Ces comptes sont exclusivement administrés par l'Éditeur pour son propre
         compte. Aucune fonctionnalité du Site ne permet à un Utilisateur tiers de
-        publier sur ces comptes, ni de connecter son propre compte TikTok à
-        revue-de-presse.org.
+        publier sur ces comptes, ni d'y connecter son propre compte.
       </p>
 
-      <h2 id="tiktok">ARTICLE 4 – INTÉGRATION TIKTOK</h2>
-      <p>
-        L'Éditeur exploite une application TikTok déclarée auprès de{' '}
-        <a
-          href="https://developers.tiktok.com/"
-          rel="noreferrer nofollow noopener"
-          target="_blank"
-        >
-          TikTok for Developers
-        </a>{' '}
-        afin de publier automatiquement, chaque jour, une vidéo de format 9:16
-        reprenant les dix publications les plus relayées de la veille sur le
-        compte&nbsp;
-        <a
-          href={`https://www.tiktok.com/@${(props.tiktokAccount ?? 'revue_2_presse').replace(/^@/, '')}`}
-          rel="noreferrer nofollow noopener"
-          target="_blank"
-        >
-          @{(props.tiktokAccount ?? 'revue_2_presse').replace(/^@/, '')}
-        </a>.
-      </p>
-      <p>
-        Cette application TikTok demande les autorisations («&nbsp;scopes&nbsp;»)
-        suivantes, et uniquement pour le compte officiel{' '}
-        @{(props.tiktokAccount ?? 'revue_2_presse').replace(/^@/, '')}&nbsp;:
-      </p>
-      <ul>
-        <li>
-          <strong>user.info.basic</strong> (Login Kit)&nbsp;: lecture des
-          informations publiques de profil du compte connecté (identifiant
-          opaque, nom affiché, image d'avatar). Ces informations servent
-          uniquement à confirmer que l'autorisation a bien été délivrée pour le
-          compte attendu. Elles ne sont ni revendues, ni rapprochées d'autres
-          jeux de données.
-        </li>
-        <li>
-          <strong>video.upload</strong> (Content Posting API)&nbsp;: dépôt de la
-          vidéo quotidienne en tant que brouillon dans la boîte de réception du
-          compte officiel pour validation manuelle, ou publication directe
-          lorsque l'application est habilitée.
-        </li>
-        <li>
-          <strong>video.list</strong> (Content Posting API)&nbsp;: lecture de la
-          liste des vidéos publiques du compte officiel afin de vérifier le bon
-          déroulement des publications quotidiennes et d'éviter les doublons.
-        </li>
-      </ul>
-      <p>
-        Aucun de ces accès n'est utilisé pour collecter ou afficher des données
-        relatives à des Utilisateurs tiers. L'Éditeur ne stocke ni n'expose
-        l'identifiant TikTok, l'image d'avatar ou le nom affiché du compte
-        officiel sur le Site&nbsp;; ces informations ne servent qu'à
-        l'administration interne de la publication automatique.
-      </p>
-
-      <h2>ARTICLE 5 – USAGE LOYAL</h2>
+      <h2>ARTICLE 4 – USAGE LOYAL</h2>
       <p>
         L'Utilisateur s'engage à utiliser le Site et les services associés de
         bonne foi, à des fins d'information personnelle. Sont notamment
@@ -148,7 +80,7 @@ export default function TermsOfServicePage(props: TermsOfServicePageProps) {
         sans préavis, en cas d'usage manifestement abusif.
       </p>
 
-      <h2>ARTICLE 6 – PROPRIÉTÉ INTELLECTUELLE</h2>
+      <h2>ARTICLE 5 – PROPRIÉTÉ INTELLECTUELLE</h2>
       <p>
         L'ensemble des éléments éditoriaux propres au Site (mise en page,
         rédactionnels, identité visuelle) est protégé par le droit de la
@@ -159,25 +91,24 @@ export default function TermsOfServicePage(props: TermsOfServicePageProps) {
         d'origine.
       </p>
 
-      <h2>ARTICLE 7 – DONNÉES PERSONNELLES</h2>
+      <h2>ARTICLE 6 – DONNÉES PERSONNELLES</h2>
       <p>
         Les modalités détaillées de collecte et de traitement des données
-        personnelles, y compris celles liées à l'intégration TikTok, sont
-        décrites dans la{' '}
+        personnelles sont décrites dans la{' '}
         <a href="/mentions-legales#confidentialite">
           politique de confidentialité
         </a>{' '}
         du Site.
       </p>
 
-      <h2>ARTICLE 8 – MODIFICATION DES CGU</h2>
+      <h2>ARTICLE 7 – MODIFICATION DES CGU</h2>
       <p>
         L'Éditeur se réserve la faculté de modifier les présentes CGU à tout
         moment. La version applicable est celle en vigueur à la date de l'accès
         au Site, dont la date d'effet figure en tête du présent document.
       </p>
 
-      <h2>ARTICLE 9 – DROIT APPLICABLE</h2>
+      <h2>ARTICLE 8 – DROIT APPLICABLE</h2>
       <p>
         Les présentes CGU sont soumises au droit français. À défaut de
         résolution amiable, tout litige sera porté devant les tribunaux
