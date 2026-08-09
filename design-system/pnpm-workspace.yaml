@@ -16,6 +16,11 @@ overrides:
   markdown-it: ^14.2.0
   "@babel/core": ^7.29.6
   brace-expansion: ^5.0.8
+  # brace-expansion 5 is ESM-only with named exports; minimatch@3 is CJS and
+  # calls the module as a function, so the blanket override above turned every
+  # `mitosis build` into "TypeError: expand is not a function" before it read a
+  # single source file. 1.1.12+ carries the ReDoS fix the override was for.
+  "minimatch@3>brace-expansion": ^1.1.12
 
 # pnpm 11 refuses to install a lockfile entry published less than 24h ago
 # (ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION) — a quarantine against compromised
