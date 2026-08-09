@@ -32,7 +32,7 @@
     "@types/node": "^26.1.2",
     "@vitejs/plugin-react": "^6.0.4",
     "@vitejs/plugin-vue": "^6.0.8",
-    "@zxcvbn-ts/core": "^3.0.4",
+    "@zxcvbn-ts/core": "^4.1.2",
     "@zxcvbn-ts/language-common": "^3.0.4",
     "@zxcvbn-ts/language-en": "^3.0.2",
     "@zxcvbn-ts/language-fr": "^3.0.2",
