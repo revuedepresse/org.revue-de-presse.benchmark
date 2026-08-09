@@ -8,10 +8,6 @@ updates:
     directory: /social/linkedin
     schedule:
       interval: weekly
-  - package-ecosystem: npm
-    directory: /social/tiktok
-    schedule:
-      interval: weekly
   # Below were missing, so no update PRs ever reached them and their
   # advisories accumulated: at the time of writing nuxt holds 16 open
   # alerts, social/bluesky 9 and e2e 3, out of 66 across the repo.

@@ -9,22 +9,19 @@ SHELL:=/bin/bash
         e2e-test e2e-test-functional e2e-test-perf e2e-show-report \
         test \
         linkedin-install linkedin-bootstrap linkedin-post linkedin-post-dry linkedin-test linkedin-typecheck \
-        tiktok-install tiktok-bootstrap tiktok-post tiktok-post-dry tiktok-test tiktok-typecheck \
         bluesky-install bluesky-keygen bluesky-bootstrap bluesky-post bluesky-post-cron bluesky-post-dry bluesky-test bluesky-typecheck
 
 NUXT_DIR     := nuxt
 E2E_DIR      := e2e
 LINKEDIN_DIR := social/linkedin
-TIKTOK_DIR   := social/tiktok
 BLUESKY_DIR  := social/bluesky
 
 # -- Install --------------------------------------------------------------
 
-install: ## Install dependencies for nuxt, e2e, and social/{linkedin,tiktok,bluesky} workspaces
+install: ## Install dependencies for nuxt, e2e, and social/{linkedin,bluesky} workspaces
 	@$(MAKE) -C $(NUXT_DIR) install
 	@cd $(E2E_DIR)  && pnpm install
 	@$(MAKE) -C $(LINKEDIN_DIR) install
-	@$(MAKE) -C $(TIKTOK_DIR) install
 	@$(MAKE) -C $(BLUESKY_DIR) install
 
 # -- Nuxt -----------------------------------------------------------------
@@ -96,7 +93,7 @@ e2e-show-report: ## Open the last Playwright HTML report in a browser
 
 # -- Aggregates -----------------------------------------------------------
 
-test: nuxt-test linkedin-test tiktok-test bluesky-test e2e-test ## Run all tests (nuxt unit + linkedin unit + tiktok unit + bluesky unit + e2e)
+test: nuxt-test linkedin-test bluesky-test e2e-test ## Run all tests (nuxt unit + linkedin unit + bluesky unit + e2e)
 
 # -- LinkedIn -------------------------------------------------------------
 
@@ -117,26 +114,6 @@ linkedin-test: ## Run social/linkedin unit tests
 
 linkedin-typecheck: ## Typecheck social/linkedin
 	@$(MAKE) -C $(LINKEDIN_DIR) typecheck
-
-# -- TikTok --------------------------------------------------------------
-
-tiktok-install: ## Install social/tiktok dependencies (seeds .env.local from template)
-	@$(MAKE) -C $(TIKTOK_DIR) install
-
-tiktok-bootstrap: ## Run the one-time TikTok Login Kit OAuth bootstrap (interactive)
-	@$(MAKE) -C $(TIKTOK_DIR) bootstrap
-
-tiktok-post: ## Cron entry: render scroll capture + publish to TikTok
-	@$(MAKE) -C $(TIKTOK_DIR) post
-
-tiktok-post-dry: ## Render + transcode without publishing to TikTok
-	@$(MAKE) -C $(TIKTOK_DIR) post-dry
-
-tiktok-test: ## Run social/tiktok unit tests
-	@$(MAKE) -C $(TIKTOK_DIR) test
-
-tiktok-typecheck: ## Typecheck social/tiktok
-	@$(MAKE) -C $(TIKTOK_DIR) typecheck
 
 # -- Bluesky -------------------------------------------------------------
 

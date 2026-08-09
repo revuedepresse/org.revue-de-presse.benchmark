@@ -19,7 +19,6 @@ nuxt/            Nuxt 3 app, TWA tooling, Netlify deploy config
 e2e/             Playwright suite exercising the Nuxt app via a single webServer
 social/bluesky/  daily Bluesky thread CLI (lead + 3 replies, top 3 publications)
 social/linkedin/ daily LinkedIn auto-post CLI (top 10, organization page)
-social/tiktok/   daily TikTok 9:16 scroll-capture publisher CLI
 Makefile         top-level orchestration (delegates to per-workspace Makefiles)
 LICENSE          GNU GPL v3.0
 ```
@@ -78,13 +77,11 @@ preset). See `nuxt/README.md` for the full Netlify + TWA workflow.
 
 ## Social publishers
 
-Three daily auto-posters consume the same upstream highlights API and
-publish them to social platforms. The LinkedIn and TikTok publishers
-run on a GitHub Actions schedule and rotate their long-lived OAuth
-refresh token back into a repository secret via `gh secret set` after
-each run; the Bluesky publisher runs from a cron entry on the
-production server (file-based session, rotated in place by
-`@atproto/oauth-client-node`).
+Two daily auto-posters consume the same upstream highlights API and
+publish them to social platforms. Both run from cron entries on the
+production server: LinkedIn refreshes its long-lived OAuth token from
+`.env.local`, and Bluesky keeps a file-based session rotated in place
+by `@atproto/oauth-client-node`.
 
 ### Bluesky (`social/bluesky/`)
 
@@ -108,15 +105,6 @@ from a daily cron on the production server (see `social/linkedin/README.md`
 for the crontab entry, local bootstrap, the required credentials
 (`LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `API_CLIENT_SECRET`), and
 the annual re-auth procedure).
-
-### TikTok (`social/tiktok/`)
-
-Renders a 9:16 scroll capture of the day's top-10 publications with
-Playwright + ffmpeg and posts it to
-[`@revue_2_presse`](https://www.tiktok.com/@revue_2_presse) via the
-Content Posting API. CI runs via `.github/workflows/tiktok-publish.yml`.
-See `social/tiktok/README.md` for the auth bootstrap, `inbox` vs `direct`
-publish modes, exit-code reference, and operational runbook.
 
 ## Contributing
 
