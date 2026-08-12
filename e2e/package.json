@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.2.0",
     "chrome-launcher": "^1.2.1",
     "lighthouse": "^12.8.2",
     "playwright-lighthouse": "^4.0.0",
