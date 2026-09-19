@@ -147,16 +147,36 @@ describe('renderPost', () => {
       expect(out).not.toContain('\\#RevueDePresse');
     });
 
-    it('does not escape characters inside URLs', () => {
-      // Footer URL has underscores (https://play.google.com/.../id=org.revue_2_presse).
-      // LinkedIn auto-detects URLs and re-shortens them — escaping inside the URL
-      // would corrupt it.
+    // Production incident observed 2026-09-19: the footer of the daily digest
+    // linked to https://lnkd.in/eFRyxddm, which resolves to
+    // https://play.google.com/store/apps/details?id=org.revue2presse — a
+    // non-existent app id. URLs were exempted from escaping on the assumption
+    // that LinkedIn auto-detects them verbatim; it does not. The LITTLE_TEXT
+    // parser runs first, so `org.revue_2_presse` is read as an italic run
+    // `_2_` and BOTH underscores are dropped from the rendered text that the
+    // link auto-detection then shortens.
+    it('escapes reserved characters in the footer URL', () => {
       const out = renderPost(SAMPLE.slice(0, 1), '2026-05-20', {
         ...OPTS,
         escapeText: escapeLittleText,
       });
-      expect(out).toContain('https://play.google.com/store/apps/details?id=org.revue_2_presse');
-      expect(out).not.toContain('revue\\_2\\_presse');
+      expect(out).toContain('id=org.revue\\_2\\_presse');
+      expect(out).not.toMatch(/id=org\.revue_2_presse/);
+    });
+
+    it('escapes reserved characters in each entry URL', () => {
+      const out = renderPost(
+        [{ screenName: 'outlet', publicationId: 'p', url: 'https://example.org/a_b(c)~d', text: '', date: '2026-05-20' }],
+        '2026-05-20',
+        { ...OPTS, escapeText: escapeLittleText },
+      );
+      expect(out).toContain('https://example.org/a\\_b\\(c\\)\\~d');
+    });
+
+    it('leaves URLs literal on the dry-run path (no escapeText)', () => {
+      const out = renderPost(SAMPLE.slice(0, 1), '2026-05-20', OPTS);
+      expect(out).toContain('id=org.revue_2_presse');
+      expect(out).not.toContain('\\_');
     });
 
   });
