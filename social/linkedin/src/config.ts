@@ -49,7 +49,7 @@ export function loadConfig(): Config {
     tz: process.env.TZ ?? 'Europe/Paris',
     postFooterUrl:
       process.env.POST_FOOTER_URL ??
-      'https://play.google.com/store/apps/details?id=org.revue_2_presse',
+      'https://play.google.com/store/apps/details?id=org.revue_2_presse&hl=fr',
     postHashtag: process.env.POST_HASHTAG ?? '#RevueDePresse',
   };
 }
