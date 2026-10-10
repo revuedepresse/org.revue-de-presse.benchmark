@@ -4,6 +4,8 @@
 overrides:
   brace-expansion: ^5.0.8
   "@opentelemetry/core": ^2.8.0
+  # reached through lighthouse's puppeteer proxy-agent chain (Dependabot)
+  ip-address: ^10.7.1
 
 # pnpm 11 refuses to install a lockfile entry published less than 24h ago
 # (ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION) — a quarantine against compromised

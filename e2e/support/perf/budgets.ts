@@ -14,7 +14,9 @@ export const BUDGETS = {
     accessibility: 90,
     'best-practices': 90,
     seo: 90,
-    pwa: 0, // not asserted; we don't target PWA install despite the manifest
+    // No `pwa` entry: Lighthouse 13 dropped the category, and these keys become
+    // its `onlyCategories`, so naming it fails every audit. It was never
+    // asserted anyway — we don't target PWA install despite the manifest.
   },
 } as const;
 
