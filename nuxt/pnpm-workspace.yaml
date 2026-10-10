@@ -2,11 +2,15 @@
 # lives here — keep it the single source of truth or the two majors resolve
 # different trees and fight over the lockfile.
 overrides:
-  devalue@5.8.0: 5.8.1
   vite: ^7.0.0
   esbuild: ^0.25.0
   tar: ^7.5.11
-  brace-expansion: ^5.0.8
+  # Dependabot advisories on transitive packages; each floor is the first
+  # patched release on the major the tree already resolves.
+  brace-expansion: ^5.0.10
+  devalue: ^5.9.3
+  svgo: ^4.1.0
+  "nanoid@3": ^3.3.18
 
 # A dependency that ships a build script must be classified explicitly:
 # `strictDepBuilds` defaults to true in pnpm 11 and aborts the install
