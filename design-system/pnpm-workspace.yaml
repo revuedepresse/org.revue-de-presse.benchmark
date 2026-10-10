@@ -11,9 +11,15 @@ overrides:
   esbuild: ^0.25.0
   svelte: ^5.55.9
   "@tootallnate/once": ^3.0.1
-  "@builder.io/mitosis>@angular/compiler": ^20.0.0
+  "@builder.io/mitosis>@angular/compiler": ^20.3.28
   linkify-it: ^5.0.2
-  markdown-it: ^14.2.0
+  markdown-it: ^14.3.1
+  # Dependabot advisories on transitive packages; each floor is the first
+  # patched release on the major the tree already resolves.
+  axios: ^1.20.0
+  devalue: ^5.9.3
+  "js-yaml@3": ^3.15.2
+  "js-yaml@4": ^4.3.2
   "@babel/core": ^7.29.6
   brace-expansion: ^5.0.8
   # brace-expansion 5 is ESM-only with named exports; minimatch@3 is CJS and
