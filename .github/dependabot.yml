@@ -15,6 +15,17 @@ updates:
     directory: /nuxt
     schedule:
       interval: weekly
+    # Nuxt 4 is a planned migration, not a bump: it moves the default srcDir
+    # onto app/, which here is the generated Android TWA project, and it needs
+    # feature parity proved first (draft #155). vue-router 5 is what Nuxt 4
+    # depends on; next to Nuxt 3 (which pins ^4) it only adds a second, unused
+    # router copy to the build. Lift both ignores together when migrating.
+    # Minor and patch releases of either still come through.
+    ignore:
+      - dependency-name: nuxt
+        update-types: ["version-update:semver-major"]
+      - dependency-name: vue-router
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: npm
     directory: /social/bluesky
     schedule:
