@@ -1,7 +1,7 @@
 SHELL:=/bin/bash
 .ONESHELL:
 .PHONY: help install \
-        nuxt-dev nuxt-dev-tls nuxt-certs nuxt-build nuxt-prod nuxt-test \
+        nuxt-dev nuxt-dev-tls nuxt-certs nuxt-build nuxt-verify-build nuxt-prod nuxt-test \
         nuxt-install-bubblewrap nuxt-update-twa nuxt-build-twa \
         chat-jwt-secret \
         install-bubblewrap update-twa build-twa \
@@ -37,6 +37,11 @@ nuxt-dev-tls: ## Start the Nuxt dev server on https://local.revue-de-presse.org:
 
 nuxt-build: ## Build the Nuxt app for production
 	@$(MAKE) -C $(NUXT_DIR) build
+
+nuxt-verify-build: ## Assert the last Nuxt build emitted every page (not just the error shell)
+	@# NITRO_PRESET must match what `nuxt-build` used, or this inspects an
+	@# output tree that build never wrote.
+	@cd $(NUXT_DIR) && NITRO_PRESET=netlify pnpm verify:build
 
 nuxt-prod: ## Preview the Nuxt production build locally
 	@$(MAKE) -C $(NUXT_DIR) preview
