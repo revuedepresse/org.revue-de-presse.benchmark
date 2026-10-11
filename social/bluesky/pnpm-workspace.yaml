@@ -4,6 +4,13 @@
 overrides:
   vite: ^7.3.6
   esbuild: ^0.25.0
+  # @atproto-labs/fetch-node pulls three undici majors side by side through
+  # npm aliases, so a plain `undici` key never matches them: the override has
+  # to name each alias. Each floor is the first release carrying the
+  # Dependabot-reported fixes.
+  "@atproto-labs/fetch-node>undici_v6": npm:undici@^6.28.1
+  "@atproto-labs/fetch-node>undici_v7": npm:undici@^7.29.1
+  "@atproto-labs/fetch-node>undici_v8": npm:undici@^8.10.2
 
 # A dependency that ships a build script must be classified explicitly: pnpm
 # only warns about unclassified ones under 10.x, but `strictDepBuilds` defaults

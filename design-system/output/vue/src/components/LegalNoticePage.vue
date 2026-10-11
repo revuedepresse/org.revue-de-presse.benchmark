@@ -40,54 +40,6 @@
       et Libertés (CNIL) dans la mesure où il ne collecte aucune donnée
       concernant les utilisateurs.
     </p>
-    <h2 id="tiktok">ARTICLE 5 – DIFFUSION SUR TIKTOK</h2>
-    <p>
-      L'Éditeur opère, pour son propre compte, une application déclarée auprès
-      de TikTok afin de publier chaque jour, sur le compte officiel @{{
-        (tiktokAccount ?? "revue_2_presse").replace(/^@/, "")
-      }}, une vidéo verticale reprenant les dix publications les plus relayées
-      de la veille. Aucune fonctionnalité du Site ne permet à un Utilisateur
-      tiers de se connecter à TikTok via revue-de-presse.org.
-    </p>
-    <p>
-      Cette application demande à TikTok, exclusivement pour le compte officiel
-      précité, les autorisations suivantes&nbsp;:
-    </p>
-    <ul>
-      <li>
-        <strong>user.info.basic</strong>&nbsp;: identifiant opaque, nom affiché
-        et image d'avatar du compte officiel, utilisés uniquement pour confirmer
-        que le jeton d'accès correspond bien au compte attendu&nbsp;;
-      </li>
-      <li>
-        <strong>video.upload</strong>&nbsp;: dépôt de la vidéo quotidienne en
-        tant que brouillon dans la boîte de réception du compte officiel, en vue
-        d'une finalisation manuelle ou d'une publication directe&nbsp;;
-      </li>
-      <li>
-        <strong>video.list</strong>&nbsp;: lecture de la liste des vidéos
-        publiques du compte officiel, à seule fin de vérifier qu'une publication
-        quotidienne a bien abouti et d'éviter les doublons.
-      </li>
-    </ul>
-    <p>
-      Les informations obtenues via ces autorisations restent strictement
-      internes au processus de publication automatique. Elles ne sont jamais
-      affichées sur le Site, ne sont jamais transmises à des tiers commerciaux,
-      et ne servent à aucune finalité publicitaire ou de profilage. Les jetons
-      d'accès et de rafraîchissement délivrés par TikTok sont conservés de
-      manière chiffrée sur l'infrastructure de publication, sont renouvelés à
-      chaque exécution conformément aux recommandations de TikTok, et peuvent
-      être révoqués à tout moment par l'Éditeur depuis sa console
-      TikTok&nbsp;for Developers.
-    </p>
-    <p>
-      Toute demande relative aux données traitées dans le cadre de cette
-      intégration peut être adressée à
-      <a href="mailto:contact@revue-de-presse.org"
-        >&nbsp;contact@revue-de-presse.org</a
-      >.
-    </p>
     
   </article>
 </template>
@@ -98,7 +50,6 @@ type LegalNoticePageProps = {
   editor?: string;
   email?: string;
   effectiveAt?: string;
-  tiktokAccount?: string;
 };
 
 const props = defineProps<LegalNoticePageProps>();

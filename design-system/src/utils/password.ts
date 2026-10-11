@@ -42,16 +42,16 @@ let zxcvbnCached: ((value: string) => Promise<{ score: number }>) | null = null;
 
 async function loadZxcvbn(): Promise<(value: string) => Promise<{ score: number }>> {
   if (zxcvbnCached) return zxcvbnCached;
-  const { zxcvbnAsync, zxcvbnOptions } = await import('@zxcvbn-ts/core');
+  const { ZxcvbnFactory } = await import('@zxcvbn-ts/core');
   const langCommon = await import('@zxcvbn-ts/language-common');
   const langFr = await import('@zxcvbn-ts/language-fr');
   const langEn = await import('@zxcvbn-ts/language-en');
-  zxcvbnOptions.setOptions({
+  const zxcvbn = new ZxcvbnFactory({
     translations: langEn.translations,
     dictionary: { ...langCommon.dictionary, ...langFr.dictionary, ...langEn.dictionary },
     graphs: langCommon.adjacencyGraphs,
   });
-  zxcvbnCached = (value) => zxcvbnAsync(value).then((r) => ({ score: r.score }));
+  zxcvbnCached = (value) => zxcvbn.checkAsync(value).then((r) => ({ score: r.score }));
   return zxcvbnCached;
 }
 

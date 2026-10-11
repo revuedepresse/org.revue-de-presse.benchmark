@@ -16,12 +16,12 @@
     "maestro:ios": "maestro test maestro/flows/"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
-    "@types/node": "^26.1.2",
-    "chrome-launcher": "^1.2.1",
-    "lighthouse": "^12.8.2",
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^26.6.5",
+    "chrome-launcher": "^1.2.2",
+    "lighthouse": "^13.5.0",
     "playwright-lighthouse": "^4.0.0",
     "typescript": "^7.0.2",
-    "web-vitals": "^4.2.4"
+    "web-vitals": "^6.2.3"
   }
 }

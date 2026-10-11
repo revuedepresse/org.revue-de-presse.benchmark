@@ -47,7 +47,7 @@ describe('loadConfig', () => {
     expect(cfg.logLevel).toBe('info');
     expect(cfg.tz).toBe('Europe/Paris');
     expect(cfg.postFooterUrl).toBe(
-      'https://play.google.com/store/apps/details?id=org.revue_2_presse',
+      'https://play.google.com/store/apps/details?id=org.revue_2_presse&hl=fr',
     );
     expect(cfg.postHashtag).toBe('#RevueDePresse');
   });
