@@ -36,6 +36,7 @@ type AppProps = {
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
+  newsletterSubscribeUrl?: string;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
@@ -224,7 +225,7 @@ export default function App(props: AppProps) {
               <SourcesPage />
             </Show>
             <Show when={state.currentView === 'newsletter'}>
-              <NewsletterPage />
+              <NewsletterPage action={props.newsletterSubscribeUrl} />
             </Show>
           </main>
         </div>
@@ -280,7 +281,7 @@ export default function App(props: AppProps) {
             <SourcesPage />
           </Show>
           <Show when={state.currentView === 'newsletter'}>
-            <NewsletterPage />
+            <NewsletterPage action={props.newsletterSubscribeUrl} />
           </Show>
           <BannerAbout
             onLegalNoticeClick={() => state.goTo('legal')}

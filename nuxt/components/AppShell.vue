@@ -12,6 +12,7 @@ const props = defineProps<{
 const router = useRouter();
 const route = useRoute();
 const { lists } = useSampleData();
+const newsletterSubscribeUrl = useRuntimeConfig().public.newsletterSubscribeUrl || undefined;
 
 const layout = ref<'desktop' | 'mobile'>('desktop');
 
@@ -122,6 +123,7 @@ function onLogoClick() {
     :loading="loading"
     :initial-view="props.initialView ?? 'main'"
     :empty-message-key="props.emptyMessageKey"
+    :newsletter-subscribe-url="newsletterSubscribeUrl"
     locale="fr-FR"
     :on-date-select="onDateSelect"
     :on-view-change="onViewChange"

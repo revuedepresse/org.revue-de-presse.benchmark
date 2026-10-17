@@ -100,7 +100,7 @@
           </template>
 
           <template v-if="currentView === 'newsletter'">
-            <NewsletterPage></NewsletterPage>
+            <NewsletterPage :action="newsletterSubscribeUrl"></NewsletterPage>
           </template>
         </main>
       </div>
@@ -172,7 +172,7 @@
         </template>
 
         <template v-if="currentView === 'newsletter'">
-          <NewsletterPage></NewsletterPage>
+          <NewsletterPage :action="newsletterSubscribeUrl"></NewsletterPage>
         </template>
 
         <BannerAbout
@@ -266,6 +266,7 @@ type AppProps = {
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
+  newsletterSubscribeUrl?: string;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
