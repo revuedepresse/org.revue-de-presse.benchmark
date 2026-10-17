@@ -33,6 +33,7 @@
             :onContactClick="(event) => goTo('contact')"
             :onSupportClick="(event) => goTo('support')"
             :onSourcesClick="(event) => goTo('sources')"
+            :onNewsletterClick="(event) => goTo('newsletter')"
           ></Sidebar>
         </aside>
         <main class="rdp-app__main" :aria-busy="loading ? 'true' : undefined">
@@ -96,6 +97,10 @@
 
           <template v-if="currentView === 'sources'">
             <SourcesPage></SourcesPage>
+          </template>
+
+          <template v-if="currentView === 'newsletter'">
+            <NewsletterPage></NewsletterPage>
           </template>
         </main>
       </div>
@@ -166,12 +171,17 @@
           <SourcesPage></SourcesPage>
         </template>
 
+        <template v-if="currentView === 'newsletter'">
+          <NewsletterPage></NewsletterPage>
+        </template>
+
         <BannerAbout
           :onLegalNoticeClick="(event) => goTo('legal')"
           :onTermsOfServiceClick="(event) => goTo('terms')"
           :onContactClick="(event) => goTo('contact')"
           :onSupportClick="(event) => goTo('support')"
           :onSourcesClick="(event) => goTo('sources')"
+          :onNewsletterClick="(event) => goTo('newsletter')"
         ></BannerAbout>
       </main>
 
@@ -222,6 +232,7 @@ import TermsOfServicePage from "./TermsOfServicePage.vue";
 import ContactPage from "./ContactPage.vue";
 import SupportPage from "./SupportPage.vue";
 import SourcesPage from "./SourcesPage.vue";
+import NewsletterPage from "./NewsletterPage.vue";
 import IntroCard from "./IntroCard.vue";
 import Spinner from "./Spinner.vue";
 import type { BlueskyPost } from "./BlueskyPostCard.vue";
@@ -231,7 +242,14 @@ type SnapshotItem = {
   id: string;
   label: string;
 };
-type ViewKey = "main" | "legal" | "terms" | "contact" | "support" | "sources";
+type ViewKey =
+  | "main"
+  | "legal"
+  | "terms"
+  | "contact"
+  | "support"
+  | "sources"
+  | "newsletter";
 type AppProps = {
   layout?: "mobile" | "desktop";
   posts: BlueskyPost[];

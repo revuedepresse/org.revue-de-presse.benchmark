@@ -93,6 +93,9 @@ describe('buildLegacySitemapUrls', () => {
     expect(byLoc.get('/sources')?.lastmod).toBe(
       new Date('2025-03-08').toISOString(),
     );
+    expect(byLoc.get('/lettre-quotidienne')?.lastmod).toBe(
+      new Date('2026-10-17').toISOString(),
+    );
   });
 
   it('emits a yesterday-highlight entry with daily changefreq', async () => {

@@ -91,6 +91,8 @@
   "footer.about.body": "Revue de presse uses the Bluesky API and relays press snippets exclusively from French media according to the success they have had with the public.",
   "footer.sharing.body": "Each day, find the 10 media posts that were most relayed during the day.",
   "footer.subscribe-to.label": "Follow @revue-de-presse.org",
+  "footer.newsletter.pitch": "Prefer email? Get the previous day's top 10 in your inbox every morning.",
+  "footer.newsletter.label": "Subscribe to the daily newsletter",
   "footer.about.privacy-policy": "Privacy policy",
   "footer.about.terms-of-service": "Terms of service",
   "footer.about.contact": "Contact us",

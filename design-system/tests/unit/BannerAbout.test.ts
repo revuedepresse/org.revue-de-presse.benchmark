@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 import { TARGETS } from './_targets';
@@ -14,4 +14,18 @@ describe('BannerAbout (post-Mitosis emit)', () => {
       expect(existsSync(path)).toBe(true);
     });
   }
+});
+
+describe('BannerAbout newsletter invitation', () => {
+  const vue = () => readFileSync(join(root, 'output/vue/src/components/BannerAbout.vue'), 'utf8');
+
+  it('links to the newsletter page right after the Google Play badge', () => {
+    const src = vue();
+    const badge = src.indexOf('rdp-banner-about__play-store-badge');
+    const invite = src.indexOf('rdp-banner-about__newsletter-link');
+    expect(badge).toBeGreaterThan(-1);
+    expect(invite).toBeGreaterThan(badge);
+    expect(src).toContain("'/lettre-quotidienne'");
+    expect(src).toContain('footer.newsletter.label');
+  });
 });

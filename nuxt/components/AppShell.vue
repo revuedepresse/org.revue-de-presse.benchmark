@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import App from '@design-system/components/App.vue';
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'newsletter';
 
 const props = defineProps<{
   initialView?: ViewKey;
@@ -75,6 +75,7 @@ function urlForView(view: ViewKey): string {
     case 'contact': return '/nous-contacter';
     case 'support': return '/nous-soutenir';
     case 'sources': return '/sources';
+    case 'newsletter': return '/lettre-quotidienne';
     case 'main':
     default:
       return urlForDate(pickedDate.value);

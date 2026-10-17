@@ -13,6 +13,7 @@ import TermsOfServicePage from './TermsOfServicePage.lite';
 import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
+import NewsletterPage from './NewsletterPage.lite';
 import IntroCard from './IntroCard.lite';
 import Spinner from './Spinner.lite';
 import type { BlueskyPost } from './BlueskyPostCard.lite';
@@ -20,7 +21,7 @@ import type { Locale } from '../utils/i18n';
 
 type SnapshotItem = { id: string; label: string };
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
+type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'newsletter';
 
 type AppProps = {
   layout?: 'mobile' | 'desktop';
@@ -45,7 +46,7 @@ export default function App(props: AppProps) {
   const state = useStore({
     focusedDate: new Date(),
     isCalendarOpen: false,
-    currentView: 'main' as 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources',
+    currentView: 'main' as 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'newsletter',
     initialised: false,
     get popularNewsLine(): string {
       return t(
@@ -170,6 +171,7 @@ export default function App(props: AppProps) {
               onContactClick={() => state.goTo('contact')}
               onSupportClick={() => state.goTo('support')}
               onSourcesClick={() => state.goTo('sources')}
+              onNewsletterClick={() => state.goTo('newsletter')}
             />
           </aside>
 
@@ -220,6 +222,9 @@ export default function App(props: AppProps) {
             </Show>
             <Show when={state.currentView === 'sources'}>
               <SourcesPage />
+            </Show>
+            <Show when={state.currentView === 'newsletter'}>
+              <NewsletterPage />
             </Show>
           </main>
         </div>
@@ -274,12 +279,16 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'sources'}>
             <SourcesPage />
           </Show>
+          <Show when={state.currentView === 'newsletter'}>
+            <NewsletterPage />
+          </Show>
           <BannerAbout
             onLegalNoticeClick={() => state.goTo('legal')}
             onTermsOfServiceClick={() => state.goTo('terms')}
             onContactClick={() => state.goTo('contact')}
             onSupportClick={() => state.goTo('support')}
             onSourcesClick={() => state.goTo('sources')}
+            onNewsletterClick={() => state.goTo('newsletter')}
           />
         </main>
         <Show when={state.isCalendarOpen}>
