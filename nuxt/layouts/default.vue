@@ -9,6 +9,13 @@ const route = useRoute();
 const view = computed<ViewKey>(() => route.meta.view ?? 'main');
 const emptyMessageKey = computed(() => route.meta.emptyMessageKey);
 const initialDate = computed(() => {
+  // `/` always means yesterday's top 10, even when arriving from another day.
+  if (route.path === '/') {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
   const day = route.params.day;
   if (typeof day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return undefined;
   const [y, m, d] = day.split('-').map(Number);

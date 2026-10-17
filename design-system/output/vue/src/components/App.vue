@@ -51,7 +51,11 @@
             <IntroCard></IntroCard>
           </template>
 
-          <template v-if="currentView === 'main' && loading === true">
+          <template
+            v-if="
+              currentView === 'main' && loading === true && posts.length === 0
+            "
+          >
             <Spinner></Spinner>
           </template>
 
@@ -64,10 +68,14 @@
             ></Alert>
           </template>
 
-          <template
-            v-if="currentView === 'main' && !loading && posts.length > 0"
-          >
-            <ol class="rdp-app__post-list">
+          <template v-if="currentView === 'main' && posts.length > 0">
+            <ol
+              :class="
+                loading
+                  ? 'rdp-app__post-list rdp-app__post-list--stale'
+                  : 'rdp-app__post-list'
+              "
+            >
               <template :key="index" v-for="(post, index) in posts">
                 <li class="rdp-app__post-item">
                   <BlueskyPostCard
@@ -125,7 +133,11 @@
           <IntroCard></IntroCard>
         </template>
 
-        <template v-if="currentView === 'main' && loading === true">
+        <template
+          v-if="
+            currentView === 'main' && loading === true && posts.length === 0
+          "
+        >
           <Spinner></Spinner>
         </template>
 
@@ -138,8 +150,14 @@
           ></Alert>
         </template>
 
-        <template v-if="currentView === 'main' && !loading && posts.length > 0">
-          <ol class="rdp-app__post-list">
+        <template v-if="currentView === 'main' && posts.length > 0">
+          <ol
+            :class="
+              loading
+                ? 'rdp-app__post-list rdp-app__post-list--stale'
+                : 'rdp-app__post-list'
+            "
+          >
             <template :key="index" v-for="(post, index) in posts">
               <li class="rdp-app__post-item">
                 <BlueskyPostCard

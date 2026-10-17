@@ -14,7 +14,15 @@ const route = useRoute();
 const { lists } = useSampleData();
 const newsletterSubscribeUrl = useRuntimeConfig().public.newsletterSubscribeUrl || undefined;
 
-const layout = ref<'desktop' | 'mobile'>('desktop');
+// Server-side guess from the request (client hints, then user agent) so the
+// first paint on a phone is already the mobile layout. Shared with the client
+// through useState, so hydration matches; syncLayout() corrects it on mount.
+const requestHeaders = useRequestHeaders(['sec-ch-ua-mobile', 'user-agent']);
+const layout = useState<'desktop' | 'mobile'>('rdp-layout', () => {
+  const hint = requestHeaders['sec-ch-ua-mobile'];
+  if (hint) return hint === '?1' ? 'mobile' : 'desktop';
+  return /Mobi|Android|iPhone|iPod/i.test(requestHeaders['user-agent'] ?? '') ? 'mobile' : 'desktop';
+});
 
 function yesterday(): Date {
   const d = new Date();

@@ -204,7 +204,7 @@ export default function App(props: AppProps) {
             <Show when={state.currentView === 'main'}>
               <IntroCard />
             </Show>
-            <Show when={state.currentView === 'main' && props.loading === true}>
+            <Show when={state.currentView === 'main' && props.loading === true && props.posts.length === 0}>
               <Spinner />
             </Show>
             <Show when={state.currentView === 'main' && !props.loading && props.posts.length === 0}>
@@ -213,8 +213,8 @@ export default function App(props: AppProps) {
                 messageKey={props.emptyMessageKey ?? 'alert.empty.no-content-for-date'}
               />
             </Show>
-            <Show when={state.currentView === 'main' && !props.loading && props.posts.length > 0}>
-              <ol class="rdp-app__post-list">
+            <Show when={state.currentView === 'main' && props.posts.length > 0}>
+              <ol class={props.loading ? 'rdp-app__post-list rdp-app__post-list--stale' : 'rdp-app__post-list'}>
                 <For each={props.posts}>
                   {(post) => (
                     <li class="rdp-app__post-item">
@@ -260,7 +260,7 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'main'}>
             <IntroCard />
           </Show>
-          <Show when={state.currentView === 'main' && props.loading === true}>
+          <Show when={state.currentView === 'main' && props.loading === true && props.posts.length === 0}>
             <Spinner />
           </Show>
           <Show when={state.currentView === 'main' && !props.loading && props.posts.length === 0}>
@@ -269,8 +269,8 @@ export default function App(props: AppProps) {
               messageKey={props.emptyMessageKey ?? 'alert.empty.no-content-for-date'}
             />
           </Show>
-          <Show when={state.currentView === 'main' && !props.loading && props.posts.length > 0}>
-            <ol class="rdp-app__post-list">
+          <Show when={state.currentView === 'main' && props.posts.length > 0}>
+            <ol class={props.loading ? 'rdp-app__post-list rdp-app__post-list--stale' : 'rdp-app__post-list'}>
               <For each={props.posts}>
                 {(post) => (
                   <li class="rdp-app__post-item">
@@ -408,6 +408,9 @@ export default function App(props: AppProps) {
           padding: var(--separation-2);
           padding-bottom: calc(64px + var(--separation-2));
         }
+        /* Previous day's posts stay in place (dimmed) while the next day loads,
+           instead of being swapped for a spinner and back. */
+        .rdp-app__post-list--stale { opacity: 0.55; transition: opacity 120ms ease-in; }
         .rdp-app__post-list {
           list-style: none;
           margin: 0;
