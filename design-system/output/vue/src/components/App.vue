@@ -216,7 +216,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import { t } from "../utils/i18n";
 import { formatLegacyShortDay } from "../utils/intl";
@@ -276,7 +276,7 @@ type AppProps = {
 const props = defineProps<AppProps>();
 const focusedDate = ref(new Date());
 const isCalendarOpen = ref(false);
-const currentView = ref("main");
+const currentView = ref(props.initialView ?? "main");
 const initialised = ref(false);
 
 onMounted(() => {
@@ -322,6 +322,22 @@ const nextDayDisabled = computed(() => {
   return cur.getTime() >= yesterday.getTime();
 });
 
+watch(
+  () => [props.initialView],
+  () => {
+    if (props.initialView) {
+      currentView.value = props.initialView;
+    }
+  },
+  { immediate: true }
+);
+watch(
+  () => [props.pickedDate],
+  () => {
+    focusedDate.value = props.pickedDate;
+  },
+  { immediate: true }
+);
 function prevDay() {
   const next = new Date(focusedDate.value);
   next.setDate(next.getDate() - 1);

@@ -1,4 +1,4 @@
-import { onMount, useStore } from '@builder.io/mitosis';
+import { onMount, onUpdate, useStore } from '@builder.io/mitosis';
 import { t } from '../utils/i18n';
 import { formatLegacyShortDay } from '../utils/intl';
 import AppHeader from './AppHeader.lite';
@@ -47,7 +47,9 @@ export default function App(props: AppProps) {
   const state = useStore({
     focusedDate: new Date(),
     isCalendarOpen: false,
-    currentView: 'main' as 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'newsletter',
+    // Seeded from the prop (not only in onMount) so server-rendered HTML
+    // already shows the requested view instead of flashing the home view.
+    currentView: (props.initialView ?? 'main') as ViewKey,
     initialised: false,
     get popularNewsLine(): string {
       return t(
@@ -131,6 +133,19 @@ export default function App(props: AppProps) {
       return cur.getTime() >= yesterday.getTime();
     },
   });
+
+  // The shell stays mounted across routes (Nuxt layout), so follow the
+  // route-driven props instead of reading them once: browser back/forward
+  // and direct links switch the view without remounting the app.
+  onUpdate(() => {
+    if (props.initialView) {
+      state.currentView = props.initialView;
+    }
+  }, [props.initialView]);
+
+  onUpdate(() => {
+    state.focusedDate = props.pickedDate;
+  }, [props.pickedDate]);
 
   onMount(() => {
     state.focusedDate = props.pickedDate;

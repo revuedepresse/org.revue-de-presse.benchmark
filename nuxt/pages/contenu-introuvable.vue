@@ -1,3 +1,7 @@
+<script setup lang="ts">
+definePageMeta({ view: 'main', emptyMessageKey: 'alert.empty.no-content-for-date' });
+</script>
+
 <template>
-  <AppShell empty-message-key="alert.empty.no-content-for-date" />
+  <!-- Rendered by the shared AppShell in layouts/default.vue -->
 </template>

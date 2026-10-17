@@ -1,3 +1,7 @@
+<script setup lang="ts">
+definePageMeta({ view: 'support' });
+</script>
+
 <template>
-  <AppShell initial-view="support" />
+  <!-- Rendered by the shared AppShell in layouts/default.vue -->
 </template>

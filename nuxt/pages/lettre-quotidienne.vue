@@ -1,3 +1,7 @@
+<script setup lang="ts">
+definePageMeta({ view: 'newsletter' });
+</script>
+
 <template>
-  <AppShell initial-view="newsletter" />
+  <!-- Rendered by the shared AppShell in layouts/default.vue -->
 </template>

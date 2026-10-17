@@ -1,3 +1,7 @@
+<script setup lang="ts">
+definePageMeta({ view: 'terms' });
+</script>
+
 <template>
-  <AppShell initial-view="terms" />
+  <!-- Rendered by the shared AppShell in layouts/default.vue -->
 </template>

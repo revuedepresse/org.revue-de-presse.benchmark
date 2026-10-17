@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import App from '@design-system/components/App.vue';
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'newsletter';
+import type { ViewKey } from '~/types/page-meta';
 
 const props = defineProps<{
   initialView?: ViewKey;
