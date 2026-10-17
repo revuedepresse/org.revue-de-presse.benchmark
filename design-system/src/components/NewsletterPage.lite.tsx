@@ -46,8 +46,12 @@ export default function NewsletterPage(props: NewsletterPageProps) {
 
       <h2>Comment ça marche&nbsp;?</h2>
       <ul>
-        <li>Un e-mail de confirmation vous est envoyé&nbsp;: cliquez sur son lien pour activer l'abonnement.</li>
-        <li>La lettre arrive ensuite chaque matin avec le top 10 de la veille.</li>
+        <li>
+          Vous recevez aussitôt un e-mail «&nbsp;Confirmez votre adresse e-mail&nbsp;»&nbsp;:
+          cliquez sur «&nbsp;Confirmer mon adresse e-mail&nbsp;». Tant que ce n'est pas fait,
+          aucune lettre ne vous est envoyée.
+        </li>
+        <li>Une fois votre adresse confirmée, la lettre arrive chaque matin avec le top 10 de la veille.</li>
         <li>Un lien en bas de chaque lettre permet de se désabonner en un clic.</li>
       </ul>
       <p class="rdp-newsletter-page__fine-print">
