@@ -31,12 +31,23 @@ type HydraCollection<T> = {
   member?: T[];
 };
 
+// Publisher lists the API ranks into a daily top 10. `fr` is the API default,
+// so it is never forwarded: that keeps this proxy compatible with API releases
+// that predate the `list` parameter.
+const PUBLISHER_LISTS = ['fr', 'coop-medias'];
+
 export default defineEventHandler(async (event) => {
-  const { startDate, endDate } = getQuery(event) as Record<string, string | undefined>;
+  const { startDate, endDate, list } = getQuery(event) as Record<string, string | undefined>;
   if (!startDate || !endDate) {
     throw createError({
       statusCode: 400,
       statusMessage: 'startDate and endDate query params are required',
+    });
+  }
+  if (list !== undefined && !PUBLISHER_LISTS.includes(list)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `list must be one of ${PUBLISHER_LISTS.join(', ')}`,
     });
   }
 
@@ -56,6 +67,9 @@ export default defineEventHandler(async (event) => {
   url.searchParams.set('startDate', startDate);
   url.searchParams.set('endDate', endDate);
   url.searchParams.set('itemsPerPage', '10');
+  if (list !== undefined && list !== 'fr') {
+    url.searchParams.set('list', list);
+  }
 
   const callOnce = async (token: string) =>
     $fetch<HydraCollection<HydraHighlight>>(url.toString(), {

@@ -13,6 +13,7 @@ import TermsOfServicePage from './TermsOfServicePage.lite';
 import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
+import SnapshotsList from './SnapshotsList.lite';
 import IntroCard from './IntroCard.lite';
 import Spinner from './Spinner.lite';
 import type { BlueskyPost } from './BlueskyPostCard.lite';
@@ -93,6 +94,11 @@ export default function App(props: AppProps) {
       state.currentView = view;
       props.onViewChange?.(view);
     },
+    selectList(id: string) {
+      state.currentView = 'main';
+      props.onViewChange?.('main');
+      props.onListSelect?.(id);
+    },
     goHome() {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
@@ -163,7 +169,7 @@ export default function App(props: AppProps) {
               yearRange={props.yearRange}
               minDate={props.minDate}
               locale={props.locale}
-              onListSelect={(id: string) => props.onListSelect?.(id)}
+              onListSelect={(id: string) => state.selectList(id)}
               onDateSelect={(d: Date) => state.selectFromSidebar(d)}
               onLegalNoticeClick={() => state.goTo('legal')}
               onTermsOfServiceClick={() => state.goTo('terms')}
@@ -238,6 +244,13 @@ export default function App(props: AppProps) {
           </Show>
           <Show when={state.currentView === 'main'}>
             <IntroCard />
+          </Show>
+          <Show when={state.currentView === 'main' && props.lists.length > 1}>
+            <SnapshotsList
+              items={props.lists}
+              selectedId={props.selectedListId}
+              onSelect={(id: string) => state.selectList(id)}
+            />
           </Show>
           <Show when={state.currentView === 'main' && props.loading === true}>
             <Spinner />

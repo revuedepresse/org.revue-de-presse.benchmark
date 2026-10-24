@@ -26,6 +26,7 @@
           <template :key="index" v-for="(item, index) in items">
             <li
               role="option"
+              tabindex="0"
               :aria-selected="item.id === selectedId ? 'true' : 'false'"
               :class="`rdp-snapshots-list__item${
                 item.id === selectedId
@@ -33,6 +34,14 @@
                   : ''
               }`"
               @click="async (event) => onSelect?.(item.id)"
+              @keydown="
+                async (event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onSelect?.(item.id);
+                  }
+                }
+              "
             >
               <span class="rdp-snapshots-list__item-rank">{{ index + 1 }}.</span
               ><span class="rdp-snapshots-list__item-label">{{

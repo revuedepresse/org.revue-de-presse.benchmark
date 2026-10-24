@@ -35,9 +35,16 @@ export default function SnapshotsList(props: SnapshotsListProps) {
               {(item, index) => (
                 <li
                   role="option"
+                  tabindex="0"
                   aria-selected={item.id === props.selectedId ? 'true' : 'false'}
                   class={`rdp-snapshots-list__item${item.id === props.selectedId ? ' rdp-snapshots-list__item--selected' : ''}`}
                   onClick={() => props.onSelect?.(item.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      props.onSelect?.(item.id);
+                    }
+                  }}
                 >
                   <span class="rdp-snapshots-list__item-rank">{index + 1}.</span>
                   <span class="rdp-snapshots-list__item-label">{item.label}</span>
@@ -87,6 +94,10 @@ export default function SnapshotsList(props: SnapshotsListProps) {
         }
         .rdp-snapshots-list__item--selected .rdp-snapshots-list__item-rank {
           color: var(--color-white);
+        }
+        .rdp-snapshots-list__item:focus-visible {
+          outline: 2px solid var(--color-brand-active);
+          outline-offset: -2px;
         }
         .rdp-snapshots-list__item-label { flex: 1; }
         .rdp-snapshots-list__item:last-child { border-bottom: none; }

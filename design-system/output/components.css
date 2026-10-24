@@ -915,6 +915,10 @@
         .rdp-snapshots-list__item--selected .rdp-snapshots-list__item-rank {
           color: var(--color-white);
         }
+        .rdp-snapshots-list__item:focus-visible {
+          outline: 2px solid var(--color-brand-active);
+          outline-offset: -2px;
+        }
         .rdp-snapshots-list__item-label { flex: 1; }
         .rdp-snapshots-list__item:last-child { border-bottom: none; }
         .rdp-snapshots-list__item--selected {

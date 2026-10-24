@@ -90,6 +90,42 @@ describe('GET /api/highlights (Nitro proxy)', () => {
     expect(observedUrl).not.toContain('pageSize=');
   });
 
+  it('forwards list only for lists other than French media', async () => {
+    const observedUrls: string[] = [];
+    globalThis.$fetch = vi.fn(async (url: string) => {
+      observedUrls.push(url);
+      return makeHydraBody([]);
+    });
+    vi.doMock('../utils/apiToken', () => ({
+      getApiToken: vi.fn(async () => 'b'),
+      refreshApiToken: vi.fn(async () => 'b'),
+    }));
+
+    const handler = (await import('./highlights.get')).default;
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }));
+
+    expect(observedUrls[0]).not.toContain('list=');
+    expect(observedUrls[1]).not.toContain('list=');
+    expect(observedUrls[2]).toContain('list=coop-medias');
+  });
+
+  it('rejects an unknown list with 400 without calling upstream', async () => {
+    globalThis.$fetch = vi.fn(async () => makeHydraBody([]));
+    vi.doMock('../utils/apiToken', () => ({
+      getApiToken: vi.fn(async () => 'b'),
+      refreshApiToken: vi.fn(async () => 'b'),
+    }));
+
+    const handler = (await import('./highlights.get')).default;
+
+    await expect(
+      handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: '../etc' })),
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect(globalThis.$fetch).not.toHaveBeenCalled();
+  });
+
   it('returns legacy shape so useHighlights is unchanged', async () => {
     globalThis.$fetch = vi.fn(async () => makeHydraBody([{
       '@id': '/api/highlights/x',

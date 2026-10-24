@@ -6,8 +6,16 @@
       :yearRange="yearRange"
       :minDate="minDate"
       :onSelect="(d) => onDateSelect?.(d)"
-    ></Calendar
-    ><BannerAbout
+    ></Calendar>
+    <template v-if="(lists ?? []).length > 1">
+      <SnapshotsList
+        :items="lists ?? []"
+        :selectedId="selectedListId"
+        :onSelect="(id) => onListSelect?.(id)"
+      ></SnapshotsList>
+    </template>
+
+    <BannerAbout
       :onLegalNoticeClick="(event) => onLegalNoticeClick()"
       :onTermsOfServiceClick="(event) => onTermsOfServiceClick()"
       :onContactClick="(event) => onContactClick()"
@@ -21,6 +29,7 @@
 <script setup lang="ts">
 import Calendar from "./Calendar.vue";
 import BannerAbout from "./BannerAbout.vue";
+import SnapshotsList from "./SnapshotsList.vue";
 import type { Locale } from "../utils/i18n";
 
 type ListItem = {

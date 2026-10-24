@@ -1,5 +1,6 @@
 import Calendar from './Calendar.lite';
 import BannerAbout from './BannerAbout.lite';
+import SnapshotsList from './SnapshotsList.lite';
 import type { Locale } from '../utils/i18n';
 
 type ListItem = { id: string; label: string };
@@ -30,6 +31,13 @@ export default function Sidebar(props: SidebarProps) {
         minDate={props.minDate}
         onSelect={(d: Date) => props.onDateSelect?.(d)}
       />
+      <Show when={(props.lists ?? []).length > 1}>
+        <SnapshotsList
+          items={props.lists ?? []}
+          selectedId={props.selectedListId}
+          onSelect={(id: string) => props.onListSelect?.(id)}
+        />
+      </Show>
       <BannerAbout
         onLegalNoticeClick={props.onLegalNoticeClick}
         onTermsOfServiceClick={props.onTermsOfServiceClick}

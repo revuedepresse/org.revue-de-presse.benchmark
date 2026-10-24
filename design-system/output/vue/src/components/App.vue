@@ -26,7 +26,7 @@
             :yearRange="yearRange"
             :minDate="minDate"
             :locale="locale"
-            :onListSelect="(id) => onListSelect?.(id)"
+            :onListSelect="(id) => selectList(id)"
             :onDateSelect="(d) => selectFromSidebar(d)"
             :onLegalNoticeClick="(event) => goTo('legal')"
             :onTermsOfServiceClick="(event) => goTo('terms')"
@@ -118,6 +118,14 @@
 
         <template v-if="currentView === 'main'">
           <IntroCard></IntroCard>
+        </template>
+
+        <template v-if="currentView === 'main' && lists.length > 1">
+          <SnapshotsList
+            :items="lists"
+            :selectedId="selectedListId"
+            :onSelect="(id) => selectList(id)"
+          ></SnapshotsList>
         </template>
 
         <template v-if="currentView === 'main' && loading === true">
@@ -222,6 +230,7 @@ import TermsOfServicePage from "./TermsOfServicePage.vue";
 import ContactPage from "./ContactPage.vue";
 import SupportPage from "./SupportPage.vue";
 import SourcesPage from "./SourcesPage.vue";
+import SnapshotsList from "./SnapshotsList.vue";
 import IntroCard from "./IntroCard.vue";
 import Spinner from "./Spinner.vue";
 import type { BlueskyPost } from "./BlueskyPostCard.vue";
@@ -341,6 +350,11 @@ function selectFromSidebar(d: Date) {
 function goTo(view: ViewKey) {
   currentView.value = view;
   props.onViewChange?.(view);
+}
+function selectList(id: string) {
+  currentView.value = "main";
+  props.onViewChange?.("main");
+  props.onListSelect?.(id);
 }
 function goHome() {
   const yesterday = new Date();

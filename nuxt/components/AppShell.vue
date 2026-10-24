@@ -11,7 +11,22 @@ const props = defineProps<{
 
 const router = useRouter();
 const route = useRoute();
-const { lists } = useSampleData();
+
+// Publisher lists ranked by the API, selected with ?liste=<id>. Without the
+// query parameter, the French media top 10 shows as before.
+const lists = [
+  { id: 'fr', label: 'Médias français' },
+  { id: 'coop-medias', label: 'Coop Médias' },
+];
+const selectedListId = computed<string>(() => {
+  const requested = route.query.liste;
+  return typeof requested === 'string' && lists.some((l) => l.id === requested)
+    ? requested
+    : 'fr';
+});
+const listQuery = computed(() =>
+  selectedListId.value === 'fr' ? {} : { liste: selectedListId.value },
+);
 
 const layout = ref<'desktop' | 'mobile'>('desktop');
 
@@ -26,7 +41,7 @@ const minDate = new Date(2025, 2, 4);
 const yearRange = { min: minDate.getFullYear(), max: new Date().getFullYear() };
 
 const pickedDate = ref<Date>(props.initialDate ?? yesterday());
-const { posts, loading } = useHighlights(pickedDate);
+const { posts, loading } = useHighlights(pickedDate, selectedListId);
 
 // Sync pickedDate when the dynamic-route page reuses this component and
 // only swaps the initialDate prop (e.g. /2025-05-08 → /2025-05-09).
@@ -96,12 +111,22 @@ onBeforeUnmount(() => {
 
 function onDateSelect(d: Date) {
   pickedDate.value = d;
-  if (import.meta.client) router.push(urlForDate(d));
+  if (import.meta.client) router.push({ path: urlForDate(d), query: listQuery.value });
 }
 
 function onViewChange(view: ViewKey) {
   const target = urlForView(view);
-  if (import.meta.client && route.path !== target) router.push(target);
+  if (import.meta.client && route.path !== target) {
+    router.push(view === 'main' ? { path: target, query: listQuery.value } : target);
+  }
+}
+
+function onListSelect(id: string) {
+  if (!import.meta.client) return;
+  router.push({
+    path: urlForDate(pickedDate.value),
+    query: id === 'fr' ? {} : { liste: id },
+  });
 }
 
 function onLogoClick() {
@@ -115,7 +140,7 @@ function onLogoClick() {
     :posts="posts"
     :picked-date="pickedDate"
     :lists="lists"
-    selected-list-id="medias-francais"
+    :selected-list-id="selectedListId"
     :year-range="yearRange"
     :min-date="minDate"
     :loading="loading"
@@ -123,6 +148,7 @@ function onLogoClick() {
     :empty-message-key="props.emptyMessageKey"
     locale="fr-FR"
     :on-date-select="onDateSelect"
+    :on-list-select="onListSelect"
     :on-view-change="onViewChange"
     :on-logo-click="onLogoClick"
   />
