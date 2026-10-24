@@ -7,6 +7,8 @@ type SnapshotsListProps = {
   items: ListItem[];
   selectedId?: string;
   presentation?: 'inline' | 'sheet';
+  // i18n key of the heading; the publisher lists' one by default.
+  headingKey?: string;
   onSelect?: (id: string) => void;
   onDismiss?: () => void;
 };
@@ -24,7 +26,7 @@ export default function SnapshotsList(props: SnapshotsListProps) {
       <div class="rdp-snapshots-list__panel">
         <header class="rdp-snapshots-list__header">
           <Icon name="pick-list" size={24} decorative={true} />
-          <span>{t('snapshots-list.heading')}</span>
+          <span>{t(props.headingKey ?? 'snapshots-list.heading')}</span>
         </header>
         <Show when={props.items.length === 0}>
           <p class="rdp-snapshots-list__empty">{t('snapshots-list.empty')}</p>

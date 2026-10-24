@@ -34,6 +34,11 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiBaseUrl: '',
     apiClientSecret: '',
+    public: {
+      // Ranking the API applies without ?ranking= (HIGHLIGHTS_DEFAULT_RANKING
+      // on the API side); the ranking picker shows it as selected.
+      defaultRanking: 'first-sighting',
+    },
   },
 
   experimental: {

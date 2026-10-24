@@ -27,6 +27,9 @@
             :minDate="minDate"
             :locale="locale"
             :onListSelect="(id) => selectList(id)"
+            :rankings="rankings"
+            :selectedRankingId="selectedRankingId"
+            :onRankingSelect="(id) => selectRanking(id)"
             :onDateSelect="(d) => selectFromSidebar(d)"
             :onLegalNoticeClick="(event) => goTo('legal')"
             :onTermsOfServiceClick="(event) => goTo('terms')"
@@ -125,6 +128,15 @@
             :items="lists"
             :selectedId="selectedListId"
             :onSelect="(id) => selectList(id)"
+          ></SnapshotsList>
+        </template>
+
+        <template v-if="currentView === 'main' && (rankings ?? []).length > 1">
+          <SnapshotsList
+            headingKey="ranking-list.heading"
+            :items="rankings ?? []"
+            :selectedId="selectedRankingId"
+            :onSelect="(id) => selectRanking(id)"
           ></SnapshotsList>
         </template>
 
@@ -247,6 +259,8 @@ type AppProps = {
   pickedDate: Date;
   lists: SnapshotItem[];
   selectedListId?: string;
+  rankings?: SnapshotItem[];
+  selectedRankingId?: string;
   yearRange: {
     min: number;
     max: number;
@@ -258,6 +272,7 @@ type AppProps = {
   locale?: Locale;
   initialView?: ViewKey;
   onListSelect?: (id: string) => void;
+  onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
@@ -359,6 +374,13 @@ function selectList(id: string) {
     props.onViewChange?.("main");
   }
   props.onListSelect?.(id);
+}
+function selectRanking(id: string) {
+  if (currentView.value !== "sources") {
+    currentView.value = "main";
+    props.onViewChange?.("main");
+  }
+  props.onRankingSelect?.(id);
 }
 function goHome() {
   const yesterday = new Date();

@@ -15,7 +15,7 @@
     <div class="rdp-snapshots-list__panel">
       <header class="rdp-snapshots-list__header">
         <Icon name="pick-list" :size="24" :decorative="true"></Icon
-        ><span>{{ t("snapshots-list.heading") }}</span>
+        ><span>{{ t(headingKey ?? "snapshots-list.heading") }}</span>
       </header>
       <template v-if="items.length === 0">
         <p class="rdp-snapshots-list__empty">{{ t("snapshots-list.empty") }}</p>
@@ -68,6 +68,8 @@ type SnapshotsListProps = {
   items: ListItem[];
   selectedId?: string;
   presentation?: "inline" | "sheet";
+  // i18n key of the heading; the publisher lists' one by default.
+  headingKey?: string;
   onSelect?: (id: string) => void;
   onDismiss?: () => void;
 };

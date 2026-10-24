@@ -15,6 +15,15 @@
       ></SnapshotsList>
     </template>
 
+    <template v-if="(rankings ?? []).length > 1">
+      <SnapshotsList
+        headingKey="ranking-list.heading"
+        :items="rankings ?? []"
+        :selectedId="selectedRankingId"
+        :onSelect="(id) => onRankingSelect?.(id)"
+      ></SnapshotsList>
+    </template>
+
     <BannerAbout
       :onLegalNoticeClick="(event) => onLegalNoticeClick()"
       :onTermsOfServiceClick="(event) => onTermsOfServiceClick()"
@@ -39,6 +48,8 @@ type ListItem = {
 type SidebarProps = {
   lists?: ListItem[];
   selectedListId?: string;
+  rankings?: ListItem[];
+  selectedRankingId?: string;
   selectedDate: Date;
   yearRange: {
     min: number;
@@ -47,6 +58,7 @@ type SidebarProps = {
   minDate?: Date;
   locale?: Locale;
   onListSelect?: (id: string) => void;
+  onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLegalNoticeClick?: () => void;
   onTermsOfServiceClick?: () => void;

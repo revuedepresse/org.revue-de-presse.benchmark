@@ -8,11 +8,14 @@ type ListItem = { id: string; label: string };
 type SidebarProps = {
   lists?: ListItem[];
   selectedListId?: string;
+  rankings?: ListItem[];
+  selectedRankingId?: string;
   selectedDate: Date;
   yearRange: { min: number; max: number };
   minDate?: Date;
   locale?: Locale;
   onListSelect?: (id: string) => void;
+  onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLegalNoticeClick?: () => void;
   onTermsOfServiceClick?: () => void;
@@ -36,6 +39,14 @@ export default function Sidebar(props: SidebarProps) {
           items={props.lists ?? []}
           selectedId={props.selectedListId}
           onSelect={(id: string) => props.onListSelect?.(id)}
+        />
+      </Show>
+      <Show when={(props.rankings ?? []).length > 1}>
+        <SnapshotsList
+          items={props.rankings ?? []}
+          selectedId={props.selectedRankingId}
+          headingKey="ranking-list.heading"
+          onSelect={(id: string) => props.onRankingSelect?.(id)}
         />
       </Show>
       <BannerAbout

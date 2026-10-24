@@ -71,6 +71,7 @@
   "calendar.heading.year": "{year}",
   "snapshots-list.heading": "Listes",
   "snapshots-list.empty": "Aucune liste disponible.",
+  "ranking-list.heading": "Classement",
   "alert.empty.no-content-for-date": "Il semblerait qu'il n'y a pas de contenu disponible pour cette liste et/ou pour cette date.",
   "notice.signup-confirmed.headline": "Allez voir vos emails",
   "notice.signup-confirmed.body": "Votre inscription a bien été prise en compte.",

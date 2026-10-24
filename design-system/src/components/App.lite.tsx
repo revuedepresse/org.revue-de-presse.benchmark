@@ -29,6 +29,8 @@ type AppProps = {
   pickedDate: Date;
   lists: SnapshotItem[];
   selectedListId?: string;
+  rankings?: SnapshotItem[];
+  selectedRankingId?: string;
   yearRange: { min: number; max: number };
   minDate?: Date;
   loading?: boolean;
@@ -37,6 +39,7 @@ type AppProps = {
   locale?: Locale;
   initialView?: ViewKey;
   onListSelect?: (id: string) => void;
+  onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
@@ -102,6 +105,13 @@ export default function App(props: AppProps) {
         props.onViewChange?.('main');
       }
       props.onListSelect?.(id);
+    },
+    selectRanking(id: string) {
+      if (state.currentView !== 'sources') {
+        state.currentView = 'main';
+        props.onViewChange?.('main');
+      }
+      props.onRankingSelect?.(id);
     },
     goHome() {
       const yesterday = new Date();
@@ -174,6 +184,9 @@ export default function App(props: AppProps) {
               minDate={props.minDate}
               locale={props.locale}
               onListSelect={(id: string) => state.selectList(id)}
+              rankings={props.rankings}
+              selectedRankingId={props.selectedRankingId}
+              onRankingSelect={(id: string) => state.selectRanking(id)}
               onDateSelect={(d: Date) => state.selectFromSidebar(d)}
               onLegalNoticeClick={() => state.goTo('legal')}
               onTermsOfServiceClick={() => state.goTo('terms')}
@@ -254,6 +267,14 @@ export default function App(props: AppProps) {
               items={props.lists}
               selectedId={props.selectedListId}
               onSelect={(id: string) => state.selectList(id)}
+            />
+          </Show>
+          <Show when={state.currentView === 'main' && (props.rankings ?? []).length > 1}>
+            <SnapshotsList
+              items={props.rankings ?? []}
+              selectedId={props.selectedRankingId}
+              headingKey="ranking-list.heading"
+              onSelect={(id: string) => state.selectRanking(id)}
             />
           </Show>
           <Show when={state.currentView === 'main' && props.loading === true}>

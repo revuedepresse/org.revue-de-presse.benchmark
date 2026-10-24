@@ -7,7 +7,7 @@ import {
   withinList,
   type PublisherListId,
 } from '~/utils/publisher-lists';
-import { rankingFromQuery } from '~/utils/rankings';
+import { RANKING_CHOICES, rankingFromQuery, selectedRankingChoice } from '~/utils/rankings';
 
 type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
 
@@ -30,6 +30,8 @@ const ranking = computed(() => rankingFromQuery(route.query.classement));
 const rankingQuery = computed(() =>
   ranking.value ? { classement: route.query.classement as string } : {},
 );
+const defaultRanking = String(useRuntimeConfig().public.defaultRanking ?? 'first-sighting');
+const selectedRankingId = computed(() => selectedRankingChoice(route.query.classement, defaultRanking));
 const listQuery = computed(() => ({
   ...(selectedListId.value === 'fr' ? {} : { liste: selectedListId.value }),
   ...rankingQuery.value,
@@ -145,6 +147,11 @@ function onListSelect(id: string) {
   router.push({ path: urlForDate(withinList(pickedDate.value, listId)), query });
 }
 
+function onRankingSelect(id: string) {
+  if (!import.meta.client || !rankingFromQuery(id)) return;
+  router.push({ path: route.path, query: { ...route.query, classement: id } });
+}
+
 function onLogoClick() {
   pickedDate.value = withinList(yesterday(), selectedListId.value);
 }
@@ -191,6 +198,9 @@ watch([selectedListId, () => pickedDate.value.getTime()], () => {
     locale="fr-FR"
     :on-date-select="onDateSelect"
     :on-list-select="onListSelect"
+    :rankings="RANKING_CHOICES"
+    :selected-ranking-id="selectedRankingId"
+    :on-ranking-select="onRankingSelect"
     :on-view-change="onViewChange"
     :on-logo-click="onLogoClick"
   />
