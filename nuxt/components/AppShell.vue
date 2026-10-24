@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import App from '@design-system/components/App.vue';
+import {
+  PUBLISHER_LISTS,
+  firstDayOf,
+  publisherListFromQuery,
+  withinList,
+  type PublisherListId,
+} from '~/utils/publisher-lists';
 
 type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
 
@@ -14,16 +21,8 @@ const route = useRoute();
 
 // Publisher lists ranked by the API, selected with ?liste=<id>. Without the
 // query parameter, the French media top 10 shows as before.
-const lists = [
-  { id: 'fr', label: 'Médias français' },
-  { id: 'coop-medias', label: 'Coop Médias' },
-];
-const selectedListId = computed<string>(() => {
-  const requested = route.query.liste;
-  return typeof requested === 'string' && lists.some((l) => l.id === requested)
-    ? requested
-    : 'fr';
-});
+const lists = PUBLISHER_LISTS.map(({ id, label }) => ({ id, label }));
+const selectedListId = computed(() => publisherListFromQuery(route.query.liste));
 const listQuery = computed(() =>
   selectedListId.value === 'fr' ? {} : { liste: selectedListId.value },
 );
@@ -37,8 +36,12 @@ function yesterday(): Date {
   return d;
 }
 
-const minDate = new Date(2025, 2, 4);
-const yearRange = { min: minDate.getFullYear(), max: new Date().getFullYear() };
+// The calendar starts on the selected list's first collected day.
+const minDate = computed(() => firstDayOf(selectedListId.value));
+const yearRange = computed(() => ({
+  min: minDate.value.getFullYear(),
+  max: new Date().getFullYear(),
+}));
 
 const pickedDate = ref<Date>(props.initialDate ?? yesterday());
 const { posts, loading } = useHighlights(pickedDate, selectedListId);
@@ -123,15 +126,42 @@ function onViewChange(view: ViewKey) {
 
 function onListSelect(id: string) {
   if (!import.meta.client) return;
+  const listId = publisherListFromQuery(id);
   router.push({
-    path: urlForDate(pickedDate.value),
-    query: id === 'fr' ? {} : { liste: id },
+    path: urlForDate(withinList(pickedDate.value, listId)),
+    query: listId === 'fr' ? {} : { liste: listId },
   });
 }
 
 function onLogoClick() {
-  pickedDate.value = yesterday();
+  pickedDate.value = withinList(yesterday(), selectedListId.value);
 }
+
+// A day the selected list has not reached yet (an old link, or the home page
+// before the list's first day) moves to that list's first day, on the server
+// as in the browser.
+function dayOutsideList(listId: PublisherListId): Date | null {
+  const day = withinList(pickedDate.value, listId);
+  return day.getTime() === pickedDate.value.getTime() ? null : day;
+}
+
+// Other pages (legal notice, sources…) keep their own address.
+const firstAvailableDay = (props.initialView ?? 'main') === 'main'
+  ? dayOutsideList(selectedListId.value)
+  : null;
+if (firstAvailableDay) {
+  await navigateTo(
+    { path: urlForDate(firstAvailableDay), query: listQuery.value },
+    { replace: true },
+  );
+}
+
+watch([selectedListId, () => pickedDate.value.getTime()], () => {
+  const day = dayOutsideList(selectedListId.value);
+  if (day && import.meta.client) {
+    router.replace({ path: urlForDate(day), query: listQuery.value });
+  }
+});
 </script>
 
 <template>
