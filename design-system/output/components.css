@@ -946,7 +946,8 @@
           margin: 0 0 var(--separation-2);
         }
         .rdp-sources-page p { margin: 0 0 var(--separation-1); }
-        .rdp-sources-page__internal-link { color: var(--color-brand); }
+        .rdp-sources-page__internal-link,
+        .rdp-sources-page__external-link { color: var(--color-brand); }
 
         .rdp-sources-page__list {
           list-style: none;

@@ -120,17 +120,21 @@ function onDateSelect(d: Date) {
 function onViewChange(view: ViewKey) {
   const target = urlForView(view);
   if (import.meta.client && route.path !== target) {
-    router.push(view === 'main' ? { path: target, query: listQuery.value } : target);
+    // The posts and their sources follow the selected list.
+    const followsList = view === 'main' || view === 'sources';
+    router.push(followsList ? { path: target, query: listQuery.value } : target);
   }
 }
 
 function onListSelect(id: string) {
   if (!import.meta.client) return;
   const listId = publisherListFromQuery(id);
-  router.push({
-    path: urlForDate(withinList(pickedDate.value, listId)),
-    query: listId === 'fr' ? {} : { liste: listId },
-  });
+  const query = listId === 'fr' ? {} : { liste: listId };
+  if (route.path === urlForView('sources')) {
+    router.push({ path: route.path, query });
+    return;
+  }
+  router.push({ path: urlForDate(withinList(pickedDate.value, listId)), query });
 }
 
 function onLogoClick() {

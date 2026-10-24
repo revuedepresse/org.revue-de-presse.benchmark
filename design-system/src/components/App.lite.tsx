@@ -95,8 +95,12 @@ export default function App(props: AppProps) {
       props.onViewChange?.(view);
     },
     selectList(id: string) {
-      state.currentView = 'main';
-      props.onViewChange?.('main');
+      // The sources page follows the selected list; every other page goes
+      // back to the posts of that list.
+      if (state.currentView !== 'sources') {
+        state.currentView = 'main';
+        props.onViewChange?.('main');
+      }
       props.onListSelect?.(id);
     },
     goHome() {
@@ -225,7 +229,7 @@ export default function App(props: AppProps) {
               <SupportPage />
             </Show>
             <Show when={state.currentView === 'sources'}>
-              <SourcesPage />
+              <SourcesPage listId={props.selectedListId} />
             </Show>
           </main>
         </div>
@@ -285,7 +289,7 @@ export default function App(props: AppProps) {
             <SupportPage />
           </Show>
           <Show when={state.currentView === 'sources'}>
-            <SourcesPage />
+            <SourcesPage listId={props.selectedListId} />
           </Show>
           <BannerAbout
             onLegalNoticeClick={() => state.goTo('legal')}

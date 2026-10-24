@@ -95,7 +95,7 @@
           </template>
 
           <template v-if="currentView === 'sources'">
-            <SourcesPage></SourcesPage>
+            <SourcesPage :listId="selectedListId"></SourcesPage>
           </template>
         </main>
       </div>
@@ -171,7 +171,7 @@
         </template>
 
         <template v-if="currentView === 'sources'">
-          <SourcesPage></SourcesPage>
+          <SourcesPage :listId="selectedListId"></SourcesPage>
         </template>
 
         <BannerAbout
@@ -352,8 +352,12 @@ function goTo(view: ViewKey) {
   props.onViewChange?.(view);
 }
 function selectList(id: string) {
-  currentView.value = "main";
-  props.onViewChange?.("main");
+  // The sources page follows the selected list; every other page goes
+  // back to the posts of that list.
+  if (currentView.value !== "sources") {
+    currentView.value = "main";
+    props.onViewChange?.("main");
+  }
   props.onListSelect?.(id);
 }
 function goHome() {
