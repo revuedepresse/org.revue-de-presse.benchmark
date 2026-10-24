@@ -16,14 +16,14 @@ importers:
   .:
     dependencies:
       '@atproto/api':
-        specifier: ^0.28.0
-        version: 0.28.1
+        specifier: ^0.29.1
+        version: 0.29.1
       '@atproto/jwk-jose':
         specifier: ^0.2.4
         version: 0.2.4
       '@atproto/oauth-client-node':
         specifier: ^0.5.10
-        version: 0.5.12
+        version: 0.5.11
       pino:
         specifier: ^10.4.0
         version: 10.4.0
@@ -85,8 +85,8 @@ packages:
     resolution: {integrity: sha512-vfvoDhu6ds6BT3Pqe+d2/LBU1WpDRtt69y6zltlfMCoucPm82m1j50/Wb6xTvv+oZ+2j0JyZVXsmXQ12SWYQJg==}
     engines: {node: '>=22'}
 
-  '@atproto/api@0.28.1':
-    resolution: {integrity: sha512-mPMXuM5F+Vh+dOlu7Ys6/ZVrTpG+PIUg/LartoVijok+Ki6OmJrtBGgRRCppx6Okjs8aW1yH3JZG73gqGfU1zA==}
+  '@atproto/api@0.29.1':
+    resolution: {integrity: sha512-8b9YEAP6YiUSknIKsEDvH8fKDMpVtITScbhh3N7LpoeWwijxqznTq/djK7Yxga9tjAYodNTqk67gILnBj4yXiA==}
     engines: {node: '>=22'}
 
   '@atproto/common-web@0.5.15':
@@ -121,8 +121,8 @@ packages:
     resolution: {integrity: sha512-FR2CPlsGVjAfzvvvTHnoW1wFOFS0Tl9GPlS5yvqjb5GTtRCrDzXmuX+DlFjEvKTUVizx8hWwzCgDihIKCm10HA==}
     engines: {node: '>=22'}
 
-  '@atproto/oauth-client-node@0.5.12':
-    resolution: {integrity: sha512-Afz863wyf+i28EMB0U0kATla4C0fX33GQLR3JYSvYj6OcMHMxhsYfGggPkXqnCrmlTUt4PXbLrvpIMnwisdoww==}
+  '@atproto/oauth-client-node@0.5.11':
+    resolution: {integrity: sha512-b1tZOssiL6/rijXZDrm2RFG0czeEQZ6OiHg2iBQ2lO6TNX6u7N7c1+iSnzLQ+xT/3Bdcv7TdG5chS3oecezZTg==}
     engines: {node: '>=22'}
 
   '@atproto/oauth-client@0.8.10':
@@ -1155,7 +1155,7 @@ snapshots:
 
   '@atproto-labs/simple-store@0.5.1': {}
 
-  '@atproto/api@0.28.1':
+  '@atproto/api@0.29.1':
     dependencies:
       '@atproto/common-web': 0.5.15
       '@atproto/lexicon': 0.7.17
@@ -1211,7 +1211,7 @@ snapshots:
       multiformats: 13.4.2
       zod: 3.25.76
 
-  '@atproto/oauth-client-node@0.5.12':
+  '@atproto/oauth-client-node@0.5.11':
     dependencies:
       '@atproto-labs/did-resolver': 0.3.11
       '@atproto-labs/handle-resolver-node': 0.2.14
