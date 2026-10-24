@@ -7,6 +7,7 @@ import {
   withinList,
   type PublisherListId,
 } from '~/utils/publisher-lists';
+import { rankingFromQuery } from '~/utils/rankings';
 
 type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
 
@@ -23,9 +24,16 @@ const route = useRoute();
 // query parameter, the French media top 10 shows as before.
 const lists = PUBLISHER_LISTS.map(({ id, label }) => ({ id, label }));
 const selectedListId = computed(() => publisherListFromQuery(route.query.liste));
-const listQuery = computed(() =>
-  selectedListId.value === 'fr' ? {} : { liste: selectedListId.value },
+// ?classement= picks the ranking (see utils/rankings.ts) and, like ?liste=,
+// follows the reader from day to day.
+const ranking = computed(() => rankingFromQuery(route.query.classement));
+const rankingQuery = computed(() =>
+  ranking.value ? { classement: route.query.classement as string } : {},
 );
+const listQuery = computed(() => ({
+  ...(selectedListId.value === 'fr' ? {} : { liste: selectedListId.value }),
+  ...rankingQuery.value,
+}));
 
 const layout = ref<'desktop' | 'mobile'>('desktop');
 
@@ -44,7 +52,7 @@ const yearRange = computed(() => ({
 }));
 
 const pickedDate = ref<Date>(props.initialDate ?? yesterday());
-const { posts, loading } = useHighlights(pickedDate, selectedListId);
+const { posts, loading } = useHighlights(pickedDate, selectedListId, ranking);
 
 // Sync pickedDate when the dynamic-route page reuses this component and
 // only swaps the initialDate prop (e.g. /2025-05-08 → /2025-05-09).
@@ -129,7 +137,7 @@ function onViewChange(view: ViewKey) {
 function onListSelect(id: string) {
   if (!import.meta.client) return;
   const listId = publisherListFromQuery(id);
-  const query = listId === 'fr' ? {} : { liste: listId };
+  const query = { ...(listId === 'fr' ? {} : { liste: listId }), ...rankingQuery.value };
   if (route.path === urlForView('sources')) {
     router.push({ path: route.path, query });
     return;

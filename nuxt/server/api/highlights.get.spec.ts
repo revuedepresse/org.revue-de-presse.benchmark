@@ -111,6 +111,42 @@ describe('GET /api/highlights (Nitro proxy)', () => {
     expect(observedUrls[2]).toContain('list=coop-medias');
   });
 
+  it('forwards a known ranking, and nothing without one', async () => {
+    const observedUrls: string[] = [];
+    globalThis.$fetch = vi.fn(async (url: string) => {
+      observedUrls.push(url);
+      return makeHydraBody([]);
+    });
+    vi.doMock('../utils/apiToken', () => ({
+      getApiToken: vi.fn(async () => 'b'),
+      refreshApiToken: vi.fn(async () => 'b'),
+    }));
+
+    const handler = (await import('./highlights.get')).default;
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', ranking: 'first-sighting' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', ranking: 'end-of-day' }));
+
+    expect(observedUrls[0]).not.toContain('ranking=');
+    expect(observedUrls[1]).toContain('ranking=first-sighting');
+    expect(observedUrls[2]).toContain('ranking=end-of-day');
+  });
+
+  it('rejects an unknown ranking with 400 without calling upstream', async () => {
+    globalThis.$fetch = vi.fn(async () => makeHydraBody([]));
+    vi.doMock('../utils/apiToken', () => ({
+      getApiToken: vi.fn(async () => 'b'),
+      refreshApiToken: vi.fn(async () => 'b'),
+    }));
+
+    const handler = (await import('./highlights.get')).default;
+
+    await expect(
+      handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', ranking: 'bogus' })),
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect(globalThis.$fetch).not.toHaveBeenCalled();
+  });
+
   it('rejects an unknown list with 400 without calling upstream', async () => {
     globalThis.$fetch = vi.fn(async () => makeHydraBody([]));
     vi.doMock('../utils/apiToken', () => ({

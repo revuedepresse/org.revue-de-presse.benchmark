@@ -66,7 +66,7 @@ function mapStatus(raw: RawStatus, fallbackDate: string): BlueskyPost {
   };
 }
 
-export function useHighlights(date: Ref<Date>, list?: Ref<string>) {
+export function useHighlights(date: Ref<Date>, list?: Ref<string>, ranking?: Ref<string | undefined>) {
   // Hits the Nitro proxy at /api/highlights — it forwards to
   // `${NUXT_API_BASE_URL}/api/highlights` with a short-lived Bearer token
   // minted server-side from NUXT_API_CLIENT_SECRET. Browser never sees the secret.
@@ -74,12 +74,15 @@ export function useHighlights(date: Ref<Date>, list?: Ref<string>) {
     query: computed(() => {
       const day = formatYmd(date.value);
       const selected = list?.value;
-      return selected && selected !== 'fr'
-        ? { startDate: day, endDate: day, list: selected }
-        : { startDate: day, endDate: day };
+      return {
+        startDate: day,
+        endDate: day,
+        ...(selected && selected !== 'fr' ? { list: selected } : {}),
+        ...(ranking?.value ? { ranking: ranking.value } : {}),
+      };
     }),
     default: () => null,
-    watch: list ? [date, list] : [date],
+    watch: [date, ...(list ? [list] : []), ...(ranking ? [ranking] : [])],
   });
 
   const posts = computed<BlueskyPost[]>(() => {

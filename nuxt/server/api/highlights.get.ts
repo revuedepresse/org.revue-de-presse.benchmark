@@ -36,12 +36,22 @@ type HydraCollection<T> = {
 // that predate the `list` parameter.
 const PUBLISHER_LISTS = ['fr', 'coop-medias'];
 
+// Rankings the API serves. Forwarded only when asked for, so that the API's
+// configured default applies otherwise.
+const RANKINGS = ['first-sighting', 'end-of-day'];
+
 export default defineEventHandler(async (event) => {
-  const { startDate, endDate, list } = getQuery(event) as Record<string, string | undefined>;
+  const { startDate, endDate, list, ranking } = getQuery(event) as Record<string, string | undefined>;
   if (!startDate || !endDate) {
     throw createError({
       statusCode: 400,
       statusMessage: 'startDate and endDate query params are required',
+    });
+  }
+  if (ranking !== undefined && !RANKINGS.includes(ranking)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `ranking must be one of ${RANKINGS.join(', ')}`,
     });
   }
   if (list !== undefined && !PUBLISHER_LISTS.includes(list)) {
@@ -69,6 +79,9 @@ export default defineEventHandler(async (event) => {
   url.searchParams.set('itemsPerPage', '10');
   if (list !== undefined && list !== 'fr') {
     url.searchParams.set('list', list);
+  }
+  if (ranking !== undefined) {
+    url.searchParams.set('ranking', ranking);
   }
 
   const callOnce = async (token: string) =>
