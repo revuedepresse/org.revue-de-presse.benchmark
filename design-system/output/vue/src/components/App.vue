@@ -123,23 +123,6 @@
           <IntroCard></IntroCard>
         </template>
 
-        <template v-if="currentView === 'main' && lists.length > 1">
-          <SnapshotsList
-            :items="lists"
-            :selectedId="selectedListId"
-            :onSelect="(id) => selectList(id)"
-          ></SnapshotsList>
-        </template>
-
-        <template v-if="currentView === 'main' && (rankings ?? []).length > 1">
-          <SnapshotsList
-            headingKey="ranking-list.heading"
-            :items="rankings ?? []"
-            :selectedId="selectedRankingId"
-            :onSelect="(id) => selectRanking(id)"
-          ></SnapshotsList>
-        </template>
-
         <template v-if="currentView === 'main' && loading === true">
           <Spinner></Spinner>
         </template>
@@ -195,6 +178,28 @@
         ></BannerAbout>
       </main>
 
+      <template v-if="isFiltersOpen">
+        <FiltersSheet
+          :lists="lists"
+          :selectedListId="selectedListId"
+          :rankings="rankings ?? []"
+          :selectedRankingId="selectedRankingId"
+          :onListSelect="
+            (id) => {
+              closeFilters();
+              selectList(id);
+            }
+          "
+          :onRankingSelect="
+            (id) => {
+              closeFilters();
+              selectRanking(id);
+            }
+          "
+          :onDismiss="(event) => closeFilters()"
+        ></FiltersSheet>
+      </template>
+
       <template v-if="isCalendarOpen">
         <Calendar
           presentation="sheet"
@@ -213,6 +218,8 @@
           :date="focusedDate"
           :locale="locale"
           :onPillClick="(event) => openCalendar()"
+          :showFilters="hasFilters"
+          :onFiltersClick="(event) => openFilters()"
           :onPrev="(event) => prevDay()"
           :onNext="(event) => nextDay()"
           :prevDisabled="prevDayDisabled"
@@ -242,7 +249,7 @@ import TermsOfServicePage from "./TermsOfServicePage.vue";
 import ContactPage from "./ContactPage.vue";
 import SupportPage from "./SupportPage.vue";
 import SourcesPage from "./SourcesPage.vue";
-import SnapshotsList from "./SnapshotsList.vue";
+import FiltersSheet from "./FiltersSheet.vue";
 import IntroCard from "./IntroCard.vue";
 import Spinner from "./Spinner.vue";
 import type { BlueskyPost } from "./BlueskyPostCard.vue";
@@ -281,6 +288,7 @@ type AppProps = {
 const props = defineProps<AppProps>();
 const focusedDate = ref(new Date());
 const isCalendarOpen = ref(false);
+const isFiltersOpen = ref(false);
 const currentView = ref("main");
 const initialised = ref(false);
 
@@ -300,6 +308,9 @@ const popularNewsLine = computed(() => {
     },
     props.locale ?? "fr-FR"
   );
+});
+const hasFilters = computed(() => {
+  return props.lists.length > 1 || (props.rankings ?? []).length > 1;
 });
 const prevDayDisabled = computed(() => {
   if (!props.minDate) return false;
@@ -348,6 +359,12 @@ function openCalendar() {
 }
 function closeCalendar() {
   isCalendarOpen.value = false;
+}
+function openFilters() {
+  isFiltersOpen.value = true;
+}
+function closeFilters() {
+  isFiltersOpen.value = false;
 }
 function pickFromCalendar(d: Date) {
   focusedDate.value = d;

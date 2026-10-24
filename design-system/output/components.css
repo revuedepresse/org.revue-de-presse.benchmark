@@ -148,6 +148,22 @@
           max-width: 480px;
           padding-bottom: var(--rdp-mobile-dock-height);
         }
+        .rdp-app--mobile .rdp-filters-sheet {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          padding-bottom: var(--rdp-mobile-dock-height);
+        }
+        .rdp-app--mobile .rdp-filters-sheet__scrim {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          bottom: var(--rdp-mobile-dock-height);
+        }
         .rdp-app--mobile .rdp-calendar__scrim {
           left: 50%;
           right: auto;
@@ -469,6 +485,19 @@
           text-align: left;
           cursor: pointer;
         }
+        .rdp-calendar-action-bar__filters {
+          width: 40px;
+          height: 40px;
+          padding: 0;
+          background: transparent;
+          color: var(--color-white);
+          border: none;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
         .rdp-calendar-action-bar__nav {
           display: flex;
           gap: var(--separation-1);
@@ -652,6 +681,19 @@
             padding-left: var(--separation-1);
             font-family: Roboto, sans-serif;
           }
+
+/* FiltersSheet */
+.rdp-filters-sheet { position: fixed; inset: 0; display: grid; align-items: end; z-index: 30; }
+        .rdp-filters-sheet__scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); }
+        .rdp-filters-sheet__panel {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          gap: var(--separation-2);
+          background: var(--color-taupe-grey);
+          padding: var(--separation-2);
+          border-radius: var(--radius-default) var(--radius-default) 0 0;
+        }
 
 /* FormError */
 .rdp-form-error {

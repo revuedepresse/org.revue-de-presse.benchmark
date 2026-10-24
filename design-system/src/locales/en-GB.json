@@ -10,6 +10,7 @@
   "actions.prev-day": "Go to previous day",
   "actions.next-day": "Go to next day",
   "actions.pick-month.aria-label": "Select another month",
+  "actions.pick-filters.aria-label": "Choose the list and the ranking",
   "actions.pick-year.aria-label": "Select another year",
   "calendar.year-picker.heading": "Choose year",
   "actions.next": "Next",

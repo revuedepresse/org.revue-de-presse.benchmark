@@ -13,7 +13,7 @@ import TermsOfServicePage from './TermsOfServicePage.lite';
 import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
-import SnapshotsList from './SnapshotsList.lite';
+import FiltersSheet from './FiltersSheet.lite';
 import IntroCard from './IntroCard.lite';
 import Spinner from './Spinner.lite';
 import type { BlueskyPost } from './BlueskyPostCard.lite';
@@ -49,6 +49,7 @@ export default function App(props: AppProps) {
   const state = useStore({
     focusedDate: new Date(),
     isCalendarOpen: false,
+    isFiltersOpen: false,
     currentView: 'main' as 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources',
     initialised: false,
     get popularNewsLine(): string {
@@ -79,6 +80,15 @@ export default function App(props: AppProps) {
     },
     closeCalendar() {
       state.isCalendarOpen = false;
+    },
+    openFilters() {
+      state.isFiltersOpen = true;
+    },
+    closeFilters() {
+      state.isFiltersOpen = false;
+    },
+    get hasFilters(): boolean {
+      return props.lists.length > 1 || (props.rankings ?? []).length > 1;
     },
     pickFromCalendar(d: Date) {
       state.focusedDate = d;
@@ -262,21 +272,6 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'main'}>
             <IntroCard />
           </Show>
-          <Show when={state.currentView === 'main' && props.lists.length > 1}>
-            <SnapshotsList
-              items={props.lists}
-              selectedId={props.selectedListId}
-              onSelect={(id: string) => state.selectList(id)}
-            />
-          </Show>
-          <Show when={state.currentView === 'main' && (props.rankings ?? []).length > 1}>
-            <SnapshotsList
-              items={props.rankings ?? []}
-              selectedId={props.selectedRankingId}
-              headingKey="ranking-list.heading"
-              onSelect={(id: string) => state.selectRanking(id)}
-            />
-          </Show>
           <Show when={state.currentView === 'main' && props.loading === true}>
             <Spinner />
           </Show>
@@ -320,6 +315,23 @@ export default function App(props: AppProps) {
             onSourcesClick={() => state.goTo('sources')}
           />
         </main>
+        <Show when={state.isFiltersOpen}>
+          <FiltersSheet
+            lists={props.lists}
+            selectedListId={props.selectedListId}
+            rankings={props.rankings ?? []}
+            selectedRankingId={props.selectedRankingId}
+            onListSelect={(id: string) => {
+              state.closeFilters();
+              state.selectList(id);
+            }}
+            onRankingSelect={(id: string) => {
+              state.closeFilters();
+              state.selectRanking(id);
+            }}
+            onDismiss={() => state.closeFilters()}
+          />
+        </Show>
         <Show when={state.isCalendarOpen}>
           <Calendar
             selectedDate={state.focusedDate}
@@ -337,6 +349,8 @@ export default function App(props: AppProps) {
             locale={props.locale}
             position="bottom"
             onPillClick={() => state.openCalendar()}
+            showFilters={state.hasFilters}
+            onFiltersClick={() => state.openFilters()}
             onPrev={() => state.prevDay()}
             onNext={() => state.nextDay()}
             prevDisabled={state.prevDayDisabled}
@@ -477,6 +491,22 @@ export default function App(props: AppProps) {
           width: 100%;
           max-width: 480px;
           padding-bottom: var(--rdp-mobile-dock-height);
+        }
+        .rdp-app--mobile .rdp-filters-sheet {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          padding-bottom: var(--rdp-mobile-dock-height);
+        }
+        .rdp-app--mobile .rdp-filters-sheet__scrim {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          bottom: var(--rdp-mobile-dock-height);
         }
         .rdp-app--mobile .rdp-calendar__scrim {
           left: 50%;
