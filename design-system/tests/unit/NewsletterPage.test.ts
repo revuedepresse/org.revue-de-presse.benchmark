@@ -127,6 +127,16 @@ describe('NewsletterPage editions (server-rendered)', () => {
     }
   });
 
+  it('offers the French media letter alone, naming no other list, when asked to', async () => {
+    const html = await render({ frenchMediaOnly: true });
+    expect(heading(html)).toBe("La lettre d'information des médias français");
+    expect(radios(html)).toEqual([]);
+    expect(html).toMatch(/<input[^>]*type="hidden"[^>]*name="edition"[^>]*value="fr"/);
+    expect(html).not.toContain('Coop');
+    expect(html).not.toContain('les deux lettres');
+    expect(html).toContain('Confirmez votre adresse e-mail');
+  });
+
   it('honours a custom endpoint', async () => {
     const html = await render({ action: 'https://api.example.org/newsletter/subscribe' });
     expect(html).toContain('action="https://api.example.org/newsletter/subscribe"');

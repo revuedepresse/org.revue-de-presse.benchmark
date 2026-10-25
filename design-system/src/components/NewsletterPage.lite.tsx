@@ -1,4 +1,4 @@
-import { onUpdate, useStore } from '@builder.io/mitosis';
+import { onUpdate, Show, useStore } from '@builder.io/mitosis';
 import { t } from '../utils/i18n';
 
 export type NewsletterEdition = 'fr' | 'coop-medias' | 'fr-coop-medias' | 'both';
@@ -18,6 +18,9 @@ type NewsletterPageProps = {
   //    confirmed with a single email
   edition?: NewsletterEdition;
   privacyPolicyHref?: string;
+  // The French media letter alone: no choice of letters, and no other list
+  // named, for visitors who are not previewing the other lists.
+  frenchMediaOnly?: boolean;
 };
 
 const EDITIONS: NewsletterEdition[] = ['fr', 'coop-medias', 'fr-coop-medias', 'both'];
@@ -38,52 +41,57 @@ export default function NewsletterPage(props: NewsletterPageProps) {
   }, [props.edition]);
 
   return (
-    <article class="rdp-newsletter-page" data-edition={state.choice}>
-      <h1>{t('newsletter.heading')}</h1>
-      <p>{t('newsletter.intro')}</p>
+    <article class="rdp-newsletter-page" data-edition={props.frenchMediaOnly ? 'fr' : state.choice}>
+      <h1>{t(props.frenchMediaOnly ? 'newsletter.fr-only.heading' : 'newsletter.heading')}</h1>
+      <p>{t(props.frenchMediaOnly ? 'newsletter.fr-only.intro' : 'newsletter.intro')}</p>
 
       <form
         class="rdp-newsletter-page__form"
         method="post"
         action={props.action ?? 'https://api.revue-de-presse.org/newsletter/subscribe'}
       >
-        <fieldset class="rdp-newsletter-page__choice">
-          <legend class="rdp-newsletter-page__label">{t('newsletter.choice.legend')}</legend>
-          <For each={state.editions}>
-            {(edition: NewsletterEdition) => (
-              <label class="rdp-newsletter-page__option" key={edition}>
-                <input
-                  class="rdp-newsletter-page__radio"
-                  type="radio"
-                  name="edition"
-                  value={edition}
-                  checked={state.choice === edition}
-                  onChange={() => state.choose(edition)}
-                />
-                <span class="rdp-newsletter-page__option-text">
-                  <span class="rdp-newsletter-page__option-label">{t('newsletter.choice.' + edition)}</span>
-                  <span class="rdp-newsletter-page__option-hint">{t('newsletter.choice.' + edition + '.hint')}</span>
-                </span>
-              </label>
-            )}
-          </For>
-        </fieldset>
-        {/* Every choice's details share one grid cell, so the block keeps the
-            height of the longest and choosing never shifts the layout. */}
-        <div class="rdp-newsletter-page__details" aria-live="polite">
-          <For each={state.editions}>
-            {(edition: NewsletterEdition) => (
-              <p
-                class="rdp-newsletter-page__detail"
-                key={edition}
-                data-edition={edition}
-                aria-hidden={state.choice === edition ? 'false' : 'true'}
-              >
-                {t('newsletter.' + edition + '.details')}
-              </p>
-            )}
-          </For>
-        </div>
+        <Show when={props.frenchMediaOnly}>
+          <input type="hidden" name="edition" value="fr" />
+        </Show>
+        <Show when={!props.frenchMediaOnly}>
+          <fieldset class="rdp-newsletter-page__choice">
+            <legend class="rdp-newsletter-page__label">{t('newsletter.choice.legend')}</legend>
+            <For each={state.editions}>
+              {(edition: NewsletterEdition) => (
+                <label class="rdp-newsletter-page__option" key={edition}>
+                  <input
+                    class="rdp-newsletter-page__radio"
+                    type="radio"
+                    name="edition"
+                    value={edition}
+                    checked={state.choice === edition}
+                    onChange={() => state.choose(edition)}
+                  />
+                  <span class="rdp-newsletter-page__option-text">
+                    <span class="rdp-newsletter-page__option-label">{t('newsletter.choice.' + edition)}</span>
+                    <span class="rdp-newsletter-page__option-hint">{t('newsletter.choice.' + edition + '.hint')}</span>
+                  </span>
+                </label>
+              )}
+            </For>
+          </fieldset>
+          {/* Every choice's details share one grid cell, so the block keeps the
+              height of the longest and choosing never shifts the layout. */}
+          <div class="rdp-newsletter-page__details" aria-live="polite">
+            <For each={state.editions}>
+              {(edition: NewsletterEdition) => (
+                <p
+                  class="rdp-newsletter-page__detail"
+                  key={edition}
+                  data-edition={edition}
+                  aria-hidden={state.choice === edition ? 'false' : 'true'}
+                >
+                  {t('newsletter.' + edition + '.details')}
+                </p>
+              )}
+            </For>
+          </div>
+        </Show>
         <label class="rdp-newsletter-page__label" for="newsletter-email">
           {t('newsletter.form.email.label')}
         </label>
@@ -109,13 +117,13 @@ export default function NewsletterPage(props: NewsletterPageProps) {
 
       <h2>{t('newsletter.how.heading')}</h2>
       <ul>
-        <li>{t('newsletter.how.confirm')}</li>
-        <li>{t('newsletter.how.delivery')}</li>
-        <li>{t('newsletter.how.unsubscribe')}</li>
+        <li>{t(props.frenchMediaOnly ? 'newsletter.fr-only.how.confirm' : 'newsletter.how.confirm')}</li>
+        <li>{t(props.frenchMediaOnly ? 'newsletter.fr-only.how.delivery' : 'newsletter.how.delivery')}</li>
+        <li>{t(props.frenchMediaOnly ? 'newsletter.fr-only.how.unsubscribe' : 'newsletter.how.unsubscribe')}</li>
       </ul>
 
       <p class="rdp-newsletter-page__fine-print">
-        {t('newsletter.fine-print')}&nbsp;<a href={props.privacyPolicyHref ?? '/mentions-legales'}>{t('newsletter.fine-print.privacy-policy')}</a>.
+        {t(props.frenchMediaOnly ? 'newsletter.fr-only.fine-print' : 'newsletter.fine-print')}&nbsp;<a href={props.privacyPolicyHref ?? '/mentions-legales'}>{t('newsletter.fine-print.privacy-policy')}</a>.
       </p>
 
       <style>{`

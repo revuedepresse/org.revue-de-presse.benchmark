@@ -29,8 +29,8 @@ describe('preview switch', () => {
     expect(previewFromRequest(['0', '1'], undefined)).toEqual({ enabled: true, cookie: 'set' });
   });
 
-  it('keeps the newsletter pages for the preview', () => {
-    expect(isPreviewOnlyPath('/lettre-quotidienne')).toBe(true);
+  it('keeps the Coop Médias newsletter page for the preview, the French media one public', () => {
+    expect(isPreviewOnlyPath('/lettre-quotidienne')).toBe(false);
     expect(isPreviewOnlyPath('/lettre-quotidienne-coop-medias')).toBe(true);
     expect(isPreviewOnlyPath('/')).toBe(false);
     expect(isPreviewOnlyPath('/sources')).toBe(false);

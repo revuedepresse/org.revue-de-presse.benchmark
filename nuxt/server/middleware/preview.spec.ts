@@ -89,8 +89,8 @@ describe('preview middleware', () => {
     expect(cookiesOf(event)).toEqual({ other: 'x' });
   });
 
-  it('redirects the newsletter pages to the home page without the preview', async () => {
-    for (const path of ['/lettre-quotidienne', '/lettre-quotidienne-coop-medias', '/lettre-quotidienne?apercu=0']) {
+  it('redirects the Coop Médias newsletter page to the home page without the preview', async () => {
+    for (const path of ['/lettre-quotidienne-coop-medias', '/lettre-quotidienne-coop-medias?apercu=0']) {
       const event = makeEvent(path, path.includes('apercu=0') ? 'rdp_apercu=1' : undefined);
       await (await middleware())(event);
       expect(event.redirect).toEqual({ to: '/', code: 302 });

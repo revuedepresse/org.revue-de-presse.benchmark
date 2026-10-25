@@ -1,47 +1,63 @@
 <template>
-  <article class="rdp-newsletter-page" :data-edition="choice">
-    <h1>{{ t("newsletter.heading") }}</h1>
-    <p>{{ t("newsletter.intro") }}</p>
+  <article
+    class="rdp-newsletter-page"
+    :data-edition="frenchMediaOnly ? 'fr' : choice"
+  >
+    <h1>
+      {{
+        t(frenchMediaOnly ? "newsletter.fr-only.heading" : "newsletter.heading")
+      }}
+    </h1>
+    <p>
+      {{ t(frenchMediaOnly ? "newsletter.fr-only.intro" : "newsletter.intro") }}
+    </p>
     <form
       class="rdp-newsletter-page__form"
       method="post"
       :action="action ?? 'https://api.revue-de-presse.org/newsletter/subscribe'"
     >
-      <fieldset class="rdp-newsletter-page__choice">
-        <legend class="rdp-newsletter-page__label">
-          {{ t("newsletter.choice.legend") }}
-        </legend>
-        <template :key="edition" v-for="(edition, index) in editions">
-          <label class="rdp-newsletter-page__option"
-            ><input
-              class="rdp-newsletter-page__radio"
-              type="radio"
-              name="edition"
-              :value="edition"
-              :checked="choice === edition"
-              @change="async (event) => choose(edition)"
-            /><span class="rdp-newsletter-page__option-text"
-              ><span class="rdp-newsletter-page__option-label">{{
-                t("newsletter.choice." + edition)
-              }}</span
-              ><span class="rdp-newsletter-page__option-hint">{{
-                t("newsletter.choice." + edition + ".hint")
-              }}</span></span
-            ></label
-          >
-        </template>
-      </fieldset>
-      <div class="rdp-newsletter-page__details" aria-live="polite">
-        <template :key="edition" v-for="(edition, index) in editions">
-          <p
-            class="rdp-newsletter-page__detail"
-            :data-edition="edition"
-            :aria-hidden="choice === edition ? 'false' : 'true'"
-          >
-            {{ t("newsletter." + edition + ".details") }}
-          </p>
-        </template>
-      </div>
+      <template v-if="frenchMediaOnly">
+        <input type="hidden" name="edition" value="fr" />
+      </template>
+
+      <template v-if="!frenchMediaOnly">
+        <fieldset class="rdp-newsletter-page__choice">
+          <legend class="rdp-newsletter-page__label">
+            {{ t("newsletter.choice.legend") }}
+          </legend>
+          <template :key="edition" v-for="(edition, index) in editions">
+            <label class="rdp-newsletter-page__option"
+              ><input
+                class="rdp-newsletter-page__radio"
+                type="radio"
+                name="edition"
+                :value="edition"
+                :checked="choice === edition"
+                @change="async (event) => choose(edition)"
+              /><span class="rdp-newsletter-page__option-text"
+                ><span class="rdp-newsletter-page__option-label">{{
+                  t("newsletter.choice." + edition)
+                }}</span
+                ><span class="rdp-newsletter-page__option-hint">{{
+                  t("newsletter.choice." + edition + ".hint")
+                }}</span></span
+              ></label
+            >
+          </template>
+        </fieldset>
+        <div class="rdp-newsletter-page__details" aria-live="polite">
+          <template :key="edition" v-for="(edition, index) in editions">
+            <p
+              class="rdp-newsletter-page__detail"
+              :data-edition="edition"
+              :aria-hidden="choice === edition ? 'false' : 'true'"
+            >
+              {{ t("newsletter." + edition + ".details") }}
+            </p>
+          </template>
+        </div>
+      </template>
+
       <label class="rdp-newsletter-page__label" for="newsletter-email">{{
         t("newsletter.form.email.label")
       }}</label>
@@ -73,14 +89,44 @@
     </form>
     <h2>{{ t("newsletter.how.heading") }}</h2>
     <ul>
-      <li>{{ t("newsletter.how.confirm") }}</li>
-      <li>{{ t("newsletter.how.delivery") }}</li>
-      <li>{{ t("newsletter.how.unsubscribe") }}</li>
+      <li>
+        {{
+          t(
+            frenchMediaOnly
+              ? "newsletter.fr-only.how.confirm"
+              : "newsletter.how.confirm"
+          )
+        }}
+      </li>
+      <li>
+        {{
+          t(
+            frenchMediaOnly
+              ? "newsletter.fr-only.how.delivery"
+              : "newsletter.how.delivery"
+          )
+        }}
+      </li>
+      <li>
+        {{
+          t(
+            frenchMediaOnly
+              ? "newsletter.fr-only.how.unsubscribe"
+              : "newsletter.how.unsubscribe"
+          )
+        }}
+      </li>
     </ul>
     <p class="rdp-newsletter-page__fine-print">
-      {{ t("newsletter.fine-print") }}&nbsp;<a
-        :href="privacyPolicyHref ?? '/mentions-legales'"
-        >{{ t("newsletter.fine-print.privacy-policy") }}</a
+      {{
+        t(
+          frenchMediaOnly
+            ? "newsletter.fr-only.fine-print"
+            : "newsletter.fine-print"
+        )
+      }}&nbsp;<a :href="privacyPolicyHref ?? '/mentions-legales'">{{
+        t("newsletter.fine-print.privacy-policy")
+      }}</a
       >.
     </p>
     
@@ -118,6 +164,9 @@ type NewsletterPageProps = {
   //    confirmed with a single email
   edition?: NewsletterEdition;
   privacyPolicyHref?: string;
+  // The French media letter alone: no choice of letters, and no other list
+  // named, for visitors who are not previewing the other lists.
+  frenchMediaOnly?: boolean;
 };
 
 const props = defineProps<NewsletterPageProps>();

@@ -116,6 +116,8 @@ export default defineNuxtConfig({
       '/[day]/**',
       '/bluesky-callback',
       ...PREVIEW_ONLY_PATHS,
+      // Public for the French media letter, but not advertised yet.
+      '/lettre-quotidienne',
     ],
     defaults: { changefreq: 'monthly', priority: 0.7 },
     urls: buildLegacySitemapUrls,

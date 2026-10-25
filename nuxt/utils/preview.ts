@@ -10,7 +10,8 @@ export const PREVIEW_QUERY_PARAM = 'apercu';
 export const PREVIEW_COOKIE = 'rdp_apercu';
 
 // Pages only reachable in preview; without it they redirect to the home page.
-export const PREVIEW_ONLY_PATHS = ['/lettre-quotidienne', '/lettre-quotidienne-coop-medias'];
+// /lettre-quotidienne stays public, offering the French media letter alone.
+export const PREVIEW_ONLY_PATHS = ['/lettre-quotidienne-coop-medias'];
 
 export type PreviewDecision = {
   /** Whether this request is shown the preview. */

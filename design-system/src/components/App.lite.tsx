@@ -287,6 +287,7 @@ export default function App(props: AppProps) {
               <NewsletterPage
                 edition="both"
                 action={props.newsletterSubscribeUrl}
+                frenchMediaOnly={!props.showNewsletter}
               />
             </Show>
             <Show when={state.currentView === 'newsletter-coop-medias'}>
@@ -352,6 +353,7 @@ export default function App(props: AppProps) {
             <NewsletterPage
               edition="both"
               action={props.newsletterSubscribeUrl}
+              frenchMediaOnly={!props.showNewsletter}
             />
           </Show>
           <Show when={state.currentView === 'newsletter-coop-medias'}>

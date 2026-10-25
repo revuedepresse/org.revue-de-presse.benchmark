@@ -115,6 +115,7 @@
             <NewsletterPage
               edition="both"
               :action="newsletterSubscribeUrl"
+              :frenchMediaOnly="!showNewsletter"
             ></NewsletterPage>
           </template>
 
@@ -207,6 +208,7 @@
           <NewsletterPage
             edition="both"
             :action="newsletterSubscribeUrl"
+            :frenchMediaOnly="!showNewsletter"
           ></NewsletterPage>
         </template>
 
