@@ -55,16 +55,28 @@
             <IntroCard></IntroCard>
           </template>
 
+          <template v-if="currentView === 'main' && !!noticeMessageKey">
+            <Alert variant="empty" :messageKey="noticeMessageKey"></Alert>
+          </template>
+
           <template
             v-if="
-              currentView === 'main' && loading === true && posts.length === 0
+              currentView === 'main' &&
+              !noticeMessageKey &&
+              loading === true &&
+              posts.length === 0
             "
           >
             <Spinner></Spinner>
           </template>
 
           <template
-            v-if="currentView === 'main' && !loading && posts.length === 0"
+            v-if="
+              currentView === 'main' &&
+              !noticeMessageKey &&
+              !loading &&
+              posts.length === 0
+            "
           >
             <Alert
               variant="empty"
@@ -72,7 +84,11 @@
             ></Alert>
           </template>
 
-          <template v-if="currentView === 'main' && posts.length > 0">
+          <template
+            v-if="
+              currentView === 'main' && !noticeMessageKey && posts.length > 0
+            "
+          >
             <ol
               :class="
                 loading
@@ -148,16 +164,28 @@
           <IntroCard></IntroCard>
         </template>
 
+        <template v-if="currentView === 'main' && !!noticeMessageKey">
+          <Alert variant="empty" :messageKey="noticeMessageKey"></Alert>
+        </template>
+
         <template
           v-if="
-            currentView === 'main' && loading === true && posts.length === 0
+            currentView === 'main' &&
+            !noticeMessageKey &&
+            loading === true &&
+            posts.length === 0
           "
         >
           <Spinner></Spinner>
         </template>
 
         <template
-          v-if="currentView === 'main' && !loading && posts.length === 0"
+          v-if="
+            currentView === 'main' &&
+            !noticeMessageKey &&
+            !loading &&
+            posts.length === 0
+          "
         >
           <Alert
             variant="empty"
@@ -165,7 +193,9 @@
           ></Alert>
         </template>
 
-        <template v-if="currentView === 'main' && posts.length > 0">
+        <template
+          v-if="currentView === 'main' && !noticeMessageKey && posts.length > 0"
+        >
           <ol
             :class="
               loading
@@ -336,6 +366,9 @@ type AppProps = {
   minDate?: Date;
   loading?: boolean;
   emptyMessageKey?: string;
+  // A message shown in the main panel instead of any post (e.g. an unknown
+  // address), inside the usual header, calendar and sidebar.
+  noticeMessageKey?: string;
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;

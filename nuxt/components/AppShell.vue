@@ -21,6 +21,7 @@ const props = defineProps<{
   initialView?: ViewKey;
   initialDate?: Date;
   emptyMessageKey?: string;
+  noticeMessageKey?: string;
 }>();
 
 const router = useRouter();
@@ -228,6 +229,7 @@ watch([selectedListId, () => pickedDate.value.getTime()], () => {
     :loading="loading"
     :initial-view="props.initialView ?? 'main'"
     :empty-message-key="props.emptyMessageKey"
+    :notice-message-key="props.noticeMessageKey"
     :newsletter-subscribe-url="newsletterSubscribeUrl"
     :show-newsletter="preview"
     locale="fr-FR"

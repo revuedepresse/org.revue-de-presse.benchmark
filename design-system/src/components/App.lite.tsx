@@ -44,6 +44,9 @@ type AppProps = {
   minDate?: Date;
   loading?: boolean;
   emptyMessageKey?: string;
+  // A message shown in the main panel instead of any post (e.g. an unknown
+  // address), inside the usual header, calendar and sidebar.
+  noticeMessageKey?: string;
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
@@ -248,16 +251,19 @@ export default function App(props: AppProps) {
             <Show when={state.currentView === 'main'}>
               <IntroCard />
             </Show>
-            <Show when={state.currentView === 'main' && props.loading === true && props.posts.length === 0}>
+            <Show when={state.currentView === 'main' && !!props.noticeMessageKey}>
+              <Alert variant="empty" messageKey={props.noticeMessageKey} />
+            </Show>
+            <Show when={state.currentView === 'main' && !props.noticeMessageKey && props.loading === true && props.posts.length === 0}>
               <Spinner />
             </Show>
-            <Show when={state.currentView === 'main' && !props.loading && props.posts.length === 0}>
+            <Show when={state.currentView === 'main' && !props.noticeMessageKey && !props.loading && props.posts.length === 0}>
               <Alert
                 variant="empty"
                 messageKey={props.emptyMessageKey ?? 'alert.empty.no-content-for-date'}
               />
             </Show>
-            <Show when={state.currentView === 'main' && props.posts.length > 0}>
+            <Show when={state.currentView === 'main' && !props.noticeMessageKey && props.posts.length > 0}>
               <ol class={props.loading ? 'rdp-app__post-list rdp-app__post-list--stale' : 'rdp-app__post-list'}>
                 <For each={props.posts}>
                   {(post) => (
@@ -314,16 +320,19 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'main'}>
             <IntroCard />
           </Show>
-          <Show when={state.currentView === 'main' && props.loading === true && props.posts.length === 0}>
+          <Show when={state.currentView === 'main' && !!props.noticeMessageKey}>
+            <Alert variant="empty" messageKey={props.noticeMessageKey} />
+          </Show>
+          <Show when={state.currentView === 'main' && !props.noticeMessageKey && props.loading === true && props.posts.length === 0}>
             <Spinner />
           </Show>
-          <Show when={state.currentView === 'main' && !props.loading && props.posts.length === 0}>
+          <Show when={state.currentView === 'main' && !props.noticeMessageKey && !props.loading && props.posts.length === 0}>
             <Alert
               variant="empty"
               messageKey={props.emptyMessageKey ?? 'alert.empty.no-content-for-date'}
             />
           </Show>
-          <Show when={state.currentView === 'main' && props.posts.length > 0}>
+          <Show when={state.currentView === 'main' && !props.noticeMessageKey && props.posts.length > 0}>
             <ol class={props.loading ? 'rdp-app__post-list rdp-app__post-list--stale' : 'rdp-app__post-list'}>
               <For each={props.posts}>
                 {(post) => (
