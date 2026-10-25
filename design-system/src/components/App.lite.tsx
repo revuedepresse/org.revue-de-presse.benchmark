@@ -13,6 +13,7 @@ import TermsOfServicePage from './TermsOfServicePage.lite';
 import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
+import FiltersSheet from './FiltersSheet.lite';
 import NewsletterPage from './NewsletterPage.lite';
 import IntroCard from './IntroCard.lite';
 import Spinner from './Spinner.lite';
@@ -37,6 +38,8 @@ type AppProps = {
   pickedDate: Date;
   lists: SnapshotItem[];
   selectedListId?: string;
+  rankings?: SnapshotItem[];
+  selectedRankingId?: string;
   yearRange: { min: number; max: number };
   minDate?: Date;
   loading?: boolean;
@@ -45,7 +48,10 @@ type AppProps = {
   locale?: Locale;
   initialView?: ViewKey;
   newsletterSubscribeUrl?: string;
+  /** The invitation to the newsletter in the footer, only shown when true (until its release). */
+  showNewsletter?: boolean;
   onListSelect?: (id: string) => void;
+  onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
@@ -55,6 +61,7 @@ export default function App(props: AppProps) {
   const state = useStore({
     focusedDate: new Date(),
     isCalendarOpen: false,
+    isFiltersOpen: false,
     // Seeded from the prop (not only in onMount) so server-rendered HTML
     // already shows the requested view instead of flashing the home view.
     currentView: (props.initialView ?? 'main') as ViewKey,
@@ -88,6 +95,15 @@ export default function App(props: AppProps) {
     closeCalendar() {
       state.isCalendarOpen = false;
     },
+    openFilters() {
+      state.isFiltersOpen = true;
+    },
+    closeFilters() {
+      state.isFiltersOpen = false;
+    },
+    get hasFilters(): boolean {
+      return props.lists.length > 1 || (props.rankings ?? []).length > 1;
+    },
     pickFromCalendar(d: Date) {
       state.focusedDate = d;
       state.isCalendarOpen = false;
@@ -104,6 +120,22 @@ export default function App(props: AppProps) {
     goTo(view: ViewKey) {
       state.currentView = view;
       props.onViewChange?.(view);
+    },
+    selectList(id: string) {
+      // The sources page follows the selected list; every other page goes
+      // back to the posts of that list.
+      if (state.currentView !== 'sources') {
+        state.currentView = 'main';
+        props.onViewChange?.('main');
+      }
+      props.onListSelect?.(id);
+    },
+    selectRanking(id: string) {
+      if (state.currentView !== 'sources') {
+        state.currentView = 'main';
+        props.onViewChange?.('main');
+      }
+      props.onRankingSelect?.(id);
     },
     goHome() {
       const yesterday = new Date();
@@ -188,7 +220,10 @@ export default function App(props: AppProps) {
               yearRange={props.yearRange}
               minDate={props.minDate}
               locale={props.locale}
-              onListSelect={(id: string) => props.onListSelect?.(id)}
+              onListSelect={(id: string) => state.selectList(id)}
+              rankings={props.rankings}
+              selectedRankingId={props.selectedRankingId}
+              onRankingSelect={(id: string) => state.selectRanking(id)}
               onDateSelect={(d: Date) => state.selectFromSidebar(d)}
               onLegalNoticeClick={() => state.goTo('legal')}
               onTermsOfServiceClick={() => state.goTo('terms')}
@@ -196,6 +231,7 @@ export default function App(props: AppProps) {
               onSupportClick={() => state.goTo('support')}
               onSourcesClick={() => state.goTo('sources')}
               onNewsletterClick={() => state.goTo('newsletter')}
+              showNewsletter={props.showNewsletter}
             />
           </aside>
 
@@ -245,20 +281,18 @@ export default function App(props: AppProps) {
               <SupportPage />
             </Show>
             <Show when={state.currentView === 'sources'}>
-              <SourcesPage />
+              <SourcesPage listId={props.selectedListId} />
             </Show>
             <Show when={state.currentView === 'newsletter'}>
               <NewsletterPage
-                edition="fr"
+                edition="both"
                 action={props.newsletterSubscribeUrl}
-                onOtherEditionClick={() => state.goTo('newsletter-coop-medias')}
               />
             </Show>
             <Show when={state.currentView === 'newsletter-coop-medias'}>
               <NewsletterPage
                 edition="coop-medias"
                 action={props.newsletterSubscribeUrl}
-                onOtherEditionClick={() => state.goTo('newsletter')}
               />
             </Show>
           </main>
@@ -312,20 +346,18 @@ export default function App(props: AppProps) {
             <SupportPage />
           </Show>
           <Show when={state.currentView === 'sources'}>
-            <SourcesPage />
+            <SourcesPage listId={props.selectedListId} />
           </Show>
           <Show when={state.currentView === 'newsletter'}>
             <NewsletterPage
-              edition="fr"
+              edition="both"
               action={props.newsletterSubscribeUrl}
-              onOtherEditionClick={() => state.goTo('newsletter-coop-medias')}
             />
           </Show>
           <Show when={state.currentView === 'newsletter-coop-medias'}>
             <NewsletterPage
               edition="coop-medias"
               action={props.newsletterSubscribeUrl}
-              onOtherEditionClick={() => state.goTo('newsletter')}
             />
           </Show>
           <BannerAbout
@@ -335,8 +367,26 @@ export default function App(props: AppProps) {
             onSupportClick={() => state.goTo('support')}
             onSourcesClick={() => state.goTo('sources')}
             onNewsletterClick={() => state.goTo('newsletter')}
+            showNewsletter={props.showNewsletter}
           />
         </main>
+        <Show when={state.isFiltersOpen}>
+          <FiltersSheet
+            lists={props.lists}
+            selectedListId={props.selectedListId}
+            rankings={props.rankings ?? []}
+            selectedRankingId={props.selectedRankingId}
+            onListSelect={(id: string) => {
+              state.closeFilters();
+              state.selectList(id);
+            }}
+            onRankingSelect={(id: string) => {
+              state.closeFilters();
+              state.selectRanking(id);
+            }}
+            onDismiss={() => state.closeFilters()}
+          />
+        </Show>
         <Show when={state.isCalendarOpen}>
           <Calendar
             selectedDate={state.focusedDate}
@@ -354,6 +404,8 @@ export default function App(props: AppProps) {
             locale={props.locale}
             position="bottom"
             onPillClick={() => state.openCalendar()}
+            showFilters={state.hasFilters}
+            onFiltersClick={() => state.openFilters()}
             onPrev={() => state.prevDay()}
             onNext={() => state.nextDay()}
             prevDisabled={state.prevDayDisabled}
@@ -497,6 +549,22 @@ export default function App(props: AppProps) {
           width: 100%;
           max-width: 480px;
           padding-bottom: var(--rdp-mobile-dock-height);
+        }
+        .rdp-app--mobile .rdp-filters-sheet {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          padding-bottom: var(--rdp-mobile-dock-height);
+        }
+        .rdp-app--mobile .rdp-filters-sheet__scrim {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          bottom: var(--rdp-mobile-dock-height);
         }
         .rdp-app--mobile .rdp-calendar__scrim {
           left: 50%;

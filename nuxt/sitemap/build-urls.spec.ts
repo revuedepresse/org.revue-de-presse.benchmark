@@ -93,12 +93,11 @@ describe('buildLegacySitemapUrls', () => {
     expect(byLoc.get('/sources')?.lastmod).toBe(
       new Date('2025-03-08').toISOString(),
     );
-    expect(byLoc.get('/lettre-quotidienne')?.lastmod).toBe(
-      new Date('2026-10-25').toISOString(),
-    );
-    expect(byLoc.get('/lettre-quotidienne-coop-medias')?.lastmod).toBe(
-      new Date('2026-10-25').toISOString(),
-    );
+  });
+
+  it('leaves out the newsletter pages, only shown in preview', async () => {
+    const urls = await buildLegacySitemapUrls();
+    expect(urls.filter((u) => u.loc.startsWith('/lettre-quotidienne'))).toEqual([]);
   });
 
   it('emits a yesterday-highlight entry with daily changefreq', async () => {

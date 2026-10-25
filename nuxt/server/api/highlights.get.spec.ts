@@ -9,6 +9,7 @@ beforeEach(() => {
     apiClientSecret: 'shared-secret',
   });
   globalThis.getQuery = (event: any) => event.__query ?? {};
+  globalThis.getCookie = (event: any, name: string) => event.__cookies?.[name];
   globalThis.createError = (e: any) => Object.assign(new Error(e.statusMessage ?? 'err'), e);
   globalThis.defineEventHandler = (handler: any) => handler;
 });
@@ -17,13 +18,16 @@ afterEach(() => {
   delete globalThis.useRuntimeConfig;
   delete globalThis.$fetch;
   delete globalThis.getQuery;
+  delete globalThis.getCookie;
   delete globalThis.createError;
   delete globalThis.defineEventHandler;
 });
 
-function makeEvent(query: Record<string, string>) {
-  return { __query: query };
+function makeEvent(query: Record<string, string>, cookies: Record<string, string> = {}) {
+  return { __query: query, __cookies: cookies };
 }
+
+const PREVIEW = { rdp_apercu: '1' };
 
 function makeHydraBody(items: any[]) {
   return {
@@ -88,6 +92,100 @@ describe('GET /api/highlights (Nitro proxy)', () => {
 
     expect(observedUrl).toContain('itemsPerPage=10');
     expect(observedUrl).not.toContain('pageSize=');
+  });
+
+  it('forwards list only for lists other than French media, in preview', async () => {
+    const observedUrls: string[] = [];
+    globalThis.$fetch = vi.fn(async (url: string) => {
+      observedUrls.push(url);
+      return makeHydraBody([]);
+    });
+    vi.doMock('../utils/apiToken', () => ({
+      getApiToken: vi.fn(async () => 'b'),
+      refreshApiToken: vi.fn(async () => 'b'),
+    }));
+
+    const handler = (await import('./highlights.get')).default;
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01' }, PREVIEW));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr' }, PREVIEW));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }, PREVIEW));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr-coop-medias' }, PREVIEW));
+
+    expect(observedUrls[0]).not.toContain('list=');
+    expect(observedUrls[1]).not.toContain('list=');
+    expect(observedUrls[2]).toContain('list=coop-medias');
+    expect(observedUrls[3]).toContain('list=fr-coop-medias');
+  });
+
+  it('asks the API for the French media only without the preview cookie', async () => {
+    const observedUrls: string[] = [];
+    globalThis.$fetch = vi.fn(async (url: string) => {
+      observedUrls.push(url);
+      return makeHydraBody([]);
+    });
+    vi.doMock('../utils/apiToken', () => ({
+      getApiToken: vi.fn(async () => 'b'),
+      refreshApiToken: vi.fn(async () => 'b'),
+    }));
+
+    const handler = (await import('./highlights.get')).default;
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr-coop-medias' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }, { rdp_apercu: '0' }));
+
+    expect(observedUrls).toHaveLength(3);
+    for (const url of observedUrls) expect(url).not.toContain('list=');
+  });
+
+  it('forwards a known ranking, and nothing without one', async () => {
+    const observedUrls: string[] = [];
+    globalThis.$fetch = vi.fn(async (url: string) => {
+      observedUrls.push(url);
+      return makeHydraBody([]);
+    });
+    vi.doMock('../utils/apiToken', () => ({
+      getApiToken: vi.fn(async () => 'b'),
+      refreshApiToken: vi.fn(async () => 'b'),
+    }));
+
+    const handler = (await import('./highlights.get')).default;
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', ranking: 'first-sighting' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', ranking: 'end-of-day' }));
+
+    expect(observedUrls[0]).not.toContain('ranking=');
+    expect(observedUrls[1]).toContain('ranking=first-sighting');
+    expect(observedUrls[2]).toContain('ranking=end-of-day');
+  });
+
+  it('rejects an unknown ranking with 400 without calling upstream', async () => {
+    globalThis.$fetch = vi.fn(async () => makeHydraBody([]));
+    vi.doMock('../utils/apiToken', () => ({
+      getApiToken: vi.fn(async () => 'b'),
+      refreshApiToken: vi.fn(async () => 'b'),
+    }));
+
+    const handler = (await import('./highlights.get')).default;
+
+    await expect(
+      handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', ranking: 'bogus' })),
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect(globalThis.$fetch).not.toHaveBeenCalled();
+  });
+
+  it('rejects an unknown list with 400 without calling upstream', async () => {
+    globalThis.$fetch = vi.fn(async () => makeHydraBody([]));
+    vi.doMock('../utils/apiToken', () => ({
+      getApiToken: vi.fn(async () => 'b'),
+      refreshApiToken: vi.fn(async () => 'b'),
+    }));
+
+    const handler = (await import('./highlights.get')).default;
+
+    await expect(
+      handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: '../etc' })),
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect(globalThis.$fetch).not.toHaveBeenCalled();
   });
 
   it('returns legacy shape so useHighlights is unchanged', async () => {

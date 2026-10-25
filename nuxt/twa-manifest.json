@@ -21,9 +21,16 @@
     "path": "./android.keystore",
     "alias": "org.revue-de-presse"
   },
-  "appVersionName": "23",
-  "appVersionCode": 23,
-  "shortcuts": [],
+  "appVersionName": "24",
+  "appVersionCode": 24,
+  "shortcuts": [
+    {
+      "name": "Médias français",
+      "shortName": "Français",
+      "url": "https://revue-de-presse.org/",
+      "chosenIconUrl": "https://revue-de-presse.org/revue-de-presse_96x96_006663.png"
+    }
+  ],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://revue-de-presse.org/manifest.webmanifest",
   "fallbackType": "customtabs",
@@ -41,5 +48,5 @@
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
   "displayOverride": [],
-  "appVersion": "23"
+  "appVersion": "24"
 }

@@ -6,14 +6,32 @@
       :yearRange="yearRange"
       :minDate="minDate"
       :onSelect="(d) => onDateSelect?.(d)"
-    ></Calendar
-    ><BannerAbout
+    ></Calendar>
+    <template v-if="(lists ?? []).length > 1">
+      <SnapshotsList
+        :items="lists ?? []"
+        :selectedId="selectedListId"
+        :onSelect="(id) => onListSelect?.(id)"
+      ></SnapshotsList>
+    </template>
+
+    <template v-if="(rankings ?? []).length > 1">
+      <SnapshotsList
+        headingKey="ranking-list.heading"
+        :items="rankings ?? []"
+        :selectedId="selectedRankingId"
+        :onSelect="(id) => onRankingSelect?.(id)"
+      ></SnapshotsList>
+    </template>
+
+    <BannerAbout
       :onLegalNoticeClick="(event) => onLegalNoticeClick()"
       :onTermsOfServiceClick="(event) => onTermsOfServiceClick()"
       :onContactClick="(event) => onContactClick()"
       :onSupportClick="(event) => onSupportClick()"
       :onSourcesClick="(event) => onSourcesClick()"
       :onNewsletterClick="(event) => onNewsletterClick()"
+      :showNewsletter="showNewsletter"
     ></BannerAbout
     >
   </aside>
@@ -22,6 +40,7 @@
 <script setup lang="ts">
 import Calendar from "./Calendar.vue";
 import BannerAbout from "./BannerAbout.vue";
+import SnapshotsList from "./SnapshotsList.vue";
 import type { Locale } from "../utils/i18n";
 
 type ListItem = {
@@ -31,6 +50,8 @@ type ListItem = {
 type SidebarProps = {
   lists?: ListItem[];
   selectedListId?: string;
+  rankings?: ListItem[];
+  selectedRankingId?: string;
   selectedDate: Date;
   yearRange: {
     min: number;
@@ -39,6 +60,7 @@ type SidebarProps = {
   minDate?: Date;
   locale?: Locale;
   onListSelect?: (id: string) => void;
+  onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLegalNoticeClick?: () => void;
   onTermsOfServiceClick?: () => void;
@@ -46,6 +68,7 @@ type SidebarProps = {
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
   onNewsletterClick?: () => void;
+  showNewsletter?: boolean;
 };
 
 const props = defineProps<SidebarProps>();

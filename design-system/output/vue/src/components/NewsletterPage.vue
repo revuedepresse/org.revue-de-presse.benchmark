@@ -1,17 +1,50 @@
 <template>
-  <article class="rdp-newsletter-page" :data-edition="edition">
-    <h1>{{ t("newsletter." + edition + ".heading") }}</h1>
-    <p>{{ t("newsletter." + edition + ".intro") }}</p>
+  <article class="rdp-newsletter-page" :data-edition="choice">
+    <h1>{{ t("newsletter.heading") }}</h1>
+    <p>{{ t("newsletter.intro") }}</p>
     <form
       class="rdp-newsletter-page__form"
       method="post"
       :action="action ?? 'https://api.revue-de-presse.org/newsletter/subscribe'"
     >
-      <input type="hidden" name="edition" :value="edition" /><label
-        class="rdp-newsletter-page__label"
-        for="newsletter-email"
-        >{{ t("newsletter.form.email.label") }}</label
-      >
+      <fieldset class="rdp-newsletter-page__choice">
+        <legend class="rdp-newsletter-page__label">
+          {{ t("newsletter.choice.legend") }}
+        </legend>
+        <template :key="edition" v-for="(edition, index) in editions">
+          <label class="rdp-newsletter-page__option"
+            ><input
+              class="rdp-newsletter-page__radio"
+              type="radio"
+              name="edition"
+              :value="edition"
+              :checked="choice === edition"
+              @change="async (event) => choose(edition)"
+            /><span class="rdp-newsletter-page__option-text"
+              ><span class="rdp-newsletter-page__option-label">{{
+                t("newsletter.choice." + edition)
+              }}</span
+              ><span class="rdp-newsletter-page__option-hint">{{
+                t("newsletter.choice." + edition + ".hint")
+              }}</span></span
+            ></label
+          >
+        </template>
+      </fieldset>
+      <div class="rdp-newsletter-page__details" aria-live="polite">
+        <template :key="edition" v-for="(edition, index) in editions">
+          <p
+            class="rdp-newsletter-page__detail"
+            :data-edition="edition"
+            :aria-hidden="choice === edition ? 'false' : 'true'"
+          >
+            {{ t("newsletter." + edition + ".details") }}
+          </p>
+        </template>
+      </div>
+      <label class="rdp-newsletter-page__label" for="newsletter-email">{{
+        t("newsletter.form.email.label")
+      }}</label>
       <div class="rdp-newsletter-page__row">
         <input
           id="newsletter-email"
@@ -44,18 +77,6 @@
       <li>{{ t("newsletter.how.delivery") }}</li>
       <li>{{ t("newsletter.how.unsubscribe") }}</li>
     </ul>
-    <p class="rdp-newsletter-page__other-edition">
-      <span class="rdp-newsletter-page__other-edition-pitch">{{
-        t("newsletter." + edition + ".other-edition.pitch")
-      }}</span
-      ><a
-        class="rdp-newsletter-page__other-edition-link"
-        :href="otherEditionHref"
-        @click="async (event) => handleOtherEditionClick(event)"
-        :data-edition="otherEdition"
-        >{{ t("newsletter." + edition + ".other-edition.label") }}</a
-      >
-    </p>
     <p class="rdp-newsletter-page__fine-print">
       {{ t("newsletter.fine-print") }}&nbsp;<a
         :href="privacyPolicyHref ?? '/mentions-legales'"
@@ -67,47 +88,54 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { ref, watch } from "vue";
 
 import { t } from "../utils/i18n";
+const EDITIONS: NewsletterEdition[] = [
+  "fr",
+  "coop-medias",
+  "fr-coop-medias",
+  "both",
+];
 
-export type NewsletterEdition = "fr" | "coop-medias";
+export type NewsletterEdition =
+  | "fr"
+  | "coop-medias"
+  | "fr-coop-medias"
+  | "both";
 type NewsletterPageProps = {
   // Endpoint of the API's public sign-up route. The form is a plain HTML
   // POST (no fetch) so it works without JavaScript and the API sees the
   // visitor's own IP for rate limiting; the API renders the follow-up page.
   action?: string;
-  // Two daily editions share this page and the same sign-up endpoint; the
-  // API tells them apart by the hidden `edition` field.
-  //  - 'fr' (default): top 10 posts by French media (/lettre-quotidienne)
+  // Letter checked when the page opens; the reader picks another one with
+  // the radio buttons, posted as the `edition` field:
+  //  - 'fr': top 10 posts by French media
   //  - 'coop-medias': top 10 posts by Coop Médias members
-  //    (/lettre-quotidienne-coop-medias)
+  //    (preselected on /lettre-quotidienne-coop-medias)
+  //  - 'fr-coop-medias': one letter, the top 10 of both lists together
+  //  - 'both' (default, /lettre-quotidienne): both letters, two a day,
+  //    confirmed with a single email
   edition?: NewsletterEdition;
   privacyPolicyHref?: string;
-  // Link to the other edition's sign-up page, so readers can take both.
-  otherEditionHref?: string;
-  onOtherEditionClick?: () => void;
 };
 
 const props = defineProps<NewsletterPageProps>();
+const choice = ref(
+  props.edition && EDITIONS.includes(props.edition) ? props.edition : "both"
+);
+const editions = ref(EDITIONS);
 
-const edition = computed(() => {
-  return props.edition === "coop-medias" ? "coop-medias" : "fr";
-});
-const otherEdition = computed(() => {
-  return props.edition === "coop-medias" ? "fr" : "coop-medias";
-});
-const otherEditionHref = computed(() => {
-  if (props.otherEditionHref) return props.otherEditionHref;
-  return props.edition === "coop-medias"
-    ? "/lettre-quotidienne"
-    : "/lettre-quotidienne-coop-medias";
-});
-
-function handleOtherEditionClick(event: any) {
-  if (props.onOtherEditionClick) {
-    event.preventDefault();
-    props.onOtherEditionClick();
-  }
+watch(
+  () => [props.edition],
+  () => {
+    if (props.edition && EDITIONS.includes(props.edition)) {
+      choice.value = props.edition;
+    }
+  },
+  { immediate: true }
+);
+function choose(edition: NewsletterEdition) {
+  choice.value = edition;
 }
 </script>

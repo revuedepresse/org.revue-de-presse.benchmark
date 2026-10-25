@@ -1,60 +1,89 @@
-import { useStore } from '@builder.io/mitosis';
+import { onUpdate, useStore } from '@builder.io/mitosis';
 import { t } from '../utils/i18n';
 
-export type NewsletterEdition = 'fr' | 'coop-medias';
+export type NewsletterEdition = 'fr' | 'coop-medias' | 'fr-coop-medias' | 'both';
 
 type NewsletterPageProps = {
   // Endpoint of the API's public sign-up route. The form is a plain HTML
   // POST (no fetch) so it works without JavaScript and the API sees the
   // visitor's own IP for rate limiting; the API renders the follow-up page.
   action?: string;
-  // Two daily editions share this page and the same sign-up endpoint; the
-  // API tells them apart by the hidden `edition` field.
-  //  - 'fr' (default): top 10 posts by French media (/lettre-quotidienne)
+  // Letter checked when the page opens; the reader picks another one with
+  // the radio buttons, posted as the `edition` field:
+  //  - 'fr': top 10 posts by French media
   //  - 'coop-medias': top 10 posts by Coop Médias members
-  //    (/lettre-quotidienne-coop-medias)
+  //    (preselected on /lettre-quotidienne-coop-medias)
+  //  - 'fr-coop-medias': one letter, the top 10 of both lists together
+  //  - 'both' (default, /lettre-quotidienne): both letters, two a day,
+  //    confirmed with a single email
   edition?: NewsletterEdition;
   privacyPolicyHref?: string;
-  // Link to the other edition's sign-up page, so readers can take both.
-  otherEditionHref?: string;
-  onOtherEditionClick?: () => void;
 };
+
+const EDITIONS: NewsletterEdition[] = ['fr', 'coop-medias', 'fr-coop-medias', 'both'];
 
 export default function NewsletterPage(props: NewsletterPageProps) {
   const state = useStore({
-    get edition(): NewsletterEdition {
-      return props.edition === 'coop-medias' ? 'coop-medias' : 'fr';
-    },
-    // Getters read props directly rather than each other: Mitosis' Vue
-    // emit does not unwrap one computed inside another.
-    get otherEdition(): NewsletterEdition {
-      return props.edition === 'coop-medias' ? 'fr' : 'coop-medias';
-    },
-    get otherEditionHref(): string {
-      if (props.otherEditionHref) return props.otherEditionHref;
-      return props.edition === 'coop-medias'
-        ? '/lettre-quotidienne'
-        : '/lettre-quotidienne-coop-medias';
-    },
-    handleOtherEditionClick(event: any) {
-      if (props.onOtherEditionClick) {
-        event.preventDefault();
-        props.onOtherEditionClick();
-      }
+    choice: (props.edition && EDITIONS.includes(props.edition) ? props.edition : 'both') as NewsletterEdition,
+    editions: EDITIONS,
+    choose(edition: NewsletterEdition) {
+      state.choice = edition;
     },
   });
 
+  onUpdate(() => {
+    if (props.edition && EDITIONS.includes(props.edition)) {
+      state.choice = props.edition;
+    }
+  }, [props.edition]);
+
   return (
-    <article class="rdp-newsletter-page" data-edition={state.edition}>
-      <h1>{t('newsletter.' + state.edition + '.heading')}</h1>
-      <p>{t('newsletter.' + state.edition + '.intro')}</p>
+    <article class="rdp-newsletter-page" data-edition={state.choice}>
+      <h1>{t('newsletter.heading')}</h1>
+      <p>{t('newsletter.intro')}</p>
 
       <form
         class="rdp-newsletter-page__form"
         method="post"
         action={props.action ?? 'https://api.revue-de-presse.org/newsletter/subscribe'}
       >
-        <input type="hidden" name="edition" value={state.edition} />
+        <fieldset class="rdp-newsletter-page__choice">
+          <legend class="rdp-newsletter-page__label">{t('newsletter.choice.legend')}</legend>
+          <For each={state.editions}>
+            {(edition: NewsletterEdition) => (
+              <label class="rdp-newsletter-page__option" key={edition}>
+                <input
+                  class="rdp-newsletter-page__radio"
+                  type="radio"
+                  name="edition"
+                  value={edition}
+                  checked={state.choice === edition}
+                  onChange={() => state.choose(edition)}
+                />
+                <span class="rdp-newsletter-page__option-text">
+                  <span class="rdp-newsletter-page__option-label">{t('newsletter.choice.' + edition)}</span>
+                  <span class="rdp-newsletter-page__option-hint">{t('newsletter.choice.' + edition + '.hint')}</span>
+                </span>
+              </label>
+            )}
+          </For>
+        </fieldset>
+        {/* Every choice's details share one grid cell, so the block keeps the
+            height of the longest and choosing never shifts the layout. */}
+        <div class="rdp-newsletter-page__details" aria-live="polite">
+          <For each={state.editions}>
+            {(edition: NewsletterEdition) => (
+              <p
+                class="rdp-newsletter-page__detail"
+                key={edition}
+                data-edition={edition}
+                aria-hidden={state.choice === edition ? 'false' : 'true'}
+              >
+                {t('newsletter.' + edition + '.details')}
+              </p>
+            )}
+          </For>
+        </div>
         <label class="rdp-newsletter-page__label" for="newsletter-email">
           {t('newsletter.form.email.label')}
         </label>
@@ -84,20 +113,6 @@ export default function NewsletterPage(props: NewsletterPageProps) {
         <li>{t('newsletter.how.delivery')}</li>
         <li>{t('newsletter.how.unsubscribe')}</li>
       </ul>
-
-      <p class="rdp-newsletter-page__other-edition">
-        <span class="rdp-newsletter-page__other-edition-pitch">
-          {t('newsletter.' + state.edition + '.other-edition.pitch')}
-        </span>
-        <a
-          class="rdp-newsletter-page__other-edition-link"
-          href={state.otherEditionHref}
-          onClick={(event: any) => state.handleOtherEditionClick(event)}
-          data-edition={state.otherEdition}
-        >
-          {t('newsletter.' + state.edition + '.other-edition.label')}
-        </a>
-      </p>
 
       <p class="rdp-newsletter-page__fine-print">
         {t('newsletter.fine-print')}&nbsp;<a href={props.privacyPolicyHref ?? '/mentions-legales'}>{t('newsletter.fine-print.privacy-policy')}</a>.
@@ -176,15 +191,53 @@ export default function NewsletterPage(props: NewsletterPageProps) {
           height: 1px;
           overflow: hidden;
         }
-        .rdp-newsletter-page__other-edition {
-          margin: var(--separation-3) 0 0;
-          padding: var(--separation-2);
-          border-left: 3px solid var(--color-brand);
-          background: var(--color-taupe-grey);
-          border-radius: var(--radius-default);
+        .rdp-newsletter-page__choice {
+          border: 0;
+          margin: 0 0 var(--separation-2);
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          gap: var(--separation-1);
         }
-        .rdp-newsletter-page__other-edition-pitch { display: block; }
-        .rdp-newsletter-page__other-edition-link { font-weight: bold; }
+        .rdp-newsletter-page__choice legend { padding: 0; margin: 0 0 var(--separation-1); }
+        .rdp-newsletter-page__option {
+          display: flex;
+          align-items: flex-start;
+          gap: var(--separation-1);
+          padding: var(--separation-1) var(--separation-2);
+          border: 1px solid var(--color-light-grey);
+          border-radius: var(--radius-default);
+          cursor: pointer;
+        }
+        .rdp-newsletter-page__option:has(input:checked) {
+          border-color: var(--color-brand);
+          background: var(--color-taupe-grey);
+        }
+        .rdp-newsletter-page__radio {
+          margin: 3px 0 0;
+          accent-color: var(--color-brand);
+        }
+        .rdp-newsletter-page__option-text { display: flex; flex-direction: column; }
+        .rdp-newsletter-page__option-label { font-weight: bold; }
+        .rdp-newsletter-page__option-hint {
+          font-size: var(--font-size-publication-date);
+          color: var(--color-light-grey);
+        }
+        .rdp-newsletter-page__details {
+          display: grid;
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-newsletter-page__detail {
+          grid-area: 1 / 1;
+          margin: 0;
+          visibility: hidden;
+        }
+        .rdp-newsletter-page[data-edition='fr'] .rdp-newsletter-page__detail[data-edition='fr'],
+        .rdp-newsletter-page[data-edition='coop-medias'] .rdp-newsletter-page__detail[data-edition='coop-medias'],
+        .rdp-newsletter-page[data-edition='fr-coop-medias'] .rdp-newsletter-page__detail[data-edition='fr-coop-medias'],
+        .rdp-newsletter-page[data-edition='both'] .rdp-newsletter-page__detail[data-edition='both'] {
+          visibility: visible;
+        }
         .rdp-newsletter-page__fine-print {
           font-size: var(--font-size-publication-date);
           color: var(--color-light-grey);

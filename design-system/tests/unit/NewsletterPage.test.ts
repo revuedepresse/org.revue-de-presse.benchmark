@@ -47,58 +47,88 @@ describe('NewsletterPage editions (server-rendered)', () => {
     return html.replace(/&#39;/g, "'").replace(/&amp;/g, '&');
   }
 
-  const hiddenEdition = (html: string) =>
-    html.match(/<input[^>]*type="hidden"[^>]*name="edition"[^>]*value="([^"]*)"/)?.[1];
+  // Radio buttons named `edition`, in order, with the checked one marked.
+  const radios = (html: string) =>
+    [...html.matchAll(/<input[^>]*type="radio"[^>]*>/g)].map((m) => ({
+      name: m[0].match(/name="([^"]*)"/)?.[1],
+      value: m[0].match(/value="([^"]*)"/)?.[1],
+      checked: /\schecked(=|\s|>|\/)/.test(m[0]),
+    }));
+  const checkedEdition = (html: string) => radios(html).find((r) => r.checked)?.value;
   const heading = (html: string) => html.match(/<h1>([^<]*)<\/h1>/)?.[1];
-  const crossLink = (html: string) =>
-    html.match(/<a[^>]*class="rdp-newsletter-page__other-edition-link"[^>]*href="([^"]*)"[^>]*>([^<]*)<\/a>/);
 
-  it('defaults to the French media edition', async () => {
+  it('offers French media, Coop Médias, both in one letter, or both letters, as one `edition` field', async () => {
     const html = await render();
-    expect(hiddenEdition(html)).toBe('fr');
-    expect(heading(html)).toBe("La lettre d'information des médias français");
+    expect(radios(html).map((r) => [r.name, r.value])).toEqual([
+      ['edition', 'fr'],
+      ['edition', 'coop-medias'],
+      ['edition', 'fr-coop-medias'],
+      ['edition', 'both'],
+    ]);
+    expect(html).toContain('Médias français + Coop Médias');
+    expect(html).toContain('Quelle lettre souhaitez-vous recevoir ?');
+    expect(html).toContain('Médias français');
+    expect(html).toContain('Coop Médias');
+    expect(html).toContain('Les deux');
+    // No hidden `edition` left over: the radio choice is the only value posted.
+    expect(html).not.toMatch(/type="hidden"[^>]*name="edition"/);
   });
 
-  it('French media edition: sends edition=fr and links to the Coop Médias edition', async () => {
-    const html = await render({ edition: 'fr' });
-    expect(hiddenEdition(html)).toBe('fr');
-    expect(heading(html)).toBe("La lettre d'information des médias français");
-    expect(html).toContain('top 10 des publications des médias français les plus relayées sur Bluesky la veille');
-    const link = crossLink(html);
-    expect(link?.[1]).toBe('/lettre-quotidienne-coop-medias');
-    expect(link?.[2]).toBe("S'abonner à la lettre d'information de Coop Médias");
-    expect(html).toContain('Vous préférez la sélection des médias membres de Coop Médias');
+  it('checks both letters by default', async () => {
+    const html = await render();
+    expect(checkedEdition(html)).toBe('both');
+    expect(radios(html).filter((r) => r.checked)).toHaveLength(1);
+    expect(html).toContain('Deux lettres par jour, une par sélection.');
   });
 
-  it('Coop Médias edition: sends edition=coop-medias and links to the French media edition', async () => {
-    const html = await render({ edition: 'coop-medias' });
-    expect(hiddenEdition(html)).toBe('coop-medias');
-    expect(heading(html)).toBe("La lettre d'information de Coop Médias");
-    expect(html).toContain(
-      'top 10 des publications des médias membres de Coop Médias les plus relayées sur Bluesky la veille',
-    );
-    const link = crossLink(html);
-    expect(link?.[1]).toBe('/lettre-quotidienne');
-    expect(link?.[2]).toBe("S'abonner à la lettre d'information des médias français");
-    expect(html).toContain("Vous préférez la sélection de l'ensemble des médias français");
+  it('keeps the heading and intro whatever the choice, so choosing never shifts the layout', async () => {
+    const intro = (html: string) => html.match(/<\/h1>\s*<p>([^<]*)<\/p>/)?.[1];
+    const pages = await Promise.all(['fr', 'coop-medias', 'fr-coop-medias', 'both'].map((edition) => render({ edition })));
+    expect(new Set(pages.map(heading))).toEqual(new Set(["Les lettres d'information des médias français et de Coop Médias"]));
+    expect(new Set(pages.map(intro)).size).toBe(1);
   });
 
-  it('both editions post to the same endpoint and explain the confirmation step', async () => {
-    for (const edition of ['fr', 'coop-medias']) {
+  it('renders every choice\'s details below the options, showing only the chosen one', async () => {
+    const html = await render({ edition: 'fr-coop-medias' });
+    const details = [...html.matchAll(/<p[^>]*class="rdp-newsletter-page__detail"[^>]*>/g)].map((m) => ({
+      edition: m[0].match(/data-edition="([^"]*)"/)?.[1],
+      hidden: m[0].match(/aria-hidden="([^"]*)"/)?.[1],
+    }));
+    expect(details).toEqual([
+      { edition: 'fr', hidden: 'true' },
+      { edition: 'coop-medias', hidden: 'true' },
+      { edition: 'fr-coop-medias', hidden: 'false' },
+      { edition: 'both', hidden: 'true' },
+    ]);
+    expect(html.indexOf('rdp-newsletter-page__details')).toBeGreaterThan(html.indexOf('rdp-newsletter-page__choice'));
+    expect(html).toMatch(/data-edition="fr-coop-medias"/);
+  });
+
+  it('checks the edition it is opened with', async () => {
+    for (const edition of ['fr', 'coop-medias', 'fr-coop-medias', 'both']) {
+      expect(checkedEdition(await render({ edition }))).toBe(edition);
+    }
+    expect(checkedEdition(await render({ edition: 'unknown' }))).toBe('both');
+  });
+
+  it('explains the single confirmation, two letters a day and per-letter unsubscribe', async () => {
+    const html = await render();
+    expect(html).toContain('Confirmez votre adresse e-mail');
+    expect(html).toContain('Un seul e-mail de confirmation, même si vous choisissez les deux lettres.');
+    expect(html).toContain('Avec les deux lettres, vous en recevez deux par jour.');
+    expect(html).toContain('Chaque lettre a son propre lien de désabonnement');
+  });
+
+  it('posts every choice to the same endpoint, honeypot included', async () => {
+    for (const edition of ['fr', 'coop-medias', 'fr-coop-medias', 'both']) {
       const html = await render({ edition });
       expect(html).toContain('action="https://api.revue-de-presse.org/newsletter/subscribe"');
-      expect(html).toContain('Confirmez votre adresse e-mail');
       expect(html).toContain('name="website"');
     }
   });
 
-  it('honours a custom endpoint and cross-link href', async () => {
-    const html = await render({
-      edition: 'coop-medias',
-      action: 'https://api.example.org/newsletter/subscribe',
-      otherEditionHref: '/autre',
-    });
+  it('honours a custom endpoint', async () => {
+    const html = await render({ action: 'https://api.example.org/newsletter/subscribe' });
     expect(html).toContain('action="https://api.example.org/newsletter/subscribe"');
-    expect(crossLink(html)?.[1]).toBe('/autre');
   });
 });
