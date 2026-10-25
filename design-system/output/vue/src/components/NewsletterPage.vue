@@ -1,7 +1,7 @@
 <template>
   <article class="rdp-newsletter-page" :data-edition="choice">
-    <h1>{{ t("newsletter." + choice + ".heading") }}</h1>
-    <p>{{ t("newsletter." + choice + ".intro") }}</p>
+    <h1>{{ t("newsletter.heading") }}</h1>
+    <p>{{ t("newsletter.intro") }}</p>
     <form
       class="rdp-newsletter-page__form"
       method="post"
@@ -31,6 +31,17 @@
           >
         </template>
       </fieldset>
+      <div class="rdp-newsletter-page__details" aria-live="polite">
+        <template :key="edition" v-for="(edition, index) in editions">
+          <p
+            class="rdp-newsletter-page__detail"
+            :data-edition="edition"
+            :aria-hidden="choice === edition ? 'false' : 'true'"
+          >
+            {{ t("newsletter." + edition + ".details") }}
+          </p>
+        </template>
+      </div>
       <label class="rdp-newsletter-page__label" for="newsletter-email">{{
         t("newsletter.form.email.label")
       }}</label>
@@ -80,9 +91,18 @@
 import { ref, watch } from "vue";
 
 import { t } from "../utils/i18n";
-const EDITIONS: NewsletterEdition[] = ["fr", "coop-medias", "both"];
+const EDITIONS: NewsletterEdition[] = [
+  "fr",
+  "coop-medias",
+  "fr-coop-medias",
+  "both",
+];
 
-export type NewsletterEdition = "fr" | "coop-medias" | "both";
+export type NewsletterEdition =
+  | "fr"
+  | "coop-medias"
+  | "fr-coop-medias"
+  | "both";
 type NewsletterPageProps = {
   // Endpoint of the API's public sign-up route. The form is a plain HTML
   // POST (no fetch) so it works without JavaScript and the API sees the
@@ -93,6 +113,7 @@ type NewsletterPageProps = {
   //  - 'fr': top 10 posts by French media
   //  - 'coop-medias': top 10 posts by Coop Médias members
   //    (preselected on /lettre-quotidienne-coop-medias)
+  //  - 'fr-coop-medias': one letter, the top 10 of both lists together
   //  - 'both' (default, /lettre-quotidienne): both letters, two a day,
   //    confirmed with a single email
   edition?: NewsletterEdition;

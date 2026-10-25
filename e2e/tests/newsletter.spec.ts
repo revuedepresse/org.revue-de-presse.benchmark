@@ -22,15 +22,34 @@ const radio = (page: Page, edition: string) =>
   page.locator(`.rdp-newsletter-page input[type="radio"][name="edition"][value="${edition}"]`);
 
 test.describe('/lettre-quotidienne', () => {
-  test('offers French media, Coop Médias or both, both checked', async ({ page }) => {
+  test('offers French media, Coop Médias, both in one letter or both letters, both letters checked', async ({ page }) => {
     await page.goto('/lettre-quotidienne');
     await expect(appShell(page)).toBeVisible();
-    await expect(page.locator('.rdp-newsletter-page input[type="radio"][name="edition"]')).toHaveCount(3);
+    await expect(page.locator('.rdp-newsletter-page input[type="radio"][name="edition"]')).toHaveCount(4);
     await expect(radio(page, 'both')).toBeChecked();
     await expect(page.locator('.rdp-newsletter-page')).toContainText('Un seul e-mail de confirmation');
   });
 
-  for (const edition of ['fr', 'coop-medias', 'both']) {
+  test('choosing a letter moves neither the heading, the intro nor the form', async ({ page }) => {
+    await page.goto('/lettre-quotidienne');
+    await expect(appShell(page)).toBeVisible();
+    // Positions in the page, not the viewport: checking a radio may scroll it into view.
+    const boxes = async () =>
+      page.evaluate(() =>
+        ['.rdp-newsletter-page h1', '.rdp-newsletter-page h1 + p', '#newsletter-email', '.rdp-newsletter-page__submit'].map((selector) => {
+          const r = document.querySelector(selector)!.getBoundingClientRect();
+          return { x: r.left + window.scrollX, y: r.top + window.scrollY, width: r.width, height: r.height };
+        }),
+      );
+    const before = await boxes();
+    for (const edition of ['fr', 'coop-medias', 'fr-coop-medias', 'both']) {
+      await radio(page, edition).check();
+      await expect(page.locator('.rdp-newsletter-page')).toHaveAttribute('data-edition', edition);
+      expect(await boxes()).toEqual(before);
+    }
+  });
+
+  for (const edition of ['fr', 'coop-medias', 'fr-coop-medias', 'both']) {
     test(`posts edition=${edition} when that letter is chosen`, async ({ page }) => {
       await page.goto('/lettre-quotidienne');
       await expect(appShell(page)).toBeVisible();

@@ -57,13 +57,15 @@ describe('NewsletterPage editions (server-rendered)', () => {
   const checkedEdition = (html: string) => radios(html).find((r) => r.checked)?.value;
   const heading = (html: string) => html.match(/<h1>([^<]*)<\/h1>/)?.[1];
 
-  it('offers French media, Coop Médias or both, as one `edition` field', async () => {
+  it('offers French media, Coop Médias, both in one letter, or both letters, as one `edition` field', async () => {
     const html = await render();
     expect(radios(html).map((r) => [r.name, r.value])).toEqual([
       ['edition', 'fr'],
       ['edition', 'coop-medias'],
+      ['edition', 'fr-coop-medias'],
       ['edition', 'both'],
     ]);
+    expect(html).toContain('Médias français + Coop Médias');
     expect(html).toContain('Quelle lettre souhaitez-vous recevoir ?');
     expect(html).toContain('Médias français');
     expect(html).toContain('Coop Médias');
@@ -76,16 +78,36 @@ describe('NewsletterPage editions (server-rendered)', () => {
     const html = await render();
     expect(checkedEdition(html)).toBe('both');
     expect(radios(html).filter((r) => r.checked)).toHaveLength(1);
-    expect(heading(html)).toBe("Les lettres d'information des médias français et de Coop Médias");
     expect(html).toContain('Deux lettres par jour, une par sélection.');
   });
 
+  it('keeps the heading and intro whatever the choice, so choosing never shifts the layout', async () => {
+    const intro = (html: string) => html.match(/<\/h1>\s*<p>([^<]*)<\/p>/)?.[1];
+    const pages = await Promise.all(['fr', 'coop-medias', 'fr-coop-medias', 'both'].map((edition) => render({ edition })));
+    expect(new Set(pages.map(heading))).toEqual(new Set(["Les lettres d'information des médias français et de Coop Médias"]));
+    expect(new Set(pages.map(intro)).size).toBe(1);
+  });
+
+  it('renders every choice\'s details below the options, showing only the chosen one', async () => {
+    const html = await render({ edition: 'fr-coop-medias' });
+    const details = [...html.matchAll(/<p[^>]*class="rdp-newsletter-page__detail"[^>]*>/g)].map((m) => ({
+      edition: m[0].match(/data-edition="([^"]*)"/)?.[1],
+      hidden: m[0].match(/aria-hidden="([^"]*)"/)?.[1],
+    }));
+    expect(details).toEqual([
+      { edition: 'fr', hidden: 'true' },
+      { edition: 'coop-medias', hidden: 'true' },
+      { edition: 'fr-coop-medias', hidden: 'false' },
+      { edition: 'both', hidden: 'true' },
+    ]);
+    expect(html.indexOf('rdp-newsletter-page__details')).toBeGreaterThan(html.indexOf('rdp-newsletter-page__choice'));
+    expect(html).toMatch(/data-edition="fr-coop-medias"/);
+  });
+
   it('checks the edition it is opened with', async () => {
-    for (const edition of ['fr', 'coop-medias', 'both']) {
+    for (const edition of ['fr', 'coop-medias', 'fr-coop-medias', 'both']) {
       expect(checkedEdition(await render({ edition }))).toBe(edition);
     }
-    expect(heading(await render({ edition: 'coop-medias' }))).toBe("La lettre d'information de Coop Médias");
-    expect(heading(await render({ edition: 'fr' }))).toBe("La lettre d'information des médias français");
     expect(checkedEdition(await render({ edition: 'unknown' }))).toBe('both');
   });
 
@@ -98,7 +120,7 @@ describe('NewsletterPage editions (server-rendered)', () => {
   });
 
   it('posts every choice to the same endpoint, honeypot included', async () => {
-    for (const edition of ['fr', 'coop-medias', 'both']) {
+    for (const edition of ['fr', 'coop-medias', 'fr-coop-medias', 'both']) {
       const html = await render({ edition });
       expect(html).toContain('action="https://api.revue-de-presse.org/newsletter/subscribe"');
       expect(html).toContain('name="website"');

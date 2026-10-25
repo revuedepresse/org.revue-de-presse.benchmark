@@ -992,6 +992,21 @@
           font-size: var(--font-size-publication-date);
           color: var(--color-light-grey);
         }
+        .rdp-newsletter-page__details {
+          display: grid;
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-newsletter-page__detail {
+          grid-area: 1 / 1;
+          margin: 0;
+          visibility: hidden;
+        }
+        .rdp-newsletter-page[data-edition='fr'] .rdp-newsletter-page__detail[data-edition='fr'],
+        .rdp-newsletter-page[data-edition='coop-medias'] .rdp-newsletter-page__detail[data-edition='coop-medias'],
+        .rdp-newsletter-page[data-edition='fr-coop-medias'] .rdp-newsletter-page__detail[data-edition='fr-coop-medias'],
+        .rdp-newsletter-page[data-edition='both'] .rdp-newsletter-page__detail[data-edition='both'] {
+          visibility: visible;
+        }
         .rdp-newsletter-page__fine-print {
           font-size: var(--font-size-publication-date);
           color: var(--color-light-grey);

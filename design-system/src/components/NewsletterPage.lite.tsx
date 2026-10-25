@@ -1,7 +1,7 @@
 import { onUpdate, useStore } from '@builder.io/mitosis';
 import { t } from '../utils/i18n';
 
-export type NewsletterEdition = 'fr' | 'coop-medias' | 'both';
+export type NewsletterEdition = 'fr' | 'coop-medias' | 'fr-coop-medias' | 'both';
 
 type NewsletterPageProps = {
   // Endpoint of the API's public sign-up route. The form is a plain HTML
@@ -13,13 +13,14 @@ type NewsletterPageProps = {
   //  - 'fr': top 10 posts by French media
   //  - 'coop-medias': top 10 posts by Coop Médias members
   //    (preselected on /lettre-quotidienne-coop-medias)
+  //  - 'fr-coop-medias': one letter, the top 10 of both lists together
   //  - 'both' (default, /lettre-quotidienne): both letters, two a day,
   //    confirmed with a single email
   edition?: NewsletterEdition;
   privacyPolicyHref?: string;
 };
 
-const EDITIONS: NewsletterEdition[] = ['fr', 'coop-medias', 'both'];
+const EDITIONS: NewsletterEdition[] = ['fr', 'coop-medias', 'fr-coop-medias', 'both'];
 
 export default function NewsletterPage(props: NewsletterPageProps) {
   const state = useStore({
@@ -38,8 +39,8 @@ export default function NewsletterPage(props: NewsletterPageProps) {
 
   return (
     <article class="rdp-newsletter-page" data-edition={state.choice}>
-      <h1>{t('newsletter.' + state.choice + '.heading')}</h1>
-      <p>{t('newsletter.' + state.choice + '.intro')}</p>
+      <h1>{t('newsletter.heading')}</h1>
+      <p>{t('newsletter.intro')}</p>
 
       <form
         class="rdp-newsletter-page__form"
@@ -67,6 +68,22 @@ export default function NewsletterPage(props: NewsletterPageProps) {
             )}
           </For>
         </fieldset>
+        {/* Every choice's details share one grid cell, so the block keeps the
+            height of the longest and choosing never shifts the layout. */}
+        <div class="rdp-newsletter-page__details" aria-live="polite">
+          <For each={state.editions}>
+            {(edition: NewsletterEdition) => (
+              <p
+                class="rdp-newsletter-page__detail"
+                key={edition}
+                data-edition={edition}
+                aria-hidden={state.choice === edition ? 'false' : 'true'}
+              >
+                {t('newsletter.' + edition + '.details')}
+              </p>
+            )}
+          </For>
+        </div>
         <label class="rdp-newsletter-page__label" for="newsletter-email">
           {t('newsletter.form.email.label')}
         </label>
@@ -205,6 +222,21 @@ export default function NewsletterPage(props: NewsletterPageProps) {
         .rdp-newsletter-page__option-hint {
           font-size: var(--font-size-publication-date);
           color: var(--color-light-grey);
+        }
+        .rdp-newsletter-page__details {
+          display: grid;
+          margin: 0 0 var(--separation-2);
+        }
+        .rdp-newsletter-page__detail {
+          grid-area: 1 / 1;
+          margin: 0;
+          visibility: hidden;
+        }
+        .rdp-newsletter-page[data-edition='fr'] .rdp-newsletter-page__detail[data-edition='fr'],
+        .rdp-newsletter-page[data-edition='coop-medias'] .rdp-newsletter-page__detail[data-edition='coop-medias'],
+        .rdp-newsletter-page[data-edition='fr-coop-medias'] .rdp-newsletter-page__detail[data-edition='fr-coop-medias'],
+        .rdp-newsletter-page[data-edition='both'] .rdp-newsletter-page__detail[data-edition='both'] {
+          visibility: visible;
         }
         .rdp-newsletter-page__fine-print {
           font-size: var(--font-size-publication-date);
