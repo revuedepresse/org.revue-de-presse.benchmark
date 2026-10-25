@@ -17,7 +17,8 @@ export type Sources = {
   roster: SourceRow[];
 };
 
-// French press accounts, as fetched by the hourly worker.
+// French press accounts, as fetched by the hourly worker. The French media list
+// also ranks the Coop Médias members in ALSO_FRENCH_MEDIA.
 const FRENCH_MEDIA: SourceRow[] = [
   { handle: 'afp.com', displayName: 'Agence France-Presse', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:ffccycfh6c6pmxwkhvq5clkv/bafkreiadcsh7hzzurk5joh7bhxxlyqlvr26mg25f6dnozuwhsz72jz2cme' },
   { handle: 'bfmtv.com', displayName: 'BFMTV', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:wb4ovhhcrif6cp66oe2pqx7i/bafkreic3fjfw4c2hbqailogxb2nusnspddwczt5bhyib3enp5qxl5bslla' },
@@ -45,6 +46,27 @@ const FRENCH_MEDIA: SourceRow[] = [
   { handle: 'pixelsfr.bsky.social', displayName: 'Pixels | Le Monde', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:ug64elynwv5wsbg6cgr75hc3/bafkreievkg4gk2o65zpv3nb7ioxvifrh4kngwiidew4p7ddx7awtajborq' },
   { handle: 'rfi.fr', displayName: 'RFI', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:vvlpfarso2eojm2xpzc7qrd7/bafkreiblpeqcmcska4t5jux5uiipvsmwci4xvffthimktqbphseggv72v4' },
   { handle: 'telerama.bsky.social', displayName: 'Télérama', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:d4mzml4o35ineocvaluv5vss/bafkreibwv7t72coic6z2zrfprda7onuesrw7xcjq2fsbpwagkez57xbvyy' },
+  { handle: '20minutes.bsky.social', displayName: '20 minutes', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:3mchts55ik67nxmtafua5gfd/bafkreid72cxugfbwnghcdg54wilczkwn5tgj2maao3cgdi5s32b4espkhq' },
+  { handle: '28minutes-arte.bsky.social', displayName: '28 minutes - ARTE', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:2qysbywa47gzqu46n6h6dity/bafkreiby7e2z5vljz3e2z7jjqtrjnfndpthqpnw6nftcczjdtg2wp7d4dy' },
+  { handle: 'artefr.bsky.social', displayName: 'ARTE', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:6lbh3sx5vzfhzjy2td2lafnq/bafkreifgl6edsha7mx3csltdetr2s5h2zfbdxtgikxl3nhmnvjc7vafziq' },
+  { handle: 'contexte.com', displayName: 'Contexte', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:2v5gqgdyjqv4xtrg7iax6mwf/bafkreibo3s5u6uhmogno47roaf3j2pc7pmz4375sw7o5eor7mb4demvij4' },
+  { handle: 'euronewsfr.bsky.social', displayName: 'Euronews en Français', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:oeu6wbebsrsy2x235t7ar3eu/bafkreifjt3gjiazcdwqvu64ctn6mcopchtd6wbuzd7f5cjtr3x6uepgzqe' },
+  { handle: 'factuel.afp.com', displayName: 'AFP Factuel', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:4ks5wkubjfcbgxvphqkd3wxm/bafkreie6j7nhdhgqnycier7gvhwlmyztch4asibacu3k6rlhowbl4tvhme' },
+  { handle: 'france3npdc.bsky.social', displayName: 'France 3 Nord Pas-de-Calais', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:szbhzsncadyh22lebcvz3qkl/bafkreih7yjwq4ibw3trtvpxwif4tfnocwj7nnfuibdgrwklbzyqhg7zmk4' },
+  { handle: 'franceinfo.fr', displayName: 'franceinfo', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:vb7d3zz6khc7zqcg7743eqiq/bafkreiaclqgqttcym2utcynunohawuhc4amnh55zqgizit4cs52ptyjz5q' },
+  { handle: 'franceinter.fr', displayName: 'France Inter', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:biwhb222rpid6vfji4j2uj3m/bafkreiblld2pjkq66npe5bj2nuxzphiou2gsdm2ctohimfop55aav5jnsu' },
+  { handle: 'francetv.bsky.social', displayName: 'france.tv', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:z3xi5gootb5yzoxuba6ucsmt/bafkreic7kkqlcnpt2rxtgqpjovnjvmalovaahviasaq6jnmhrogoxgy4bi' },
+  { handle: 'francetvculture.bsky.social', displayName: 'france tv culture', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:2pwf6z5x4pxwqppgp5t747sr/bafkreianuyaibpoc7lm5kcafuarnvi6s6oy3m4lhmjjbsb6rllrxvxx3xu' },
+  { handle: 'huffingtonpost.fr', displayName: 'Le HuffPost', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:3dkkhd6dqiqswrxnitge3axp/bafkreicrm2xdwugzvhf2wttrenmrc6wb4647fjawwbjvc6ejhezy32lpt4' },
+  { handle: 'larevuedesmedias.ina.fr', displayName: 'La Revue des médias', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:g6bs5amikddbqgq2idp5yo5d/bafkreif7dnriwkj6fyfyuuj6ynkpfjhtlk5b5vfupfwttk2tqdfuoqjnxy' },
+  { handle: 'leparisien.fr', displayName: 'Le Parisien', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:anpfslmr5xhyw7oqzai3dprd/bafkreicj43s3lywac7idfkad2yqnk64hnh73gsnc5wf5zp4lcyf53vqq3m' },
+  { handle: 'lexpress.fr', displayName: 'L’Express', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:fpambcnvhstbckgv23fh7rem/bafkreifvlmhy6tcv7lehnsm7brbcxgu534oohzyxafc45jcnundpwvwjei' },
+  { handle: 'lvslmedia.bsky.social', displayName: 'Le Vent Se Lève', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:6b66t3n65h3v2rdz3yjoombc/bafkreiaifxno4y5765vxlzomzt2p6bkiak67nvnxnu7eaftmn6lvttvnha' },
+  { handle: 'numerama.com', displayName: 'Numerama', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:kc53xgnevbecrg7xaimmfexh/bafkreieiinpdqezrxehcc5xjwx3c5tua3iy44rgp5gmm56ndivdowptznq' },
+  { handle: 'radiofrance.fr', displayName: 'Radio France', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:xmxueyzsdchqowossr24xsjw/bafkreifl2dspy7nqiaejbkushkbd7ner364esinhxumbsnl7gupt7x23oe' },
+  { handle: 'sudouest.fr', displayName: 'Sud Ouest', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:qtupmmogj72y37n7pl4u736w/bafkreicmucosl2v2lvuetye2p6fccp52roz74wc7xwoaznbpuhuqnjcis4' },
+  { handle: 'usbeketrica.bsky.social', displayName: 'Usbek & Rica', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:n3fbgyh3jyfgheysmd6bftok/bafkreihemxjfeld2bgjctw4flmrlgtrn7ubps2srt7hwo5cggri4aajbh4' },
+  { handle: 'viastella.bsky.social', displayName: 'France 3 Corse ViaStella', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:bhfnbmt4fq2fqkfiqh43er26/bafkreifl72bytlr3vz7suxzbhivzdhbwnflk5vuj7qjpb363mg4w26ybxy' },
 ];
 
 // Members of the coop-medias.org Bluesky list.
@@ -99,6 +121,19 @@ const COOP_MEDIAS: SourceRow[] = [
   { handle: 'voxeurop.bsky.social', displayName: 'Voxeurop', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:5ofbcsv232rb74bae7uscdy4/bafkreiaqdhvezldvmusonquytfqm3yjhpq7iwzvuesnsi5rqkjsrpbm3mq' },
 ];
 
+// Coop Médias members that the French media list ranks too.
+const ALSO_FRENCH_MEDIA = [
+  'alternatives-economiques.fr',
+  'arretsurimages.net',
+  'marsactu.fr',
+  'reflets.info',
+  'reporterre.net',
+  'rue89bordeaux.bsky.social',
+  'rue89strasbourg.com',
+  'socialter.bsky.social',
+  'vert.eco',
+];
+
 const byName = (rows: SourceRow[]): SourceRow[] =>
   [...rows].sort((a, b) => a.displayName.localeCompare(b.displayName, 'fr', { sensitivity: 'base' }));
 
@@ -113,13 +148,16 @@ const unionByHandle = (...rosters: SourceRow[][]): SourceRow[] => {
   return [...seen.values()];
 };
 
+const frenchMedia = (): SourceRow[] =>
+  unionByHandle(FRENCH_MEDIA, COOP_MEDIAS.filter((row) => ALSO_FRENCH_MEDIA.includes(row.handle)));
+
 export function sourcesOf(list: string | undefined): Sources {
   if (list === 'fr-coop-medias') {
     return {
       list: 'fr-coop-medias',
       origin: 'de médias français et de',
       originLink: { href: 'https://www.coop-medias.org/', label: 'https://www.coop-medias.org/' },
-      roster: byName(unionByHandle(FRENCH_MEDIA, COOP_MEDIAS)),
+      roster: byName(unionByHandle(frenchMedia(), COOP_MEDIAS)),
     };
   }
 
@@ -132,5 +170,5 @@ export function sourcesOf(list: string | undefined): Sources {
     };
   }
 
-  return { list: 'fr', origin: 'de médias français', roster: byName(FRENCH_MEDIA) };
+  return { list: 'fr', origin: 'de médias français', roster: byName(frenchMedia()) };
 }
