@@ -9,7 +9,6 @@ import { appShell } from '../support/selectors';
 const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'afp.com',                     displayName: 'Agence France-Presse' },
   { handle: 'bfmtv.com',                   displayName: 'BFMTV' },
-  { handle: 'blast-info.fr',               displayName: 'Blast le souffle de l’info' },
   { handle: 'challengesfr.bsky.social',    displayName: 'Challenges' },
   { handle: 'charliehebdo.fr',             displayName: 'Charlie Hebdo' },
   { handle: 'courrierinter.bsky.social',   displayName: 'Courrier international' },
@@ -24,7 +23,6 @@ const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'afrique.lemonde.fr',          displayName: 'Le Monde Afrique' },
   { handle: 'lepoint.fr',                  displayName: 'Le Point' },
   { handle: 'lesechosfr.bsky.social',      displayName: 'Les Echos' },
-  { handle: 'lesjours.fr',                 displayName: 'Les Jours' },
   { handle: 'liberation.fr',               displayName: 'Libération' },
   { handle: 'mediapart.fr',                displayName: 'Mediapart' },
   { handle: 'monde-diplomatique.fr',       displayName: 'Le Monde diplomatique' },
@@ -33,26 +31,13 @@ const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'pixelsfr.bsky.social',        displayName: 'Pixels | Le Monde' },
   { handle: 'rfi.fr',                      displayName: 'RFI' },
   { handle: 'telerama.bsky.social',        displayName: 'Télérama' },
-  { handle: 'alternatives-economiques.fr', displayName: 'Alternatives Economiques' },
-  { handle: 'arretsurimages.net',          displayName: 'Arrêt sur images' },
-  { handle: 'marsactu.fr',                 displayName: 'Marsactu' },
-  { handle: 'reflets.info',                displayName: 'Reflets.info' },
-  { handle: 'reporterre.net',              displayName: 'Reporterre' },
-  { handle: 'rue89bordeaux.bsky.social',   displayName: 'Rue89 Bordeaux' },
-  { handle: 'rue89strasbourg.com',         displayName: 'Rue89 Strasbourg' },
-  { handle: 'socialter.bsky.social',       displayName: 'Socialter' },
-  { handle: 'vert.eco',                    displayName: 'Vert' },
   { handle: '20minutes.bsky.social',       displayName: '20 minutes' },
-  { handle: '28minutes-arte.bsky.social',  displayName: '28 minutes - ARTE' },
   { handle: 'artefr.bsky.social',          displayName: 'ARTE' },
   { handle: 'contexte.com',                displayName: 'Contexte' },
-  { handle: 'euronewsfr.bsky.social',      displayName: 'Euronews en Français' },
   { handle: 'factuel.afp.com',             displayName: 'AFP Factuel' },
   { handle: 'france3npdc.bsky.social',     displayName: 'France 3 Nord Pas-de-Calais' },
   { handle: 'franceinfo.fr',               displayName: 'franceinfo' },
   { handle: 'franceinter.fr',              displayName: 'France Inter' },
-  { handle: 'francetv.bsky.social',        displayName: 'france.tv' },
-  { handle: 'francetvculture.bsky.social', displayName: 'france tv culture' },
   { handle: 'huffingtonpost.fr',           displayName: 'Le HuffPost' },
   { handle: 'larevuedesmedias.ina.fr',     displayName: 'La Revue des médias' },
   { handle: 'leparisien.fr',               displayName: 'Le Parisien' },
@@ -90,7 +75,7 @@ test.describe('/sources', () => {
     await expect(article.locator('#rdp-sources-page-footnote')).toContainText('« Première mesure »');
   });
 
-  test('lists exactly the 56 canonical media accounts', async ({ page }) => {
+  test('lists exactly the 41 canonical media accounts', async ({ page }) => {
     const rows = page.locator('.rdp-sources-page__row');
     await expect(rows).toHaveCount(ROSTER.length);
   });
