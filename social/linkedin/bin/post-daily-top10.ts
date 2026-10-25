@@ -3,12 +3,14 @@ import { writeFile } from 'node:fs/promises';
 import { parseArgs } from 'node:util';
 import { loadConfig, ConfigError } from '../src/config.ts';
 import { createRevueDePresseClient, UpstreamError } from '../src/revueDePresseClient.ts';
+import { createBlueskyProfiles } from '../src/blueskyProfiles.ts';
 import { createLinkedinClient, LinkedinApiError } from '../src/linkedinClient.ts';
 import { readTokenFile, writeTokenFile, TokenFileError } from '../src/tokenStore.ts';
 import { hasPostedFor, recordPost, StateFileError } from '../src/stateStore.ts';
 import { renderPost } from '../src/renderPost.ts';
 import { escapeLittleText } from '../src/littleText.ts';
 import { logger } from '../src/logger.ts';
+import { PUBLISHER_LISTS, type Highlight, type PublisherList } from '../src/types.ts';
 
 const EXIT = {
   OK: 0,
@@ -43,6 +45,8 @@ async function main(): Promise<number> {
       date: { type: 'string' },
       force: { type: 'boolean', default: false },
       'dry-run': { type: 'boolean', default: false },
+      // One list only (fr or coop-medias); every list when absent.
+      list: { type: 'string' },
     },
     strict: true,
   });
@@ -52,8 +56,26 @@ async function main(): Promise<number> {
   const targetDate = values.date ?? previousDateInTz(cfg.tz);
   logger.info({ targetDate, dryRun: values['dry-run'], force: values.force, envMode }, 'starting');
 
-  if (!values.force && !envMode && (await hasPostedFor(cfg.linkedinStateFile, targetDate))) {
-    logger.warn({ targetDate }, 'already posted for this date — pass --force to override');
+  let lists: readonly PublisherList[] = PUBLISHER_LISTS;
+  if (values.list !== undefined) {
+    if (!PUBLISHER_LISTS.includes(values.list as PublisherList)) {
+      logger.error({ list: values.list, known: PUBLISHER_LISTS }, 'unknown list');
+      return EXIT.CONFIG;
+    }
+    lists = [values.list as PublisherList];
+  }
+
+  // One post per list, each deduped on its own: a list already posted for
+  // this date is skipped, the others still go out.
+  const pending: PublisherList[] = [];
+  for (const list of lists) {
+    if (!values.force && !envMode && (await hasPostedFor(cfg.linkedinStateFile, targetDate, list))) {
+      logger.warn({ targetDate, list }, 'already posted for this date — pass --force to override');
+      continue;
+    }
+    pending.push(list);
+  }
+  if (pending.length === 0) {
     return EXIT.ALREADY_POSTED;
   }
 
@@ -62,40 +84,59 @@ async function main(): Promise<number> {
     clientSecret: cfg.apiClientSecret,
   });
 
-  let highlights;
-  try {
-    highlights = await upstream.fetchTopTen(targetDate);
-  } catch (err) {
-    logger.error({ err }, 'upstream fetchTopTen failed');
-    return EXIT.UPSTREAM;
+  // The worst outcome across lists is the exit code; one list failing does
+  // not hold back the other.
+  let exitCode = EXIT.OK;
+  const posts: { list: PublisherList; highlights: Highlight[] }[] = [];
+  for (const list of pending) {
+    let highlights: Highlight[];
+    try {
+      highlights = await upstream.fetchTopTen(targetDate, list);
+    } catch (err) {
+      logger.error({ err, list }, 'upstream fetchTopTen failed');
+      exitCode = Math.max(exitCode, EXIT.UPSTREAM);
+      continue;
+    }
+    if (highlights.length === 0) {
+      logger.error({ targetDate, list }, 'upstream returned 0 highlights — refusing to post empty digest');
+      exitCode = Math.max(exitCode, EXIT.UPSTREAM);
+      continue;
+    }
+    posts.push({ list, highlights });
   }
-  if (highlights.length === 0) {
-    logger.error({ targetDate }, 'upstream returned 0 highlights — refusing to post empty digest');
-    return EXIT.UPSTREAM;
+  if (posts.length === 0) {
+    return exitCode;
   }
 
-  const commentary = renderPost(highlights, targetDate, {
-    footerUrl: cfg.postFooterUrl,
-    hashtag: cfg.postHashtag,
-  });
+  // Media are named by their Bluesky display name; their handle when it is
+  // missing or Bluesky cannot be reached, so a lookup never holds a post back.
+  const handles = [...new Set(posts.flatMap(({ highlights }) => highlights.map((h) => h.screenName)))];
+  try {
+    const names = await createBlueskyProfiles({ baseUrl: cfg.blueskyPublicApiUrl }).fetchDisplayNames(handles);
+    for (const post of posts) {
+      post.highlights = post.highlights.map((h) => ({ ...h, displayName: names.get(h.screenName) }));
+    }
+  } catch (err) {
+    logger.warn({ err }, 'Bluesky display names unavailable — naming media by their handle');
+  }
+
+  const render = (list: PublisherList, highlights: Highlight[], escapeText?: (s: string) => string) =>
+    renderPost(highlights, targetDate, {
+      list,
+      newsletterUrl: cfg.newsletterUrls[list],
+      footerUrl: cfg.postFooterUrl,
+      hashtag: cfg.postHashtag,
+      escapeText,
+    });
 
   if (values['dry-run']) {
     // Dry-run output is for human inspection — keep it readable, no escapes.
-    process.stdout.write(commentary + '\n');
+    for (const { list, highlights } of posts) {
+      process.stdout.write(`--- ${list} ---\n` + render(list, highlights) + '\n');
+    }
     logger.info('dry-run complete — no LinkedIn call made');
-    return EXIT.OK;
+    return exitCode;
   }
-
-  // Re-render with LinkedIn LITTLE_TEXT escaping applied to each entry's
-  // free-form text. Unescaped `()@[]{}<>*_~|\\` in the commentary cause
-  // LinkedIn's parser to truncate the post silently — see the 2026-05-25
-  // 05:30 Paris incident where only entry #1 rendered because of `(J'ai du
-  // mal...)` in the headline.
-  const linkedinCommentary = renderPost(highlights, targetDate, {
-    footerUrl: cfg.postFooterUrl,
-    hashtag: cfg.postHashtag,
-    escapeText: escapeLittleText,
-  });
 
   let refreshToken: string;
   if (envMode) {
@@ -151,24 +192,31 @@ async function main(): Promise<number> {
     });
   }
 
-  let postUrn: string;
-  try {
-    postUrn = await linkedin.createPost({
-      accessToken: fresh.access_token,
-      authorUrn: cfg.linkedinOrganizationUrn,
-      commentary: linkedinCommentary,
-    });
-  } catch (err) {
-    logger.error({ err }, 'LinkedIn create-post failed');
-    return EXIT.LINKEDIN;
-  }
+  for (const { list, highlights } of posts) {
+    // LinkedIn LITTLE_TEXT escaping applied to each entry's free-form text.
+    // Unescaped `()@[]{}<>*_~|\\` in the commentary cause LinkedIn's parser
+    // to truncate the post silently — see the 2026-05-25 05:30 Paris incident
+    // where only entry #1 rendered because of `(J'ai du mal...)` in the headline.
+    let postUrn: string;
+    try {
+      postUrn = await linkedin.createPost({
+        accessToken: fresh.access_token,
+        authorUrn: cfg.linkedinOrganizationUrn,
+        commentary: render(list, highlights, escapeLittleText),
+      });
+    } catch (err) {
+      logger.error({ err, list }, 'LinkedIn create-post failed');
+      exitCode = Math.max(exitCode, EXIT.LINKEDIN);
+      continue;
+    }
 
-  if (!envMode) {
-    await recordPost(cfg.linkedinStateFile, targetDate, postUrn, new Date().toISOString());
+    if (!envMode) {
+      await recordPost(cfg.linkedinStateFile, targetDate, postUrn, new Date().toISOString(), list);
+    }
+    logger.info({ postUrn, targetDate, list }, 'posted');
+    process.stdout.write(postUrn + '\n');
   }
-  logger.info({ postUrn, targetDate }, 'posted');
-  process.stdout.write(postUrn + '\n');
-  return EXIT.OK;
+  return exitCode;
 }
 
 main()

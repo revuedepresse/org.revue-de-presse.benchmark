@@ -1,5 +1,13 @@
+// The publisher lists the API ranks a top 10 for (`?list=`); one LinkedIn
+// post and one newsletter each.
+export type PublisherList = 'fr' | 'coop-medias';
+
+export const PUBLISHER_LISTS: readonly PublisherList[] = ['fr', 'coop-medias'];
+
 export type Highlight = {
   screenName: string;
+  // The account's Bluesky display name, printed instead of the handle.
+  displayName?: string;
   publicationId: string;
   url: string;
   text: string;
@@ -18,6 +26,9 @@ export type StateEntry = {
   date: string;
   postUrn: string;
   postedAt: string;
+  // Absent from entries written before there was more than one list: those
+  // are French media posts.
+  list?: PublisherList;
 };
 
 export type StateFile = {
@@ -41,4 +52,6 @@ export type Config = {
   tz: string;
   postFooterUrl: string;
   postHashtag: string;
+  blueskyPublicApiUrl: string;
+  newsletterUrls: Record<PublisherList, string>;
 };

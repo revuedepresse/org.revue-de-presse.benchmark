@@ -1,7 +1,9 @@
 # @revue-de-presse/social-linkedin
 
-CLI that posts the previous day's Revue de Presse top 10 to the LinkedIn
-organization page once per day. Run from cron in production.
+CLI that posts the previous day's Revue de Presse top 10s to the LinkedIn
+organization page once per day: one post for French media (`fr`) and one for
+Coop Médias (`coop-medias`), each ranked by end of day and inviting readers to
+that list's newsletter. Run from cron in production.
 
 ## Posting identity
 
@@ -39,14 +41,17 @@ make linkedin-post           # production cron entry — posts yesterday's top 1
 ## CLI
 
 ```
-post-daily-top10 [--date YYYY-MM-DD] [--force] [--dry-run]
+post-daily-top10 [--date YYYY-MM-DD] [--list fr|coop-medias] [--force] [--dry-run]
   --date     Override the default (yesterday in $TZ).
+  --list     Post one list only (default: every list).
   --force    Post even if the state file shows this date was already posted.
   --dry-run  Render the commentary and log it; do not call LinkedIn.
 ```
 
-Exit codes: `0` success / dry-run, `1` already-posted, `2` upstream failure,
-`3` LinkedIn failure, `4` config invalid.
+Each list is deduped and posted on its own: one already posted, or failing,
+does not hold back the other. Exit codes, the worst across lists: `0` success /
+dry-run, `1` already-posted (every list), `2` upstream failure, `3` LinkedIn
+failure, `4` config invalid.
 
 ## Cron
 
@@ -95,7 +100,7 @@ year; the CLI logs a warning when expiry is < 14 days away.
 
 - `.linkedin-token.json` (mode `0600`) — LinkedIn access + refresh tokens; rotated
   on every run.
-- `.linkedin-state.json` — dedupe state + last 30 posts (date, post URN).
+- `.linkedin-state.json` — dedupe state + last 60 posts (date, list, post URN).
 
 Both default paths are relative to the workspace and gitignored.
 
@@ -142,8 +147,14 @@ Audit checklist when forking:
    objects (see `src/types.ts`).
 4. **Post footer + hashtag** — `POST_FOOTER_URL` and `POST_HASHTAG` env vars.
    Leave either blank to drop that section entirely from the commentary.
-5. **Header copy + locale** — the French header "Top 10 des publications de
-   presse les plus relayées sur Bluesky le {date} :" lives at
+   Media are named by their Bluesky display name, looked up on
+   `BLUESKY_PUBLIC_API_URL` (default `https://public.api.bsky.app`), or by
+   their handle when that fails.
+   `NEWSLETTER_URL_FR` and `NEWSLETTER_URL_COOP_MEDIAS` are each list's
+   newsletter sign-up page, invited to right before the footer; blank drops it.
+5. **Header copy + locale** — the French headers ("Top 10 des publications de
+   presse les plus relayées sur Bluesky le {date} :" and its Coop Médias twin)
+   and the newsletter invitations live at
    `src/renderPost.ts` and uses `Intl.DateTimeFormat('fr-FR', ...)` for the
    date. Edit both if you want a different language or framing — they're a
    handful of lines.
