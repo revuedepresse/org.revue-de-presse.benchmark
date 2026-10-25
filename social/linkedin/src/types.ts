@@ -6,6 +6,8 @@ export const PUBLISHER_LISTS: readonly PublisherList[] = ['fr', 'coop-medias'];
 
 export type Highlight = {
   screenName: string;
+  // The account's Bluesky display name, printed instead of the handle.
+  displayName?: string;
   publicationId: string;
   url: string;
   text: string;
@@ -50,5 +52,6 @@ export type Config = {
   tz: string;
   postFooterUrl: string;
   postHashtag: string;
+  blueskyPublicApiUrl: string;
   newsletterUrls: Record<PublisherList, string>;
 };

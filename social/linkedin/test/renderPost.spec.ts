@@ -231,4 +231,27 @@ describe('renderPost', () => {
       expect(out).toContain('https://revue-de-presse.org/lettre\\_quotidienne');
     });
   });
+
+  describe('media names', () => {
+    const one = (h: Partial<Highlight>): Highlight[] => [
+      { screenName: 'alternatives-economiques.fr', publicationId: 'p', url: 'https://bsky.app/post/p', text: 't', date: '2026-10-24', ...h },
+    ];
+
+    it('names a media by its Bluesky display name, which LinkedIn does not turn into a short link', () => {
+      const out = renderPost(one({ displayName: 'Alternatives Economiques' }), '2026-10-24');
+      expect(out).toContain(' 1. Alternatives Economiques\n');
+      expect(out).not.toContain('alternatives-economiques.fr\n');
+    });
+
+    it('falls back on the handle when the display name is missing or blank', () => {
+      expect(renderPost(one({}), '2026-10-24')).toContain(' 1. alternatives-economiques.fr\n');
+      expect(renderPost(one({ displayName: '  ' }), '2026-10-24')).toContain(' 1. alternatives-economiques.fr\n');
+    });
+
+    it('escapes reserved characters in a display name', () => {
+      const out = renderPost(one({ displayName: 'Rue89 (Bordeaux)' }), '2026-10-24', { escapeText: escapeLittleText });
+      expect(out).toContain(' 1. Rue89 \\(Bordeaux\\)\n');
+    });
+  });
 });
+

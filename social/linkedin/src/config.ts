@@ -51,6 +51,7 @@ export function loadConfig(): Config {
       process.env.POST_FOOTER_URL ??
       'https://play.google.com/store/apps/details?id=org.revue_2_presse&hl=fr',
     postHashtag: process.env.POST_HASHTAG ?? '#RevueDePresse',
+    blueskyPublicApiUrl: process.env.BLUESKY_PUBLIC_API_URL ?? 'https://public.api.bsky.app',
     newsletterUrls: {
       fr: process.env.NEWSLETTER_URL_FR ?? 'https://revue-de-presse.org/lettre-quotidienne',
       'coop-medias':

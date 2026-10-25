@@ -147,6 +147,9 @@ Audit checklist when forking:
    objects (see `src/types.ts`).
 4. **Post footer + hashtag** — `POST_FOOTER_URL` and `POST_HASHTAG` env vars.
    Leave either blank to drop that section entirely from the commentary.
+   Media are named by their Bluesky display name, looked up on
+   `BLUESKY_PUBLIC_API_URL` (default `https://public.api.bsky.app`), or by
+   their handle when that fails.
    `NEWSLETTER_URL_FR` and `NEWSLETTER_URL_COOP_MEDIAS` are each list's
    newsletter sign-up page, invited to right before the footer; blank drops it.
 5. **Header copy + locale** — the French headers ("Top 10 des publications de

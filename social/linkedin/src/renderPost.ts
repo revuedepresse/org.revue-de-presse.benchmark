@@ -59,7 +59,9 @@ export function renderPost(
   const entries = highlights.map((h, i) => {
     const rank = String(i + 1).padStart(2, ' ');
     const text = escape(cleanText(h.text).replace(/\s+/g, ' ').trim());
-    const lines = [`${rank}. ${h.screenName}`];
+    // A handle is a domain, which LinkedIn turns into a link, shortened once long.
+    const name = h.displayName?.trim() || h.screenName;
+    const lines = [`${rank}. ${escape(name)}`];
     if (text) lines.push(`    ${text}`);
     lines.push(`    ${escape(h.url)}`);
     return lines.join('\n');

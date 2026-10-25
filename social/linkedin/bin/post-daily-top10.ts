@@ -3,6 +3,7 @@ import { writeFile } from 'node:fs/promises';
 import { parseArgs } from 'node:util';
 import { loadConfig, ConfigError } from '../src/config.ts';
 import { createRevueDePresseClient, UpstreamError } from '../src/revueDePresseClient.ts';
+import { createBlueskyProfiles } from '../src/blueskyProfiles.ts';
 import { createLinkedinClient, LinkedinApiError } from '../src/linkedinClient.ts';
 import { readTokenFile, writeTokenFile, TokenFileError } from '../src/tokenStore.ts';
 import { hasPostedFor, recordPost, StateFileError } from '../src/stateStore.ts';
@@ -105,6 +106,18 @@ async function main(): Promise<number> {
   }
   if (posts.length === 0) {
     return exitCode;
+  }
+
+  // Media are named by their Bluesky display name; their handle when it is
+  // missing or Bluesky cannot be reached, so a lookup never holds a post back.
+  const handles = [...new Set(posts.flatMap(({ highlights }) => highlights.map((h) => h.screenName)))];
+  try {
+    const names = await createBlueskyProfiles({ baseUrl: cfg.blueskyPublicApiUrl }).fetchDisplayNames(handles);
+    for (const post of posts) {
+      post.highlights = post.highlights.map((h) => ({ ...h, displayName: names.get(h.screenName) }));
+    }
+  } catch (err) {
+    logger.warn({ err }, 'Bluesky display names unavailable — naming media by their handle');
   }
 
   const render = (list: PublisherList, highlights: Highlight[], escapeText?: (s: string) => string) =>
