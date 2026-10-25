@@ -960,15 +960,38 @@
           height: 1px;
           overflow: hidden;
         }
-        .rdp-newsletter-page__other-edition {
-          margin: var(--separation-3) 0 0;
-          padding: var(--separation-2);
-          border-left: 3px solid var(--color-brand);
-          background: var(--color-taupe-grey);
-          border-radius: var(--radius-default);
+        .rdp-newsletter-page__choice {
+          border: 0;
+          margin: 0 0 var(--separation-2);
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          gap: var(--separation-1);
         }
-        .rdp-newsletter-page__other-edition-pitch { display: block; }
-        .rdp-newsletter-page__other-edition-link { font-weight: bold; }
+        .rdp-newsletter-page__choice legend { padding: 0; margin: 0 0 var(--separation-1); }
+        .rdp-newsletter-page__option {
+          display: flex;
+          align-items: flex-start;
+          gap: var(--separation-1);
+          padding: var(--separation-1) var(--separation-2);
+          border: 1px solid var(--color-light-grey);
+          border-radius: var(--radius-default);
+          cursor: pointer;
+        }
+        .rdp-newsletter-page__option:has(input:checked) {
+          border-color: var(--color-brand);
+          background: var(--color-taupe-grey);
+        }
+        .rdp-newsletter-page__radio {
+          margin: 3px 0 0;
+          accent-color: var(--color-brand);
+        }
+        .rdp-newsletter-page__option-text { display: flex; flex-direction: column; }
+        .rdp-newsletter-page__option-label { font-weight: bold; }
+        .rdp-newsletter-page__option-hint {
+          font-size: var(--font-size-publication-date);
+          color: var(--color-light-grey);
+        }
         .rdp-newsletter-page__fine-print {
           font-size: var(--font-size-publication-date);
           color: var(--color-light-grey);

@@ -112,9 +112,8 @@
 
           <template v-if="currentView === 'newsletter'">
             <NewsletterPage
-              edition="fr"
+              edition="both"
               :action="newsletterSubscribeUrl"
-              :onOtherEditionClick="(event) => goTo('newsletter-coop-medias')"
             ></NewsletterPage>
           </template>
 
@@ -122,7 +121,6 @@
             <NewsletterPage
               edition="coop-medias"
               :action="newsletterSubscribeUrl"
-              :onOtherEditionClick="(event) => goTo('newsletter')"
             ></NewsletterPage>
           </template>
         </main>
@@ -206,9 +204,8 @@
 
         <template v-if="currentView === 'newsletter'">
           <NewsletterPage
-            edition="fr"
+            edition="both"
             :action="newsletterSubscribeUrl"
-            :onOtherEditionClick="(event) => goTo('newsletter-coop-medias')"
           ></NewsletterPage>
         </template>
 
@@ -216,7 +213,6 @@
           <NewsletterPage
             edition="coop-medias"
             :action="newsletterSubscribeUrl"
-            :onOtherEditionClick="(event) => goTo('newsletter')"
           ></NewsletterPage>
         </template>
 

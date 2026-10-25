@@ -282,16 +282,14 @@ export default function App(props: AppProps) {
             </Show>
             <Show when={state.currentView === 'newsletter'}>
               <NewsletterPage
-                edition="fr"
+                edition="both"
                 action={props.newsletterSubscribeUrl}
-                onOtherEditionClick={() => state.goTo('newsletter-coop-medias')}
               />
             </Show>
             <Show when={state.currentView === 'newsletter-coop-medias'}>
               <NewsletterPage
                 edition="coop-medias"
                 action={props.newsletterSubscribeUrl}
-                onOtherEditionClick={() => state.goTo('newsletter')}
               />
             </Show>
           </main>
@@ -349,16 +347,14 @@ export default function App(props: AppProps) {
           </Show>
           <Show when={state.currentView === 'newsletter'}>
             <NewsletterPage
-              edition="fr"
+              edition="both"
               action={props.newsletterSubscribeUrl}
-              onOtherEditionClick={() => state.goTo('newsletter-coop-medias')}
             />
           </Show>
           <Show when={state.currentView === 'newsletter-coop-medias'}>
             <NewsletterPage
               edition="coop-medias"
               action={props.newsletterSubscribeUrl}
-              onOtherEditionClick={() => state.goTo('newsletter')}
             />
           </Show>
           <BannerAbout
