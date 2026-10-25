@@ -76,8 +76,22 @@ test.describe('without the preview', () => {
     for (const status of body.statuses) expect(status.text).not.toContain('[liste ');
   });
 
-  test('the newsletter pages redirect to the home page', async ({ page, request }) => {
-    for (const path of ['/lettre-quotidienne', '/lettre-quotidienne-coop-medias']) {
+  test('the French media letter can be signed up to, alone, without naming any other list', async ({ page, request }) => {
+    const response = await request.get('/lettre-quotidienne', { maxRedirects: 0 });
+    expect(response.status()).toBe(200);
+
+    await page.goto('/lettre-quotidienne');
+    await expect(appShell(page)).toBeVisible();
+    const newsletter = page.locator('.rdp-newsletter-page');
+    await expect(newsletter.locator('h1')).toHaveText("La lettre d'information des médias français");
+    await expect(newsletter.locator('input[type="radio"]')).toHaveCount(0);
+    await expect(newsletter.locator('input[type="hidden"][name="edition"]')).toHaveValue('fr');
+    await expect(newsletter).not.toContainText('Coop');
+    await expect(page.locator('body')).not.toContainText('Coop Médias');
+  });
+
+  test('the Coop Médias newsletter page redirects to the home page', async ({ page, request }) => {
+    for (const path of ['/lettre-quotidienne-coop-medias']) {
       const response = await request.get(path, { maxRedirects: 0 });
       expect(response.status()).toBe(302);
       expect(response.headers().location).toBe('/');
@@ -127,6 +141,9 @@ test.describe('with ?apercu=1', () => {
     expect(await previewCookie(page)).toBeUndefined();
     await expect(newsletterLink(page)).toHaveCount(0);
     await page.goto('/lettre-quotidienne');
+    await expect(page).toHaveURL(/\/lettre-quotidienne$/);
+    await expect(page.locator('.rdp-newsletter-page input[type="radio"]')).toHaveCount(0);
+    await page.goto('/lettre-quotidienne-coop-medias');
     await expect(page).toHaveURL(/\/$/);
   });
 
