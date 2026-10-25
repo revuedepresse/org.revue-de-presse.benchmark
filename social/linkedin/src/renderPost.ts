@@ -43,7 +43,7 @@ const HEADINGS: Record<PublisherList, (dateFr: string) => string> = {
 
 const NEWSLETTERS: Record<PublisherList, string> = {
   fr: "la lettre d'information des médias français",
-  'coop-medias': "la lettre d'information de Coop Médias",
+  'coop-medias': "la lettre d'information dédiée à Coop Médias (coop-medias.org)",
 };
 
 export function renderPost(
@@ -69,7 +69,7 @@ export function renderPost(
   if (opts.newsletterUrl) {
     sections.push(
       '',
-      `Pour recevoir ce top 10 chaque matin, inscrivez-vous à ${NEWSLETTERS[list]} : ${escape(opts.newsletterUrl)}`,
+      `Pour recevoir ce top 10 chaque matin, inscrivez-vous à ${escape(NEWSLETTERS[list])} : ${escape(opts.newsletterUrl)}`,
     );
   }
   if (opts.footerUrl) {

@@ -201,9 +201,21 @@ describe('renderPost', () => {
         out.startsWith('Top 10 des publications des médias de Coop Médias les plus relayées sur Bluesky le 20 mai 2026 :'),
       ).toBe(true);
       expect(out).toContain(
-        "Pour recevoir ce top 10 chaque matin, inscrivez-vous à la lettre d'information de Coop Médias : " + COOP_NEWSLETTER,
+        "Pour recevoir ce top 10 chaque matin, inscrivez-vous à la lettre d'information dédiée à Coop Médias (coop-medias.org) : " +
+          COOP_NEWSLETTER,
       );
       expect(out).not.toContain('médias français');
+    });
+
+    it("escapes the invitation's parentheses for LinkedIn's little text format", () => {
+      const out = renderPost(SAMPLE, '2026-05-20', {
+        ...OPTS,
+        list: 'coop-medias',
+        newsletterUrl: COOP_NEWSLETTER,
+        escapeText: escapeLittleText,
+      });
+      expect(out).toContain("la lettre d'information dédiée à Coop Médias \\(coop-medias.org\\) : ");
+      expect(out).not.toContain('Coop Médias (coop-medias.org)');
     });
 
     it('omits the invitation when no newsletter URL is given', () => {
