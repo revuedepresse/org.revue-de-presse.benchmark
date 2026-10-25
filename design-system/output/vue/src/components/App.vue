@@ -37,6 +37,7 @@
             :onSupportClick="(event) => goTo('support')"
             :onSourcesClick="(event) => goTo('sources')"
             :onNewsletterClick="(event) => goTo('newsletter')"
+            :showNewsletter="showNewsletter"
           ></Sidebar>
         </aside>
         <main class="rdp-app__main" :aria-busy="loading ? 'true' : undefined">
@@ -223,6 +224,7 @@
           :onSupportClick="(event) => goTo('support')"
           :onSourcesClick="(event) => goTo('sources')"
           :onNewsletterClick="(event) => goTo('newsletter')"
+          :showNewsletter="showNewsletter"
         ></BannerAbout>
       </main>
 
@@ -336,6 +338,8 @@ type AppProps = {
   locale?: Locale;
   initialView?: ViewKey;
   newsletterSubscribeUrl?: string;
+  /** The invitation to the newsletter in the footer, only shown when true (until its release). */
+  showNewsletter?: boolean;
   onListSelect?: (id: string) => void;
   onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;

@@ -29,18 +29,6 @@
       "shortName": "Français",
       "url": "https://revue-de-presse.org/",
       "chosenIconUrl": "https://revue-de-presse.org/revue-de-presse_96x96_006663.png"
-    },
-    {
-      "name": "Coop Médias",
-      "shortName": "Coop",
-      "url": "https://revue-de-presse.org/?liste=coop-medias",
-      "chosenIconUrl": "https://revue-de-presse.org/revue-de-presse_96x96_006663.png"
-    },
-    {
-      "name": "Français + Coop Médias",
-      "shortName": "Fr + Coop",
-      "url": "https://revue-de-presse.org/?liste=fr-coop-medias",
-      "chosenIconUrl": "https://revue-de-presse.org/revue-de-presse_96x96_006663.png"
     }
   ],
   "generatorApp": "bubblewrap-cli",

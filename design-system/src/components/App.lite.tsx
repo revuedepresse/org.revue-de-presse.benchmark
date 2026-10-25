@@ -48,6 +48,8 @@ type AppProps = {
   locale?: Locale;
   initialView?: ViewKey;
   newsletterSubscribeUrl?: string;
+  /** The invitation to the newsletter in the footer, only shown when true (until its release). */
+  showNewsletter?: boolean;
   onListSelect?: (id: string) => void;
   onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
@@ -229,6 +231,7 @@ export default function App(props: AppProps) {
               onSupportClick={() => state.goTo('support')}
               onSourcesClick={() => state.goTo('sources')}
               onNewsletterClick={() => state.goTo('newsletter')}
+              showNewsletter={props.showNewsletter}
             />
           </aside>
 
@@ -364,6 +367,7 @@ export default function App(props: AppProps) {
             onSupportClick={() => state.goTo('support')}
             onSourcesClick={() => state.goTo('sources')}
             onNewsletterClick={() => state.goTo('newsletter')}
+            showNewsletter={props.showNewsletter}
           />
         </main>
         <Show when={state.isFiltersOpen}>

@@ -26,3 +26,13 @@ describe('App newsletter views', () => {
     expect(src.match(/currentView === 'newsletter-coop-medias'"[\s\S]*?edition="coop-medias"/g)).toHaveLength(2);
   });
 });
+
+describe('App newsletter invitation', () => {
+  it('passes showNewsletter to the footer of both layouts', () => {
+    const app = readFileSync(join(root, 'output/vue/src/components/App.vue'), 'utf8');
+    const sidebar = readFileSync(join(root, 'output/vue/src/components/Sidebar.vue'), 'utf8');
+    // Desktop: through the sidebar; mobile: to BannerAbout directly.
+    expect(app.match(/:showNewsletter="showNewsletter"/g)).toHaveLength(2);
+    expect(sidebar).toMatch(/:showNewsletter="showNewsletter"/);
+  });
+});

@@ -1,7 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { PUBLISHER_LISTS } from './publisher-lists';
 
 const read = (path: string) =>
   JSON.parse(readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8'));
@@ -10,13 +9,13 @@ const webManifest = read('../public/manifest.webmanifest');
 const twaManifest = read('../twa-manifest.json');
 
 const ORIGIN = 'https://revue-de-presse.org';
-const listUrl = (id: string) => (id === 'fr' ? '/' : `/?liste=${id}`);
-
 describe('launcher shortcuts', () => {
-  it('open each publisher list from the installed web app', () => {
-    expect(webManifest.shortcuts.map((s: { url: string }) => s.url)).toEqual(
-      PUBLISHER_LISTS.map((l) => listUrl(l.id)),
-    );
+  // The Coop Médias lists are only shown in preview (utils/preview.ts): their
+  // shortcuts come back with their release.
+  it('open the French media top 10 from the installed web app, and no list in preview', () => {
+    expect(webManifest.shortcuts.map((s: { url: string }) => s.url)).toEqual(['/']);
+    expect(JSON.stringify(webManifest)).not.toContain('liste=');
+    expect(JSON.stringify(twaManifest)).not.toContain('liste=');
     for (const shortcut of webManifest.shortcuts) {
       // Android launcher limits: long label up to 25 characters, short label up to 10.
       expect(shortcut.name.length).toBeLessThanOrEqual(25);

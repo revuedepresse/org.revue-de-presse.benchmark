@@ -1,5 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
 import { appShell } from '../support/selectors';
+import { enablePreview } from '../support/preview';
+
+// Lists other than the French media are only offered in preview.
+test.beforeEach(async ({ context, baseURL }) => {
+  await enablePreview(context, baseURL);
+});
 
 const LABELS = ['Médias français', 'Coop Médias', 'Médias français + Coop Médias'];
 

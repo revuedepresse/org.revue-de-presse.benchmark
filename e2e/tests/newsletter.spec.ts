@@ -1,5 +1,11 @@
 import { test, expect, type Page, type Request } from '@playwright/test';
 import { appShell } from '../support/selectors';
+import { enablePreview } from '../support/preview';
+
+// The newsletter is only offered in preview until its release.
+test.beforeEach(async ({ context, baseURL }) => {
+  await enablePreview(context, baseURL);
+});
 
 // The sign-up form is a plain HTML POST to the API. Intercept it so the test
 // reads exactly what the browser sends, without leaving the mock setup.
