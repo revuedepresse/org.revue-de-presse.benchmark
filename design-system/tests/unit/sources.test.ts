@@ -6,15 +6,15 @@ describe('sources of each publisher list', () => {
     const fr = sourcesOf(undefined);
     expect(fr.list).toBe('fr');
     expect(fr.roster.map((r) => r.handle)).toContain('lemonde.fr');
-    expect(fr.roster).toHaveLength(56);
+    expect(fr.roster).toHaveLength(45);
   });
 
-  it('lists the Coop Médias members the French media list ranks too', () => {
+  it('keeps the French media and Coop Médias lists disjoint', () => {
     const fr = sourcesOf('fr').roster.map((r) => r.handle);
-    expect(fr).toEqual(expect.arrayContaining(['reporterre.net', 'arretsurimages.net', 'vert.eco', 'rue89strasbourg.com']));
+    const coop = new Set(sourcesOf('coop-medias').roster.map((r) => r.handle));
+    expect(fr.filter((handle) => coop.has(handle))).toEqual([]);
     expect(fr).toEqual(expect.arrayContaining(['franceinfo.fr', 'leparisien.fr', 'factuel.afp.com']));
-    expect(fr).not.toContain('bonpote.com');
-    expect(new Set(fr).size).toBe(fr.length);
+    expect(fr).not.toContain('reporterre.net');
   });
 
   it('lists the Coop Médias members for coop-medias', () => {

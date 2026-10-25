@@ -17,12 +17,11 @@ export type Sources = {
   roster: SourceRow[];
 };
 
-// French press accounts, as fetched by the hourly worker. The French media list
-// also ranks the Coop Médias members in ALSO_FRENCH_MEDIA.
+// French press accounts, as fetched by the hourly worker. No account is in both
+// this list and COOP_MEDIAS: the two lists are disjoint.
 const FRENCH_MEDIA: SourceRow[] = [
   { handle: 'afp.com', displayName: 'Agence France-Presse', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:ffccycfh6c6pmxwkhvq5clkv/bafkreiadcsh7hzzurk5joh7bhxxlyqlvr26mg25f6dnozuwhsz72jz2cme' },
   { handle: 'bfmtv.com', displayName: 'BFMTV', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:wb4ovhhcrif6cp66oe2pqx7i/bafkreic3fjfw4c2hbqailogxb2nusnspddwczt5bhyib3enp5qxl5bslla' },
-  { handle: 'blast-info.fr', displayName: 'Blast le souffle de l’info', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:omtqqkwusnfvxos7pxvl4fgo/bafkreicuchhqcsd4zzhtp3rhrkgtfl2nhqbmxlfmpfar2sqs7fe4v2xt2a' },
   { handle: 'challengesfr.bsky.social', displayName: 'Challenges', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:56yk6cagxatjj2k4eh5cobpo/bafkreiav6xfv33jsusr7jkuukpzwwdoolsrmbmpjjtjgyrulh7zxffeuxa' },
   { handle: 'charliehebdo.fr', displayName: 'Charlie Hebdo', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:vm2tsoixg7vsygrolxd4rrho/bafkreibtzaftgx54wwclo7ocd6skgozsbx7jq5m7vyetmkpubyijdhzgf4' },
   { handle: 'courrierinter.bsky.social', displayName: 'Courrier international', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:kfygevef2pjjsyu7dfd6xpxi/bafkreidtpw344uym7ilh7mghqhjcdcvvzrhjfi2ovdzp4ag44wrd63vwqq' },
@@ -37,7 +36,6 @@ const FRENCH_MEDIA: SourceRow[] = [
   { handle: 'afrique.lemonde.fr', displayName: 'Le Monde Afrique', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:ggiopaobxfyknqlltcxddbmi/bafkreib65oh7hvdopn3kuqiul4ohuxhmfxvfdq6riuk42l3zi7h2mevc2a' },
   { handle: 'lepoint.fr', displayName: 'Le Point', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:aixwsdaeubfrxedelxe7rqwq/bafkreidcnybv5hzc3euw26cpxmodam6y3qsf5w6imxh6asax43a4mgrcoq' },
   { handle: 'lesechosfr.bsky.social', displayName: 'Les Echos', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:tuwg4bd73p5m7jrrmjhl2jix/bafkreidrfm5ta35ybp77vfda5jmrmlnug4yyt7le2ml37zp2qszxze55be' },
-  { handle: 'lesjours.fr', displayName: 'Les Jours', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:fleaqu2yloy5vpnb3wamdp6m/bafkreiej5h2k73ts367cfdfvvljq3tznrndw4nfrm723uv7efp3kiowur4' },
   { handle: 'liberation.fr', displayName: 'Libération', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:uo4didwt5qe4onrscbmqwvwm/bafkreie5puv24c5xxzh2y2ovf3jnjlhtn3w5iprb4lz2scmfxtc2t2eebu' },
   { handle: 'mediapart.fr', displayName: 'Mediapart', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:2egpzsea27fru2vkrjgdw2ob/bafkreiell2vpjxbrvddt63enj7jd2rwqzl47ivryhyetxbpqxpk3tuppjq' },
   { handle: 'monde-diplomatique.fr', displayName: 'Le Monde diplomatique', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:q4q2hko2prboin62shrck5ix/bafkreidg3zq3cnbnrytsaxoemy6gtapydmpaykzs3symq4z63cbvmk4ggi' },
@@ -121,35 +119,8 @@ const COOP_MEDIAS: SourceRow[] = [
   { handle: 'voxeurop.bsky.social', displayName: 'Voxeurop', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:5ofbcsv232rb74bae7uscdy4/bafkreiaqdhvezldvmusonquytfqm3yjhpq7iwzvuesnsi5rqkjsrpbm3mq' },
 ];
 
-// Coop Médias members that the French media list ranks too.
-const ALSO_FRENCH_MEDIA = [
-  'alternatives-economiques.fr',
-  'arretsurimages.net',
-  'marsactu.fr',
-  'reflets.info',
-  'reporterre.net',
-  'rue89bordeaux.bsky.social',
-  'rue89strasbourg.com',
-  'socialter.bsky.social',
-  'vert.eco',
-];
-
 const byName = (rows: SourceRow[]): SourceRow[] =>
   [...rows].sort((a, b) => a.displayName.localeCompare(b.displayName, 'fr', { sensitivity: 'base' }));
-
-// Both rosters together, an account that belongs to both lists only once.
-const unionByHandle = (...rosters: SourceRow[][]): SourceRow[] => {
-  const seen = new Map<string, SourceRow>();
-  for (const roster of rosters) {
-    for (const row of roster) {
-      if (!seen.has(row.handle)) seen.set(row.handle, row);
-    }
-  }
-  return [...seen.values()];
-};
-
-const frenchMedia = (): SourceRow[] =>
-  unionByHandle(FRENCH_MEDIA, COOP_MEDIAS.filter((row) => ALSO_FRENCH_MEDIA.includes(row.handle)));
 
 export function sourcesOf(list: string | undefined): Sources {
   if (list === 'fr-coop-medias') {
@@ -157,7 +128,7 @@ export function sourcesOf(list: string | undefined): Sources {
       list: 'fr-coop-medias',
       origin: 'de médias français et de',
       originLink: { href: 'https://www.coop-medias.org/', label: 'https://www.coop-medias.org/' },
-      roster: byName(unionByHandle(frenchMedia(), COOP_MEDIAS)),
+      roster: byName([...FRENCH_MEDIA, ...COOP_MEDIAS]),
     };
   }
 
@@ -170,5 +141,5 @@ export function sourcesOf(list: string | undefined): Sources {
     };
   }
 
-  return { list: 'fr', origin: 'de médias français', roster: byName(frenchMedia()) };
+  return { list: 'fr', origin: 'de médias français', roster: byName(FRENCH_MEDIA) };
 }
