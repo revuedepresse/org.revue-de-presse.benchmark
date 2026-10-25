@@ -62,43 +62,32 @@ describe('preview middleware', () => {
     expect(event.redirect).toBeUndefined();
   });
 
-  it('turns the preview on with ?apercu=1, in a session cookie for the whole site', async () => {
+  it('turns the preview on with ?apercu=1, without remembering it', async () => {
     const event = makeEvent('/?apercu=1');
-    await (await middleware())(event);
-    expect(event.context.preview).toBe(true);
-    expect(event.setCookies).toEqual([
-      { name: 'rdp_apercu', value: '1', options: { path: '/', sameSite: 'lax', secure: false } },
-    ]);
-    expect(event.setCookies[0].options).not.toHaveProperty('maxAge');
-    // The highlights proxy, called while this page renders, sees it too.
-    expect(cookiesOf(event).rdp_apercu).toBe('1');
-  });
-
-  it('keeps the preview on the next pages through the cookie', async () => {
-    const event = makeEvent('/sources', 'rdp_apercu=1');
     await (await middleware())(event);
     expect(event.context.preview).toBe(true);
     expect(event.setCookies).toEqual([]);
   });
 
-  it('turns the preview off with ?apercu=0 and clears the cookie', async () => {
-    const event = makeEvent('/?apercu=0', 'other=x; rdp_apercu=1');
+  it('shows the public site to an address without ?apercu=1, even after a preview', async () => {
+    const event = makeEvent('/', 'other=x; rdp_apercu=1');
     await (await middleware())(event);
     expect(event.context.preview).toBe(false);
+    // The cookie an earlier version set is cleared, for the proxy too.
     expect(event.deletedCookies).toEqual(['rdp_apercu']);
     expect(cookiesOf(event)).toEqual({ other: 'x' });
   });
 
   it('redirects the Coop Médias newsletter page to the home page without the preview', async () => {
-    for (const path of ['/lettre-quotidienne-coop-medias', '/lettre-quotidienne-coop-medias?apercu=0']) {
-      const event = makeEvent(path, path.includes('apercu=0') ? 'rdp_apercu=1' : undefined);
+    for (const [path, cookie] of [['/lettre-quotidienne-coop-medias', undefined], ['/lettre-quotidienne-coop-medias', 'rdp_apercu=1']] as const) {
+      const event = makeEvent(path, cookie);
       await (await middleware())(event);
       expect(event.redirect).toEqual({ to: '/', code: 302 });
     }
   });
 
   it('shows the newsletter pages in preview', async () => {
-    for (const event of [makeEvent('/lettre-quotidienne?apercu=1'), makeEvent('/lettre-quotidienne-coop-medias', 'rdp_apercu=1')]) {
+    for (const event of [makeEvent('/lettre-quotidienne?apercu=1'), makeEvent('/lettre-quotidienne-coop-medias?apercu=1')]) {
       await (await middleware())(event);
       expect(event.redirect).toBeUndefined();
     }

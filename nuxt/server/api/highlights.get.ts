@@ -1,6 +1,6 @@
 import { getApiToken, refreshApiToken } from '../utils/apiToken';
 import { logger } from '../utils/logger';
-import { PREVIEW_COOKIE } from '../../utils/preview';
+import { PREVIEW_QUERY_PARAM, isPreviewQuery } from '../../utils/preview';
 
 const log = logger.child({ route: '/api/highlights' });
 
@@ -80,9 +80,9 @@ export default defineEventHandler(async (event) => {
   url.searchParams.set('endDate', endDate);
   url.searchParams.set('itemsPerPage', '10');
   // Lists other than the French media are not released yet: only forwarded
-  // for the preview (?apercu=1, remembered in a cookie), so that public pages
-  // never query the API for them.
-  if (list !== undefined && list !== 'fr' && getCookie(event, PREVIEW_COOKIE) === '1') {
+  // for the preview, which asks with apercu=1, so that public pages never
+  // query the API for them.
+  if (list !== undefined && list !== 'fr' && isPreviewQuery(getQuery(event)[PREVIEW_QUERY_PARAM])) {
     url.searchParams.set('list', list);
   }
   if (ranking !== undefined) {

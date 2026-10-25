@@ -1,8 +1,9 @@
 // Preview of the features not released yet (the Coop Médias lists and the
-// newsletter). `?apercu=1` on any address turns it on for the rest of the
-// browsing session, through a cookie set by the server
-// (server/middleware/preview.ts), and `?apercu=0` turns it off. Without it,
-// the site shows the French media only, with the choice of ranking.
+// newsletter): on only while the address carries `?apercu=1`, which in-site
+// navigation keeps (middleware/preview.global.ts). Nothing remembers it, so an
+// address without it, https://revue-de-presse.org/ included, always shows the
+// public site: the French media only, with the choice of ranking. The cookie
+// an earlier version set is cleared.
 //
 // Pure TS, shared by the server middleware, the highlights proxy and the app.
 
@@ -16,20 +17,24 @@ export const PREVIEW_ONLY_PATHS = ['/lettre-quotidienne-coop-medias'];
 export type PreviewDecision = {
   /** Whether this request is shown the preview. */
   enabled: boolean;
-  /** What to do with the cookie: set it, clear it, or leave it as it is. */
-  cookie: 'set' | 'clear' | 'keep';
+  /** What to do with the cookie an earlier version set: clear it, or there is none. */
+  cookie: 'clear' | 'keep';
 };
 
 function single(value: unknown): unknown {
   return Array.isArray(value) ? value[value.length - 1] : value;
 }
 
-// ?apercu=1 turns the preview on, ?apercu=0 off; otherwise the cookie decides.
+// The preview is on only for ?apercu=1; a leftover cookie never turns it on.
 export function previewFromRequest(queryValue: unknown, cookieValue: unknown): PreviewDecision {
-  const asked = single(queryValue);
-  if (asked === '1') return { enabled: true, cookie: 'set' };
-  if (asked === '0') return { enabled: false, cookie: cookieValue === undefined ? 'keep' : 'clear' };
-  return { enabled: cookieValue === '1', cookie: 'keep' };
+  return {
+    enabled: single(queryValue) === '1',
+    cookie: cookieValue === undefined ? 'keep' : 'clear',
+  };
+}
+
+export function isPreviewQuery(queryValue: unknown): boolean {
+  return single(queryValue) === '1';
 }
 
 export function isPreviewOnlyPath(path: string): boolean {
@@ -45,6 +50,5 @@ export function cookieHeaderAfter(header: string | undefined, decision: PreviewD
     .split(';')
     .map((part) => part.trim())
     .filter((part) => part !== '' && !part.startsWith(`${PREVIEW_COOKIE}=`));
-  if (decision.cookie === 'set') others.push(`${PREVIEW_COOKIE}=1`);
   return others.length > 0 ? others.join('; ') : undefined;
 }

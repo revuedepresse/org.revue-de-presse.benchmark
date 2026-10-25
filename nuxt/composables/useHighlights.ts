@@ -77,7 +77,8 @@ export function useHighlights(date: Ref<Date>, list?: Ref<string>, ranking?: Ref
       return {
         startDate: day,
         endDate: day,
-        ...(selected && selected !== 'fr' ? { list: selected } : {}),
+        // Another list only exists in the preview; the proxy forwards it only then.
+        ...(selected && selected !== 'fr' ? { list: selected, apercu: '1' } : {}),
         ...(ranking?.value ? { ranking: ranking.value } : {}),
       };
     }),
