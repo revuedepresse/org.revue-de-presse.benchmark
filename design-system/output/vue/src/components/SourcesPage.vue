@@ -8,7 +8,6 @@
         href="#rdp-sources-page-footnote"
         >triées par popularité</a
       >, au choix en fin de journée ou à leur première mesure. Elles proviennent
-      des comptes Bluesky
 
       <template v-if="!sources.originLink">{{ sources.origin + "." }}</template>
 

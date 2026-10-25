@@ -24,7 +24,7 @@ export default function SourcesPage(props: SourcesPageProps) {
         {/* The comma right after the link, with no line break in between: the
             generated Vue template would turn it into a space before the comma. */}
         Les brèves de publications sont&nbsp;
-        <a class="rdp-sources-page__internal-link" href="#rdp-sources-page-footnote">triées par popularité</a>, au choix en fin de journée ou à leur première mesure. Elles proviennent des comptes Bluesky
+        <a class="rdp-sources-page__internal-link" href="#rdp-sources-page-footnote">triées par popularité</a>, au choix en fin de journée ou à leur première mesure. Elles proviennent
         {/* One expression, and the full stop in its own element after the link:
             the generated Vue template must not put a space before the full stop. */}
         <Show when={!state.sources.originLink}>{state.sources.origin + '.'}</Show>
