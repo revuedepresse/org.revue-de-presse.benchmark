@@ -14,8 +14,8 @@ importers:
   .:
     devDependencies:
       '@playwright/test':
-        specifier: ^1.64.0
-        version: 1.64.0
+        specifier: ^1.64.1
+        version: 1.64.1
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.5
@@ -27,7 +27,7 @@ importers:
         version: 13.5.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(supports-color@7.2.0)(yauzl@2.10.0)
       playwright-lighthouse:
         specifier: ^4.0.0
-        version: 4.0.0(lighthouse@13.5.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(supports-color@7.2.0)(yauzl@2.10.0))(playwright-core@1.64.0)
+        version: 4.0.0(lighthouse@13.5.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(supports-color@7.2.0)(yauzl@2.10.0))(playwright-core@1.64.1)
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -97,8 +97,8 @@ packages:
   '@paulirish/trace_engine@0.0.65':
     resolution: {integrity: sha512-Qsm6F5C8xf6ZzQXbQc2+wcpe6sggfs/gvc/ytqSurdvYg3kyW0ECHCqE0CWBKZpqgjVfPNX9c7SCS3r2nEIRGg==}
 
-  '@playwright/test@1.64.0':
-    resolution: {integrity: sha512-oTN9FNYuN6bqQMwiho6jJKLCG2/QOYCixGXuCjRmzOq23eODeukuY2XiAVoVpAECbuezMt1MHQjAiQxK8F+Y+g==}
+  '@playwright/test@1.64.1':
+    resolution: {integrity: sha512-IaYGml/nSOiZWROfPtuIL7neuu9qDOZ3TNvNljUIrhDMxiGTgPjzj/g9p9RxpS2tSepPDRY+UwAaEeiKtUvIAg==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -515,8 +515,8 @@ packages:
   pend@1.2.0:
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
 
-  playwright-core@1.64.0:
-    resolution: {integrity: sha512-T9r+MZkTECl2+oUcZ26YgZzTrYidTsIhYYkJix+6iDOymOb1FB2RLLSOxRGnZGv5DStt+aduIVbt+E8WygXYpg==}
+  playwright-core@1.64.1:
+    resolution: {integrity: sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -530,8 +530,8 @@ packages:
       playwright-core:
         optional: true
 
-  playwright@1.64.0:
-    resolution: {integrity: sha512-kVzTnYFYEyQ9RGzBjNCd2+yEqWmVbxl3AHPynv3qQ6JTjv4a+kwRcnqQwIpuP3NnrnIrE/Q6wWAIAvMfIE2/Yg==}
+  playwright@1.64.1:
+    resolution: {integrity: sha512-HCrVhHr5QQuwYoswEUGTb7gGp522yflbv/ST8nF4sFWGuLjQCt17Q/EubpGGSNKYn1tsTCPZxqHhHCfVURu7UA==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -770,9 +770,9 @@ snapshots:
       legacy-javascript: 0.0.3
       third-party-web: 0.30.0
 
-  '@playwright/test@1.64.0':
+  '@playwright/test@1.64.1':
     dependencies:
-      playwright: 1.64.0
+      playwright: 1.64.1
 
   '@puppeteer/browsers@3.2.4(yauzl@2.10.0)':
     dependencies:
@@ -1128,19 +1128,19 @@ snapshots:
   pend@1.2.0:
     optional: true
 
-  playwright-core@1.64.0: {}
+  playwright-core@1.64.1: {}
 
-  playwright-lighthouse@4.0.0(lighthouse@13.5.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(supports-color@7.2.0)(yauzl@2.10.0))(playwright-core@1.64.0):
+  playwright-lighthouse@4.0.0(lighthouse@13.5.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(supports-color@7.2.0)(yauzl@2.10.0))(playwright-core@1.64.1):
     dependencies:
       chalk: 4.1.2
       lighthouse: 13.5.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(supports-color@7.2.0)(yauzl@2.10.0)
       ua-parser-js: 1.0.41
     optionalDependencies:
-      playwright-core: 1.64.0
+      playwright-core: 1.64.1
 
-  playwright@1.64.0:
+  playwright@1.64.1:
     dependencies:
-      playwright-core: 1.64.0
+      playwright-core: 1.64.1
 
   puppeteer-core@25.13.0(yauzl@2.10.0):
     dependencies:
