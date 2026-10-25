@@ -6,7 +6,7 @@ describe('sources of each publisher list', () => {
     const fr = sourcesOf(undefined);
     expect(fr.list).toBe('fr');
     expect(fr.roster.map((r) => r.handle)).toContain('lemonde.fr');
-    expect(fr.roster).toHaveLength(45);
+    expect(fr.roster).toHaveLength(41);
   });
 
   it('keeps the French media and Coop Médias lists disjoint', () => {
@@ -15,6 +15,7 @@ describe('sources of each publisher list', () => {
     expect(fr.filter((handle) => coop.has(handle))).toEqual([]);
     expect(fr).toEqual(expect.arrayContaining(['franceinfo.fr', 'leparisien.fr', 'factuel.afp.com']));
     expect(fr).not.toContain('reporterre.net');
+    expect(fr).not.toContain('euronewsfr.bsky.social');
   });
 
   it('lists the Coop Médias members for coop-medias', () => {
