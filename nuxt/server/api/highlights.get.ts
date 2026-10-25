@@ -33,8 +33,9 @@ type HydraCollection<T> = {
 
 // Publisher lists the API ranks into a daily top 10. `fr` is the API default,
 // so it is never forwarded: that keeps this proxy compatible with API releases
-// that predate the `list` parameter.
-const PUBLISHER_LISTS = ['fr', 'coop-medias'];
+// that predate the `list` parameter. `fr-coop-medias` ranks the members of
+// either list together, each post once.
+const PUBLISHER_LISTS = ['fr', 'coop-medias', 'fr-coop-medias'];
 
 // Rankings the API serves. Forwarded only when asked for, so that the API's
 // configured default applies otherwise.

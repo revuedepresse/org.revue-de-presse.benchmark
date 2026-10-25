@@ -50,6 +50,18 @@
           "type": "image/png"
         }
       ]
+    },
+    {
+      "name": "Français + Coop Médias",
+      "short_name": "Fr + Coop",
+      "url": "/?liste=fr-coop-medias",
+      "icons": [
+        {
+          "src": "/revue-de-presse_96x96_006663.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }

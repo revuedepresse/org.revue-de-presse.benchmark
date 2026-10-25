@@ -2,7 +2,7 @@
 // ?liste=<id>. Each list starts on the first day its members were collected for
 // a whole day, so the calendar never offers a day the list cannot have.
 
-export type PublisherListId = 'fr' | 'coop-medias';
+export type PublisherListId = 'fr' | 'coop-medias' | 'fr-coop-medias';
 
 export type PublisherList = {
   id: PublisherListId;
@@ -13,6 +13,8 @@ export type PublisherList = {
 export const PUBLISHER_LISTS: PublisherList[] = [
   { id: 'fr', label: 'Médias français', firstDay: [2025, 3, 4] },
   { id: 'coop-medias', label: 'Coop Médias', firstDay: [2026, 10, 25] },
+  // Members of either list, each post counted once.
+  { id: 'fr-coop-medias', label: 'Médias français + Coop Médias', firstDay: [2025, 3, 4] },
 ];
 
 export function publisherListFromQuery(value: unknown): PublisherListId {

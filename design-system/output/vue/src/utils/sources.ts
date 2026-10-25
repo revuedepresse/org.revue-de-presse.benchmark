@@ -10,7 +10,7 @@ export type SourceRow = {
 };
 
 export type Sources = {
-  list: 'fr' | 'coop-medias';
+  list: 'fr' | 'coop-medias' | 'fr-coop-medias';
   // Completes "… proviennent des comptes Bluesky <origin>".
   origin: string;
   originLink?: { href: string; label: string };
@@ -102,7 +102,27 @@ const COOP_MEDIAS: SourceRow[] = [
 const byName = (rows: SourceRow[]): SourceRow[] =>
   [...rows].sort((a, b) => a.displayName.localeCompare(b.displayName, 'fr', { sensitivity: 'base' }));
 
+// Both rosters together, an account that belongs to both lists only once.
+const unionByHandle = (...rosters: SourceRow[][]): SourceRow[] => {
+  const seen = new Map<string, SourceRow>();
+  for (const roster of rosters) {
+    for (const row of roster) {
+      if (!seen.has(row.handle)) seen.set(row.handle, row);
+    }
+  }
+  return [...seen.values()];
+};
+
 export function sourcesOf(list: string | undefined): Sources {
+  if (list === 'fr-coop-medias') {
+    return {
+      list: 'fr-coop-medias',
+      origin: 'de médias Français et de',
+      originLink: { href: 'https://www.coop-medias.org/', label: 'https://www.coop-medias.org/' },
+      roster: byName(unionByHandle(FRENCH_MEDIA, COOP_MEDIAS)),
+    };
+  }
+
   if (list === 'coop-medias') {
     return {
       list: 'coop-medias',

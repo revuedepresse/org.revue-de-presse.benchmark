@@ -105,10 +105,12 @@ describe('GET /api/highlights (Nitro proxy)', () => {
     await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01' }));
     await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr' }));
     await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr-coop-medias' }));
 
     expect(observedUrls[0]).not.toContain('list=');
     expect(observedUrls[1]).not.toContain('list=');
     expect(observedUrls[2]).toContain('list=coop-medias');
+    expect(observedUrls[3]).toContain('list=fr-coop-medias');
   });
 
   it('forwards a known ranking, and nothing without one', async () => {

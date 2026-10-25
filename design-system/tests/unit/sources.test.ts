@@ -17,19 +17,32 @@ describe('sources of each publisher list', () => {
     expect(coop.roster.map((r) => r.handle)).not.toContain('lemonde.fr');
   });
 
+  it('lists the members of both lists for fr-coop-medias, each account once', () => {
+    const both = sourcesOf('fr-coop-medias');
+    expect(both.list).toBe('fr-coop-medias');
+    const handles = both.roster.map((r) => r.handle);
+    expect(handles).toEqual(expect.arrayContaining(['lemonde.fr', 'reporterre.net', 'blast-info.fr', 'lesjours.fr']));
+    expect(new Set(handles).size).toBe(handles.length);
+    const fr = sourcesOf('fr').roster.map((r) => r.handle);
+    const coop = sourcesOf('coop-medias').roster.map((r) => r.handle);
+    expect(handles).toHaveLength(new Set([...fr, ...coop]).size);
+    expect(both.origin).toBe('de médias Français et de');
+    expect(both.originLink?.href).toBe('https://www.coop-medias.org/');
+  });
+
   it('falls back to French media for an unknown list', () => {
     expect(sourcesOf('unknown').list).toBe('fr');
   });
 
   it('sorts each roster by name, in French', () => {
-    for (const list of ['fr', 'coop-medias']) {
+    for (const list of ['fr', 'coop-medias', 'fr-coop-medias']) {
       const names = sourcesOf(list).roster.map((r) => r.displayName);
       expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' })));
     }
   });
 
   it('gives every source a Bluesky avatar and a curated name', () => {
-    for (const list of ['fr', 'coop-medias']) {
+    for (const list of ['fr', 'coop-medias', 'fr-coop-medias']) {
       for (const row of sourcesOf(list).roster) {
         expect(row.avatar).toMatch(/^https:\/\/cdn\.bsky\.app\/img\/avatar\//);
         expect(row.displayName).not.toMatch(/\.bsky\.social$/);
