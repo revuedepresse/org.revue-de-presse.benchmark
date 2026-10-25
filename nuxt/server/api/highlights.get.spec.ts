@@ -27,7 +27,6 @@ function makeEvent(query: Record<string, string>, cookies: Record<string, string
   return { __query: query, __cookies: cookies };
 }
 
-const PREVIEW = { rdp_apercu: '1' };
 
 function makeHydraBody(items: any[]) {
   return {
@@ -106,10 +105,10 @@ describe('GET /api/highlights (Nitro proxy)', () => {
     }));
 
     const handler = (await import('./highlights.get')).default;
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01' }, PREVIEW));
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr' }, PREVIEW));
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }, PREVIEW));
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr-coop-medias' }, PREVIEW));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', apercu: '1' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr', apercu: '1' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias', apercu: '1' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr-coop-medias', apercu: '1' }));
 
     expect(observedUrls[0]).not.toContain('list=');
     expect(observedUrls[1]).not.toContain('list=');
@@ -117,7 +116,7 @@ describe('GET /api/highlights (Nitro proxy)', () => {
     expect(observedUrls[3]).toContain('list=fr-coop-medias');
   });
 
-  it('asks the API for the French media only without the preview cookie', async () => {
+  it('asks the API for the French media only without apercu=1, whatever the cookies', async () => {
     const observedUrls: string[] = [];
     globalThis.$fetch = vi.fn(async (url: string) => {
       observedUrls.push(url);
@@ -131,7 +130,7 @@ describe('GET /api/highlights (Nitro proxy)', () => {
     const handler = (await import('./highlights.get')).default;
     await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }));
     await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr-coop-medias' }));
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }, { rdp_apercu: '0' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }, { rdp_apercu: '1' }));
 
     expect(observedUrls).toHaveLength(3);
     for (const url of observedUrls) expect(url).not.toContain('list=');

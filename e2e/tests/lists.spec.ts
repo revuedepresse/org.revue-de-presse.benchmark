@@ -1,12 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import { appShell } from '../support/selectors';
-import { enablePreview } from '../support/preview';
+import { withPreview } from '../support/preview';
 
 // Lists other than the French media are only offered in preview.
-test.beforeEach(async ({ context, baseURL }) => {
-  await enablePreview(context, baseURL);
-});
-
 const LABELS = ['Médias français', 'Coop Médias', 'Médias français + Coop Médias'];
 
 const listOption = (page: Page, label: string) =>
@@ -15,7 +11,7 @@ const listOption = (page: Page, label: string) =>
   });
 
 test('offers both lists together and asks the API for list=fr-coop-medias', async ({ page, isMobile }) => {
-  await page.goto('/2026-05-01/actualites-du-vendredi-1-mai-2026');
+  await page.goto(withPreview('/2026-05-01/actualites-du-vendredi-1-mai-2026'));
   await expect(appShell(page)).toBeVisible();
 
   const openLists = async () => {

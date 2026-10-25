@@ -6,23 +6,19 @@ import {
   previewFromRequest,
 } from '../../utils/preview';
 
-// Turns the preview on (?apercu=1) or off (?apercu=0) and remembers it for the
-// browsing session in a cookie, before the page renders, so that the server
-// already renders what the reader will see: no list picker or newsletter
-// invitation appearing or vanishing once the page has loaded.
-//
-// The cookie is a session cookie (no Max-Age): it lasts until the browser
-// session ends, or until ?apercu=0.
+// Decides, before the page renders, whether this request previews the
+// features not released yet: only with ?apercu=1 in the address. The server
+// then already renders what the reader will see, with no list picker or
+// newsletter invitation appearing or vanishing once the page has loaded. The
+// cookie an earlier version set to remember the preview is cleared.
 export default defineEventHandler((event) => {
   const decision = previewFromRequest(
     getQuery(event)[PREVIEW_QUERY_PARAM],
     getCookie(event, PREVIEW_COOKIE),
   );
 
-  if (decision.cookie === 'set') {
-    setCookie(event, PREVIEW_COOKIE, '1', { path: '/', sameSite: 'lax', secure: isSecure(event) });
-  } else if (decision.cookie === 'clear') {
-    deleteCookie(event, PREVIEW_COOKIE, { path: '/', sameSite: 'lax' });
+  if (decision.cookie === 'clear') {
+    deleteCookie(event, PREVIEW_COOKIE, { path: '/', sameSite: 'lax', secure: isSecure(event) });
   }
   // Requests made while rendering this page (to the highlights proxy) forward
   // the request's cookies: let them carry the decision just taken.

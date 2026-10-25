@@ -1,21 +1,16 @@
-import {
-  PREVIEW_COOKIE,
-  PREVIEW_QUERY_PARAM,
-  isPreviewOnlyPath,
-  previewFromRequest,
-} from '~/utils/preview';
+import { PREVIEW_QUERY_PARAM, isPreviewOnlyPath, isPreviewQuery } from '~/utils/preview';
 
-// The server decides on page requests (server/middleware/preview.ts); in the
-// browser, follow ?apercu= on navigations within the site too, and keep the
-// newsletter pages out of reach without the preview.
-export default defineNuxtRouteMiddleware((to) => {
+// The preview lives in the address alone (utils/preview.ts): once a page is
+// opened with ?apercu=1, every in-site navigation keeps it, so the reader can
+// click around; an address typed or opened without it is the public site.
+export default defineNuxtRouteMiddleware((to, from) => {
   const preview = usePreview();
+  const asked = to.query[PREVIEW_QUERY_PARAM];
+  if (import.meta.client && asked === undefined && isPreviewQuery(from.query[PREVIEW_QUERY_PARAM]) && to.fullPath !== from.fullPath) {
+    return navigateTo({ path: to.path, query: { ...to.query, [PREVIEW_QUERY_PARAM]: '1' }, hash: to.hash }, { replace: true });
+  }
   if (import.meta.client) {
-    const decision = previewFromRequest(to.query[PREVIEW_QUERY_PARAM], preview.value ? '1' : undefined);
-    if (decision.cookie !== 'keep') {
-      useCookie(PREVIEW_COOKIE, { path: '/', sameSite: 'lax' }).value = decision.cookie === 'set' ? '1' : null;
-    }
-    preview.value = decision.enabled;
+    preview.value = isPreviewQuery(asked);
   }
   if (!preview.value && isPreviewOnlyPath(to.path)) {
     return navigateTo('/', { redirectCode: 302 });
