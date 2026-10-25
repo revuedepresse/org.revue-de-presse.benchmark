@@ -65,6 +65,8 @@ export function createRevueDePresseClient(opts: {
     url.searchParams.set('startDate', isoDate);
     url.searchParams.set('endDate', isoDate);
     url.searchParams.set('itemsPerPage', '3');
+    // Counts as they stood at the end of the day, like the site and LinkedIn.
+    url.searchParams.set('ranking', 'end-of-day');
     return fetch(url.toString(), {
       headers: { authorization: `Bearer ${token}`, accept: 'application/ld+json' },
     });

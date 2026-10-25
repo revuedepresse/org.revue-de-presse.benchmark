@@ -46,5 +46,6 @@ export function loadConfig(): Config {
       process.env.POST_FOOTER_URL ??
       'https://play.google.com/store/apps/details?id=org.revue_2_presse',
     postHashtag: process.env.POST_HASHTAG ?? '#RevueDePresse',
+    newsletterUrl: process.env.NEWSLETTER_URL ?? 'https://revue-de-presse.org/lettre-quotidienne',
   };
 }

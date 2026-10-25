@@ -185,7 +185,11 @@ async function main(): Promise<number> {
 
   let draft;
   try {
-    draft = renderThread(highlights, targetDate, { footerUrl: cfg.postFooterUrl, hashtag: cfg.postHashtag });
+    draft = renderThread(highlights, targetDate, {
+      footerUrl: cfg.postFooterUrl,
+      hashtag: cfg.postHashtag,
+      newsletterUrl: cfg.newsletterUrl,
+    });
   } catch (err) {
     logger.error({ err }, 'render failed');
     return EXIT.UPSTREAM;
@@ -196,6 +200,9 @@ async function main(): Promise<number> {
     for (let i = 0; i < draft.replies.length; i += 1) {
       const r = draft.replies[i];
       process.stdout.write(`--- REPLY ${i + 1} @${r.handle} (${graphemeLength(r.text)} g) embed=${r.embedUri} ---\n${r.text}\n\n`);
+    }
+    if (draft.closing) {
+      process.stdout.write(`--- CLOSING (${graphemeLength(draft.closing.text)} g) ---\n${draft.closing.text}\n\n`);
     }
     logger.info('dry-run complete — no PDS calls made');
     return EXIT.OK;
@@ -262,6 +269,16 @@ async function main(): Promise<number> {
       return { text, facets, embed: embed ?? undefined };
     }),
   );
+
+  // The newsletter invitation closes the thread, as one more reply.
+  if (draft.closing) {
+    const { byteStart, byteEnd, uri } = draft.closing.linkRange;
+    enrichedReplies.push({
+      text: draft.closing.text,
+      facets: [{ index: { byteStart, byteEnd }, features: [{ $type: 'app.bsky.richtext.facet#link', uri }] }],
+      embed: undefined,
+    });
+  }
 
   const leadFacets = draft.lead.linkRange
     ? [{

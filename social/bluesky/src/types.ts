@@ -21,6 +21,8 @@ export type LinkRange = { byteStart: number; byteEnd: number; uri: string };
 export type ThreadDraft = {
   lead: { text: string; linkRange?: LinkRange };
   replies: Reply[];
+  // Last post of the thread, inviting readers to the newsletter.
+  closing?: { text: string; linkRange: LinkRange };
 };
 
 export type StateEntry = {
@@ -58,4 +60,5 @@ export type Config = {
   tz: string;
   postFooterUrl: string;
   postHashtag: string;
+  newsletterUrl: string;
 };

@@ -20,7 +20,7 @@ let saved: NodeJS.ProcessEnv;
 beforeEach(() => {
   saved = { ...process.env };
   for (const k of Object.keys(process.env)) {
-    if (k.startsWith('BLUESKY_') || k.startsWith('API_') || k === 'POST_FOOTER_URL' || k === 'POST_HASHTAG' || k === 'TZ' || k === 'LOG_LEVEL') {
+    if (k.startsWith('BLUESKY_') || k.startsWith('API_') || k === 'POST_FOOTER_URL' || k === 'POST_HASHTAG' || k === 'NEWSLETTER_URL' || k === 'TZ' || k === 'LOG_LEVEL') {
       delete process.env[k];
     }
   }
@@ -45,6 +45,7 @@ describe('loadConfig', () => {
     expect(cfg.tz).toBe('Europe/Paris');
     expect(cfg.logLevel).toBe('info');
     expect(cfg.postFooterUrl).toContain('play.google.com');
+    expect(cfg.newsletterUrl).toBe('https://revue-de-presse.org/lettre-quotidienne');
     expect(cfg.postHashtag).toBe('#RevueDePresse');
   });
 
