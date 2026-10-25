@@ -1,3 +1,9 @@
+// The publisher lists the API ranks a top 10 for (`?list=`); one LinkedIn
+// post and one newsletter each.
+export type PublisherList = 'fr' | 'coop-medias';
+
+export const PUBLISHER_LISTS: readonly PublisherList[] = ['fr', 'coop-medias'];
+
 export type Highlight = {
   screenName: string;
   publicationId: string;
@@ -18,6 +24,9 @@ export type StateEntry = {
   date: string;
   postUrn: string;
   postedAt: string;
+  // Absent from entries written before there was more than one list: those
+  // are French media posts.
+  list?: PublisherList;
 };
 
 export type StateFile = {
@@ -41,4 +50,5 @@ export type Config = {
   tz: string;
   postFooterUrl: string;
   postHashtag: string;
+  newsletterUrls: Record<PublisherList, string>;
 };

@@ -1,7 +1,12 @@
-import type { Highlight } from './types.ts';
+import type { Highlight, PublisherList } from './types.ts';
 import { cleanText } from './cleanText.ts';
 
 export type RenderPostOpts = {
+  // Whose top 10 this is. Defaults to French media.
+  list?: PublisherList;
+  // Sign-up page of the list's newsletter, invited to right before the full
+  // review link. Omitted from the post if empty.
+  newsletterUrl?: string;
   // URL appended in the footer (e.g. a Play Store / website link). Omitted
   // from the post if empty.
   footerUrl?: string;
@@ -30,6 +35,17 @@ const formatDateFr = (isoDate: string): string => {
   }).format(dt);
 };
 
+const HEADINGS: Record<PublisherList, (dateFr: string) => string> = {
+  fr: (dateFr) => `Top 10 des publications de presse les plus relayées sur Bluesky le ${dateFr} :`,
+  'coop-medias': (dateFr) =>
+    `Top 10 des publications des médias de Coop Médias les plus relayées sur Bluesky le ${dateFr} :`,
+};
+
+const NEWSLETTERS: Record<PublisherList, string> = {
+  fr: "la lettre d'information des médias français",
+  'coop-medias': "la lettre d'information de Coop Médias",
+};
+
 export function renderPost(
   highlights: Highlight[],
   isoDate: string,
@@ -48,11 +64,14 @@ export function renderPost(
     lines.push(`    ${escape(h.url)}`);
     return lines.join('\n');
   });
-  const sections: string[] = [
-    `Top 10 des publications de presse les plus relayées sur Bluesky le ${dateFr} :`,
-    '',
-    entries.join('\n\n'),
-  ];
+  const list = opts.list ?? 'fr';
+  const sections: string[] = [HEADINGS[list](dateFr), '', entries.join('\n\n')];
+  if (opts.newsletterUrl) {
+    sections.push(
+      '',
+      `Pour recevoir ce top 10 chaque matin, inscrivez-vous à ${NEWSLETTERS[list]} : ${escape(opts.newsletterUrl)}`,
+    );
+  }
   if (opts.footerUrl) {
     sections.push(
       '',

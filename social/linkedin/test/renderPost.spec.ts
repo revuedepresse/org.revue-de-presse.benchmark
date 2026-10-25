@@ -180,4 +180,43 @@ describe('renderPost', () => {
     });
 
   });
+
+  describe('newsletter invitation', () => {
+    const FR_NEWSLETTER = 'https://revue-de-presse.org/lettre-quotidienne';
+    const COOP_NEWSLETTER = 'https://revue-de-presse.org/lettre-quotidienne-coop-medias';
+
+    it('invites French media readers to their newsletter, right before the full review link', () => {
+      const out = renderPost(SAMPLE, '2026-05-20', { ...OPTS, newsletterUrl: FR_NEWSLETTER });
+      expect(out).toContain(
+        "Pour recevoir ce top 10 chaque matin, inscrivez-vous à la lettre d'information des médias français : " +
+          FR_NEWSLETTER +
+          '\n\nRetrouvez la revue de presse complète : ',
+      );
+      expect(out.startsWith('Top 10 des publications de presse les plus relayées sur Bluesky le 20 mai 2026 :')).toBe(true);
+    });
+
+    it('gives Coop Médias its own heading and its own newsletter', () => {
+      const out = renderPost(SAMPLE, '2026-05-20', { ...OPTS, list: 'coop-medias', newsletterUrl: COOP_NEWSLETTER });
+      expect(
+        out.startsWith('Top 10 des publications des médias de Coop Médias les plus relayées sur Bluesky le 20 mai 2026 :'),
+      ).toBe(true);
+      expect(out).toContain(
+        "Pour recevoir ce top 10 chaque matin, inscrivez-vous à la lettre d'information de Coop Médias : " + COOP_NEWSLETTER,
+      );
+      expect(out).not.toContain('médias français');
+    });
+
+    it('omits the invitation when no newsletter URL is given', () => {
+      expect(renderPost(SAMPLE, '2026-05-20', OPTS)).not.toContain('inscrivez-vous');
+    });
+
+    it('escapes the newsletter URL like every other URL', () => {
+      const out = renderPost(SAMPLE, '2026-05-20', {
+        ...OPTS,
+        newsletterUrl: 'https://revue-de-presse.org/lettre_quotidienne',
+        escapeText: escapeLittleText,
+      });
+      expect(out).toContain('https://revue-de-presse.org/lettre\\_quotidienne');
+    });
+  });
 });
