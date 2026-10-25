@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import type { Config } from './types.ts';
+import { PUBLISHER_LISTS, type Config, type PublisherList } from './types.ts';
 
 dotenv.config({ path: '.env.local' });
 
@@ -14,10 +14,21 @@ const BASE_REQUIRED_KEYS = [
 const FILE_MODE_KEYS = ['LINKEDIN_TOKEN_FILE', 'LINKEDIN_STATE_FILE'] as const;
 
 export class ConfigError extends Error {
-  constructor(public readonly missing: string[]) {
-    super(`Missing required env vars: ${missing.join(', ')}`);
+  constructor(public readonly missing: string[], message?: string) {
+    super(message ?? `Missing required env vars: ${missing.join(', ')}`);
     this.name = 'ConfigError';
   }
+}
+
+// French media only unless LINKEDIN_PUBLISH_LISTS names others, e.g.
+// "fr,coop-medias": the Coop Médias post is ready but off by default.
+function publishLists(raw: string | undefined): PublisherList[] {
+  const names = (raw ?? 'fr').split(',').map((s) => s.trim()).filter(Boolean);
+  const unknown = names.filter((n) => !PUBLISHER_LISTS.includes(n as PublisherList));
+  if (unknown.length > 0 || names.length === 0) {
+    throw new ConfigError([], `LINKEDIN_PUBLISH_LISTS names unknown lists: ${unknown.join(', ') || '(none)'}; known: ${PUBLISHER_LISTS.join(', ')}`);
+  }
+  return [...new Set(names)] as PublisherList[];
 }
 
 export function loadConfig(): Config {
@@ -52,6 +63,7 @@ export function loadConfig(): Config {
       'https://play.google.com/store/apps/details?id=org.revue_2_presse&hl=fr',
     postHashtag: process.env.POST_HASHTAG ?? '#RevueDePresse',
     blueskyPublicApiUrl: process.env.BLUESKY_PUBLIC_API_URL ?? 'https://public.api.bsky.app',
+    publishLists: publishLists(process.env.LINKEDIN_PUBLISH_LISTS),
     newsletterUrls: {
       fr: process.env.NEWSLETTER_URL_FR ?? 'https://revue-de-presse.org/lettre-quotidienne',
       'coop-medias':

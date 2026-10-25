@@ -53,5 +53,7 @@ export type Config = {
   postFooterUrl: string;
   postHashtag: string;
   blueskyPublicApiUrl: string;
+  // Lists posted each morning; the others are built but not posted.
+  publishLists: PublisherList[];
   newsletterUrls: Record<PublisherList, string>;
 };
