@@ -60,7 +60,7 @@ describe('sources of each publisher list', () => {
 
   it('describes where each roster comes from', () => {
     expect(sourcesOf('fr').origin).toBe('de médias français');
-    expect(sourcesOf('coop-medias').origin).toBe('de');
+    expect(sourcesOf('coop-medias').origin).toBe('référencés par');
     expect(sourcesOf('coop-medias').originLink).toEqual({
       href: 'https://www.coop-medias.org/',
       label: 'https://www.coop-medias.org/',
