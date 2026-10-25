@@ -155,7 +155,7 @@ export function sourcesOf(list: string | undefined): Sources {
   if (list === 'fr-coop-medias') {
     return {
       list: 'fr-coop-medias',
-      origin: 'de médias français et de ceux référencés par',
+      origin: 'de médias français et de certains de ceux référencés par',
       originLink: { href: 'https://www.coop-medias.org/', label: 'https://www.coop-medias.org/' },
       roster: byName(unionByHandle(frenchMedia(), COOP_MEDIAS)),
     };
