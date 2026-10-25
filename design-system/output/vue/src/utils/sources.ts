@@ -131,7 +131,7 @@ export function sourcesOf(list: string | undefined): Sources {
   if (list === 'coop-medias') {
     return {
       list: 'coop-medias',
-      origin: 'de comptes Bluesky référencés par',
+      origin: 'de comptes Bluesky de médias français référencés par',
       originLink: { href: 'https://www.coop-medias.org/', label: 'https://www.coop-medias.org/' },
       roster: byName(COOP_MEDIAS),
     };
