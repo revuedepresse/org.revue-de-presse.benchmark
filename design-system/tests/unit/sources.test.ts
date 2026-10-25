@@ -35,7 +35,7 @@ describe('sources of each publisher list', () => {
     const fr = sourcesOf('fr').roster.map((r) => r.handle);
     const coop = sourcesOf('coop-medias').roster.map((r) => r.handle);
     expect(handles).toHaveLength(new Set([...fr, ...coop]).size);
-    expect(both.origin).toBe('de médias français et de');
+    expect(both.origin).toBe('de comptes Bluesky de médias français et/ou référencés par');
     expect(both.originLink?.href).toBe('https://www.coop-medias.org/');
   });
 
@@ -60,8 +60,8 @@ describe('sources of each publisher list', () => {
   });
 
   it('describes where each roster comes from', () => {
-    expect(sourcesOf('fr').origin).toBe('de médias français');
-    expect(sourcesOf('coop-medias').origin).toBe('de');
+    expect(sourcesOf('fr').origin).toBe('des comptes Bluesky de médias français');
+    expect(sourcesOf('coop-medias').origin).toBe('de comptes Bluesky de médias français référencés par');
     expect(sourcesOf('coop-medias').originLink).toEqual({
       href: 'https://www.coop-medias.org/',
       label: 'https://www.coop-medias.org/',

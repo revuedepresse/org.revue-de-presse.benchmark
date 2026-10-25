@@ -11,7 +11,7 @@ export type SourceRow = {
 
 export type Sources = {
   list: 'fr' | 'coop-medias' | 'fr-coop-medias';
-  // Completes "… proviennent des comptes Bluesky <origin>".
+  // Completes "… proviennent <origin>".
   origin: string;
   originLink?: { href: string; label: string };
   roster: SourceRow[];
@@ -122,7 +122,7 @@ export function sourcesOf(list: string | undefined): Sources {
   if (list === 'fr-coop-medias') {
     return {
       list: 'fr-coop-medias',
-      origin: 'de médias français et de',
+      origin: 'de comptes Bluesky de médias français et/ou référencés par',
       originLink: { href: 'https://www.coop-medias.org/', label: 'https://www.coop-medias.org/' },
       roster: byName([...FRENCH_MEDIA, ...COOP_MEDIAS]),
     };
@@ -131,11 +131,11 @@ export function sourcesOf(list: string | undefined): Sources {
   if (list === 'coop-medias') {
     return {
       list: 'coop-medias',
-      origin: 'de',
+      origin: 'de comptes Bluesky de médias français référencés par',
       originLink: { href: 'https://www.coop-medias.org/', label: 'https://www.coop-medias.org/' },
       roster: byName(COOP_MEDIAS),
     };
   }
 
-  return { list: 'fr', origin: 'de médias français', roster: byName(FRENCH_MEDIA) };
+  return { list: 'fr', origin: 'des comptes Bluesky de médias français', roster: byName(FRENCH_MEDIA) };
 }
