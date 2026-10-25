@@ -22,6 +22,7 @@ type SidebarProps = {
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
+  onNewsletterClick?: () => void;
 };
 
 export default function Sidebar(props: SidebarProps) {
@@ -55,6 +56,7 @@ export default function Sidebar(props: SidebarProps) {
         onContactClick={props.onContactClick}
         onSupportClick={props.onSupportClick}
         onSourcesClick={props.onSourcesClick}
+        onNewsletterClick={props.onNewsletterClick}
       />
       <style>{`
         .rdp-sidebar {

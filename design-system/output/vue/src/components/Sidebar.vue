@@ -30,6 +30,7 @@
       :onContactClick="(event) => onContactClick()"
       :onSupportClick="(event) => onSupportClick()"
       :onSourcesClick="(event) => onSourcesClick()"
+      :onNewsletterClick="(event) => onNewsletterClick()"
     ></BannerAbout
     >
   </aside>
@@ -65,6 +66,7 @@ type SidebarProps = {
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
+  onNewsletterClick?: () => void;
 };
 
 const props = defineProps<SidebarProps>();

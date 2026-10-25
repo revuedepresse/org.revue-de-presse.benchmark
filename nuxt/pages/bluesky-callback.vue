@@ -32,6 +32,9 @@ async function copy() {
   }
 }
 
+// Stand-alone page: not part of the AppShell layout.
+definePageMeta({ layout: false })
+
 useHead({
   title: 'Bluesky — autorisation',
   // Nothing here is useful to a search engine, and the URL carries a one-time code.
