@@ -33,6 +33,7 @@
             :onContactClick="(event) => goTo('contact')"
             :onSupportClick="(event) => goTo('support')"
             :onSourcesClick="(event) => goTo('sources')"
+            :onNewsletterClick="(event) => goTo('newsletter')"
           ></Sidebar>
         </aside>
         <main class="rdp-app__main" :aria-busy="loading ? 'true' : undefined">
@@ -50,7 +51,11 @@
             <IntroCard></IntroCard>
           </template>
 
-          <template v-if="currentView === 'main' && loading === true">
+          <template
+            v-if="
+              currentView === 'main' && loading === true && posts.length === 0
+            "
+          >
             <Spinner></Spinner>
           </template>
 
@@ -63,10 +68,14 @@
             ></Alert>
           </template>
 
-          <template
-            v-if="currentView === 'main' && !loading && posts.length > 0"
-          >
-            <ol class="rdp-app__post-list">
+          <template v-if="currentView === 'main' && posts.length > 0">
+            <ol
+              :class="
+                loading
+                  ? 'rdp-app__post-list rdp-app__post-list--stale'
+                  : 'rdp-app__post-list'
+              "
+            >
               <template :key="index" v-for="(post, index) in posts">
                 <li class="rdp-app__post-item">
                   <BlueskyPostCard
@@ -97,6 +106,22 @@
           <template v-if="currentView === 'sources'">
             <SourcesPage></SourcesPage>
           </template>
+
+          <template v-if="currentView === 'newsletter'">
+            <NewsletterPage
+              edition="fr"
+              :action="newsletterSubscribeUrl"
+              :onOtherEditionClick="(event) => goTo('newsletter-coop-medias')"
+            ></NewsletterPage>
+          </template>
+
+          <template v-if="currentView === 'newsletter-coop-medias'">
+            <NewsletterPage
+              edition="coop-medias"
+              :action="newsletterSubscribeUrl"
+              :onOtherEditionClick="(event) => goTo('newsletter')"
+            ></NewsletterPage>
+          </template>
         </main>
       </div>
     </template>
@@ -120,7 +145,11 @@
           <IntroCard></IntroCard>
         </template>
 
-        <template v-if="currentView === 'main' && loading === true">
+        <template
+          v-if="
+            currentView === 'main' && loading === true && posts.length === 0
+          "
+        >
           <Spinner></Spinner>
         </template>
 
@@ -133,8 +162,14 @@
           ></Alert>
         </template>
 
-        <template v-if="currentView === 'main' && !loading && posts.length > 0">
-          <ol class="rdp-app__post-list">
+        <template v-if="currentView === 'main' && posts.length > 0">
+          <ol
+            :class="
+              loading
+                ? 'rdp-app__post-list rdp-app__post-list--stale'
+                : 'rdp-app__post-list'
+            "
+          >
             <template :key="index" v-for="(post, index) in posts">
               <li class="rdp-app__post-item">
                 <BlueskyPostCard
@@ -166,12 +201,29 @@
           <SourcesPage></SourcesPage>
         </template>
 
+        <template v-if="currentView === 'newsletter'">
+          <NewsletterPage
+            edition="fr"
+            :action="newsletterSubscribeUrl"
+            :onOtherEditionClick="(event) => goTo('newsletter-coop-medias')"
+          ></NewsletterPage>
+        </template>
+
+        <template v-if="currentView === 'newsletter-coop-medias'">
+          <NewsletterPage
+            edition="coop-medias"
+            :action="newsletterSubscribeUrl"
+            :onOtherEditionClick="(event) => goTo('newsletter')"
+          ></NewsletterPage>
+        </template>
+
         <BannerAbout
           :onLegalNoticeClick="(event) => goTo('legal')"
           :onTermsOfServiceClick="(event) => goTo('terms')"
           :onContactClick="(event) => goTo('contact')"
           :onSupportClick="(event) => goTo('support')"
           :onSourcesClick="(event) => goTo('sources')"
+          :onNewsletterClick="(event) => goTo('newsletter')"
         ></BannerAbout>
       </main>
 
@@ -206,7 +258,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import { t } from "../utils/i18n";
 import { formatLegacyShortDay } from "../utils/intl";
@@ -222,6 +274,7 @@ import TermsOfServicePage from "./TermsOfServicePage.vue";
 import ContactPage from "./ContactPage.vue";
 import SupportPage from "./SupportPage.vue";
 import SourcesPage from "./SourcesPage.vue";
+import NewsletterPage from "./NewsletterPage.vue";
 import IntroCard from "./IntroCard.vue";
 import Spinner from "./Spinner.vue";
 import type { BlueskyPost } from "./BlueskyPostCard.vue";
@@ -231,7 +284,15 @@ type SnapshotItem = {
   id: string;
   label: string;
 };
-type ViewKey = "main" | "legal" | "terms" | "contact" | "support" | "sources";
+type ViewKey =
+  | "main"
+  | "legal"
+  | "terms"
+  | "contact"
+  | "support"
+  | "sources"
+  | "newsletter"
+  | "newsletter-coop-medias";
 type AppProps = {
   layout?: "mobile" | "desktop";
   posts: BlueskyPost[];
@@ -248,6 +309,7 @@ type AppProps = {
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
+  newsletterSubscribeUrl?: string;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
@@ -257,7 +319,7 @@ type AppProps = {
 const props = defineProps<AppProps>();
 const focusedDate = ref(new Date());
 const isCalendarOpen = ref(false);
-const currentView = ref("main");
+const currentView = ref(props.initialView ?? "main");
 const initialised = ref(false);
 
 onMounted(() => {
@@ -303,6 +365,22 @@ const nextDayDisabled = computed(() => {
   return cur.getTime() >= yesterday.getTime();
 });
 
+watch(
+  () => [props.initialView],
+  () => {
+    if (props.initialView) {
+      currentView.value = props.initialView;
+    }
+  },
+  { immediate: true }
+);
+watch(
+  () => [props.pickedDate],
+  () => {
+    focusedDate.value = props.pickedDate;
+  },
+  { immediate: true }
+);
 function prevDay() {
   const next = new Date(focusedDate.value);
   next.setDate(next.getDate() - 1);

@@ -1,3 +1,7 @@
+<script setup lang="ts">
+definePageMeta({ view: 'contact' });
+</script>
+
 <template>
-  <AppShell initial-view="contact" />
+  <!-- Rendered by the shared AppShell in layouts/default.vue -->
 </template>

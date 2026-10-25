@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import App from '@design-system/components/App.vue';
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
+import type { ViewKey } from '~/types/page-meta';
 
 const props = defineProps<{
   initialView?: ViewKey;
@@ -12,8 +12,17 @@ const props = defineProps<{
 const router = useRouter();
 const route = useRoute();
 const { lists } = useSampleData();
+const newsletterSubscribeUrl = useRuntimeConfig().public.newsletterSubscribeUrl || undefined;
 
-const layout = ref<'desktop' | 'mobile'>('desktop');
+// Server-side guess from the request (client hints, then user agent) so the
+// first paint on a phone is already the mobile layout. Shared with the client
+// through useState, so hydration matches; syncLayout() corrects it on mount.
+const requestHeaders = useRequestHeaders(['sec-ch-ua-mobile', 'user-agent']);
+const layout = useState<'desktop' | 'mobile'>('rdp-layout', () => {
+  const hint = requestHeaders['sec-ch-ua-mobile'];
+  if (hint) return hint === '?1' ? 'mobile' : 'desktop';
+  return /Mobi|Android|iPhone|iPod/i.test(requestHeaders['user-agent'] ?? '') ? 'mobile' : 'desktop';
+});
 
 function yesterday(): Date {
   const d = new Date();
@@ -75,6 +84,8 @@ function urlForView(view: ViewKey): string {
     case 'contact': return '/nous-contacter';
     case 'support': return '/nous-soutenir';
     case 'sources': return '/sources';
+    case 'newsletter': return '/lettre-quotidienne';
+    case 'newsletter-coop-medias': return '/lettre-quotidienne-coop-medias';
     case 'main':
     default:
       return urlForDate(pickedDate.value);
@@ -121,6 +132,7 @@ function onLogoClick() {
     :loading="loading"
     :initial-view="props.initialView ?? 'main'"
     :empty-message-key="props.emptyMessageKey"
+    :newsletter-subscribe-url="newsletterSubscribeUrl"
     locale="fr-FR"
     :on-date-select="onDateSelect"
     :on-view-change="onViewChange"

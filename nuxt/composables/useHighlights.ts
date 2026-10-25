@@ -79,9 +79,14 @@ export function useHighlights(date: Ref<Date>) {
     watch: [date],
   });
 
+  // useFetch keys its cache by query, so a day that was never loaded starts
+  // out empty. Keep the last posts on screen (dimmed by App while `loading`)
+  // until the new day arrives, rather than flashing a spinner in between.
+  const lastPosts = shallowRef<BlueskyPost[]>([]);
+
   const posts = computed<BlueskyPost[]>(() => {
     const raw = data.value as { statuses?: RawStatus[] } | RawStatus[] | null;
-    if (!raw) return [];
+    if (!raw) return pending.value ? lastPosts.value : [];
     const items: RawStatus[] = Array.isArray(raw)
       ? raw
       : Array.isArray(raw.statuses)
@@ -89,6 +94,14 @@ export function useHighlights(date: Ref<Date>) {
         : [];
     return items.map((s) => mapStatus(s, formatYmd(date.value)));
   });
+
+  watch(
+    posts,
+    (next) => {
+      if (next.length > 0) lastPosts.value = next;
+    },
+    { immediate: true },
+  );
 
   return { posts, loading: pending, error, refresh };
 }

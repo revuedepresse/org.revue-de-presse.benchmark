@@ -34,6 +34,11 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiBaseUrl: '',
     apiClientSecret: '',
+    public: {
+      // Where the newsletter sign-up form POSTs (NUXT_PUBLIC_NEWSLETTER_SUBSCRIBE_URL).
+      // Empty → the design-system default, the production API.
+      newsletterSubscribeUrl: '',
+    },
   },
 
   experimental: {

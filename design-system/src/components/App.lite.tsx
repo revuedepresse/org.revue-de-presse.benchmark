@@ -1,4 +1,4 @@
-import { onMount, useStore } from '@builder.io/mitosis';
+import { onMount, onUpdate, useStore } from '@builder.io/mitosis';
 import { t } from '../utils/i18n';
 import { formatLegacyShortDay } from '../utils/intl';
 import AppHeader from './AppHeader.lite';
@@ -13,6 +13,7 @@ import TermsOfServicePage from './TermsOfServicePage.lite';
 import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
+import NewsletterPage from './NewsletterPage.lite';
 import IntroCard from './IntroCard.lite';
 import Spinner from './Spinner.lite';
 import type { BlueskyPost } from './BlueskyPostCard.lite';
@@ -20,7 +21,15 @@ import type { Locale } from '../utils/i18n';
 
 type SnapshotItem = { id: string; label: string };
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
+type ViewKey =
+  | 'main'
+  | 'legal'
+  | 'terms'
+  | 'contact'
+  | 'support'
+  | 'sources'
+  | 'newsletter'
+  | 'newsletter-coop-medias';
 
 type AppProps = {
   layout?: 'mobile' | 'desktop';
@@ -35,6 +44,7 @@ type AppProps = {
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
+  newsletterSubscribeUrl?: string;
   onListSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
@@ -45,7 +55,9 @@ export default function App(props: AppProps) {
   const state = useStore({
     focusedDate: new Date(),
     isCalendarOpen: false,
-    currentView: 'main' as 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources',
+    // Seeded from the prop (not only in onMount) so server-rendered HTML
+    // already shows the requested view instead of flashing the home view.
+    currentView: (props.initialView ?? 'main') as ViewKey,
     initialised: false,
     get popularNewsLine(): string {
       return t(
@@ -130,6 +142,19 @@ export default function App(props: AppProps) {
     },
   });
 
+  // The shell stays mounted across routes (Nuxt layout), so follow the
+  // route-driven props instead of reading them once: browser back/forward
+  // and direct links switch the view without remounting the app.
+  onUpdate(() => {
+    if (props.initialView) {
+      state.currentView = props.initialView;
+    }
+  }, [props.initialView]);
+
+  onUpdate(() => {
+    state.focusedDate = props.pickedDate;
+  }, [props.pickedDate]);
+
   onMount(() => {
     state.focusedDate = props.pickedDate;
     if (props.initialView) {
@@ -170,6 +195,7 @@ export default function App(props: AppProps) {
               onContactClick={() => state.goTo('contact')}
               onSupportClick={() => state.goTo('support')}
               onSourcesClick={() => state.goTo('sources')}
+              onNewsletterClick={() => state.goTo('newsletter')}
             />
           </aside>
 
@@ -186,7 +212,7 @@ export default function App(props: AppProps) {
             <Show when={state.currentView === 'main'}>
               <IntroCard />
             </Show>
-            <Show when={state.currentView === 'main' && props.loading === true}>
+            <Show when={state.currentView === 'main' && props.loading === true && props.posts.length === 0}>
               <Spinner />
             </Show>
             <Show when={state.currentView === 'main' && !props.loading && props.posts.length === 0}>
@@ -195,8 +221,8 @@ export default function App(props: AppProps) {
                 messageKey={props.emptyMessageKey ?? 'alert.empty.no-content-for-date'}
               />
             </Show>
-            <Show when={state.currentView === 'main' && !props.loading && props.posts.length > 0}>
-              <ol class="rdp-app__post-list">
+            <Show when={state.currentView === 'main' && props.posts.length > 0}>
+              <ol class={props.loading ? 'rdp-app__post-list rdp-app__post-list--stale' : 'rdp-app__post-list'}>
                 <For each={props.posts}>
                   {(post) => (
                     <li class="rdp-app__post-item">
@@ -221,6 +247,20 @@ export default function App(props: AppProps) {
             <Show when={state.currentView === 'sources'}>
               <SourcesPage />
             </Show>
+            <Show when={state.currentView === 'newsletter'}>
+              <NewsletterPage
+                edition="fr"
+                action={props.newsletterSubscribeUrl}
+                onOtherEditionClick={() => state.goTo('newsletter-coop-medias')}
+              />
+            </Show>
+            <Show when={state.currentView === 'newsletter-coop-medias'}>
+              <NewsletterPage
+                edition="coop-medias"
+                action={props.newsletterSubscribeUrl}
+                onOtherEditionClick={() => state.goTo('newsletter')}
+              />
+            </Show>
           </main>
         </div>
       </Show>
@@ -239,7 +279,7 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'main'}>
             <IntroCard />
           </Show>
-          <Show when={state.currentView === 'main' && props.loading === true}>
+          <Show when={state.currentView === 'main' && props.loading === true && props.posts.length === 0}>
             <Spinner />
           </Show>
           <Show when={state.currentView === 'main' && !props.loading && props.posts.length === 0}>
@@ -248,8 +288,8 @@ export default function App(props: AppProps) {
               messageKey={props.emptyMessageKey ?? 'alert.empty.no-content-for-date'}
             />
           </Show>
-          <Show when={state.currentView === 'main' && !props.loading && props.posts.length > 0}>
-            <ol class="rdp-app__post-list">
+          <Show when={state.currentView === 'main' && props.posts.length > 0}>
+            <ol class={props.loading ? 'rdp-app__post-list rdp-app__post-list--stale' : 'rdp-app__post-list'}>
               <For each={props.posts}>
                 {(post) => (
                   <li class="rdp-app__post-item">
@@ -274,12 +314,27 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'sources'}>
             <SourcesPage />
           </Show>
+          <Show when={state.currentView === 'newsletter'}>
+            <NewsletterPage
+              edition="fr"
+              action={props.newsletterSubscribeUrl}
+              onOtherEditionClick={() => state.goTo('newsletter-coop-medias')}
+            />
+          </Show>
+          <Show when={state.currentView === 'newsletter-coop-medias'}>
+            <NewsletterPage
+              edition="coop-medias"
+              action={props.newsletterSubscribeUrl}
+              onOtherEditionClick={() => state.goTo('newsletter')}
+            />
+          </Show>
           <BannerAbout
             onLegalNoticeClick={() => state.goTo('legal')}
             onTermsOfServiceClick={() => state.goTo('terms')}
             onContactClick={() => state.goTo('contact')}
             onSupportClick={() => state.goTo('support')}
             onSourcesClick={() => state.goTo('sources')}
+            onNewsletterClick={() => state.goTo('newsletter')}
           />
         </main>
         <Show when={state.isCalendarOpen}>
@@ -383,6 +438,9 @@ export default function App(props: AppProps) {
           padding: var(--separation-2);
           padding-bottom: calc(64px + var(--separation-2));
         }
+        /* Previous day's posts stay in place (dimmed) while the next day loads,
+           instead of being swapped for a spinner and back. */
+        .rdp-app__post-list--stale { opacity: 0.55; transition: opacity 120ms ease-in; }
         .rdp-app__post-list {
           list-style: none;
           margin: 0;
