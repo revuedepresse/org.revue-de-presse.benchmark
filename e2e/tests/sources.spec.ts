@@ -33,6 +33,15 @@ const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'pixelsfr.bsky.social',        displayName: 'Pixels | Le Monde' },
   { handle: 'rfi.fr',                      displayName: 'RFI' },
   { handle: 'telerama.bsky.social',        displayName: 'Télérama' },
+  { handle: 'alternatives-economiques.fr', displayName: 'Alternatives Economiques' },
+  { handle: 'arretsurimages.net',          displayName: 'Arrêt sur images' },
+  { handle: 'marsactu.fr',                 displayName: 'Marsactu' },
+  { handle: 'reflets.info',                displayName: 'Reflets.info' },
+  { handle: 'reporterre.net',              displayName: 'Reporterre' },
+  { handle: 'rue89bordeaux.bsky.social',   displayName: 'Rue89 Bordeaux' },
+  { handle: 'rue89strasbourg.com',         displayName: 'Rue89 Strasbourg' },
+  { handle: 'socialter.bsky.social',       displayName: 'Socialter' },
+  { handle: 'vert.eco',                    displayName: 'Vert' },
 ];
 
 const ROSTER_BY_DISPLAY_NAME = [...ROSTER].sort((a, b) =>
@@ -60,7 +69,7 @@ test.describe('/sources', () => {
     await expect(article.locator('#rdp-sources-page-footnote')).toContainText('« Première mesure »');
   });
 
-  test('lists exactly the 26 canonical media accounts', async ({ page }) => {
+  test('lists exactly the 35 canonical media accounts', async ({ page }) => {
     const rows = page.locator('.rdp-sources-page__row');
     await expect(rows).toHaveCount(ROSTER.length);
   });

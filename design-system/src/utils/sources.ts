@@ -17,7 +17,8 @@ export type Sources = {
   roster: SourceRow[];
 };
 
-// French press accounts, as fetched by the hourly worker.
+// French press accounts, as fetched by the hourly worker. The French media list
+// also ranks the Coop Médias members in ALSO_FRENCH_MEDIA.
 const FRENCH_MEDIA: SourceRow[] = [
   { handle: 'afp.com', displayName: 'Agence France-Presse', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:ffccycfh6c6pmxwkhvq5clkv/bafkreiadcsh7hzzurk5joh7bhxxlyqlvr26mg25f6dnozuwhsz72jz2cme' },
   { handle: 'bfmtv.com', displayName: 'BFMTV', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:wb4ovhhcrif6cp66oe2pqx7i/bafkreic3fjfw4c2hbqailogxb2nusnspddwczt5bhyib3enp5qxl5bslla' },
@@ -99,6 +100,19 @@ const COOP_MEDIAS: SourceRow[] = [
   { handle: 'voxeurop.bsky.social', displayName: 'Voxeurop', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:5ofbcsv232rb74bae7uscdy4/bafkreiaqdhvezldvmusonquytfqm3yjhpq7iwzvuesnsi5rqkjsrpbm3mq' },
 ];
 
+// Coop Médias members that the French media list ranks too.
+const ALSO_FRENCH_MEDIA = [
+  'alternatives-economiques.fr',
+  'arretsurimages.net',
+  'marsactu.fr',
+  'reflets.info',
+  'reporterre.net',
+  'rue89bordeaux.bsky.social',
+  'rue89strasbourg.com',
+  'socialter.bsky.social',
+  'vert.eco',
+];
+
 const byName = (rows: SourceRow[]): SourceRow[] =>
   [...rows].sort((a, b) => a.displayName.localeCompare(b.displayName, 'fr', { sensitivity: 'base' }));
 
@@ -113,13 +127,16 @@ const unionByHandle = (...rosters: SourceRow[][]): SourceRow[] => {
   return [...seen.values()];
 };
 
+const frenchMedia = (): SourceRow[] =>
+  unionByHandle(FRENCH_MEDIA, COOP_MEDIAS.filter((row) => ALSO_FRENCH_MEDIA.includes(row.handle)));
+
 export function sourcesOf(list: string | undefined): Sources {
   if (list === 'fr-coop-medias') {
     return {
       list: 'fr-coop-medias',
       origin: 'de médias français et de',
       originLink: { href: 'https://www.coop-medias.org/', label: 'https://www.coop-medias.org/' },
-      roster: byName(unionByHandle(FRENCH_MEDIA, COOP_MEDIAS)),
+      roster: byName(unionByHandle(frenchMedia(), COOP_MEDIAS)),
     };
   }
 
@@ -132,5 +149,5 @@ export function sourcesOf(list: string | undefined): Sources {
     };
   }
 
-  return { list: 'fr', origin: 'de médias français', roster: byName(FRENCH_MEDIA) };
+  return { list: 'fr', origin: 'de médias français', roster: byName(frenchMedia()) };
 }
