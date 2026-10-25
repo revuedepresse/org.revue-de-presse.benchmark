@@ -45,7 +45,6 @@ const FRENCH_MEDIA: SourceRow[] = [
   { handle: 'rfi.fr', displayName: 'RFI', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:vvlpfarso2eojm2xpzc7qrd7/bafkreiblpeqcmcska4t5jux5uiipvsmwci4xvffthimktqbphseggv72v4' },
   { handle: 'telerama.bsky.social', displayName: 'Télérama', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:d4mzml4o35ineocvaluv5vss/bafkreibwv7t72coic6z2zrfprda7onuesrw7xcjq2fsbpwagkez57xbvyy' },
   { handle: '20minutes.bsky.social', displayName: '20 minutes', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:3mchts55ik67nxmtafua5gfd/bafkreid72cxugfbwnghcdg54wilczkwn5tgj2maao3cgdi5s32b4espkhq' },
-  { handle: '28minutes-arte.bsky.social', displayName: '28 minutes - ARTE', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:2qysbywa47gzqu46n6h6dity/bafkreiby7e2z5vljz3e2z7jjqtrjnfndpthqpnw6nftcczjdtg2wp7d4dy' },
   { handle: 'artefr.bsky.social', displayName: 'ARTE', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:6lbh3sx5vzfhzjy2td2lafnq/bafkreifgl6edsha7mx3csltdetr2s5h2zfbdxtgikxl3nhmnvjc7vafziq' },
   { handle: 'contexte.com', displayName: 'Contexte', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:2v5gqgdyjqv4xtrg7iax6mwf/bafkreibo3s5u6uhmogno47roaf3j2pc7pmz4375sw7o5eor7mb4demvij4' },
   { handle: 'factuel.afp.com', displayName: 'AFP Factuel', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:4ks5wkubjfcbgxvphqkd3wxm/bafkreie6j7nhdhgqnycier7gvhwlmyztch4asibacu3k6rlhowbl4tvhme' },

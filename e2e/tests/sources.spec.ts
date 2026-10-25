@@ -32,7 +32,6 @@ const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'rfi.fr',                      displayName: 'RFI' },
   { handle: 'telerama.bsky.social',        displayName: 'Télérama' },
   { handle: '20minutes.bsky.social',       displayName: '20 minutes' },
-  { handle: '28minutes-arte.bsky.social',  displayName: '28 minutes - ARTE' },
   { handle: 'artefr.bsky.social',          displayName: 'ARTE' },
   { handle: 'contexte.com',                displayName: 'Contexte' },
   { handle: 'factuel.afp.com',             displayName: 'AFP Factuel' },
@@ -76,7 +75,7 @@ test.describe('/sources', () => {
     await expect(article.locator('#rdp-sources-page-footnote')).toContainText('« Première mesure »');
   });
 
-  test('lists exactly the 42 canonical media accounts', async ({ page }) => {
+  test('lists exactly the 41 canonical media accounts', async ({ page }) => {
     const rows = page.locator('.rdp-sources-page__row');
     await expect(rows).toHaveCount(ROSTER.length);
   });
