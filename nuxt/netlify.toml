@@ -1,6 +1,14 @@
 [build]
   publish = "dist"
   command = "make build"
+  # Netlify reads this file, the one in the base directory, not the repository
+  # root's. The site compiles ../design-system, so a change there must deploy
+  # too; Netlify's default would skip any commit that changes nothing in nuxt/.
+  # Exits 0 (skip) only when nothing in nuxt/, ../design-system or either
+  # netlify.toml changed since the last deploy. With no previous deploy to
+  # compare with (empty ref, or a branch's first build, where both refs are
+  # the same commit), it builds.
+  ignore = "[ -n \"$CACHED_COMMIT_REF\" ] && [ \"$CACHED_COMMIT_REF\" != \"$COMMIT_REF\" ] && git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ../design-system ../netlify.toml"
 
 [build.environment]
   NODE_VERSION = "22"
