@@ -45,7 +45,7 @@ async function main(): Promise<number> {
       date: { type: 'string' },
       force: { type: 'boolean', default: false },
       'dry-run': { type: 'boolean', default: false },
-      // One list only (fr or coop-medias); every list when absent.
+      // One list only (fr or coop-medias), whatever LINKEDIN_PUBLISH_LISTS says.
       list: { type: 'string' },
     },
     strict: true,
@@ -56,7 +56,7 @@ async function main(): Promise<number> {
   const targetDate = values.date ?? previousDateInTz(cfg.tz);
   logger.info({ targetDate, dryRun: values['dry-run'], force: values.force, envMode }, 'starting');
 
-  let lists: readonly PublisherList[] = PUBLISHER_LISTS;
+  let lists: readonly PublisherList[] = cfg.publishLists;
   if (values.list !== undefined) {
     if (!PUBLISHER_LISTS.includes(values.list as PublisherList)) {
       logger.error({ list: values.list, known: PUBLISHER_LISTS }, 'unknown list');

@@ -1,9 +1,10 @@
 # @revue-de-presse/social-linkedin
 
 CLI that posts the previous day's Revue de Presse top 10s to the LinkedIn
-organization page once per day: one post for French media (`fr`) and one for
-Coop Médias (`coop-medias`), each ranked by end of day and inviting readers to
-that list's newsletter. Run from cron in production.
+organization page once per day: one post for French media (`fr`) and, once
+enabled in `LINKEDIN_PUBLISH_LISTS`, one for Coop Médias (`coop-medias`), each
+ranked by end of day and inviting readers to that list's newsletter. Run from
+cron in production.
 
 ## Posting identity
 
@@ -43,7 +44,7 @@ make linkedin-post           # production cron entry — posts yesterday's top 1
 ```
 post-daily-top10 [--date YYYY-MM-DD] [--list fr|coop-medias] [--force] [--dry-run]
   --date     Override the default (yesterday in $TZ).
-  --list     Post one list only (default: every list).
+  --list     Post one list only (default: the lists in LINKEDIN_PUBLISH_LISTS, `fr` unless set).
   --force    Post even if the state file shows this date was already posted.
   --dry-run  Render the commentary and log it; do not call LinkedIn.
 ```
