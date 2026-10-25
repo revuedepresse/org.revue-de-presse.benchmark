@@ -2,6 +2,12 @@
   base = "nuxt"
   publish = "nuxt/dist"
   command = "make build"
+  # The site compiles the design system's components (../design-system/output,
+  # aliased in nuxt.config.ts), so a change there must deploy too. Without this,
+  # Netlify only looks at the base directory and skips such commits as
+  # "Canceled". Runs from nuxt/; exits 0 (skip) only when nothing relevant
+  # changed since the last deploy, and builds whenever the diff cannot be made.
+  ignore = "[ -n \"$CACHED_COMMIT_REF\" ] && git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ../design-system ../netlify.toml"
 
 [build.environment]
   NODE_VERSION = "22"
