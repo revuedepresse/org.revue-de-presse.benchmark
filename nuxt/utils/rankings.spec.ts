@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RANKING_CHOICES, rankingFromQuery, selectedRankingChoice } from './rankings';
+import { DEFAULT_RANKING, RANKING_CHOICES, rankingFromQuery, requestedRanking, selectedRankingChoice } from './rankings';
 
 describe('rankings', () => {
   it('maps ?classement= to the API ranking', () => {
@@ -30,6 +30,26 @@ describe('ranking picker', () => {
   it('selects the configured default otherwise', () => {
     expect(selectedRankingChoice(undefined, 'first-sighting')).toBe('premiere-mesure');
     expect(selectedRankingChoice('unknown', 'end-of-day')).toBe('fin-de-journee');
-    expect(selectedRankingChoice(undefined, 'not-a-ranking')).toBe('premiere-mesure');
+    expect(selectedRankingChoice(undefined, 'not-a-ranking')).toBe('fin-de-journee');
+  });
+
+  it('defaults to the end-of-day ranking, like the API', () => {
+    expect(DEFAULT_RANKING).toBe('end-of-day');
+    expect(selectedRankingChoice(undefined)).toBe('fin-de-journee');
+    expect(selectedRankingChoice(undefined, '')).toBe('fin-de-journee');
+  });
+});
+
+describe('ranking asked of the API', () => {
+  it('leaves the default ranking to the API, so the default view has one cache key', () => {
+    expect(requestedRanking(undefined)).toBeUndefined();
+    expect(requestedRanking('fin-de-journee')).toBeUndefined();
+    expect(requestedRanking('fin-de-journee', 'end-of-day')).toBeUndefined();
+  });
+
+  it('asks for the other ranking explicitly', () => {
+    expect(requestedRanking('premiere-mesure')).toBe('first-sighting');
+    expect(requestedRanking('fin-de-journee', 'first-sighting')).toBe('end-of-day');
+    expect(requestedRanking('unknown')).toBeUndefined();
   });
 });

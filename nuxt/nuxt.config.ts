@@ -36,8 +36,9 @@ export default defineNuxtConfig({
     apiClientSecret: '',
     public: {
       // Ranking the API applies without ?ranking= (HIGHLIGHTS_DEFAULT_RANKING
-      // on the API side); the ranking picker shows it as selected.
-      defaultRanking: 'first-sighting',
+      // on the API side, end-of-day in production); the ranking picker shows
+      // it as selected.
+      defaultRanking: 'end-of-day',
       // Where the newsletter sign-up form POSTs (NUXT_PUBLIC_NEWSLETTER_SUBSCRIBE_URL).
       // Empty → the design-system default, the production API.
       newsletterSubscribeUrl: '',

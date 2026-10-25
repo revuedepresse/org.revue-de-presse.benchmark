@@ -7,7 +7,13 @@ import {
   withinList,
   type PublisherListId,
 } from '~/utils/publisher-lists';
-import { RANKING_CHOICES, rankingFromQuery, selectedRankingChoice } from '~/utils/rankings';
+import {
+  DEFAULT_RANKING,
+  RANKING_CHOICES,
+  rankingFromQuery,
+  requestedRanking,
+  selectedRankingChoice,
+} from '~/utils/rankings';
 
 import type { ViewKey } from '~/types/page-meta';
 
@@ -26,11 +32,12 @@ const lists = PUBLISHER_LISTS.map(({ id, label }) => ({ id, label }));
 const selectedListId = computed(() => publisherListFromQuery(route.query.liste));
 // ?classement= picks the ranking (see utils/rankings.ts) and, like ?liste=,
 // follows the reader from day to day.
-const ranking = computed(() => rankingFromQuery(route.query.classement));
+const defaultRanking = String(useRuntimeConfig().public.defaultRanking || DEFAULT_RANKING);
+// Spelling out the default ranking in the address asks the API nothing more.
+const ranking = computed(() => requestedRanking(route.query.classement, defaultRanking));
 const rankingQuery = computed(() =>
   ranking.value ? { classement: route.query.classement as string } : {},
 );
-const defaultRanking = String(useRuntimeConfig().public.defaultRanking ?? 'first-sighting');
 const selectedRankingId = computed(() => selectedRankingChoice(route.query.classement, defaultRanking));
 const listQuery = computed(() => ({
   ...(selectedListId.value === 'fr' ? {} : { liste: selectedListId.value }),
@@ -160,7 +167,12 @@ function onListSelect(id: string) {
 
 function onRankingSelect(id: string) {
   if (!import.meta.client || !rankingFromQuery(id)) return;
-  router.push({ path: route.path, query: { ...route.query, classement: id } });
+  // The default ranking needs no ?classement=: keep its address canonical.
+  const { classement: _previous, ...query } = route.query;
+  router.push({
+    path: route.path,
+    query: requestedRanking(id, defaultRanking) ? { ...query, classement: id } : query,
+  });
 }
 
 function onLogoClick() {
