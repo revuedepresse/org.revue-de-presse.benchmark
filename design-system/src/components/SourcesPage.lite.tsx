@@ -21,11 +21,10 @@ export default function SourcesPage(props: SourcesPageProps) {
     <article class="rdp-sources-page">
       <h1>Sources des brèves</h1>
       <p>
-        Les sources des brèves de publications{' '}
-        <a class="rdp-sources-page__internal-link" href="#rdp-sources-page-footnote">
-          triées par popularité
-        </a>{' '}
-        en fin de chaque journée proviennent des comptes Bluesky
+        {/* The comma right after the link, with no line break in between: the
+            generated Vue template would turn it into a space before the comma. */}
+        Les brèves de publications sont&nbsp;
+        <a class="rdp-sources-page__internal-link" href="#rdp-sources-page-footnote">triées par popularité</a>, au choix en fin de journée ou à leur première mesure. Elles proviennent des comptes Bluesky
         {/* One expression, and the full stop in its own element after the link:
             the generated Vue template must not put a space before the full stop. */}
         <Show when={!state.sources.originLink}>{state.sources.origin + '.'}</Show>
@@ -70,7 +69,7 @@ export default function SourcesPage(props: SourcesPageProps) {
       </ul>
 
       <p id="rdp-sources-page-footnote" class="rdp-sources-page__footnote">
-        La popularité est déduite des partages des publications depuis Bluesky.
+        La popularité est déduite des partages des publications sur Bluesky : « Fin de journée » compte ceux de toute la journée de publication, « Première mesure » ceux relevés à la première collecte de chaque publication.
       </p>
       <style>{`
         .rdp-sources-page {
