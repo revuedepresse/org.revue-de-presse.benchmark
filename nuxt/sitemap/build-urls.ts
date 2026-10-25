@@ -88,7 +88,8 @@ export const buildLegacySitemapUrls = (): SitemapUrl[] => {
     { loc: '/nous-contacter',   lastmod: new Date('2023-03-02').toISOString() },
     { loc: '/nous-soutenir',    lastmod: new Date('2023-03-07').toISOString() },
     { loc: '/sources',          lastmod: new Date('2025-03-08').toISOString() },
-    { loc: '/lettre-quotidienne', lastmod: new Date('2026-10-17').toISOString() },
+    { loc: '/lettre-quotidienne', lastmod: new Date('2026-10-25').toISOString() },
+    { loc: '/lettre-quotidienne-coop-medias', lastmod: new Date('2026-10-25').toISOString() },
   ];
 
   const dynamic: SitemapUrl[] = days()

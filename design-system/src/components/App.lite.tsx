@@ -21,7 +21,15 @@ import type { Locale } from '../utils/i18n';
 
 type SnapshotItem = { id: string; label: string };
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'newsletter';
+type ViewKey =
+  | 'main'
+  | 'legal'
+  | 'terms'
+  | 'contact'
+  | 'support'
+  | 'sources'
+  | 'newsletter'
+  | 'newsletter-coop-medias';
 
 type AppProps = {
   layout?: 'mobile' | 'desktop';
@@ -240,7 +248,18 @@ export default function App(props: AppProps) {
               <SourcesPage />
             </Show>
             <Show when={state.currentView === 'newsletter'}>
-              <NewsletterPage action={props.newsletterSubscribeUrl} />
+              <NewsletterPage
+                edition="fr"
+                action={props.newsletterSubscribeUrl}
+                onOtherEditionClick={() => state.goTo('newsletter-coop-medias')}
+              />
+            </Show>
+            <Show when={state.currentView === 'newsletter-coop-medias'}>
+              <NewsletterPage
+                edition="coop-medias"
+                action={props.newsletterSubscribeUrl}
+                onOtherEditionClick={() => state.goTo('newsletter')}
+              />
             </Show>
           </main>
         </div>
@@ -296,7 +315,18 @@ export default function App(props: AppProps) {
             <SourcesPage />
           </Show>
           <Show when={state.currentView === 'newsletter'}>
-            <NewsletterPage action={props.newsletterSubscribeUrl} />
+            <NewsletterPage
+              edition="fr"
+              action={props.newsletterSubscribeUrl}
+              onOtherEditionClick={() => state.goTo('newsletter-coop-medias')}
+            />
+          </Show>
+          <Show when={state.currentView === 'newsletter-coop-medias'}>
+            <NewsletterPage
+              edition="coop-medias"
+              action={props.newsletterSubscribeUrl}
+              onOtherEditionClick={() => state.goTo('newsletter')}
+            />
           </Show>
           <BannerAbout
             onLegalNoticeClick={() => state.goTo('legal')}

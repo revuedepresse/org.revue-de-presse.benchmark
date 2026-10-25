@@ -94,7 +94,10 @@ describe('buildLegacySitemapUrls', () => {
       new Date('2025-03-08').toISOString(),
     );
     expect(byLoc.get('/lettre-quotidienne')?.lastmod).toBe(
-      new Date('2026-10-17').toISOString(),
+      new Date('2026-10-25').toISOString(),
+    );
+    expect(byLoc.get('/lettre-quotidienne-coop-medias')?.lastmod).toBe(
+      new Date('2026-10-25').toISOString(),
     );
   });
 

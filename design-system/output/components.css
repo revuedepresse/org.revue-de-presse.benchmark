@@ -918,6 +918,15 @@
           height: 1px;
           overflow: hidden;
         }
+        .rdp-newsletter-page__other-edition {
+          margin: var(--separation-3) 0 0;
+          padding: var(--separation-2);
+          border-left: 3px solid var(--color-brand);
+          background: var(--color-taupe-grey);
+          border-radius: var(--radius-default);
+        }
+        .rdp-newsletter-page__other-edition-pitch { display: block; }
+        .rdp-newsletter-page__other-edition-link { font-weight: bold; }
         .rdp-newsletter-page__fine-print {
           font-size: var(--font-size-publication-date);
           color: var(--color-light-grey);

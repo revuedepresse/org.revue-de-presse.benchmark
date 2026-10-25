@@ -85,6 +85,7 @@ function urlForView(view: ViewKey): string {
     case 'support': return '/nous-soutenir';
     case 'sources': return '/sources';
     case 'newsletter': return '/lettre-quotidienne';
+    case 'newsletter-coop-medias': return '/lettre-quotidienne-coop-medias';
     case 'main':
     default:
       return urlForDate(pickedDate.value);

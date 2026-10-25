@@ -1,4 +1,12 @@
-export type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources' | 'newsletter';
+export type ViewKey =
+  | 'main'
+  | 'legal'
+  | 'terms'
+  | 'contact'
+  | 'support'
+  | 'sources'
+  | 'newsletter'
+  | 'newsletter-coop-medias';
 
 declare module '#app' {
   interface PageMeta {

@@ -108,7 +108,19 @@
           </template>
 
           <template v-if="currentView === 'newsletter'">
-            <NewsletterPage :action="newsletterSubscribeUrl"></NewsletterPage>
+            <NewsletterPage
+              edition="fr"
+              :action="newsletterSubscribeUrl"
+              :onOtherEditionClick="(event) => goTo('newsletter-coop-medias')"
+            ></NewsletterPage>
+          </template>
+
+          <template v-if="currentView === 'newsletter-coop-medias'">
+            <NewsletterPage
+              edition="coop-medias"
+              :action="newsletterSubscribeUrl"
+              :onOtherEditionClick="(event) => goTo('newsletter')"
+            ></NewsletterPage>
           </template>
         </main>
       </div>
@@ -190,7 +202,19 @@
         </template>
 
         <template v-if="currentView === 'newsletter'">
-          <NewsletterPage :action="newsletterSubscribeUrl"></NewsletterPage>
+          <NewsletterPage
+            edition="fr"
+            :action="newsletterSubscribeUrl"
+            :onOtherEditionClick="(event) => goTo('newsletter-coop-medias')"
+          ></NewsletterPage>
+        </template>
+
+        <template v-if="currentView === 'newsletter-coop-medias'">
+          <NewsletterPage
+            edition="coop-medias"
+            :action="newsletterSubscribeUrl"
+            :onOtherEditionClick="(event) => goTo('newsletter')"
+          ></NewsletterPage>
         </template>
 
         <BannerAbout
@@ -267,7 +291,8 @@ type ViewKey =
   | "contact"
   | "support"
   | "sources"
-  | "newsletter";
+  | "newsletter"
+  | "newsletter-coop-medias";
 type AppProps = {
   layout?: "mobile" | "desktop";
   posts: BlueskyPost[];
