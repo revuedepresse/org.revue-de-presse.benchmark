@@ -42,6 +42,27 @@ const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'rue89strasbourg.com',         displayName: 'Rue89 Strasbourg' },
   { handle: 'socialter.bsky.social',       displayName: 'Socialter' },
   { handle: 'vert.eco',                    displayName: 'Vert' },
+  { handle: '20minutes.bsky.social',       displayName: '20 minutes' },
+  { handle: '28minutes-arte.bsky.social',  displayName: '28 minutes - ARTE' },
+  { handle: 'artefr.bsky.social',          displayName: 'ARTE' },
+  { handle: 'contexte.com',                displayName: 'Contexte' },
+  { handle: 'euronewsfr.bsky.social',      displayName: 'Euronews en Français' },
+  { handle: 'factuel.afp.com',             displayName: 'AFP Factuel' },
+  { handle: 'france3npdc.bsky.social',     displayName: 'France 3 Nord Pas-de-Calais' },
+  { handle: 'franceinfo.fr',               displayName: 'franceinfo' },
+  { handle: 'franceinter.fr',              displayName: 'France Inter' },
+  { handle: 'francetv.bsky.social',        displayName: 'france.tv' },
+  { handle: 'francetvculture.bsky.social', displayName: 'france tv culture' },
+  { handle: 'huffingtonpost.fr',           displayName: 'Le HuffPost' },
+  { handle: 'larevuedesmedias.ina.fr',     displayName: 'La Revue des médias' },
+  { handle: 'leparisien.fr',               displayName: 'Le Parisien' },
+  { handle: 'lexpress.fr',                 displayName: 'L’Express' },
+  { handle: 'lvslmedia.bsky.social',       displayName: 'Le Vent Se Lève' },
+  { handle: 'numerama.com',                displayName: 'Numerama' },
+  { handle: 'radiofrance.fr',              displayName: 'Radio France' },
+  { handle: 'sudouest.fr',                 displayName: 'Sud Ouest' },
+  { handle: 'usbeketrica.bsky.social',     displayName: 'Usbek & Rica' },
+  { handle: 'viastella.bsky.social',       displayName: 'France 3 Corse ViaStella' },
 ];
 
 const ROSTER_BY_DISPLAY_NAME = [...ROSTER].sort((a, b) =>
@@ -69,7 +90,7 @@ test.describe('/sources', () => {
     await expect(article.locator('#rdp-sources-page-footnote')).toContainText('« Première mesure »');
   });
 
-  test('lists exactly the 35 canonical media accounts', async ({ page }) => {
+  test('lists exactly the 56 canonical media accounts', async ({ page }) => {
     const rows = page.locator('.rdp-sources-page__row');
     await expect(rows).toHaveCount(ROSTER.length);
   });
