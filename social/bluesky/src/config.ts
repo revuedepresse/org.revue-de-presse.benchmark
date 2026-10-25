@@ -1,4 +1,4 @@
-import type { Config } from './types.ts';
+import { PUBLISHER_LISTS, type Config, type PublisherList } from './types.ts';
 
 const BASE_REQUIRED_KEYS = [
   'BLUESKY_HANDLE',
@@ -11,10 +11,21 @@ const BASE_REQUIRED_KEYS = [
 const FILE_MODE_KEYS = ['BLUESKY_SESSION_FILE', 'BLUESKY_STATE_FILE'] as const;
 
 export class ConfigError extends Error {
-  constructor(public readonly missing: string[]) {
-    super(`Missing required env vars: ${missing.join(', ')}`);
+  constructor(public readonly missing: string[], message?: string) {
+    super(message ?? `Missing required env vars: ${missing.join(', ')}`);
     this.name = 'ConfigError';
   }
+}
+
+// French media only unless BLUESKY_PUBLISH_LISTS names others, e.g.
+// "fr,coop-medias": the Coop Médias thread is ready but off by default.
+function publishLists(raw: string | undefined): PublisherList[] {
+  const names = (raw ?? 'fr').split(',').map((s) => s.trim()).filter(Boolean);
+  const unknown = names.filter((n) => !PUBLISHER_LISTS.includes(n as PublisherList));
+  if (unknown.length > 0 || names.length === 0) {
+    throw new ConfigError([], `BLUESKY_PUBLISH_LISTS names unknown lists: ${unknown.join(', ') || '(none)'}; known: ${PUBLISHER_LISTS.join(', ')}`);
+  }
+  return [...new Set(names)] as PublisherList[];
 }
 
 export function loadConfig(): Config {
@@ -46,6 +57,11 @@ export function loadConfig(): Config {
       process.env.POST_FOOTER_URL ??
       'https://play.google.com/store/apps/details?id=org.revue_2_presse',
     postHashtag: process.env.POST_HASHTAG ?? '#RevueDePresse',
-    newsletterUrl: process.env.NEWSLETTER_URL ?? 'https://revue-de-presse.org/lettre-quotidienne',
+    publishLists: publishLists(process.env.BLUESKY_PUBLISH_LISTS),
+    newsletterUrls: {
+      fr: process.env.NEWSLETTER_URL ?? 'https://revue-de-presse.org/lettre-quotidienne',
+      'coop-medias':
+        process.env.NEWSLETTER_URL_COOP_MEDIAS ?? 'https://revue-de-presse.org/lettre-quotidienne-coop-medias',
+    },
   };
 }

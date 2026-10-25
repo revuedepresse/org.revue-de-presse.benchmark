@@ -1,7 +1,8 @@
 import { readFile, writeFile, rename, chmod } from 'node:fs/promises';
-import type { StateFile } from './types.ts';
+import type { PublisherList, StateFile } from './types.ts';
 
-const HISTORY_CAP = 30;
+// A month of threads, for each list.
+const HISTORY_CAP = 60;
 
 const EMPTY: StateFile = { lastPostedDate: null, history: [] };
 
@@ -38,9 +39,9 @@ export async function hasPostedFor(path: string, isoDate: string): Promise<boole
   return state?.lastPostedDate === isoDate;
 }
 
-export async function previousPublicationIds(path: string): Promise<string[] | null> {
+export async function previousPublicationIds(path: string, list: PublisherList = 'fr'): Promise<string[] | null> {
   const state = await readStateFile(path);
-  const head = state?.history[0];
+  const head = state?.history.find((entry) => (entry.list ?? 'fr') === list);
   if (!head || !Array.isArray(head.publicationIds) || head.publicationIds.length !== 3) {
     return null;
   }
@@ -53,12 +54,13 @@ export async function recordPost(
   threadRootUri: string,
   postedAt: string,
   publicationIds: string[],
+  list: PublisherList = 'fr',
 ): Promise<void> {
   const current = (await readStateFile(path)) ?? EMPTY;
   const next: StateFile = {
     lastPostedDate: isoDate,
     history: [
-      { date: isoDate, threadRootUri, postedAt, publicationIds },
+      { date: isoDate, threadRootUri, postedAt, publicationIds, list },
       ...current.history,
     ].slice(0, HISTORY_CAP),
   };

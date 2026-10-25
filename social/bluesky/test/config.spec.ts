@@ -20,7 +20,7 @@ let saved: NodeJS.ProcessEnv;
 beforeEach(() => {
   saved = { ...process.env };
   for (const k of Object.keys(process.env)) {
-    if (k.startsWith('BLUESKY_') || k.startsWith('API_') || k === 'POST_FOOTER_URL' || k === 'POST_HASHTAG' || k === 'NEWSLETTER_URL' || k === 'TZ' || k === 'LOG_LEVEL') {
+    if (k.startsWith('BLUESKY_') || k.startsWith('API_') || k === 'POST_FOOTER_URL' || k === 'POST_HASHTAG' || k.startsWith('NEWSLETTER_URL') || k === 'TZ' || k === 'LOG_LEVEL') {
       delete process.env[k];
     }
   }
@@ -45,7 +45,12 @@ describe('loadConfig', () => {
     expect(cfg.tz).toBe('Europe/Paris');
     expect(cfg.logLevel).toBe('info');
     expect(cfg.postFooterUrl).toContain('play.google.com');
-    expect(cfg.newsletterUrl).toBe('https://revue-de-presse.org/lettre-quotidienne');
+    expect(cfg.newsletterUrls).toEqual({
+      fr: 'https://revue-de-presse.org/lettre-quotidienne',
+      'coop-medias': 'https://revue-de-presse.org/lettre-quotidienne-coop-medias',
+    });
+    // Coop Médias is built in but not published until enabled.
+    expect(cfg.publishLists).toEqual(['fr']);
     expect(cfg.postHashtag).toBe('#RevueDePresse');
   });
 
@@ -68,5 +73,13 @@ describe('loadConfig', () => {
   it('defaults blueskyRotatedStateFile to null', () => {
     Object.assign(process.env, FILE_ENV);
     expect(loadConfig().blueskyRotatedStateFile).toBeNull();
+  });
+
+  it('publishes the lists BLUESKY_PUBLISH_LISTS names, refusing unknown ones', () => {
+    Object.assign(process.env, FILE_ENV, { BLUESKY_PUBLISH_LISTS: 'fr, coop-medias' });
+    expect(loadConfig().publishLists).toEqual(['fr', 'coop-medias']);
+    Object.assign(process.env, { BLUESKY_PUBLISH_LISTS: 'fr,nope' });
+    expect(() => loadConfig()).toThrow(/BLUESKY_PUBLISH_LISTS/);
+    delete process.env.BLUESKY_PUBLISH_LISTS;
   });
 });

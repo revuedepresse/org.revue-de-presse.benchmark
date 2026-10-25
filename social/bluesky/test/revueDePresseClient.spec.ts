@@ -126,4 +126,13 @@ describe('revueDePresseClient', () => {
     await client.fetchTopThree('2026-10-24');
     expect(new URL(fetchMock.mock.calls[1][0] as string).searchParams.get('ranking')).toBe('end-of-day');
   });
+
+  it('asks for the given list', async () => {
+    fetchMock.mockResolvedValueOnce(TOKEN_RES()).mockResolvedValueOnce(HIGHLIGHTS_RES()).mockResolvedValueOnce(HIGHLIGHTS_RES());
+    const client = createRevueDePresseClient({ baseUrl: 'https://api.revue-de-presse.org', clientSecret: 'sek' });
+    await client.fetchTopThree('2026-10-24');
+    await client.fetchTopThree('2026-10-24', 'coop-medias');
+    expect(new URL(fetchMock.mock.calls[1][0] as string).searchParams.get('list')).toBe('fr');
+    expect(new URL(fetchMock.mock.calls[2][0] as string).searchParams.get('list')).toBe('coop-medias');
+  });
 });
