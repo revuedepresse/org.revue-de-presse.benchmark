@@ -16,7 +16,7 @@
     "maestro:ios": "maestro test maestro/flows/"
   },
   "devDependencies": {
-    "@playwright/test": "^1.64.0",
+    "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.5",
     "chrome-launcher": "^1.2.2",
     "lighthouse": "^13.5.0",
