@@ -4,6 +4,8 @@ import { cleanText } from './cleanText.ts';
 export type RenderThreadOpts = {
   footerUrl?: string;
   hashtag?: string;
+  // Sign-up page of the French media newsletter; omitted when empty.
+  newsletterUrl?: string;
 };
 
 const MAX_GRAPHEMES = 300;
@@ -149,5 +151,11 @@ export function renderThread(
       throw new Error(`renderThread: reply ${r.handle} exceeds 300 graphemes (${graphemeLength(r.text)})`);
     }
   }
-  return { lead, replies };
+  return { lead, replies, ...(opts.newsletterUrl ? { closing: buildClosing(opts.newsletterUrl) } : {}) };
+}
+
+function buildClosing(url: string): { text: string; linkRange: LinkRange } {
+  const text = `Pour recevoir chaque matin le top 10 des médias français par e-mail, inscrivez-vous à la lettre d'information : ${url}`;
+  const byteStart = Buffer.byteLength(text.slice(0, text.lastIndexOf(url)), 'utf8');
+  return { text, linkRange: { byteStart, byteEnd: byteStart + Buffer.byteLength(url, 'utf8'), uri: url } };
 }

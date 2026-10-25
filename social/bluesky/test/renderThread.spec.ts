@@ -206,4 +206,22 @@ describe('truncateGraphemes (URL-append degradation budget)', () => {
   it('returns the input unchanged when it already fits the budget', () => {
     expect(truncateGraphemes('short', 100)).toBe('short');
   });
+
+  it('closes the thread with a dedicated invitation to the newsletter, its link a facet', () => {
+    const url = 'https://revue-de-presse.org/lettre-quotidienne';
+    const draft = renderThread(SAMPLE, '2026-10-24', { ...OPTS, newsletterUrl: url });
+    expect(draft.closing?.text).toBe(
+      "Pour recevoir chaque matin le top 10 des médias français par e-mail, inscrivez-vous à la lettre d'information : " + url,
+    );
+    const { byteStart, byteEnd, uri } = draft.closing!.linkRange;
+    expect(uri).toBe(url);
+    expect(Buffer.from(draft.closing!.text, 'utf8').subarray(byteStart, byteEnd).toString('utf8')).toBe(url);
+    expect(graphemeLength(draft.closing!.text)).toBeLessThanOrEqual(300);
+    expect(draft.replies).toHaveLength(3);
+  });
+
+  it('has no closing post without a newsletter URL', () => {
+    expect(renderThread(SAMPLE, '2026-10-24', OPTS).closing).toBeUndefined();
+    expect(renderThread(SAMPLE, '2026-10-24', { ...OPTS, newsletterUrl: '' }).closing).toBeUndefined();
+  });
 });

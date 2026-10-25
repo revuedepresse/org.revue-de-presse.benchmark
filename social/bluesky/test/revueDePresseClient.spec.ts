@@ -119,4 +119,11 @@ describe('revueDePresseClient', () => {
     expect(out).toHaveLength(3);
     expect(out.map((h) => h.screenName)).toEqual(['Outlet1', 'Outlet2', 'Outlet3']);
   });
+
+  it('asks for the end-of-day ranking', async () => {
+    fetchMock.mockResolvedValueOnce(TOKEN_RES()).mockResolvedValueOnce(HIGHLIGHTS_RES());
+    const client = createRevueDePresseClient({ baseUrl: 'https://api.revue-de-presse.org', clientSecret: 'sek' });
+    await client.fetchTopThree('2026-10-24');
+    expect(new URL(fetchMock.mock.calls[1][0] as string).searchParams.get('ranking')).toBe('end-of-day');
+  });
 });
