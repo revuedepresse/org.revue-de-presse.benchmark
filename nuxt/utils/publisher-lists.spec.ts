@@ -19,12 +19,13 @@ describe('publisher lists', () => {
 
   it('starts each list on its first collected day', () => {
     expect(firstDayOf('fr')).toEqual(day(2025, 3, 4));
-    expect(firstDayOf('coop-medias')).toEqual(day(2026, 10, 25));
+    expect(firstDayOf('coop-medias')).toEqual(day(2025, 3, 4));
     expect(firstDayOf('fr-coop-medias')).toEqual(day(2025, 3, 4));
   });
 
   it('moves a day before the list began to the list first day', () => {
-    expect(withinList(day(2026, 10, 1), 'coop-medias')).toEqual(day(2026, 10, 25));
+    expect(withinList(day(2025, 1, 1), 'coop-medias')).toEqual(day(2025, 3, 4));
+    expect(withinList(day(2026, 10, 1), 'coop-medias')).toEqual(day(2026, 10, 1));
     expect(withinList(day(2025, 1, 1), 'fr')).toEqual(day(2025, 3, 4));
     expect(withinList(day(2025, 1, 1), 'fr-coop-medias')).toEqual(day(2025, 3, 4));
   });

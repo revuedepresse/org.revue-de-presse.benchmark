@@ -12,7 +12,7 @@ export type PublisherList = {
 
 export const PUBLISHER_LISTS: PublisherList[] = [
   { id: 'fr', label: 'Médias français', firstDay: [2025, 3, 4] },
-  { id: 'coop-medias', label: 'Coop Médias', firstDay: [2026, 10, 25] },
+  { id: 'coop-medias', label: 'Coop Médias', firstDay: [2025, 3, 4] },
   // Members of either list, each post counted once.
   { id: 'fr-coop-medias', label: 'Médias français + Coop Médias', firstDay: [2025, 3, 4] },
 ];
