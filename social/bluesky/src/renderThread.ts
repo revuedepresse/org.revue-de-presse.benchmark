@@ -1,11 +1,18 @@
-import type { Highlight, ThreadDraft, Reply, LinkRange, MentionRange } from './types.ts';
+import type { Highlight, ThreadDraft, Reply, LinkRange, MentionRange, PublisherList } from './types.ts';
 import { cleanText } from './cleanText.ts';
 
 export type RenderThreadOpts = {
   footerUrl?: string;
   hashtag?: string;
-  // Sign-up page of the French media newsletter; omitted when empty.
+  // Whose top 3 this is. Defaults to French media.
+  list?: PublisherList;
+  // Sign-up page of that list's newsletter; omitted when empty.
   newsletterUrl?: string;
+};
+
+const PUBLISHERS: Record<PublisherList, { heading: string; newsletter: string }> = {
+  fr: { heading: 'des publications de presse', newsletter: 'des médias français' },
+  'coop-medias': { heading: 'des publications des médias de Coop Médias', newsletter: 'des médias de Coop Médias' },
 };
 
 const MAX_GRAPHEMES = 300;
@@ -91,7 +98,7 @@ const formatDateFr = (isoDate: string): string => {
 };
 
 function buildLead(date: string, opts: RenderThreadOpts): { text: string; linkRange?: LinkRange } {
-  const header = `Top 3 des publications de presse parmi les plus relayées sur Bluesky le ${date} :`;
+  const header = `Top 3 ${PUBLISHERS[opts.list ?? 'fr'].heading} parmi les plus relayées sur Bluesky le ${date} :`;
   const footer = opts.footerUrl ? `Retrouvez la revue de presse complète : ${opts.footerUrl}` : '';
   const tag = opts.hashtag ?? '';
 
@@ -151,11 +158,11 @@ export function renderThread(
       throw new Error(`renderThread: reply ${r.handle} exceeds 300 graphemes (${graphemeLength(r.text)})`);
     }
   }
-  return { lead, replies, ...(opts.newsletterUrl ? { closing: buildClosing(opts.newsletterUrl) } : {}) };
+  return { lead, replies, ...(opts.newsletterUrl ? { closing: buildClosing(opts.newsletterUrl, opts.list ?? 'fr') } : {}) };
 }
 
-function buildClosing(url: string): { text: string; linkRange: LinkRange } {
-  const text = `Pour recevoir chaque matin le top 10 des médias français par e-mail, inscrivez-vous à la lettre d'information : ${url}`;
+function buildClosing(url: string, list: PublisherList): { text: string; linkRange: LinkRange } {
+  const text = `Pour recevoir chaque matin le top 10 ${PUBLISHERS[list].newsletter} par e-mail, inscrivez-vous à la lettre d'information : ${url}`;
   const byteStart = Buffer.byteLength(text.slice(0, text.lastIndexOf(url)), 'utf8');
   return { text, linkRange: { byteStart, byteEnd: byteStart + Buffer.byteLength(url, 'utf8'), uri: url } };
 }

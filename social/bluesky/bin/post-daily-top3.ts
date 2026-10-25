@@ -23,8 +23,9 @@ import {
 } from '../src/stateStore.ts';
 import { hasAuthoredTodayInTz } from '../src/dailyGuard.ts';
 import { logger } from '../src/logger.ts';
+import { EXIT, worstExit } from '../src/exitCodes.ts';
+import { PUBLISHER_LISTS, type PublisherList } from '../src/types.ts';
 
-const EXIT = { OK: 0, ALREADY_POSTED: 1, UPSTREAM: 2, BLUESKY: 3, CONFIG: 4, DUPLICATE_CONTENT: 5 };
 
 function previousDateInTz(tz: string): string {
   const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -54,11 +55,21 @@ async function main(): Promise<number> {
       date: { type: 'string' },
       force: { type: 'boolean', default: false },
       'dry-run': { type: 'boolean', default: false },
+      // One list only (fr or coop-medias), whatever BLUESKY_PUBLISH_LISTS says.
+      list: { type: 'string' },
     },
     strict: true,
   });
 
   const cfg = loadConfig();
+  let lists: PublisherList[] = cfg.publishLists;
+  if (values.list !== undefined) {
+    if (!PUBLISHER_LISTS.includes(values.list as PublisherList)) {
+      logger.error({ list: values.list, known: PUBLISHER_LISTS }, 'unknown list');
+      return EXIT.CONFIG;
+    }
+    lists = [values.list as PublisherList];
+  }
   const envMode = cfg.blueskyOauthSessionEnv !== null;
   const targetDate = values.date ?? previousDateInTz(cfg.tz);
   logger.info({ targetDate, dryRun: values['dry-run'], force: values.force, envMode }, 'starting');
@@ -162,165 +173,178 @@ async function main(): Promise<number> {
   }
 
   const upstream = createRevueDePresseClient({ baseUrl: cfg.apiBaseUrl, clientSecret: cfg.apiClientSecret });
-  let highlights;
-  try {
-    highlights = await upstream.fetchTopThree(targetDate);
-  } catch (err) {
-    logger.error({ err }, 'upstream fetchTopThree failed');
-    return EXIT.UPSTREAM;
-  }
-  if (highlights.length !== 3) {
-    logger.error({ targetDate, count: highlights.length }, 'upstream did not return 3 highlights — refusing to post incomplete digest');
-    return EXIT.UPSTREAM;
-  }
 
-  if (!values.force) {
-    const prevIds = await previousPublicationIds(cfg.blueskyStateFile);
-    const currentIds = highlights.map((h) => h.publicationId);
-    if (prevIds && setEqualsStrings(prevIds, currentIds)) {
-      logger.warn({ prevIds, currentIds, targetDate }, 'contentGuard.skip — top 3 unchanged since last post');
-      return EXIT.DUPLICATE_CONTENT;
+  // One thread per list, each checked and recorded on its own; the daily
+  // guard above ran once, before any of them.
+  const publish = async (list: PublisherList): Promise<number> => {
+      let highlights;
+    try {
+      highlights = await upstream.fetchTopThree(targetDate, list);
+    } catch (err) {
+      logger.error({ err, list }, 'upstream fetchTopThree failed');
+      return EXIT.UPSTREAM;
     }
-  }
-
-  let draft;
-  try {
-    draft = renderThread(highlights, targetDate, {
-      footerUrl: cfg.postFooterUrl,
-      hashtag: cfg.postHashtag,
-      newsletterUrl: cfg.newsletterUrl,
-    });
-  } catch (err) {
-    logger.error({ err }, 'render failed');
-    return EXIT.UPSTREAM;
-  }
-
-  if (values['dry-run']) {
-    process.stdout.write(`--- LEAD (${graphemeLength(draft.lead.text)} graphemes) ---\n${draft.lead.text}\n\n`);
-    for (let i = 0; i < draft.replies.length; i += 1) {
-      const r = draft.replies[i];
-      process.stdout.write(`--- REPLY ${i + 1} @${r.handle} (${graphemeLength(r.text)} g) embed=${r.embedUri} ---\n${r.text}\n\n`);
+    if (highlights.length !== 3) {
+      logger.error({ targetDate, list, count: highlights.length }, 'upstream did not return 3 highlights — refusing to post incomplete digest');
+      return EXIT.UPSTREAM;
     }
-    if (draft.closing) {
-      process.stdout.write(`--- CLOSING (${graphemeLength(draft.closing.text)} g) ---\n${draft.closing.text}\n\n`);
+
+    if (!values.force) {
+      const prevIds = await previousPublicationIds(cfg.blueskyStateFile, list);
+      const currentIds = highlights.map((h) => h.publicationId);
+      if (prevIds && setEqualsStrings(prevIds, currentIds)) {
+        logger.warn({ prevIds, currentIds, targetDate, list }, 'contentGuard.skip — top 3 unchanged since last post');
+        return EXIT.DUPLICATE_CONTENT;
+      }
     }
-    logger.info('dry-run complete — no PDS calls made');
-    return EXIT.OK;
-  }
 
-  if (!agent) {
-    logger.error('internal: agent not initialised at post time');
-    return EXIT.BLUESKY;
-  }
+    let draft;
+    try {
+      draft = renderThread(highlights, targetDate, {
+        footerUrl: cfg.postFooterUrl,
+        hashtag: cfg.postHashtag,
+        list,
+        newsletterUrl: cfg.newsletterUrls[list],
+      });
+    } catch (err) {
+      logger.error({ err, list }, 'render failed');
+      return EXIT.UPSTREAM;
+    }
 
-  const resolver = createMentionResolver(agent);
-  const embedBuilder = createEmbedBuilder({ agent });
+    if (values['dry-run']) {
+      process.stdout.write(`=== ${list} ===\n--- LEAD (${graphemeLength(draft.lead.text)} graphemes) ---\n${draft.lead.text}\n\n`);
+      for (let i = 0; i < draft.replies.length; i += 1) {
+        const r = draft.replies[i];
+        process.stdout.write(`--- REPLY ${i + 1} @${r.handle} (${graphemeLength(r.text)} g) embed=${r.embedUri} ---\n${r.text}\n\n`);
+      }
+      if (draft.closing) {
+        process.stdout.write(`--- CLOSING (${graphemeLength(draft.closing.text)} g) ---\n${draft.closing.text}\n\n`);
+      }
+      logger.info('dry-run complete — no PDS calls made');
+      return EXIT.OK;
+    }
 
-  const enrichedReplies = await Promise.all(
-    draft.replies.map(async (r) => {
-      const [resolved, embed] = await Promise.all([
-        Promise.all(r.mentions.map(async (m) => ({ ...m, did: await resolver.resolve(m.handle) }))),
-        embedBuilder.build(r.embedUri),
-      ]);
+    if (!agent) {
+      logger.error('internal: agent not initialised at post time');
+      return EXIT.BLUESKY;
+    }
 
-      let text = r.text;
-      let linkFacet: unknown | null = null;
-      if (!embed) {
-        const suffix = `\n${r.embedUri}`;
-        const maxTextLen = 300 - graphemeLength(suffix);
-        if (graphemeLength(text) > maxTextLen) {
-          text = truncateGraphemes(text, maxTextLen);
+    const resolver = createMentionResolver(agent);
+    const embedBuilder = createEmbedBuilder({ agent });
+
+    const enrichedReplies = await Promise.all(
+      draft.replies.map(async (r) => {
+        const [resolved, embed] = await Promise.all([
+          Promise.all(r.mentions.map(async (m) => ({ ...m, did: await resolver.resolve(m.handle) }))),
+          embedBuilder.build(r.embedUri),
+        ]);
+
+        let text = r.text;
+        let linkFacet: unknown | null = null;
+        if (!embed) {
+          const suffix = `\n${r.embedUri}`;
+          const maxTextLen = 300 - graphemeLength(suffix);
+          if (graphemeLength(text) > maxTextLen) {
+            text = truncateGraphemes(text, maxTextLen);
+          }
+          const linkStart = Buffer.byteLength(text, 'utf8') + 1;
+          text = `${text}${suffix}`;
+          const linkEnd = Buffer.byteLength(text, 'utf8');
+          linkFacet = {
+            index: { byteStart: linkStart, byteEnd: linkEnd },
+            features: [{ $type: 'app.bsky.richtext.facet#link', uri: r.embedUri }],
+          };
         }
-        const linkStart = Buffer.byteLength(text, 'utf8') + 1;
-        text = `${text}${suffix}`;
-        const linkEnd = Buffer.byteLength(text, 'utf8');
-        linkFacet = {
-          index: { byteStart: linkStart, byteEnd: linkEnd },
-          features: [{ $type: 'app.bsky.richtext.facet#link', uri: r.embedUri }],
-        };
-      }
 
-      // truncateGraphemes only trims from the tail — a mention whose byteEnd
-      // now exceeds the pre-suffix text length was clipped and must be
-      // dropped. byteEnd is computed against the original r.text, which is
-      // identical to the truncated text on its retained prefix.
-      const truncatedByteLen = linkFacet
-        ? Buffer.byteLength(text, 'utf8') - Buffer.byteLength(`\n${r.embedUri}`, 'utf8')
-        : Buffer.byteLength(text, 'utf8');
+        // truncateGraphemes only trims from the tail — a mention whose byteEnd
+        // now exceeds the pre-suffix text length was clipped and must be
+        // dropped. byteEnd is computed against the original r.text, which is
+        // identical to the truncated text on its retained prefix.
+        const truncatedByteLen = linkFacet
+          ? Buffer.byteLength(text, 'utf8') - Buffer.byteLength(`\n${r.embedUri}`, 'utf8')
+          : Buffer.byteLength(text, 'utf8');
 
-      const facets: unknown[] = [];
-      for (const m of resolved) {
-        if (!m.did) continue;
-        if (m.byteEnd > truncatedByteLen) continue;
-        facets.push({
-          index: { byteStart: m.byteStart, byteEnd: m.byteEnd },
-          features: [{ $type: 'app.bsky.richtext.facet#mention', did: m.did }],
-        });
-      }
-      for (const l of r.links) {
-        if (l.byteEnd > truncatedByteLen) continue;
-        facets.push({
-          index: { byteStart: l.byteStart, byteEnd: l.byteEnd },
-          features: [{ $type: 'app.bsky.richtext.facet#link', uri: l.uri }],
-        });
-      }
-      if (linkFacet) facets.push(linkFacet);
+        const facets: unknown[] = [];
+        for (const m of resolved) {
+          if (!m.did) continue;
+          if (m.byteEnd > truncatedByteLen) continue;
+          facets.push({
+            index: { byteStart: m.byteStart, byteEnd: m.byteEnd },
+            features: [{ $type: 'app.bsky.richtext.facet#mention', did: m.did }],
+          });
+        }
+        for (const l of r.links) {
+          if (l.byteEnd > truncatedByteLen) continue;
+          facets.push({
+            index: { byteStart: l.byteStart, byteEnd: l.byteEnd },
+            features: [{ $type: 'app.bsky.richtext.facet#link', uri: l.uri }],
+          });
+        }
+        if (linkFacet) facets.push(linkFacet);
 
-      return { text, facets, embed: embed ?? undefined };
-    }),
-  );
+        return { text, facets, embed: embed ?? undefined };
+      }),
+    );
 
-  // The newsletter invitation closes the thread, as one more reply.
-  if (draft.closing) {
-    const { byteStart, byteEnd, uri } = draft.closing.linkRange;
-    enrichedReplies.push({
-      text: draft.closing.text,
-      facets: [{ index: { byteStart, byteEnd }, features: [{ $type: 'app.bsky.richtext.facet#link', uri }] }],
-      embed: undefined,
-    });
-  }
-
-  const leadFacets = draft.lead.linkRange
-    ? [{
-        index: { byteStart: draft.lead.linkRange.byteStart, byteEnd: draft.lead.linkRange.byteEnd },
-        features: [{ $type: 'app.bsky.richtext.facet#link', uri: draft.lead.linkRange.uri }],
-      }]
-    : undefined;
-
-  let rootUri: string;
-  try {
-    rootUri = await postThread(agent as never, {
-      lead: { text: draft.lead.text, facets: leadFacets },
-      enrichedReplies,
-    });
-  } catch (err) {
-    logger.error({ err }, 'postThread failed');
-    return EXIT.BLUESKY;
-  }
-
-  const publicationIds = highlights.map((h) => h.publicationId);
-  await recordPost(cfg.blueskyStateFile, targetDate, rootUri, new Date().toISOString(), publicationIds);
-
-  if (envMode && cfg.blueskyRotatedSessionFile) {
-    const envStore = sessionStore as ReturnType<typeof createEnvSessionStore>;
-    if (envStore.lastSet) {
-      const payload = JSON.stringify({ did: envStore.lastSet.did, session: envStore.lastSet.value });
-      const tmp = `${cfg.blueskyRotatedSessionFile}.tmp`;
-      await writeFile(tmp, Buffer.from(payload, 'utf8').toString('base64'), { mode: 0o600 });
-      await chmod(tmp, 0o600);
-      await rename(tmp, cfg.blueskyRotatedSessionFile);
+    // The newsletter invitation closes the thread, as one more reply.
+    if (draft.closing) {
+      const { byteStart, byteEnd, uri } = draft.closing.linkRange;
+      enrichedReplies.push({
+        text: draft.closing.text,
+        facets: [{ index: { byteStart, byteEnd }, features: [{ $type: 'app.bsky.richtext.facet#link', uri }] }],
+        embed: undefined,
+      });
     }
-  }
 
-  if (envMode && cfg.blueskyRotatedStateFile) {
-    const state = await readStateFile(cfg.blueskyStateFile);
-    if (state) await writeRotatedStateFile(cfg.blueskyRotatedStateFile, state);
-  }
+    const leadFacets = draft.lead.linkRange
+      ? [{
+          index: { byteStart: draft.lead.linkRange.byteStart, byteEnd: draft.lead.linkRange.byteEnd },
+          features: [{ $type: 'app.bsky.richtext.facet#link', uri: draft.lead.linkRange.uri }],
+        }]
+      : undefined;
 
-  logger.info({ rootUri, targetDate }, 'posted');
-  process.stdout.write(rootUri + '\n');
-  return EXIT.OK;
+    let rootUri: string;
+    try {
+      rootUri = await postThread(agent as never, {
+        lead: { text: draft.lead.text, facets: leadFacets },
+        enrichedReplies,
+      });
+    } catch (err) {
+      logger.error({ err }, 'postThread failed');
+      return EXIT.BLUESKY;
+    }
+
+    const publicationIds = highlights.map((h) => h.publicationId);
+    await recordPost(cfg.blueskyStateFile, targetDate, rootUri, new Date().toISOString(), publicationIds, list);
+
+    if (envMode && cfg.blueskyRotatedSessionFile) {
+      const envStore = sessionStore as ReturnType<typeof createEnvSessionStore>;
+      if (envStore.lastSet) {
+        const payload = JSON.stringify({ did: envStore.lastSet.did, session: envStore.lastSet.value });
+        const tmp = `${cfg.blueskyRotatedSessionFile}.tmp`;
+        await writeFile(tmp, Buffer.from(payload, 'utf8').toString('base64'), { mode: 0o600 });
+        await chmod(tmp, 0o600);
+        await rename(tmp, cfg.blueskyRotatedSessionFile);
+      }
+    }
+
+    if (envMode && cfg.blueskyRotatedStateFile) {
+      const state = await readStateFile(cfg.blueskyStateFile);
+      if (state) await writeRotatedStateFile(cfg.blueskyRotatedStateFile, state);
+    }
+
+    logger.info({ rootUri, targetDate, list }, 'posted');
+    process.stdout.write(rootUri + '\n');
+    return EXIT.OK;
+  };
+
+  const codes: number[] = [];
+  for (const list of lists) {
+    codes.push(await publish(list));
+  }
+  return worstExit(codes);
 }
+
 
 main()
   .then((code) => process.exit(code))
