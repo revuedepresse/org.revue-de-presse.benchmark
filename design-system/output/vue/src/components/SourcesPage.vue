@@ -2,13 +2,13 @@
   <article class="rdp-sources-page">
     <h1>Sources des brèves</h1>
     <p>
-      Les sources des brèves de publications<a
+      Les brèves de publications sont&nbsp;
+      <a
         class="rdp-sources-page__internal-link"
         href="#rdp-sources-page-footnote"
-      >
-        triées par popularité
-      </a>
-      en fin de chaque journée proviennent des comptes Bluesky
+        >triées par popularité</a
+      >, au choix en fin de journée ou à leur première mesure. Elles proviennent
+      des comptes Bluesky
 
       <template v-if="!sources.originLink">{{ sources.origin + "." }}</template>
 
@@ -50,7 +50,10 @@
       </template>
     </ul>
     <p id="rdp-sources-page-footnote" class="rdp-sources-page__footnote">
-      La popularité est déduite des partages des publications depuis Bluesky.
+      La popularité est déduite des partages des publications sur Bluesky : «
+      Fin de journée » compte ceux de toute la journée de publication, «
+      Première mesure » ceux relevés à la première collecte de chaque
+      publication.
     </p>
     
   </article>

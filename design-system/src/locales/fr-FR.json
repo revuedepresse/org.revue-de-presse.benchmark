@@ -186,7 +186,7 @@
   "pages.support.section-1.title": "Projet citoyen, ouvert et libre",
   "pages.support.section-2.title": "Soyez partie prenante du projet",
   "pages.sources.title": "Sources des brèves",
-  "pages.sources.intro": "Les sources des brèves de publications triées par popularité en fin de chaque journée proviennent des comptes Bluesky de médias Français.",
-  "pages.sources.footnote": "La popularité est déduite des partages des publications depuis Bluesky.",
+  "pages.sources.intro": "Les brèves de publications sont triées par popularité, au choix en fin de journée ou à leur première mesure. Elles proviennent des comptes Bluesky de médias français.",
+  "pages.sources.footnote": "La popularité est déduite des partages des publications sur Bluesky : « Fin de journée » compte ceux de toute la journée de publication, « Première mesure » ceux relevés à la première collecte de chaque publication.",
   "header.wordmark": "Revue de presse"
 }

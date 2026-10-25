@@ -52,15 +52,12 @@ test.describe('/sources', () => {
     const article = page.locator('.rdp-sources-page');
     await expect(article).toBeVisible();
     await expect(article.locator('h1')).toHaveText('Sources des brèves');
-    await expect(article.locator('p').first()).toContainText(
-      'Les sources des brèves de publications',
+    await expect(article.locator('p').first()).toHaveText(
+      'Les brèves de publications sont triées par popularité, au choix en fin de journée ou à leur première mesure. ' +
+        'Elles proviennent des comptes Bluesky de médias français.',
     );
-    await expect(article.locator('p').first()).toContainText(
-      'proviennent des comptes Bluesky de médias Français',
-    );
-    await expect(article.locator('#rdp-sources-page-footnote')).toContainText(
-      'La popularité est déduite des partages des publications depuis Bluesky.',
-    );
+    await expect(article.locator('#rdp-sources-page-footnote')).toContainText('« Fin de journée »');
+    await expect(article.locator('#rdp-sources-page-footnote')).toContainText('« Première mesure »');
   });
 
   test('lists exactly the 26 canonical media accounts', async ({ page }) => {
