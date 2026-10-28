@@ -42,7 +42,7 @@
     "pixelmatch": "^8.0.0",
     "playwright": "^1.64.0",
     "pngjs": "^7.0.0",
-    "preact": "^11.0.1",
+    "preact": "^11.0.2",
     "solid-js": "^1.9.14",
     "svelte": "^5.56.8",
     "tsup": "^8.5.1",
