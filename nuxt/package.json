@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nuxt cleanup && nuxt dev",
     "build": "nuxt build",
+    "verify:build": "node scripts/verify-build-output.mjs",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
