@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-05-28T20:07:19.468Z",
+  "capturedAt": "2026-11-11T10:45:26.962Z",
   "viewport": {
     "width": 1280,
     "height": 800
@@ -19,9 +19,9 @@
         "x": 0,
         "y": 0,
         "width": 1280,
-        "height": 1195.34375
+        "height": 1291.625
       },
-      "text": "Revue de presse\nMer. 27 Mai 2026\nMai 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n27\t",
+      "text": "Revue de presse\nMar. 10 Nov. 2026\nNovembre 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDi",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -57,7 +57,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "1280px",
-        "height": "1195.34px",
+        "height": "1291.62px",
         "maxWidth": "none",
         "minHeight": "800px",
         "boxShadow": "none"
@@ -235,9 +235,9 @@
         "x": 180,
         "y": 81,
         "width": 336,
-        "height": 1098.34375
+        "height": 1194.625
       },
-      "text": "Mer. 27 Mai 2026\nMai 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n27\t28\t29\t30\t1\t2\t3\n4",
+      "text": "Mar. 10 Nov. 2026\nNovembre 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n26\t27\t28\t29\t3",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -273,7 +273,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "336px",
-        "height": "1098.34px",
+        "height": "1194.62px",
         "maxWidth": "none",
         "minHeight": "auto",
         "boxShadow": "none"
@@ -286,7 +286,7 @@
         "x": 532,
         "y": 81,
         "width": 568,
-        "height": 1098
+        "height": 911
       },
       "text": "revue_2_presse\n@revue-de-presse.org\n\nRevue-de-presse.org est un projet citoyen i",
       "styles": {
@@ -324,7 +324,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "568px",
-        "height": "1098px",
+        "height": "911px",
         "maxWidth": "none",
         "minHeight": "auto",
         "boxShadow": "none"
@@ -337,9 +337,9 @@
         "x": 532,
         "y": 260,
         "width": 568,
-        "height": 919
+        "height": 732
       },
-      "text": "212\n486\nMediapart\n@mediapart.fr\n\nSynthetic post 1 for 2026-05-27.\n\n10:00 · mercr",
+      "text": "131\n443\nFranceculture\n@franceculture.fr\n\nSynthetic post 1 for 2026-11-10.\n\n09:00",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -375,7 +375,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "568px",
-        "height": "919px",
+        "height": "732px",
         "maxWidth": "none",
         "minHeight": "auto",
         "boxShadow": "none"
@@ -390,7 +390,7 @@
         "width": 568,
         "height": 171
       },
-      "text": "212\n486\nMediapart\n@mediapart.fr\n\nSynthetic post 1 for 2026-05-27.\n\n10:00 · mercr",
+      "text": "131\n443\nFranceculture\n@franceculture.fr\n\nSynthetic post 1 for 2026-11-10.\n\n09:00",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -439,9 +439,9 @@
         "x": 180,
         "y": 81,
         "width": 336,
-        "height": 1098.34375
+        "height": 1194.625
       },
-      "text": "Mer. 27 Mai 2026\nMai 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n27\t28\t29\t30\t1\t2\t3\n4",
+      "text": "Mar. 10 Nov. 2026\nNovembre 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n26\t27\t28\t29\t3",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -477,7 +477,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "336px",
-        "height": "1098.34px",
+        "height": "1194.62px",
         "maxWidth": "100%",
         "minHeight": "0px",
         "boxShadow": "none"
@@ -490,9 +490,9 @@
         "x": 180,
         "y": 81,
         "width": 336,
-        "height": 369
+        "height": 361
       },
-      "text": "Mer. 27 Mai 2026\nMai 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n27\t28\t29\t30\t1\t2\t3\n4",
+      "text": "Mar. 10 Nov. 2026\nNovembre 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n26\t27\t28\t29\t3",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -528,7 +528,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "336px",
-        "height": "369px",
+        "height": "361px",
         "maxWidth": "100%",
         "minHeight": "auto",
         "boxShadow": "none"
@@ -539,9 +539,9 @@
       "found": true,
       "box": {
         "x": 180,
-        "y": 466,
+        "y": 585,
         "width": 336,
-        "height": 713.34375
+        "height": 690.625
       },
       "text": "@revue-de-presse.org\n\nRetrouver chaque jour les 10 publications médias ayant été",
       "styles": {
@@ -579,7 +579,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "336px",
-        "height": "713.344px",
+        "height": "690.625px",
         "maxWidth": "100%",
         "minHeight": "auto",
         "boxShadow": "none"
@@ -590,7 +590,7 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 482,
+        "y": 601,
         "width": 304,
         "height": 30
       },
@@ -641,7 +641,7 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 482,
+        "y": 601,
         "width": 304,
         "height": 30
       },
@@ -692,7 +692,7 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 756.625,
+        "y": 852.90625,
         "width": 304,
         "height": 30
       },
@@ -743,7 +743,7 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 930.65625,
+        "y": 1026.9375,
         "width": 304,
         "height": 30
       },
@@ -794,7 +794,7 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 485,
+        "y": 604,
         "width": 24,
         "height": 24
       },
@@ -845,11 +845,11 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 520,
+        "y": 639,
         "width": 304,
-        "height": 212.625
+        "height": 189.90625
       },
-      "text": "Retrouver chaque jour les 10 publications médias ayant été les plus relayés au c",
+      "text": "Retrouver chaque jour les 10 publications médias ayant été les plus relayés la v",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -885,7 +885,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "304px",
-        "height": "212.625px",
+        "height": "189.906px",
         "maxWidth": "none",
         "minHeight": "0px",
         "boxShadow": "none"
@@ -896,11 +896,11 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 520,
+        "y": 639,
         "width": 304,
-        "height": 212.625
+        "height": 189.90625
       },
-      "text": "Retrouver chaque jour les 10 publications médias ayant été les plus relayés au c",
+      "text": "Retrouver chaque jour les 10 publications médias ayant été les plus relayés la v",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -936,7 +936,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "304px",
-        "height": "212.625px",
+        "height": "189.906px",
         "maxWidth": "none",
         "minHeight": "0px",
         "boxShadow": "none"
@@ -947,7 +947,7 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 794.625,
+        "y": 890.90625,
         "width": 185.296875,
         "height": 22
       },
@@ -998,7 +998,7 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 615.625,
+        "y": 712.21875,
         "width": 179.40625,
         "height": 28.59375
       },
@@ -1049,7 +1049,7 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 620.625,
+        "y": 717.21875,
         "width": 173.40625,
         "height": 19.59375
       },
@@ -1100,9 +1100,9 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 652.21875,
+        "y": 748.8125,
         "width": 193,
-        "height": 75
+        "height": 74.6875
       },
       "text": "",
       "styles": {
@@ -1140,7 +1140,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "193px",
-        "height": "75px",
+        "height": "74.6875px",
         "maxWidth": "none",
         "minHeight": "0px",
         "boxShadow": "none"
@@ -1151,9 +1151,9 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 652.21875,
+        "y": 748.8125,
         "width": 193,
-        "height": 75
+        "height": 74.6875
       },
       "text": "",
       "styles": {
@@ -1191,7 +1191,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "193px",
-        "height": "75px",
+        "height": "74.6875px",
         "maxWidth": "193px",
         "minHeight": "0px",
         "boxShadow": "none"
@@ -1202,7 +1202,7 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 1038.734375,
+        "y": 1135.015625,
         "width": 20,
         "height": 20
       },
@@ -1253,7 +1253,7 @@
       "found": true,
       "box": {
         "x": 196,
-        "y": 1127.546875,
+        "y": 1223.828125,
         "width": 304,
         "height": 32.796875
       },
@@ -1304,7 +1304,7 @@
       "found": true,
       "box": {
         "x": 242.890625,
-        "y": 1127.546875,
+        "y": 1223.828125,
         "width": 210.234375,
         "height": 16.796875
       },
@@ -1359,7 +1359,7 @@
         "width": 568,
         "height": 138
       },
-      "text": "Mediapart\n@mediapart.fr\n\nSynthetic post 1 for 2026-05-27.\n\n10:00 · mercredi 27 m",
+      "text": "Franceculture\n@franceculture.fr\n\nSynthetic post 1 for 2026-11-10.\n\n09:00 · mardi",
       "styles": {
         "paddingTop": "16px",
         "paddingRight": "16px",
@@ -1458,10 +1458,10 @@
       "box": {
         "x": 605,
         "y": 317.5,
-        "width": 75.21875,
+        "width": 90.703125,
         "height": 33
       },
-      "text": "Mediapart\n@mediapart.fr",
+      "text": "Franceculture\n@franceculture.fr",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -1496,7 +1496,7 @@
         "gap": "normal",
         "alignItems": "normal",
         "justifyContent": "normal",
-        "width": "75.2188px",
+        "width": "90.7031px",
         "height": "33px",
         "maxWidth": "none",
         "minHeight": "auto",
@@ -1512,7 +1512,7 @@
         "width": 534,
         "height": 25
       },
-      "text": "Synthetic post 1 for 2026-05-27.",
+      "text": "Synthetic post 1 for 2026-11-10.",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -1614,7 +1614,7 @@
         "width": 123.53125,
         "height": 25
       },
-      "text": "212\n486",
+      "text": "131\n443",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -1665,7 +1665,7 @@
         "width": 53.765625,
         "height": 25
       },
-      "text": "486",
+      "text": "443",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -1767,7 +1767,7 @@
         "width": 24.765625,
         "height": 25
       },
-      "text": "486",
+      "text": "443",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -1818,7 +1818,7 @@
         "width": 53.765625,
         "height": 25
       },
-      "text": "212",
+      "text": "131",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -1920,7 +1920,7 @@
         "width": 24.765625,
         "height": 25
       },
-      "text": "212",
+      "text": "131",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",

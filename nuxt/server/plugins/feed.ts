@@ -168,7 +168,7 @@ export default defineNitroPlugin((nitroApp) => {
       link: 'https://revue-de-presse.org',
       title: 'Revue de presse',
       description:
-        'Retrouver chaque jour les 10 publications médias ayant été les plus relayés au cours de la journée.',
+        'Retrouver chaque jour les 10 publications médias ayant été les plus relayés la veille.',
       copyright: '',
     };
 
