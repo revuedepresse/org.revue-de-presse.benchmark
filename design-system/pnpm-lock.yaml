@@ -122,7 +122,7 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
       vite:
-        specifier: ^8.3.7
+        specifier: ^8.0.16
         version: 8.3.7(@types/node@26.6.5)(esbuild@0.25.12)(jiti@1.21.7)
       vue-tsc:
         specifier: ^3.3.13
