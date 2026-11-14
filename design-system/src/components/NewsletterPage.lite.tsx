@@ -19,7 +19,7 @@ type NewsletterPageProps = {
   edition?: NewsletterEdition;
   privacyPolicyHref?: string;
   // The French media letter alone: no choice of letters, and no other list
-  // named, for visitors who are not previewing the other lists.
+  // named. Used where only that letter is offered.
   frenchMediaOnly?: boolean;
 };
 

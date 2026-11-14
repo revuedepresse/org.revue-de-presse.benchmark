@@ -41,7 +41,7 @@ describe('Sidebar pickers and newsletter invitation (server-rendered)', () => {
     );
   }
 
-  it('without the preview: the ranking picker only, no list picker, no newsletter invitation', async () => {
+  it('given one list: the ranking picker only, no list picker, no newsletter invitation', async () => {
     const html = await render({ lists: [{ id: 'fr', label: 'Médias français' }], selectedListId: 'fr' });
     expect(html).toContain('Fin de journée');
     expect(html).toContain('Première mesure');
@@ -49,7 +49,7 @@ describe('Sidebar pickers and newsletter invitation (server-rendered)', () => {
     expect(html).not.toContain('rdp-banner-about__newsletter');
   });
 
-  it('in preview: the list picker with its three lists, the ranking picker and the newsletter invitation', async () => {
+  it('given three lists: the list picker, the ranking picker and the newsletter invitation', async () => {
     const html = await render({
       lists: [
         { id: 'fr', label: 'Médias français' },

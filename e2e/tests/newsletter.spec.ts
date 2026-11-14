@@ -1,8 +1,6 @@
 import { test, expect, type Page, type Request } from '@playwright/test';
 import { appShell } from '../support/selectors';
-import { withPreview } from '../support/preview';
 
-// The newsletter is only offered in preview until its release.
 // The sign-up form is a plain HTML POST to the API. Intercept it so the test
 // reads exactly what the browser sends, without leaving the mock setup.
 const SUBSCRIBE_URL = 'https://api.revue-de-presse.org/newsletter/subscribe';
@@ -25,7 +23,7 @@ const radio = (page: Page, edition: string) =>
 
 test.describe('/lettre-quotidienne', () => {
   test('offers French media, Coop Médias, both in one letter or both letters, both letters checked', async ({ page }) => {
-    await page.goto(withPreview('/lettre-quotidienne'));
+    await page.goto('/lettre-quotidienne');
     await expect(appShell(page)).toBeVisible();
     await expect(page.locator('.rdp-newsletter-page input[type="radio"][name="edition"]')).toHaveCount(4);
     await expect(radio(page, 'both')).toBeChecked();
@@ -33,7 +31,7 @@ test.describe('/lettre-quotidienne', () => {
   });
 
   test('choosing a letter moves neither the heading, the intro nor the form', async ({ page }) => {
-    await page.goto(withPreview('/lettre-quotidienne'));
+    await page.goto('/lettre-quotidienne');
     await expect(appShell(page)).toBeVisible();
     // Positions in the page, not the viewport: checking a radio may scroll it into view.
     const boxes = async () =>
@@ -53,7 +51,7 @@ test.describe('/lettre-quotidienne', () => {
 
   for (const edition of ['fr', 'coop-medias', 'fr-coop-medias', 'both']) {
     test(`posts edition=${edition} when that letter is chosen`, async ({ page }) => {
-      await page.goto(withPreview('/lettre-quotidienne'));
+      await page.goto('/lettre-quotidienne');
       await expect(appShell(page)).toBeVisible();
       await radio(page, edition).check();
       await expect(page.locator('.rdp-newsletter-page')).toHaveAttribute('data-edition', edition);
@@ -66,7 +64,7 @@ test.describe('/lettre-quotidienne', () => {
 });
 
 test('/lettre-quotidienne-coop-medias opens on the Coop Médias letter', async ({ page }) => {
-  await page.goto(withPreview('/lettre-quotidienne-coop-medias'));
+  await page.goto('/lettre-quotidienne-coop-medias');
   await expect(appShell(page)).toBeVisible();
   await expect(radio(page, 'coop-medias')).toBeChecked();
   const body = await submitAndCapture(page);
@@ -74,10 +72,18 @@ test('/lettre-quotidienne-coop-medias opens on the Coop Médias letter', async (
 });
 
 test('the invitation under the Google Play badge leads to the choice of letters', async ({ page }) => {
-  await page.goto(withPreview('/'));
+  await page.goto('/');
   await expect(appShell(page)).toBeVisible();
   await page.locator('.rdp-banner-about__newsletter-link').first().click();
-  // In-site navigation keeps the preview in the address.
-  await expect(page).toHaveURL(/\/lettre-quotidienne\?apercu=1$/);
+  await expect(page).toHaveURL(/\/lettre-quotidienne$/);
   await expect(radio(page, 'both')).toBeChecked();
+});
+
+test('both letters are reachable, and neither is in the sitemap yet', async ({ request }) => {
+  for (const path of ['/lettre-quotidienne', '/lettre-quotidienne-coop-medias']) {
+    expect((await request.get(path, { maxRedirects: 0 })).status()).toBe(200);
+  }
+  const sitemap = await (await request.get('/sitemap.xml')).text();
+  expect(sitemap).toContain('/sources');
+  expect(sitemap).not.toContain('lettre-quotidienne');
 });

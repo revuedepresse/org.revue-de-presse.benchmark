@@ -126,3 +126,32 @@ test.describe('/sources', () => {
     await expect(anchor).toHaveText('triées par popularité');
   });
 });
+
+// The sources page follows ?liste=, so each list can be read on its own. The
+// counts are asserted by the design system's own unit tests; here it is which
+// roster answers, so that a change of membership does not break this suite.
+test.describe('/sources?liste=', () => {
+  const rows = (page: import('@playwright/test').Page) => page.locator('.rdp-sources-page__row');
+  const handles = async (page: import('@playwright/test').Page) =>
+    (await rows(page).locator('.rdp-sources-page__handle').allTextContents()).map((h) => h.trim().replace(/^@/, ''));
+
+  test('coop-medias answers with the Coop Médias roster, naming Coop-médias as its origin', async ({ page }) => {
+    await page.goto('/sources?liste=coop-medias');
+    await expect(appShell(page)).toBeVisible();
+    await rows(page).first().waitFor();
+    const listed = await handles(page);
+    expect(listed).toContain('reporterre.net');
+    expect(listed).not.toContain('lemonde.fr');
+    await expect(page.locator('.rdp-sources-page a[href="https://www.coop-medias.org/"]').first()).toBeVisible();
+  });
+
+  test('fr-coop-medias answers with both rosters at once', async ({ page }) => {
+    await page.goto('/sources?liste=fr-coop-medias');
+    await expect(appShell(page)).toBeVisible();
+    await rows(page).first().waitFor();
+    const listed = await handles(page);
+    expect(listed).toContain('lemonde.fr');
+    expect(listed).toContain('reporterre.net');
+    expect(new Set(listed).size).toBe(listed.length);
+  });
+});
