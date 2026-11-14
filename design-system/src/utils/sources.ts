@@ -63,10 +63,12 @@ const FRENCH_MEDIA: SourceRow[] = [
   { handle: 'viastella.bsky.social', displayName: 'France 3 Corse ViaStella', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:bhfnbmt4fq2fqkfiqh43er26/bafkreifl72bytlr3vz7suxzbhivzdhbwnflk5vuj7qjpb363mg4w26ybxy' },
 ];
 
-// Members of the coop-medias.org Bluesky list.
+// Members of the coop-medias.org Bluesky list: the médias sociétaires listed on
+// https://www.coop-medias.org/les-medias-independants/#liste-medias-societaires
+// that have a Bluesky account. Coop-médias asks us to keep the two in step, so an
+// account stays here only while it is on that page.
 const COOP_MEDIAS: SourceRow[] = [
   { handle: 'alternatives-economiques.fr', displayName: 'Alternatives Economiques', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:baubqpcuoesmvjiimxlers3v/bafkreiayjggk7lgpodsstxhnl5gzaztfdghbdohtmpbfajqhycbnko7fpq' },
-  { handle: 'arretsurimages.net', displayName: 'Arrêt sur images', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:jmusvarqn5czqikhnqdmjyum/bafkreibbltn4p7fij7ssdpqyjjpgbl6c47hc45xduecvf5dtszl4ltsbqe' },
   { handle: 'arrierecourlyon.bsky.social', displayName: 'L\'Arrière-Cour', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:splrykrm5chnvvfx3x64lk6m/bafkreihd76pj4rfflgt6iwkcjj3b3v2i7pwwykisq2pmytzdcr44n35uoq' },
   { handle: 'auposte.media', displayName: 'Au Poste', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:g5jpm7mczglrlizpqkrtg2vm/bafkreidoynbxmtlpxixbovypq3lsjzx3e352qd4wzv33y4z2oozevo3fbu' },
   { handle: 'basta.media', displayName: 'Basta!', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:6tko42pks4rfcjh7rfqkzmhu/bafkreihctf36sbyhck55wfazhtkj5i2oybj4r6br23uxfldcj7fgmi4qqu' },
@@ -74,7 +76,6 @@ const COOP_MEDIAS: SourceRow[] = [
   { handle: 'bonpote.com', displayName: 'Bon Pote', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:yvxxxti5p2msnfh5kmzwa5f7/bafkreibwi5got7endw7d567rxyha2muzvgrtykxoveoqxa5tr5ihebthga' },
   { handle: 'cafepedagogique.bsky.social', displayName: 'Le Café pédagogique', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:jyignm6egdhsdfvwp2qnfaa7/bafkreih7rkbdlctlgxxbe3hbj546xfkgi7nesgcbmwr6jkyz6buf66bshm' },
   { handle: 'climaxfanzine.bsky.social', displayName: 'Climax', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:wudgxad76snhn2g5aiuluomb/bafkreigc36cehz6k6c6hkdh4q4wq7lp2jrpkipcfk66f67zjm2uz366swi' },
-  { handle: 'contreattaque.bsky.social', displayName: 'Contre Attaque', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:gpss3375acfwih7x37b4kz2d/bafkreiepbfnwsmegidvtsn5shebsslycsq5vzonxwtiu4eqh3vp76vpiwq' },
   { handle: 'disclose.ngo', displayName: 'Disclose', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:qopr6txm3r27ym77th4ml46e/bafkreigdcq3bod4wh4m6l4nwfuhya6vgw47kde65ai3aj6tj6g3wxqfss4' },
   { handle: 'fracasmedia.bsky.social', displayName: 'Fracas', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:b4eex4djhkusk4s6cbqyeeol/bafkreiexnom7dehcbc7fq3qeztz6hm23vip37c7j5sq7xtoyqd7gx3wlh4' },
   { handle: 'histoires-crepues.bsky.social', displayName: 'Histoires Crépues', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:igelymoit75hraq5isrjcoor/bafkreiafvemxlipbr3ddngs7ghft3dcrfrmws6eepjmax35hggcfnz45t4' },
@@ -83,7 +84,6 @@ const COOP_MEDIAS: SourceRow[] = [
   { handle: 'journalfakir.bsky.social', displayName: 'Fakir', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:ps6pjfubpbqfdzkmqgd2hfud/bafkreie4biy6vtpezq724m236sqqyxtqqiiy7wg4zqtcszzp76vhxdoyvu' },
   { handle: 'labreche.bsky.social', displayName: 'La Brèche', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:hczviiqcj24q7b3illzfjmmv/bafkreieuf7h6mmxxwwu5oo2auet2vd5jyh5kbqialepw7twvtoe2lg6pwm' },
   { handle: 'ladeferlante.bsky.social', displayName: 'La Déferlante', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:kszenqy72ke3sbpnv2c2ys5h/bafkreiakcx4h7x2jhz6sbsifjwld6xjgrltf2an7cyutzlpepzs43sr7gm' },
-  { handle: 'lareleveetlapeste.bsky.social', displayName: 'La Relève et La Peste', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:7gkk2qg6257rziee5ylk6rc6/bafkreigua2ozs5nljgjvjhmjg2szkp7hcsln7rsnejlfp2o2xwzu3ecaaa' },
   { handle: 'lecrimedia.bsky.social', displayName: 'Le Cri', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:63vkisubtinver73glwgrwyl/bafkreibhxokgcuzztrai7nmsjlxuhfnxceyq7iqubbals2hsjbeljafkxi' },
   { handle: 'lemediatv.bsky.social', displayName: 'Le Média', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:hr4uzamyz54qo2lrf2isqcu3/bafkreidl2equcs5njbomh6xxzsp36mox32igkximutftxg4zvvykmt3t7y' },
   { handle: 'lesjours.fr', displayName: 'Les Jours', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:fleaqu2yloy5vpnb3wamdp6m/bafkreiej5h2k73ts367cfdfvvljq3tznrndw4nfrm723uv7efp3kiowur4' },
@@ -94,12 +94,10 @@ const COOP_MEDIAS: SourceRow[] = [
   { handle: 'marsactu.fr', displayName: 'Marsactu', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:oheo2dfm2v5mzptwn7juiku4/bafkreidwrfcfd3mb4qgnl2q2nvaxntulbagrqwc62uo4ahrc7fpaajzxzu' },
   { handle: 'mediacites.fr', displayName: 'Mediacités', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:6eptybcqvf2hzvqgg4fwnhrs/bafkreie32zkeijqhg5ziwgrjw5237oujd355lcculy245atkksad4cgnk4' },
   { handle: 'mob-media.info', displayName: 'MOB', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:r6j73vtjbqv2ywtaxmtegpdi/bafkreicitwcacdp2cxlnrkiutewxouolgemrfzxjv4qngwfyxjazgz6rx4' },
-  { handle: 'mr-mondialisation.bsky.social', displayName: 'Mr Mondialisation', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:vedmvdug2odqrvv63huxl4nd/bafkreibzvkjxy2jbhtghtxjqygqbzhpzbhndzlwtkwird5xc3slss6zgty' },
-  { handle: 'obsmultinationales.bsky.social', displayName: 'Observatoire des multinationales', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:dr2szexl7halmn5g2cnmd6tv/bafkreigbcnci5jx2lkdr27bqtbkclbzmlzkb3wl5dt3qynzbvg6h7i3ouu' },
+  { handle: 'narvalmedia.bsky.social', displayName: 'Narval', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:r3r6y7ddkws4uqssmzgkvbuz/bafkreigukvpkd6ttsodtlb3yott5a6kganayznuyhpnr33zzcy6uk6x65i' },
   { handle: 'onestpret.bsky.social', displayName: 'On Est Prêt', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:kvql5hr5mcfchjxgse7cz6h6/bafkreia673ipbizheeszhk7k5cbwscanhctc46ka7dt3yp2hwellymptpe' },
   { handle: 'politis.fr', displayName: 'Politis', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:oj6rklu3kys7xf37e2kmlnl5/bafkreid7tv37vhedi3tzxmpioszynogjmivsc6l2ofjhqxkr44xif4wvty' },
   { handle: 'radioparleur.bsky.social', displayName: 'Radio Parleur', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:gkdbnx3tkhertno2fppdy23h/bafkreie5w372uon7347kunvloocinmh6bdf7q5vpr7ahxuwdcpk24e7dkq' },
-  { handle: 'reflets.info', displayName: 'Reflets.info', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:5szwfaibfba3urbuewvy6s7z/bafkreic3sehd64c55lcd3agbc7rl43my4padawf3y3xxaznmfzazanwvla' },
   { handle: 'rembobine.info', displayName: 'Rembobine', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:xjv3g6e33akoiblhur5qdogz/bafkreig3yxpvnf5deqcakonv3f3k5mdqxnhla27qxmso65wbqywwhdc43m' },
   { handle: 'reporterre.net', displayName: 'Reporterre', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:2htr6vzopp6mejep7qcpszru/bafkreibpnuque2tamx4vdn4epx6uzcfnbxm4wmmqjuonpaaamgsco63w4e' },
   { handle: 'rue89bordeaux.bsky.social', displayName: 'Rue89 Bordeaux', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:zh22aza6z77iuccvjv5hi3a3/bafkreidudqy6b3dwfplnqtezz43pj3wuvfzo2xv2kg7mfzvkkh6ogzoi7y' },
@@ -109,7 +107,6 @@ const COOP_MEDIAS: SourceRow[] = [
   { handle: 'splann.org', displayName: 'Splann !', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:cwes724oksnd4kx53aacmw7p/bafkreiakbdnofdgandjiyh2etgaxi4vsoqgdqhyzuzfsras3yghoebepse' },
   { handle: 'streetpress.bsky.social', displayName: 'StreetPress', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:oc4vdaapdvl4rpxg7szifvqv/bafkreidtoi2whwpv4gnvc76oaftvz6kjvtquao6t6hckprxvksbodrf2i4' },
   { handle: 'unboutdesmedias.bsky.social', displayName: 'Un Bout Des Médias', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:azsjkflvaopiqakrhofnf7ui/bafkreicyge7m7sjsxm6n7cwbxl6v2zqwlez43qgnabepdyjfndslhrdafi' },
-  { handle: 'urbania-fr.bsky.social', displayName: 'Urbania', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:apnv7kn33oi3il6apnzhvpwb/bafkreid7i3luolue47sttpzf3bqgajbma35hadeo3lmcdy6uwmr25sifqm' },
   { handle: 'vert.eco', displayName: 'Vert', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:ittis6mfcchi54qe7m7d5mun/bafkreicdpbi63oub4gy2dplc3w4rck6tinqrwcwvnlktikkt5y5d3b7qti' },
   { handle: 'vivantlemedia.bsky.social', displayName: 'Vivant le média', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:4ows566nrwxvuvmpgide5wo4/bafkreievipspaiz2wptlb3bld5vb2jk3tlve7ex6cgc2ijwbw4tpazjkua' },
   { handle: 'voxeurop.bsky.social', displayName: 'Voxeurop', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:5ofbcsv232rb74bae7uscdy4/bafkreiaqdhvezldvmusonquytfqm3yjhpq7iwzvuesnsi5rqkjsrpbm3mq' },
