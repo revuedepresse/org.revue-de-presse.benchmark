@@ -21,7 +21,7 @@ describe('sources of each publisher list', () => {
   it('lists the Coop Médias members for coop-medias', () => {
     const coop = sourcesOf('coop-medias');
     expect(coop.list).toBe('coop-medias');
-    expect(coop.roster).toHaveLength(48);
+    expect(coop.roster).toHaveLength(42);
     expect(coop.roster.map((r) => r.handle)).toEqual(expect.arrayContaining(['reporterre.net', 'bonpote.com', 'blast-info.fr']));
     expect(coop.roster.map((r) => r.handle)).not.toContain('lemonde.fr');
   });
