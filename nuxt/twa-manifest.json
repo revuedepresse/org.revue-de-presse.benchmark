@@ -21,8 +21,8 @@
     "path": "./android.keystore",
     "alias": "org.revue-de-presse"
   },
-  "appVersionName": "24",
-  "appVersionCode": 24,
+  "appVersionName": "26",
+  "appVersionCode": 26,
   "shortcuts": [
     {
       "name": "Médias français",
@@ -42,11 +42,11 @@
   "isChromeOSOnly": false,
   "isMetaQuest": false,
   "fullScopeUrl": "https://revue-de-presse.org/",
-  "minSdkVersion": 23,
+  "minSdkVersion": 24,
   "orientation": "any",
   "fingerprints": [],
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
   "displayOverride": [],
-  "appVersion": "24"
+  "appVersion": "26"
 }

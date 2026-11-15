@@ -44,9 +44,15 @@ describe('launcher shortcuts', () => {
 });
 
 describe('Android app version', () => {
-  it('moves to 24 for the release adding the shortcuts', () => {
-    expect(twaManifest.appVersionCode).toBe(24);
-    expect(twaManifest.appVersionName).toBe('24');
-    expect(twaManifest.appVersion).toBe('24');
+  it('moves to 26, the version bubblewrap stamped on the rebuilt bundle', () => {
+    expect(twaManifest.appVersionCode).toBe(26);
+    expect(twaManifest.appVersionName).toBe('26');
+    expect(twaManifest.appVersion).toBe('26');
+  });
+
+  // Play's automatic protection (the integrity check it adds to the uploaded
+  // bundle) refuses anything below 24, so the floor is Android 7.0 Nougat.
+  it('keeps the minimum SDK at the floor Play automatic protection requires', () => {
+    expect(twaManifest.minSdkVersion).toBeGreaterThanOrEqual(24);
   });
 });
