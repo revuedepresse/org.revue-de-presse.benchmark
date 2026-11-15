@@ -1,5 +1,6 @@
-// Nitro plugin that populates /feed.xml. nuxt-module-feed fires `feed:generate`
-// for every configured source; we dispatch by options.path.
+// Nitro plugin that populates the feeds declared in utils/feeds.ts, one per
+// publisher list. nuxt-module-feed fires `feed:generate` for every configured
+// source; we dispatch by options.path and ask the API for that source's list.
 //
 // Field mapping:
 //   title       ← screen_name
@@ -18,6 +19,8 @@ import { defineNitroPlugin } from 'nitropack/runtime/plugin';
 import type { NitroCtx } from 'nuxt-module-feed';
 import { find } from 'linkifyjs';
 import { cleanForFeed } from '../../utils/clean-text';
+import { FEED_SOURCES, feedLink, feedSourceByPath } from '../../utils/feeds';
+import type { PublisherListId } from '../../utils/publisher-lists';
 import { logger } from '../utils/logger';
 
 const log = logger.child({ plugin: 'feed' });
@@ -145,12 +148,33 @@ const yesterdayYmd = (): string => {
   return formatYmd(d);
 };
 
+// The upstream call a feed makes for one day. The list is named only when it
+// is not the French media: the API ranks those without being asked, so the
+// call stays compatible with API releases that predate the `list` parameter —
+// the same rule the browser-facing proxy follows (server/api/highlights.get.ts).
+export const buildUpstreamUrl = (
+  apiBaseUrl: string,
+  day: string,
+  list: PublisherListId,
+): URL => {
+  const url = new URL('/api/highlights', apiBaseUrl);
+  url.searchParams.set('distinctSources', '1');
+  url.searchParams.set('includeRetweets', '1');
+  url.searchParams.set('excludeMedia', '0');
+  url.searchParams.set('startDate', day);
+  url.searchParams.set('endDate', day);
+  if (list !== 'fr') {
+    url.searchParams.set('list', list);
+  }
+  return url;
+};
+
 export default defineNitroPlugin((nitroApp) => {
   // nuxt-module-feed serves /feed.xml as `application/rss+xml` without a
   // charset; some readers default to Latin-1 and mojibake every accent
   // (`é` -> `Ã©`). Pin charset=utf-8 just before the response flushes.
   nitroApp.hooks.hook('beforeResponse', (event) => {
-    if (event.path === '/feed.xml') {
+    if (FEED_SOURCES.some((source) => source.path === event.path)) {
       event.node.res.setHeader(
         'content-type',
         'application/rss+xml; charset=utf-8',
@@ -159,16 +183,16 @@ export default defineNitroPlugin((nitroApp) => {
   });
 
   nitroApp.hooks.hook('feed:generate', async (ctx: NitroCtx) => {
-    if (ctx.options.path !== '/feed.xml') return;
+    const source = feedSourceByPath(ctx.options.path);
+    if (!source) return;
 
     const { feed } = ctx;
 
     feed.options = {
-      id: 'https://revue-de-presse.org',
-      link: 'https://revue-de-presse.org',
-      title: 'Revue de presse',
-      description:
-        'Retrouver chaque jour les 10 publications médias ayant été les plus relayés la veille.',
+      id: feedLink(source),
+      link: feedLink(source),
+      title: source.title,
+      description: source.description,
       copyright: '',
     };
 
@@ -176,17 +200,12 @@ export default defineNitroPlugin((nitroApp) => {
     const apiBaseUrl = config.apiBaseUrl as string | undefined;
 
     if (!apiBaseUrl) {
-      log.warn('NUXT_API_BASE_URL is not set; emitting empty feed.');
+      log.warn({ feed: source.path }, 'NUXT_API_BASE_URL is not set; emitting empty feed.');
       return;
     }
 
     const day = yesterdayYmd();
-    const url = new URL('/api/highlights', apiBaseUrl);
-    url.searchParams.set('distinctSources', '1');
-    url.searchParams.set('includeRetweets', '1');
-    url.searchParams.set('excludeMedia', '0');
-    url.searchParams.set('startDate', day);
-    url.searchParams.set('endDate', day);
+    const url = buildUpstreamUrl(apiBaseUrl, day, source.list);
 
     const callOnce = async (token: string) =>
       $fetch<any>(url.toString(), {
@@ -206,7 +225,10 @@ export default defineNitroPlugin((nitroApp) => {
         }
       }
     } catch (err) {
-      log.warn({ day, err: (err as Error).message }, 'upstream fetch failed; emitting empty feed');
+      log.warn(
+        { day, feed: source.path, list: source.list, err: (err as Error).message },
+        'upstream fetch failed; emitting empty feed',
+      );
       return;
     }
 
