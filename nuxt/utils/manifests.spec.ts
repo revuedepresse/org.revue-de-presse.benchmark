@@ -10,9 +10,9 @@ const twaManifest = read('../twa-manifest.json');
 
 const ORIGIN = 'https://revue-de-presse.org';
 describe('launcher shortcuts', () => {
-  // The Coop Médias lists are only shown in preview (utils/preview.ts): their
-  // shortcuts come back with their release.
-  it('open the French media top 10 from the installed web app, and no list in preview', () => {
+  // The launcher offers the French media top 10 alone; a shortcut per list
+  // would need its own label and icon, so the lists are picked in the app.
+  it('open the French media top 10 from the installed web app, and name no list', () => {
     expect(webManifest.shortcuts.map((s: { url: string }) => s.url)).toEqual(['/']);
     expect(JSON.stringify(webManifest)).not.toContain('liste=');
     expect(JSON.stringify(twaManifest)).not.toContain('liste=');

@@ -77,8 +77,8 @@ export function useHighlights(date: Ref<Date>, list?: Ref<string>, ranking?: Ref
       return {
         startDate: day,
         endDate: day,
-        // Another list only exists in the preview; the proxy forwards it only then.
-        ...(selected && selected !== 'fr' ? { list: selected, apercu: '1' } : {}),
+        // The French media need no list: the API ranks them by default.
+        ...(selected && selected !== 'fr' ? { list: selected } : {}),
         ...(ranking?.value ? { ranking: ranking.value } : {}),
       };
     }),

@@ -27,20 +27,11 @@ const props = defineProps<{
 const router = useRouter();
 const route = useRoute();
 
-// Lists other than the French media and the newsletter are previewed with
-// ?apercu=1 before their release (see utils/preview.ts).
-const preview = usePreview();
-
 // Publisher lists ranked by the API, selected with ?liste=<id>. Without the
-// query parameter, the French media top 10 shows as before. Outside the
-// preview, only the French media: no list picker, and ?liste= is ignored.
-const lists = computed(() =>
-  (preview.value ? PUBLISHER_LISTS : PUBLISHER_LISTS.filter(({ id }) => id === 'fr'))
-    .map(({ id, label }) => ({ id, label })),
-);
-const selectedListId = computed<PublisherListId>(() =>
-  preview.value ? publisherListFromQuery(route.query.liste) : 'fr',
-);
+// query parameter, the French media top 10 shows, as it did before the other
+// lists joined it.
+const lists = PUBLISHER_LISTS.map(({ id, label }) => ({ id, label }));
+const selectedListId = computed<PublisherListId>(() => publisherListFromQuery(route.query.liste));
 // ?classement= picks the ranking (see utils/rankings.ts) and, like ?liste=,
 // follows the reader from day to day.
 const defaultRanking = String(useRuntimeConfig().public.defaultRanking || DEFAULT_RANKING);
@@ -167,7 +158,7 @@ function onViewChange(view: ViewKey) {
 
 function onListSelect(id: string) {
   if (!import.meta.client) return;
-  const listId = preview.value ? publisherListFromQuery(id) : 'fr';
+  const listId = publisherListFromQuery(id);
   const query = { ...(listId === 'fr' ? {} : { liste: listId }), ...rankingQuery.value };
   if (route.path === urlForView('sources')) {
     router.push({ path: route.path, query });
@@ -231,7 +222,7 @@ watch([selectedListId, () => pickedDate.value.getTime()], () => {
     :empty-message-key="props.emptyMessageKey"
     :notice-message-key="props.noticeMessageKey"
     :newsletter-subscribe-url="newsletterSubscribeUrl"
-    :show-newsletter="preview"
+    :show-newsletter="true"
     locale="fr-FR"
     :on-date-select="onDateSelect"
     :on-list-select="onListSelect"

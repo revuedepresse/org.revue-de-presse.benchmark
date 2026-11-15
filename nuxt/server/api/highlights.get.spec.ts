@@ -93,7 +93,7 @@ describe('GET /api/highlights (Nitro proxy)', () => {
     expect(observedUrl).not.toContain('pageSize=');
   });
 
-  it('forwards list only for lists other than French media, in preview', async () => {
+  it('forwards list only for lists other than French media', async () => {
     const observedUrls: string[] = [];
     globalThis.$fetch = vi.fn(async (url: string) => {
       observedUrls.push(url);
@@ -105,10 +105,10 @@ describe('GET /api/highlights (Nitro proxy)', () => {
     }));
 
     const handler = (await import('./highlights.get')).default;
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', apercu: '1' }));
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr', apercu: '1' }));
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias', apercu: '1' }));
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr-coop-medias', apercu: '1' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }));
+    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr-coop-medias' }));
 
     expect(observedUrls[0]).not.toContain('list=');
     expect(observedUrls[1]).not.toContain('list=');
@@ -116,25 +116,6 @@ describe('GET /api/highlights (Nitro proxy)', () => {
     expect(observedUrls[3]).toContain('list=fr-coop-medias');
   });
 
-  it('asks the API for the French media only without apercu=1, whatever the cookies', async () => {
-    const observedUrls: string[] = [];
-    globalThis.$fetch = vi.fn(async (url: string) => {
-      observedUrls.push(url);
-      return makeHydraBody([]);
-    });
-    vi.doMock('../utils/apiToken', () => ({
-      getApiToken: vi.fn(async () => 'b'),
-      refreshApiToken: vi.fn(async () => 'b'),
-    }));
-
-    const handler = (await import('./highlights.get')).default;
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }));
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'fr-coop-medias' }));
-    await handler(makeEvent({ startDate: '2026-05-01', endDate: '2026-05-01', list: 'coop-medias' }, { rdp_apercu: '1' }));
-
-    expect(observedUrls).toHaveLength(3);
-    for (const url of observedUrls) expect(url).not.toContain('list=');
-  });
 
   it('forwards a known ranking, and nothing without one', async () => {
     const observedUrls: string[] = [];

@@ -88,8 +88,8 @@ export const buildLegacySitemapUrls = (): SitemapUrl[] => {
     { loc: '/nous-contacter',   lastmod: new Date('2023-03-02').toISOString() },
     { loc: '/nous-soutenir',    lastmod: new Date('2023-03-07').toISOString() },
     { loc: '/sources',          lastmod: new Date('2025-03-08').toISOString() },
-    // The newsletter pages (/lettre-quotidienne…) join once they are released:
-    // until then only the preview shows them (utils/preview.ts).
+    // The newsletter pages (/lettre-quotidienne…) are reachable but stay out
+    // of the sitemap until they are advertised (see nuxt.config.ts).
   ];
 
   const dynamic: SitemapUrl[] = days()
