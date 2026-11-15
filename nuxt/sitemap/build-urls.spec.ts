@@ -5,6 +5,7 @@ import {
   days,
   buildLegacySitemapUrls,
   HIGHLIGHTS_PATH_PREFIX,
+  LIST_QUERIES,
   SITEMAP_MIN_DATE,
 } from './build-urls';
 
@@ -103,8 +104,8 @@ describe('buildLegacySitemapUrls', () => {
   it('emits a yesterday-highlight entry with daily changefreq', async () => {
     const urls = await buildLegacySitemapUrls();
     const dailies = urls.filter((u) => u.changefreq === 'daily');
-    // Homepage + yesterday-highlight = 2.
-    expect(dailies.length).toBe(2);
+    // Homepage + yesterday-highlight, for each publisher list.
+    expect(dailies.length).toBe(2 * LIST_QUERIES.length);
   });
 
   it('uses `loc` (not `url`) per @nuxtjs/sitemap v8 schema', async () => {
@@ -126,7 +127,37 @@ describe('buildLegacySitemapUrls', () => {
     const matchingYesterday = urls.filter((u) =>
       u.loc.startsWith(`/${yesterdayIso}/actualites-du-`),
     );
-    expect(matchingYesterday.length).toBe(1);
+    // Once per list, and no more: days() still filters yesterday out of the archive.
+    expect(matchingYesterday.length).toBe(LIST_QUERIES.length);
+    expect(new Set(matchingYesterday.map((u) => u.loc)).size).toBe(LIST_QUERIES.length);
+  });
+
+  it('offers the home page, yesterday and the sources through each list', async () => {
+    const urls = await buildLegacySitemapUrls();
+    const locs = urls.map((u) => u.loc);
+
+    expect(LIST_QUERIES).toEqual(['', '?liste=coop-medias', '?liste=fr-coop-medias']);
+    for (const query of LIST_QUERIES) {
+      expect(locs).toContain(`/${query}`);
+      expect(locs).toContain(`/sources${query}`);
+      expect(locs.some((loc) => loc.includes('/actualites-du-') && loc.endsWith(query))).toBe(true);
+    }
+  });
+
+  it('archives every day once per list', async () => {
+    const urls = await buildLegacySitemapUrls();
+    const dated = urls.filter((u) => u.loc.includes('/actualites-du-'));
+    const firstDay = dated.filter((u) => u.loc.startsWith('/2025-03-04/'));
+
+    expect(firstDay.map((u) => u.loc.replace(/^[^?]+/, ''))).toEqual(LIST_QUERIES);
+    expect(dated.length % LIST_QUERIES.length).toBe(0);
+    // A day carries the same lastmod whichever list reads it.
+    expect(new Set(firstDay.map((u) => u.lastmod)).size).toBe(1);
+  });
+
+  it('never lists the same address twice', async () => {
+    const urls = await buildLegacySitemapUrls();
+    expect(new Set(urls.map((u) => u.loc)).size).toBe(urls.length);
   });
 
   it("does not include today (today's content is not yet published)", async () => {
