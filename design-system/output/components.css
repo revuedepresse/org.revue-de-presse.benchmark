@@ -408,7 +408,13 @@
           color: var(--color-light-grey);
           font-size: var(--font-size-publication-date);
         }
-        .rdp-bsky-post__body { margin: 0; white-space: pre-line; }
+        .rdp-bsky-post__body {
+          margin: 0;
+          white-space: pre-line;
+          /* Nothing may widen the card: an address the shortener never
+             touched, or a word longer than the column, wraps instead. */
+          overflow-wrap: anywhere;
+        }
         .rdp-bsky-post__body-link,
         .rdp-bsky-post__body-link:link,
         .rdp-bsky-post__body-link:visited,

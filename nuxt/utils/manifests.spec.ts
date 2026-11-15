@@ -44,10 +44,10 @@ describe('launcher shortcuts', () => {
 });
 
 describe('Android app version', () => {
-  it('moves to 26, the version bubblewrap stamped on the rebuilt bundle', () => {
-    expect(twaManifest.appVersionCode).toBe(26);
-    expect(twaManifest.appVersionName).toBe('26');
-    expect(twaManifest.appVersion).toBe('26');
+  it('moves to 27, the version of the bundle built for Play', () => {
+    expect(twaManifest.appVersionCode).toBe(27);
+    expect(twaManifest.appVersionName).toBe('27');
+    expect(twaManifest.appVersion).toBe('27');
   });
 
   // Play's automatic protection (the integrity check it adds to the uploaded

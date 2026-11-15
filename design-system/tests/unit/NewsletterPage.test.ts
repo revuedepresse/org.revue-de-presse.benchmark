@@ -65,7 +65,11 @@ describe('NewsletterPage editions (server-rendered)', () => {
       ['edition', 'fr-coop-medias'],
       ['edition', 'both'],
     ]);
-    expect(html).toContain('Médias français + Coop Médias');
+    // The two options that both mean "both" have to read differently: it is
+    // the only thing telling a reader which one sends one letter and which
+    // sends two.
+    expect(html).toContain('Les deux listes en une seule lettre');
+    expect(html).toContain('Les deux lettres séparément');
     expect(html).toContain('Quelle lettre souhaitez-vous recevoir ?');
     expect(html).toContain('Médias français');
     expect(html).toContain('Coop Médias');

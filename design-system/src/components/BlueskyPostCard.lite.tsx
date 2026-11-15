@@ -1,4 +1,5 @@
 import { useStore } from '@builder.io/mitosis';
+import { displayUrl } from '../utils/display-url';
 import { t } from '../utils/i18n';
 import { formatDate, formatTime } from '../utils/intl';
 import MetricsBar from './MetricsBar.lite';
@@ -25,6 +26,8 @@ type BlueskyPostCardProps = {
 };
 
 type Segment = { kind: 'text' | 'mention' | 'url'; value: string; href: string };
+
+
 
 export default function BlueskyPostCard(props: BlueskyPostCardProps) {
   const state = useStore({
@@ -60,14 +63,14 @@ export default function BlueskyPostCard(props: BlueskyPostCardProps) {
         } else if (matched.charAt(0) === 'h') {
           const trimmed = matched.replace(/[.,;:!?)]+$/, '');
           const trailing = matched.length - trimmed.length;
-          out.push({ kind: 'url', value: trimmed, href: trimmed });
+          out.push({ kind: 'url', value: displayUrl(trimmed), href: trimmed });
           if (trailing > 0) {
             out.push({ kind: 'text', value: matched.slice(matched.length - trailing), href: '' });
           }
         } else {
           const trimmed = matched.replace(/[.,;:!?)]+$/, '');
           const trailing = matched.length - trimmed.length;
-          out.push({ kind: 'url', value: trimmed, href: `https://${trimmed}` });
+          out.push({ kind: 'url', value: displayUrl(trimmed), href: `https://${trimmed}` });
           if (trailing > 0) {
             out.push({ kind: 'text', value: matched.slice(matched.length - trailing), href: '' });
           }
@@ -239,7 +242,13 @@ export default function BlueskyPostCard(props: BlueskyPostCardProps) {
           color: var(--color-light-grey);
           font-size: var(--font-size-publication-date);
         }
-        .rdp-bsky-post__body { margin: 0; white-space: pre-line; }
+        .rdp-bsky-post__body {
+          margin: 0;
+          white-space: pre-line;
+          /* Nothing may widen the card: an address the shortener never
+             touched, or a word longer than the column, wraps instead. */
+          overflow-wrap: anywhere;
+        }
         .rdp-bsky-post__body-link,
         .rdp-bsky-post__body-link:link,
         .rdp-bsky-post__body-link:visited,

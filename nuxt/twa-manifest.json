@@ -21,8 +21,8 @@
     "path": "./android.keystore",
     "alias": "org.revue-de-presse"
   },
-  "appVersionName": "26",
-  "appVersionCode": 26,
+  "appVersionName": "27",
+  "appVersionCode": 27,
   "shortcuts": [
     {
       "name": "Médias français",
@@ -48,5 +48,5 @@
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
   "displayOverride": [],
-  "appVersion": "26"
+  "appVersion": "27"
 }
