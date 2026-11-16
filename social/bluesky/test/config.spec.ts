@@ -49,7 +49,7 @@ describe('loadConfig', () => {
       fr: 'https://revue-de-presse.org/lettre-quotidienne',
       'coop-medias': 'https://revue-de-presse.org/lettre-quotidienne-coop-medias',
     });
-    // Coop Médias is built in but not published until enabled.
+    // Coop-médias is built in but not published until enabled.
     expect(cfg.publishLists).toEqual(['fr']);
     expect(cfg.postHashtag).toBe('#RevueDePresse');
   });

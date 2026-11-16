@@ -157,7 +157,7 @@ type NewsletterPageProps = {
   // Letter checked when the page opens; the reader picks another one with
   // the radio buttons, posted as the `edition` field:
   //  - 'fr': top 10 posts by French media
-  //  - 'coop-medias': top 10 posts by Coop Médias members
+  //  - 'coop-medias': top 10 posts by Coop-médias members
   //    (preselected on /lettre-quotidienne-coop-medias)
   //  - 'fr-coop-medias': one letter, the top 10 of both lists together
   //  - 'both' (default, /lettre-quotidienne): both letters, two a day,

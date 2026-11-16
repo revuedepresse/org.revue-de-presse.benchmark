@@ -225,12 +225,12 @@ describe('truncateGraphemes (URL-append degradation budget)', () => {
     expect(renderThread(SAMPLE, '2026-10-24', { ...OPTS, newsletterUrl: '' }).closing).toBeUndefined();
   });
 
-  it('gives Coop Médias its own heading and its own newsletter invitation', () => {
+  it('gives Coop-médias its own heading and its own newsletter invitation', () => {
     const url = 'https://revue-de-presse.org/lettre-quotidienne-coop-medias';
     const draft = renderThread(SAMPLE, '2026-10-24', { ...OPTS, list: 'coop-medias', newsletterUrl: url });
-    expect(draft.lead.text.startsWith('Top 3 des publications des médias de Coop Médias parmi les plus relayées sur Bluesky le 24 octobre 2026 :')).toBe(true);
+    expect(draft.lead.text.startsWith('Top 3 des publications des médias de Coop-médias parmi les plus relayées sur Bluesky le 24 octobre 2026 :')).toBe(true);
     expect(draft.closing?.text).toBe(
-      "Pour recevoir chaque matin le top 10 des médias de Coop Médias par e-mail, inscrivez-vous à la lettre d'information : " + url,
+      "Pour recevoir chaque matin le top 10 des médias de Coop-médias par e-mail, inscrivez-vous à la lettre d'information : " + url,
     );
     expect(draft.closing?.linkRange.uri).toBe(url);
   });

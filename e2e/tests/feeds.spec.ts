@@ -6,10 +6,10 @@ import { test, expect, type APIResponse } from '@playwright/test';
 // the only place that choice is visible from outside.
 const FEEDS = [
   { path: '/feed.xml', title: 'Revue de presse', tag: null },
-  { path: '/feed-coop-medias.xml', title: 'Revue de presse — Coop Médias', tag: '[liste coop-medias]' },
+  { path: '/feed-coop-medias.xml', title: 'Revue de presse — Coop-médias', tag: '[liste coop-medias]' },
   {
     path: '/feed-fr-coop-medias.xml',
-    title: 'Revue de presse — Médias français + Coop Médias',
+    title: 'Revue de presse — Médias français + Coop-médias',
     tag: '[liste fr-coop-medias]',
   },
 ] as const;

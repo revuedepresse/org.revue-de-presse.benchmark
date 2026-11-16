@@ -12,7 +12,7 @@ export type RenderThreadOpts = {
 
 const PUBLISHERS: Record<PublisherList, { heading: string; newsletter: string }> = {
   fr: { heading: 'des publications de presse', newsletter: 'des médias français' },
-  'coop-medias': { heading: 'des publications des médias de Coop Médias', newsletter: 'des médias de Coop Médias' },
+  'coop-medias': { heading: 'des publications des médias de Coop-médias', newsletter: 'des médias de Coop-médias' },
 };
 
 const MAX_GRAPHEMES = 300;

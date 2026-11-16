@@ -32,16 +32,16 @@ export const FEED_SOURCES: FeedSource[] = [
   {
     path: '/feed-coop-medias.xml',
     list: 'coop-medias',
-    title: 'Revue de presse — Coop Médias',
+    title: 'Revue de presse — Coop-médias',
     description:
-      'Retrouver chaque jour les 10 publications de Coop Médias ayant été les plus relayées la veille.',
+      'Retrouver chaque jour les 10 publications de Coop-médias ayant été les plus relayées la veille.',
   },
   {
     path: '/feed-fr-coop-medias.xml',
     list: 'fr-coop-medias',
-    title: 'Revue de presse — Médias français + Coop Médias',
+    title: 'Revue de presse — Médias français + Coop-médias',
     description:
-      'Retrouver chaque jour les 10 publications des médias français et de Coop Médias ayant été les plus relayées la veille, chacune comptée une fois.',
+      'Retrouver chaque jour les 10 publications des médias français et de Coop-médias ayant été les plus relayées la veille, chacune comptée une fois.',
   },
 ];
 

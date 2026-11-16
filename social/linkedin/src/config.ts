@@ -21,7 +21,7 @@ export class ConfigError extends Error {
 }
 
 // French media only unless LINKEDIN_PUBLISH_LISTS names others, e.g.
-// "fr,coop-medias": the Coop Médias post is ready but off by default.
+// "fr,coop-medias": the Coop-médias post is ready but off by default.
 function publishLists(raw: string | undefined): PublisherList[] {
   const names = (raw ?? 'fr').split(',').map((s) => s.trim()).filter(Boolean);
   const unknown = names.filter((n) => !PUBLISHER_LISTS.includes(n as PublisherList));

@@ -195,13 +195,13 @@ describe('renderPost', () => {
       expect(out.startsWith('Top 10 des publications de presse les plus relayées sur Bluesky le 20 mai 2026 :')).toBe(true);
     });
 
-    it('gives Coop Médias its own heading and its own newsletter', () => {
+    it('gives Coop-médias its own heading and its own newsletter', () => {
       const out = renderPost(SAMPLE, '2026-05-20', { ...OPTS, list: 'coop-medias', newsletterUrl: COOP_NEWSLETTER });
       expect(
-        out.startsWith('Top 10 des publications des médias de Coop Médias les plus relayées sur Bluesky le 20 mai 2026 :'),
+        out.startsWith('Top 10 des publications des médias de Coop-médias les plus relayées sur Bluesky le 20 mai 2026 :'),
       ).toBe(true);
       expect(out).toContain(
-        "Pour recevoir ce top 10 chaque matin, inscrivez-vous à la lettre d'information dédiée à Coop Médias (coop-medias.org) : " +
+        "Pour recevoir ce top 10 chaque matin, inscrivez-vous à la lettre d'information dédiée à Coop-médias (coop-medias.org) : " +
           COOP_NEWSLETTER,
       );
       expect(out).not.toContain('médias français');
@@ -214,8 +214,8 @@ describe('renderPost', () => {
         newsletterUrl: COOP_NEWSLETTER,
         escapeText: escapeLittleText,
       });
-      expect(out).toContain("la lettre d'information dédiée à Coop Médias \\(coop-medias.org\\) : ");
-      expect(out).not.toContain('Coop Médias (coop-medias.org)');
+      expect(out).toContain("la lettre d'information dédiée à Coop-médias \\(coop-medias.org\\) : ");
+      expect(out).not.toContain('Coop-médias (coop-medias.org)');
     });
 
     it('omits the invitation when no newsletter URL is given', () => {

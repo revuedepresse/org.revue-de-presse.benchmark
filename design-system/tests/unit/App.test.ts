@@ -19,7 +19,7 @@ describe('App (post-Mitosis emit)', () => {
 describe('App newsletter views', () => {
   const vue = () => readFileSync(join(root, 'output/vue/src/components/App.vue'), 'utf8');
 
-  it('opens /lettre-quotidienne on both letters and /lettre-quotidienne-coop-medias on Coop Médias', () => {
+  it('opens /lettre-quotidienne on both letters and /lettre-quotidienne-coop-medias on Coop-médias', () => {
     const src = vue();
     // Once per layout (desktop, mobile).
     expect(src.match(/currentView === 'newsletter'"[\s\S]*?edition="both"/g)).toHaveLength(2);

@@ -22,7 +22,7 @@ const radio = (page: Page, edition: string) =>
   page.locator(`.rdp-newsletter-page input[type="radio"][name="edition"][value="${edition}"]`);
 
 test.describe('/lettre-quotidienne', () => {
-  test('offers French media, Coop Médias, both in one letter or both letters, both letters checked', async ({ page }) => {
+  test('offers French media, Coop-médias, both in one letter or both letters, both letters checked', async ({ page }) => {
     await page.goto('/lettre-quotidienne');
     await expect(appShell(page)).toBeVisible();
     await expect(page.locator('.rdp-newsletter-page input[type="radio"][name="edition"]')).toHaveCount(4);
@@ -63,7 +63,7 @@ test.describe('/lettre-quotidienne', () => {
   }
 });
 
-test('/lettre-quotidienne-coop-medias opens on the Coop Médias letter', async ({ page }) => {
+test('/lettre-quotidienne-coop-medias opens on the Coop-médias letter', async ({ page }) => {
   await page.goto('/lettre-quotidienne-coop-medias');
   await expect(appShell(page)).toBeVisible();
   await expect(radio(page, 'coop-medias')).toBeChecked();
