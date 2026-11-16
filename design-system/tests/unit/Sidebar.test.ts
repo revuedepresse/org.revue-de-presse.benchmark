@@ -53,13 +53,13 @@ describe('Sidebar pickers and newsletter invitation (server-rendered)', () => {
     const html = await render({
       lists: [
         { id: 'fr', label: 'Médias français' },
-        { id: 'coop-medias', label: 'Coop Médias' },
-        { id: 'fr-coop-medias', label: 'Médias français + Coop Médias' },
+        { id: 'coop-medias', label: 'Coop-médias' },
+        { id: 'fr-coop-medias', label: 'Médias français + Coop-médias' },
       ],
       selectedListId: 'fr',
       showNewsletter: true,
     });
-    for (const label of ['Médias français', 'Coop Médias', 'Médias français + Coop Médias', 'Fin de journée', 'Première mesure']) {
+    for (const label of ['Médias français', 'Coop-médias', 'Médias français + Coop-médias', 'Fin de journée', 'Première mesure']) {
       expect(html).toContain(label);
     }
     expect(html).toContain('rdp-banner-about__newsletter-link');

@@ -9,7 +9,7 @@ describe('sources of each publisher list', () => {
     expect(fr.roster).toHaveLength(41);
   });
 
-  it('keeps the French media and Coop Médias lists disjoint', () => {
+  it('keeps the French media and Coop-médias lists disjoint', () => {
     const fr = sourcesOf('fr').roster.map((r) => r.handle);
     const coop = new Set(sourcesOf('coop-medias').roster.map((r) => r.handle));
     expect(fr.filter((handle) => coop.has(handle))).toEqual([]);
@@ -18,7 +18,7 @@ describe('sources of each publisher list', () => {
     expect(fr).not.toContain('euronewsfr.bsky.social');
   });
 
-  it('lists the Coop Médias members for coop-medias', () => {
+  it('lists the Coop-médias members for coop-medias', () => {
     const coop = sourcesOf('coop-medias');
     expect(coop.list).toBe('coop-medias');
     expect(coop.roster).toHaveLength(42);

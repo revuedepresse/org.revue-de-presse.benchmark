@@ -135,7 +135,7 @@ test.describe('/sources?liste=', () => {
   const handles = async (page: import('@playwright/test').Page) =>
     (await rows(page).locator('.rdp-sources-page__handle').allTextContents()).map((h) => h.trim().replace(/^@/, ''));
 
-  test('coop-medias answers with the Coop Médias roster, naming Coop-médias as its origin', async ({ page }) => {
+  test('coop-medias answers with the Coop-médias roster, naming coop-medias.org as its origin', async ({ page }) => {
     await page.goto('/sources?liste=coop-medias');
     await expect(appShell(page)).toBeVisible();
     await rows(page).first().waitFor();

@@ -53,7 +53,7 @@ describe('loadConfig', () => {
       'https://play.google.com/store/apps/details?id=org.revue_2_presse&hl=fr',
     );
     expect(cfg.postHashtag).toBe('#RevueDePresse');
-    // Coop Médias is built in but not posted until enabled.
+    // Coop-médias is built in but not posted until enabled.
     expect(cfg.publishLists).toEqual(['fr']);
     expect(cfg.newsletterUrls).toEqual({
       fr: 'https://revue-de-presse.org/lettre-quotidienne',

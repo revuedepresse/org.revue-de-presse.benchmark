@@ -38,12 +38,12 @@ const formatDateFr = (isoDate: string): string => {
 const HEADINGS: Record<PublisherList, (dateFr: string) => string> = {
   fr: (dateFr) => `Top 10 des publications de presse les plus relayées sur Bluesky le ${dateFr} :`,
   'coop-medias': (dateFr) =>
-    `Top 10 des publications des médias de Coop Médias les plus relayées sur Bluesky le ${dateFr} :`,
+    `Top 10 des publications des médias de Coop-médias les plus relayées sur Bluesky le ${dateFr} :`,
 };
 
 const NEWSLETTERS: Record<PublisherList, string> = {
   fr: "la lettre d'information des médias français",
-  'coop-medias': "la lettre d'information dédiée à Coop Médias (coop-medias.org)",
+  'coop-medias': "la lettre d'information dédiée à Coop-médias (coop-medias.org)",
 };
 
 export function renderPost(

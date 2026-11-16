@@ -2,7 +2,7 @@
 
 CLI that posts the previous day's Revue de Presse top 10s to the LinkedIn
 organization page once per day: one post for French media (`fr`) and, once
-enabled in `LINKEDIN_PUBLISH_LISTS`, one for Coop Médias (`coop-medias`), each
+enabled in `LINKEDIN_PUBLISH_LISTS`, one for Coop-médias (`coop-medias`), each
 ranked by end of day and inviting readers to that list's newsletter. Run from
 cron in production.
 
@@ -154,7 +154,7 @@ Audit checklist when forking:
    `NEWSLETTER_URL_FR` and `NEWSLETTER_URL_COOP_MEDIAS` are each list's
    newsletter sign-up page, invited to right before the footer; blank drops it.
 5. **Header copy + locale** — the French headers ("Top 10 des publications de
-   presse les plus relayées sur Bluesky le {date} :" and its Coop Médias twin)
+   presse les plus relayées sur Bluesky le {date} :" and its Coop-médias twin)
    and the newsletter invitations live at
    `src/renderPost.ts` and uses `Intl.DateTimeFormat('fr-FR', ...)` for the
    date. Edit both if you want a different language or framing — they're a

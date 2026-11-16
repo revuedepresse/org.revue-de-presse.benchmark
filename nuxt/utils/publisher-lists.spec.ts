@@ -4,9 +4,9 @@ import { PUBLISHER_LISTS, firstDayOf, publisherListFromQuery, withinList } from 
 const day = (y: number, m: number, d: number) => new Date(y, m - 1, d);
 
 describe('publisher lists', () => {
-  it('offers French media first, then Coop Médias, then both lists together', () => {
+  it('offers French media first, then Coop-médias, then both lists together', () => {
     expect(PUBLISHER_LISTS.map((l) => l.id)).toEqual(['fr', 'coop-medias', 'fr-coop-medias']);
-    expect(PUBLISHER_LISTS[2].label).toBe('Médias français + Coop Médias');
+    expect(PUBLISHER_LISTS[2].label).toBe('Médias français + Coop-médias');
   });
 
   it('reads the list from ?liste=, falling back to French media', () => {

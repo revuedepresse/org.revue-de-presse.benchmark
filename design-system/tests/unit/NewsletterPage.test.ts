@@ -57,7 +57,7 @@ describe('NewsletterPage editions (server-rendered)', () => {
   const checkedEdition = (html: string) => radios(html).find((r) => r.checked)?.value;
   const heading = (html: string) => html.match(/<h1>([^<]*)<\/h1>/)?.[1];
 
-  it('offers French media, Coop Médias, both in one letter, or both letters, as one `edition` field', async () => {
+  it('offers French media, Coop-médias, both in one letter, or both letters, as one `edition` field', async () => {
     const html = await render();
     expect(radios(html).map((r) => [r.name, r.value])).toEqual([
       ['edition', 'fr'],
@@ -72,7 +72,7 @@ describe('NewsletterPage editions (server-rendered)', () => {
     expect(html).toContain('Les deux lettres séparément');
     expect(html).toContain('Quelle lettre souhaitez-vous recevoir ?');
     expect(html).toContain('Médias français');
-    expect(html).toContain('Coop Médias');
+    expect(html).toContain('Coop-médias');
     expect(html).toContain('Les deux');
     // No hidden `edition` left over: the radio choice is the only value posted.
     expect(html).not.toMatch(/type="hidden"[^>]*name="edition"/);
@@ -88,7 +88,7 @@ describe('NewsletterPage editions (server-rendered)', () => {
   it('keeps the heading and intro whatever the choice, so choosing never shifts the layout', async () => {
     const intro = (html: string) => html.match(/<\/h1>\s*<p>([^<]*)<\/p>/)?.[1];
     const pages = await Promise.all(['fr', 'coop-medias', 'fr-coop-medias', 'both'].map((edition) => render({ edition })));
-    expect(new Set(pages.map(heading))).toEqual(new Set(["Les lettres d'information des médias français et de Coop Médias"]));
+    expect(new Set(pages.map(heading))).toEqual(new Set(["Les lettres d'information des médias français et de Coop-médias"]));
     expect(new Set(pages.map(intro)).size).toBe(1);
   });
 
