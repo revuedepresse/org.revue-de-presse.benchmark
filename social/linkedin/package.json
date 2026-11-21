@@ -35,7 +35,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "dotenv": "^18.0.8",
+    "dotenv": "^18.0.10",
     "linkedin-api-client": "^0.3.0",
     "pino": "^10.4.0"
   },
