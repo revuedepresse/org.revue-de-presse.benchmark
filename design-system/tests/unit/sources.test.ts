@@ -26,6 +26,22 @@ describe('sources of each publisher list', () => {
     expect(coop.roster.map((r) => r.handle)).not.toContain('lemonde.fr');
   });
 
+  it('carries no account Coop-médias does not reference as a sociétaire', () => {
+    const coop = sourcesOf('coop-medias').roster.map((r) => r.handle);
+    expect(coop).toContain('narvalmedia.bsky.social');
+    for (const handle of [
+      'contreattaque.bsky.social',
+      'arretsurimages.net',
+      'mr-mondialisation.bsky.social',
+      'reflets.info',
+      'lareleveetlapeste.bsky.social',
+      'obsmultinationales.bsky.social',
+      'urbania-fr.bsky.social',
+    ]) {
+      expect(coop).not.toContain(handle);
+    }
+  });
+
   it('lists the members of both lists for fr-coop-medias, each account once', () => {
     const both = sourcesOf('fr-coop-medias');
     expect(both.list).toBe('fr-coop-medias');
