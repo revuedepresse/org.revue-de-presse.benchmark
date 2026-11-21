@@ -12,7 +12,7 @@
 // Expectations are derived from pages/ rather than hardcoded, so adding or
 // renaming a page keeps this honest without anyone remembering to edit a list.
 
-import { readdir, access } from 'node:fs/promises';
+import { readdir, access, readFile } from 'node:fs/promises';
 import { join, relative, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -69,9 +69,23 @@ async function main() {
 
   const chunks = (await readdir(chunkDir)).filter((f) => f.endsWith('.mjs') && !f.endsWith('.map'));
 
+  // A page is accounted for by a chunk of its own, or by being compiled into
+  // another one. Nuxt 3 gave every page its own chunk; Nuxt 4 folds
+  // pages/index.vue into the entry, which is a bundling decision and not a
+  // lost route — the built chunks still name the source file. Asking "is this
+  // page anywhere in the output" survives that, while still failing on the
+  // shape this script exists to catch, where no chunk names any page at all.
+  const chunkSources = await Promise.all(
+    chunks.map((c) => readFile(join(chunkDir, c), 'utf8').catch(() => '')),
+  );
+  const compiledIn = (vueFile) => {
+    const needle = relative(nuxtDir, vueFile);
+    return chunkSources.some((source) => source.includes(needle));
+  };
+
   const missing = pages.filter((p) => {
     const prefix = `${chunkPrefix(p)}-`;
-    return !chunks.some((c) => c.startsWith(prefix));
+    return !chunks.some((c) => c.startsWith(prefix)) && !compiledIn(p);
   });
 
   // A build that lost its srcDir keeps the error pages, so their presence
