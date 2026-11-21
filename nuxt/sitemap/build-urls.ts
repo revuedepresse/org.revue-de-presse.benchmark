@@ -6,7 +6,19 @@
 // (UTC) the human-readable suffix renders in UTC, matching legacy build-time
 // behaviour. Pin to 'Europe/Paris' here if drift is observed in production.
 
+import { PUBLISHER_LISTS } from '../utils/publisher-lists';
+
 const serverTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+// Every page can be read through another publisher list, with ?liste=<id>: the
+// day is the same, the top 10 is not, so each is an address of its own. The
+// French media carry no parameter — they are what the site shows without one —
+// so the queries below are the other lists', and '' stands for the French media
+// wherever the three are walked together.
+export const LIST_QUERIES: string[] = [
+  '',
+  ...PUBLISHER_LISTS.filter((list) => list.id !== 'fr').map((list) => `?liste=${list.id}`),
+];
 
 export const HIGHLIGHTS_PATH_PREFIX = '/actualites-du-';
 export const SITEMAP_MIN_DATE = '04 Mar 2025 00:00:00 GMT';
@@ -71,36 +83,50 @@ export const days = (until: Date | undefined = undefined): string[] => {
   return out.map((d) => `/${formatDate(d)}`);
 };
 
+// The dated address of a day, as the site writes it: /2026-11-14/actualites-du-…
+const datedLoc = (d: string): string =>
+  `${d}${HIGHLIGHTS_PATH_PREFIX}${localizeDate(d.replace('/', ''))}`;
+
 export const buildLegacySitemapUrls = (): SitemapUrl[] => {
   const yest = yesterday();
   const yestStr = formatDate(yest);
   const yestIso = yest.toISOString();
+  const sourcesLastmod = new Date('2025-03-08').toISOString();
+
+  // The home page, yesterday's top 10 and the sources, once per list.
+  const perList: SitemapUrl[] = LIST_QUERIES.flatMap((query) => [
+    { loc: `/${query}`, changefreq: 'daily' as const, lastmod: yestIso },
+    { loc: `${datedLoc(`/${yestStr}`)}${query}`, changefreq: 'daily' as const, lastmod: yestIso },
+    { loc: `/sources${query}`, lastmod: sourcesLastmod },
+  ]);
 
   const fixed: SitemapUrl[] = [
-    { loc: '/', changefreq: 'daily', lastmod: yestIso },
-    {
-      loc: `/${yestStr}${HIGHLIGHTS_PATH_PREFIX}${localizeDate(yestStr)}`,
-      changefreq: 'daily',
-      lastmod: yestIso,
-    },
+    ...perList,
     { loc: '/mentions-legales', lastmod: new Date('2026-05-27').toISOString() },
     { loc: '/conditions-utilisation', lastmod: new Date('2026-05-27').toISOString() },
     { loc: '/nous-contacter',   lastmod: new Date('2023-03-02').toISOString() },
     { loc: '/nous-soutenir',    lastmod: new Date('2023-03-07').toISOString() },
-    { loc: '/sources',          lastmod: new Date('2025-03-08').toISOString() },
+    // The newsletter pages (/lettre-quotidienne…) are reachable but stay out
+    // of the sitemap until they are advertised (see nuxt.config.ts).
   ];
 
-  const dynamic: SitemapUrl[] = days()
-    .filter((d) => d !== `/${yestStr}`)
-    .map((d) => {
-      const day = new Date(d.replace('/', ''));
-      day.setTime(day.getTime() + 23 * 60 * 60 * 1000);
-      return {
-        loc: `${d}${HIGHLIGHTS_PATH_PREFIX}${localizeDate(d.replace('/', ''))}`,
-        lastmod: day.toISOString(),
-      };
-    })
-    .reverse();
+  const datedDays = days().filter((d) => d !== `/${yestStr}`);
+
+  const dated = (query: string): SitemapUrl[] =>
+    datedDays
+      .map((d) => {
+        const day = new Date(d.replace('/', ''));
+        day.setTime(day.getTime() + 23 * 60 * 60 * 1000);
+        return {
+          loc: `${datedLoc(d)}${query}`,
+          lastmod: day.toISOString(),
+        };
+      })
+      .reverse();
+
+  // Newest first within a list, the lists one after another, so a reader of the
+  // file still walks each list's archive in the order it had on its own.
+  const dynamic: SitemapUrl[] = LIST_QUERIES.flatMap((query) => dated(query));
 
   return [...fixed, ...dynamic];
 };

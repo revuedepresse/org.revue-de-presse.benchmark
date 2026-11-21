@@ -206,4 +206,32 @@ describe('truncateGraphemes (URL-append degradation budget)', () => {
   it('returns the input unchanged when it already fits the budget', () => {
     expect(truncateGraphemes('short', 100)).toBe('short');
   });
+
+  it('closes the thread with a dedicated invitation to the newsletter, its link a facet', () => {
+    const url = 'https://revue-de-presse.org/lettre-quotidienne';
+    const draft = renderThread(SAMPLE, '2026-10-24', { ...OPTS, newsletterUrl: url });
+    expect(draft.closing?.text).toBe(
+      "Pour recevoir chaque matin le top 10 des médias français par e-mail, inscrivez-vous à la lettre d'information : " + url,
+    );
+    const { byteStart, byteEnd, uri } = draft.closing!.linkRange;
+    expect(uri).toBe(url);
+    expect(Buffer.from(draft.closing!.text, 'utf8').subarray(byteStart, byteEnd).toString('utf8')).toBe(url);
+    expect(graphemeLength(draft.closing!.text)).toBeLessThanOrEqual(300);
+    expect(draft.replies).toHaveLength(3);
+  });
+
+  it('has no closing post without a newsletter URL', () => {
+    expect(renderThread(SAMPLE, '2026-10-24', OPTS).closing).toBeUndefined();
+    expect(renderThread(SAMPLE, '2026-10-24', { ...OPTS, newsletterUrl: '' }).closing).toBeUndefined();
+  });
+
+  it('gives Coop-médias its own heading and its own newsletter invitation', () => {
+    const url = 'https://revue-de-presse.org/lettre-quotidienne-coop-medias';
+    const draft = renderThread(SAMPLE, '2026-10-24', { ...OPTS, list: 'coop-medias', newsletterUrl: url });
+    expect(draft.lead.text.startsWith('Top 3 des publications des médias de Coop-médias parmi les plus relayées sur Bluesky le 24 octobre 2026 :')).toBe(true);
+    expect(draft.closing?.text).toBe(
+      "Pour recevoir chaque matin le top 10 des médias de Coop-médias par e-mail, inscrivez-vous à la lettre d'information : " + url,
+    );
+    expect(draft.closing?.linkRange.uri).toBe(url);
+  });
 });

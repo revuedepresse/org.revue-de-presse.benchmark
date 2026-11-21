@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-05-28T20:07:20.690Z",
+  "capturedAt": "2026-11-11T10:45:28.706Z",
   "viewport": {
     "width": 1280,
     "height": 800
@@ -15,9 +15,9 @@
         "x": 0,
         "y": 0,
         "width": 1280,
-        "height": 2681
+        "height": 4083
       },
-      "text": "Revue de presse\nMer. 27 Mai 2026\nMai 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n27\t",
+      "text": "Revue de presse\nMar. 10 Nov. 2026\nNovembre 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDi",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -53,7 +53,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "1280px",
-        "height": "2681px",
+        "height": "4083px",
         "maxWidth": "none",
         "minHeight": "800px",
         "boxShadow": "none"
@@ -117,9 +117,9 @@
         "x": 180,
         "y": 81,
         "width": 336,
-        "height": 1098.34375
+        "height": 1194.625
       },
-      "text": "Mer. 27 Mai 2026\nMai 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n27\t28\t29\t30\t1\t2\t3\n4",
+      "text": "Mar. 10 Nov. 2026\nNovembre 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n26\t27\t28\t29\t3",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -155,7 +155,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "336px",
-        "height": "1098.34px",
+        "height": "1194.62px",
         "maxWidth": "none",
         "minHeight": "auto",
         "boxShadow": "none"
@@ -168,9 +168,9 @@
         "x": 532,
         "y": 81,
         "width": 568,
-        "height": 2584
+        "height": 3986
       },
-      "text": "← Retour aux publications\nSources des brèves\n\nLes sources des brèves de publicat",
+      "text": "← Retour aux publications\nSources des brèves\n\nLes brèves de publications sont  t",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -206,7 +206,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "568px",
-        "height": "2584px",
+        "height": "3986px",
         "maxWidth": "none",
         "minHeight": "auto",
         "boxShadow": "none"
@@ -219,9 +219,9 @@
         "x": 180,
         "y": 81,
         "width": 336,
-        "height": 1098.34375
+        "height": 1194.625
       },
-      "text": "Mer. 27 Mai 2026\nMai 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n27\t28\t29\t30\t1\t2\t3\n4",
+      "text": "Mar. 10 Nov. 2026\nNovembre 2026\nLun.\tMar.\tMer.\tJeu.\tVen.\tSam.\tDim.\n26\t27\t28\t29\t3",
       "styles": {
         "paddingTop": "0px",
         "paddingRight": "0px",
@@ -257,7 +257,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "336px",
-        "height": "1098.34px",
+        "height": "1194.62px",
         "maxWidth": "100%",
         "minHeight": "0px",
         "boxShadow": "none"
@@ -268,9 +268,9 @@
       "found": true,
       "box": {
         "x": 180,
-        "y": 466,
+        "y": 585,
         "width": 336,
-        "height": 713.34375
+        "height": 690.625
       },
       "text": "@revue-de-presse.org\n\nRetrouver chaque jour les 10 publications médias ayant été",
       "styles": {
@@ -308,7 +308,7 @@
         "alignItems": "normal",
         "justifyContent": "normal",
         "width": "336px",
-        "height": "713.344px",
+        "height": "690.625px",
         "maxWidth": "100%",
         "minHeight": "auto",
         "boxShadow": "none"

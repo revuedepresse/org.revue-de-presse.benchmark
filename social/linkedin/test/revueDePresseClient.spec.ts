@@ -93,4 +93,22 @@ describe('revueDePresseClient', () => {
     });
     await expect(client.fetchTopTen('2026-05-20')).rejects.toBeInstanceOf(UpstreamError);
   });
+
+  it('asks for the end-of-day ranking of the given list', async () => {
+    fetchMock
+      .mockResolvedValueOnce(TOKEN_RES())
+      .mockResolvedValueOnce(HIGHLIGHTS_RES())
+      .mockResolvedValueOnce(HIGHLIGHTS_RES());
+    const client = createRevueDePresseClient({ baseUrl: 'https://api.revue-de-presse.org', clientSecret: 'sek' });
+
+    await client.fetchTopTen('2026-05-20');
+    await client.fetchTopTen('2026-05-20', 'coop-medias');
+
+    const french = new URL(fetchMock.mock.calls[1][0] as string);
+    expect(french.searchParams.get('ranking')).toBe('end-of-day');
+    expect(french.searchParams.get('list')).toBe('fr');
+    const coop = new URL(fetchMock.mock.calls[2][0] as string);
+    expect(coop.searchParams.get('ranking')).toBe('end-of-day');
+    expect(coop.searchParams.get('list')).toBe('coop-medias');
+  });
 });

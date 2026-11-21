@@ -15,6 +15,19 @@
       <Icon name="pick-day" :size="16" :decorative="true"></Icon
       ><span>{{ formatLegacyShortDay(date, locale ?? "fr-FR") }}</span>
     </button>
+    <template v-if="showFilters === true">
+      <button
+        type="button"
+        class="rdp-calendar-action-bar__filters"
+        :aria-label="
+          t('actions.pick-filters.aria-label', undefined, locale ?? 'fr-FR')
+        "
+        @click="async (event) => onFiltersClick?.()"
+      >
+        <Icon name="pick-list" :size="24" :decorative="true"></Icon>
+      </button>
+    </template>
+
     <div class="rdp-calendar-action-bar__nav">
       <button
         type="button"
@@ -60,6 +73,9 @@ type CalendarActionBarProps = {
   onPrev?: () => void;
   onNext?: () => void;
   onPillClick?: () => void;
+  // Shows a button opening the list and ranking filters (mobile dock).
+  showFilters?: boolean;
+  onFiltersClick?: () => void;
   prevDisabled?: boolean;
   nextDisabled?: boolean;
   position?: "top" | "bottom";

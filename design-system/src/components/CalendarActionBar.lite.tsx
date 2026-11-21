@@ -9,6 +9,9 @@ type CalendarActionBarProps = {
   onPrev?: () => void;
   onNext?: () => void;
   onPillClick?: () => void;
+  // Shows a button opening the list and ranking filters (mobile dock).
+  showFilters?: boolean;
+  onFiltersClick?: () => void;
   prevDisabled?: boolean;
   nextDisabled?: boolean;
   position?: 'top' | 'bottom';
@@ -28,6 +31,16 @@ export default function CalendarActionBar(props: CalendarActionBarProps) {
         <Icon name="pick-day" size={16} decorative={true} />
         <span>{formatLegacyShortDay(props.date, props.locale ?? 'fr-FR')}</span>
       </button>
+      <Show when={props.showFilters === true}>
+        <button
+          type="button"
+          class="rdp-calendar-action-bar__filters"
+          aria-label={t('actions.pick-filters.aria-label', undefined, props.locale ?? 'fr-FR')}
+          onClick={() => props.onFiltersClick?.()}
+        >
+          <Icon name="pick-list" size={24} decorative={true} />
+        </button>
+      </Show>
       <div class="rdp-calendar-action-bar__nav">
         <button
           type="button"
@@ -84,6 +97,19 @@ export default function CalendarActionBar(props: CalendarActionBarProps) {
           font-family: inherit;
           text-align: left;
           cursor: pointer;
+        }
+        .rdp-calendar-action-bar__filters {
+          width: 40px;
+          height: 40px;
+          padding: 0;
+          background: transparent;
+          color: var(--color-white);
+          border: none;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
         }
         .rdp-calendar-action-bar__nav {
           display: flex;

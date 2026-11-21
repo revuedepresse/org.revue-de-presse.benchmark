@@ -1,3 +1,7 @@
+<script setup lang="ts">
+definePageMeta({ view: 'sources' });
+</script>
+
 <template>
-  <AppShell initial-view="sources" />
+  <!-- Rendered by the shared AppShell in layouts/default.vue -->
 </template>

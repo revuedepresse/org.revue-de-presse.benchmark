@@ -30,6 +30,10 @@ export function startMockUpstream(): Promise<Server> {
       if (url.pathname === '/api/highlights' && req.method === 'GET') {
         const startDate = url.searchParams.get('startDate') ?? '2026-05-01';
         const fixture = getFixture(startDate);
+        // Tag the posts of a list other than the French media with that list,
+        // so tests can tell which list the API was asked for, even when the
+        // request was made by the server while rendering the page.
+        const list = url.searchParams.get('list');
         const hydraBody = {
           '@context': '/api/contexts/Highlight',
           '@id': '/api/highlights',
@@ -40,7 +44,7 @@ export function startMockUpstream(): Promise<Server> {
             publicationId: s.publication_id,
             screenName: s.screen_name,
             avatarUrl: s.avatar_url,
-            text: s.text,
+            text: list ? `[liste ${list}] ${s.text}` : s.text,
             reposts: s.reposts,
             likes: s.likes,
             replies: s.replies,

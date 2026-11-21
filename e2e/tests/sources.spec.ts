@@ -9,7 +9,6 @@ import { appShell } from '../support/selectors';
 const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'afp.com',                     displayName: 'Agence France-Presse' },
   { handle: 'bfmtv.com',                   displayName: 'BFMTV' },
-  { handle: 'blast-info.fr',               displayName: 'Blast le souffle de l’info' },
   { handle: 'challengesfr.bsky.social',    displayName: 'Challenges' },
   { handle: 'charliehebdo.fr',             displayName: 'Charlie Hebdo' },
   { handle: 'courrierinter.bsky.social',   displayName: 'Courrier international' },
@@ -24,7 +23,6 @@ const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'afrique.lemonde.fr',          displayName: 'Le Monde Afrique' },
   { handle: 'lepoint.fr',                  displayName: 'Le Point' },
   { handle: 'lesechosfr.bsky.social',      displayName: 'Les Echos' },
-  { handle: 'lesjours.fr',                 displayName: 'Les Jours' },
   { handle: 'liberation.fr',               displayName: 'Libération' },
   { handle: 'mediapart.fr',                displayName: 'Mediapart' },
   { handle: 'monde-diplomatique.fr',       displayName: 'Le Monde diplomatique' },
@@ -33,6 +31,23 @@ const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'pixelsfr.bsky.social',        displayName: 'Pixels | Le Monde' },
   { handle: 'rfi.fr',                      displayName: 'RFI' },
   { handle: 'telerama.bsky.social',        displayName: 'Télérama' },
+  { handle: '20minutes.bsky.social',       displayName: '20 minutes' },
+  { handle: 'artefr.bsky.social',          displayName: 'ARTE' },
+  { handle: 'contexte.com',                displayName: 'Contexte' },
+  { handle: 'factuel.afp.com',             displayName: 'AFP Factuel' },
+  { handle: 'france3npdc.bsky.social',     displayName: 'France 3 Nord Pas-de-Calais' },
+  { handle: 'franceinfo.fr',               displayName: 'franceinfo' },
+  { handle: 'franceinter.fr',              displayName: 'France Inter' },
+  { handle: 'huffingtonpost.fr',           displayName: 'Le HuffPost' },
+  { handle: 'larevuedesmedias.ina.fr',     displayName: 'La Revue des médias' },
+  { handle: 'leparisien.fr',               displayName: 'Le Parisien' },
+  { handle: 'lexpress.fr',                 displayName: 'L’Express' },
+  { handle: 'lvslmedia.bsky.social',       displayName: 'Le Vent Se Lève' },
+  { handle: 'numerama.com',                displayName: 'Numerama' },
+  { handle: 'radiofrance.fr',              displayName: 'Radio France' },
+  { handle: 'sudouest.fr',                 displayName: 'Sud Ouest' },
+  { handle: 'usbeketrica.bsky.social',     displayName: 'Usbek & Rica' },
+  { handle: 'viastella.bsky.social',       displayName: 'France 3 Corse ViaStella' },
 ];
 
 const ROSTER_BY_DISPLAY_NAME = [...ROSTER].sort((a, b) =>
@@ -52,18 +67,15 @@ test.describe('/sources', () => {
     const article = page.locator('.rdp-sources-page');
     await expect(article).toBeVisible();
     await expect(article.locator('h1')).toHaveText('Sources des brèves');
-    await expect(article.locator('p').first()).toContainText(
-      'Les sources des brèves de publications',
+    await expect(article.locator('p').first()).toHaveText(
+      'Les brèves de publications sont triées par popularité, au choix en fin de journée ou à leur première mesure. ' +
+        'Elles proviennent des comptes Bluesky de médias français.',
     );
-    await expect(article.locator('p').first()).toContainText(
-      'proviennent des comptes Bluesky de médias Français',
-    );
-    await expect(article.locator('#rdp-sources-page-footnote')).toContainText(
-      'La popularité est déduite des partages des publications depuis Bluesky.',
-    );
+    await expect(article.locator('#rdp-sources-page-footnote')).toContainText('« Fin de journée »');
+    await expect(article.locator('#rdp-sources-page-footnote')).toContainText('« Première mesure »');
   });
 
-  test('lists exactly the 26 canonical media accounts', async ({ page }) => {
+  test('lists exactly the 41 canonical media accounts', async ({ page }) => {
     const rows = page.locator('.rdp-sources-page__row');
     await expect(rows).toHaveCount(ROSTER.length);
   });
@@ -112,5 +124,34 @@ test.describe('/sources', () => {
     const anchor = page.locator('.rdp-sources-page__internal-link');
     await expect(anchor).toHaveAttribute('href', '#rdp-sources-page-footnote');
     await expect(anchor).toHaveText('triées par popularité');
+  });
+});
+
+// The sources page follows ?liste=, so each list can be read on its own. The
+// counts are asserted by the design system's own unit tests; here it is which
+// roster answers, so that a change of membership does not break this suite.
+test.describe('/sources?liste=', () => {
+  const rows = (page: import('@playwright/test').Page) => page.locator('.rdp-sources-page__row');
+  const handles = async (page: import('@playwright/test').Page) =>
+    (await rows(page).locator('.rdp-sources-page__handle').allTextContents()).map((h) => h.trim().replace(/^@/, ''));
+
+  test('coop-medias answers with the Coop-médias roster, naming coop-medias.org as its origin', async ({ page }) => {
+    await page.goto('/sources?liste=coop-medias');
+    await expect(appShell(page)).toBeVisible();
+    await rows(page).first().waitFor();
+    const listed = await handles(page);
+    expect(listed).toContain('reporterre.net');
+    expect(listed).not.toContain('lemonde.fr');
+    await expect(page.locator('.rdp-sources-page a[href="https://www.coop-medias.org/"]').first()).toBeVisible();
+  });
+
+  test('fr-coop-medias answers with both rosters at once', async ({ page }) => {
+    await page.goto('/sources?liste=fr-coop-medias');
+    await expect(appShell(page)).toBeVisible();
+    await rows(page).first().waitFor();
+    const listed = await handles(page);
+    expect(listed).toContain('lemonde.fr');
+    expect(listed).toContain('reporterre.net');
+    expect(new Set(listed).size).toBe(listed.length);
   });
 });

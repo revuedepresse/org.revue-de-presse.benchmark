@@ -1,5 +1,6 @@
 import Calendar from './Calendar.lite';
 import BannerAbout from './BannerAbout.lite';
+import SnapshotsList from './SnapshotsList.lite';
 import type { Locale } from '../utils/i18n';
 
 type ListItem = { id: string; label: string };
@@ -7,17 +8,22 @@ type ListItem = { id: string; label: string };
 type SidebarProps = {
   lists?: ListItem[];
   selectedListId?: string;
+  rankings?: ListItem[];
+  selectedRankingId?: string;
   selectedDate: Date;
   yearRange: { min: number; max: number };
   minDate?: Date;
   locale?: Locale;
   onListSelect?: (id: string) => void;
+  onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLegalNoticeClick?: () => void;
   onTermsOfServiceClick?: () => void;
   onContactClick?: () => void;
   onSupportClick?: () => void;
   onSourcesClick?: () => void;
+  onNewsletterClick?: () => void;
+  showNewsletter?: boolean;
 };
 
 export default function Sidebar(props: SidebarProps) {
@@ -30,12 +36,29 @@ export default function Sidebar(props: SidebarProps) {
         minDate={props.minDate}
         onSelect={(d: Date) => props.onDateSelect?.(d)}
       />
+      <Show when={(props.lists ?? []).length > 1}>
+        <SnapshotsList
+          items={props.lists ?? []}
+          selectedId={props.selectedListId}
+          onSelect={(id: string) => props.onListSelect?.(id)}
+        />
+      </Show>
+      <Show when={(props.rankings ?? []).length > 1}>
+        <SnapshotsList
+          items={props.rankings ?? []}
+          selectedId={props.selectedRankingId}
+          headingKey="ranking-list.heading"
+          onSelect={(id: string) => props.onRankingSelect?.(id)}
+        />
+      </Show>
       <BannerAbout
         onLegalNoticeClick={props.onLegalNoticeClick}
         onTermsOfServiceClick={props.onTermsOfServiceClick}
         onContactClick={props.onContactClick}
         onSupportClick={props.onSupportClick}
         onSourcesClick={props.onSourcesClick}
+        onNewsletterClick={props.onNewsletterClick}
+        showNewsletter={props.showNewsletter}
       />
       <style>{`
         .rdp-sidebar {

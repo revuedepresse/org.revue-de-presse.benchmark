@@ -1,3 +1,8 @@
+// The publisher lists the API ranks a top 3 for (`?list=`), one thread each.
+export type PublisherList = 'fr' | 'coop-medias';
+
+export const PUBLISHER_LISTS: readonly PublisherList[] = ['fr', 'coop-medias'];
+
 export type Highlight = {
   screenName: string;
   publicationId: string;
@@ -21,6 +26,8 @@ export type LinkRange = { byteStart: number; byteEnd: number; uri: string };
 export type ThreadDraft = {
   lead: { text: string; linkRange?: LinkRange };
   replies: Reply[];
+  // Last post of the thread, inviting readers to the newsletter.
+  closing?: { text: string; linkRange: LinkRange };
 };
 
 export type StateEntry = {
@@ -28,6 +35,9 @@ export type StateEntry = {
   threadRootUri: string;
   postedAt: string;
   publicationIds: string[];
+  // Absent from entries written before there was more than one list: those
+  // are French media threads.
+  list?: PublisherList;
 };
 
 export type StateFile = {
@@ -58,4 +68,7 @@ export type Config = {
   tz: string;
   postFooterUrl: string;
   postHashtag: string;
+  // Lists published each morning; the others are built but not posted.
+  publishLists: PublisherList[];
+  newsletterUrls: Record<PublisherList, string>;
 };

@@ -1,3 +1,7 @@
+<script setup lang="ts">
+definePageMeta({ view: 'legal' });
+</script>
+
 <template>
-  <AppShell initial-view="legal" />
+  <!-- Rendered by the shared AppShell in layouts/default.vue -->
 </template>

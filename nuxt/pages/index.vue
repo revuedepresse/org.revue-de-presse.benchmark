@@ -1,3 +1,7 @@
+<script setup lang="ts">
+definePageMeta({ view: 'main' });
+</script>
+
 <template>
-  <AppShell />
+  <!-- Rendered by the shared AppShell in layouts/default.vue -->
 </template>

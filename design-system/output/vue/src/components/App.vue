@@ -26,13 +26,18 @@
             :yearRange="yearRange"
             :minDate="minDate"
             :locale="locale"
-            :onListSelect="(id) => onListSelect?.(id)"
+            :onListSelect="(id) => selectList(id)"
+            :rankings="rankings"
+            :selectedRankingId="selectedRankingId"
+            :onRankingSelect="(id) => selectRanking(id)"
             :onDateSelect="(d) => selectFromSidebar(d)"
             :onLegalNoticeClick="(event) => goTo('legal')"
             :onTermsOfServiceClick="(event) => goTo('terms')"
             :onContactClick="(event) => goTo('contact')"
             :onSupportClick="(event) => goTo('support')"
             :onSourcesClick="(event) => goTo('sources')"
+            :onNewsletterClick="(event) => goTo('newsletter')"
+            :showNewsletter="showNewsletter"
           ></Sidebar>
         </aside>
         <main class="rdp-app__main" :aria-busy="loading ? 'true' : undefined">
@@ -50,12 +55,28 @@
             <IntroCard></IntroCard>
           </template>
 
-          <template v-if="currentView === 'main' && loading === true">
+          <template v-if="currentView === 'main' && !!noticeMessageKey">
+            <Alert variant="empty" :messageKey="noticeMessageKey"></Alert>
+          </template>
+
+          <template
+            v-if="
+              currentView === 'main' &&
+              !noticeMessageKey &&
+              loading === true &&
+              posts.length === 0
+            "
+          >
             <Spinner></Spinner>
           </template>
 
           <template
-            v-if="currentView === 'main' && !loading && posts.length === 0"
+            v-if="
+              currentView === 'main' &&
+              !noticeMessageKey &&
+              !loading &&
+              posts.length === 0
+            "
           >
             <Alert
               variant="empty"
@@ -64,9 +85,17 @@
           </template>
 
           <template
-            v-if="currentView === 'main' && !loading && posts.length > 0"
+            v-if="
+              currentView === 'main' && !noticeMessageKey && posts.length > 0
+            "
           >
-            <ol class="rdp-app__post-list">
+            <ol
+              :class="
+                loading
+                  ? 'rdp-app__post-list rdp-app__post-list--stale'
+                  : 'rdp-app__post-list'
+              "
+            >
               <template :key="index" v-for="(post, index) in posts">
                 <li class="rdp-app__post-item">
                   <BlueskyPostCard
@@ -95,7 +124,22 @@
           </template>
 
           <template v-if="currentView === 'sources'">
-            <SourcesPage></SourcesPage>
+            <SourcesPage :listId="selectedListId"></SourcesPage>
+          </template>
+
+          <template v-if="currentView === 'newsletter'">
+            <NewsletterPage
+              edition="both"
+              :action="newsletterSubscribeUrl"
+              :frenchMediaOnly="!showNewsletter"
+            ></NewsletterPage>
+          </template>
+
+          <template v-if="currentView === 'newsletter-coop-medias'">
+            <NewsletterPage
+              edition="coop-medias"
+              :action="newsletterSubscribeUrl"
+            ></NewsletterPage>
           </template>
         </main>
       </div>
@@ -120,12 +164,28 @@
           <IntroCard></IntroCard>
         </template>
 
-        <template v-if="currentView === 'main' && loading === true">
+        <template v-if="currentView === 'main' && !!noticeMessageKey">
+          <Alert variant="empty" :messageKey="noticeMessageKey"></Alert>
+        </template>
+
+        <template
+          v-if="
+            currentView === 'main' &&
+            !noticeMessageKey &&
+            loading === true &&
+            posts.length === 0
+          "
+        >
           <Spinner></Spinner>
         </template>
 
         <template
-          v-if="currentView === 'main' && !loading && posts.length === 0"
+          v-if="
+            currentView === 'main' &&
+            !noticeMessageKey &&
+            !loading &&
+            posts.length === 0
+          "
         >
           <Alert
             variant="empty"
@@ -133,8 +193,16 @@
           ></Alert>
         </template>
 
-        <template v-if="currentView === 'main' && !loading && posts.length > 0">
-          <ol class="rdp-app__post-list">
+        <template
+          v-if="currentView === 'main' && !noticeMessageKey && posts.length > 0"
+        >
+          <ol
+            :class="
+              loading
+                ? 'rdp-app__post-list rdp-app__post-list--stale'
+                : 'rdp-app__post-list'
+            "
+          >
             <template :key="index" v-for="(post, index) in posts">
               <li class="rdp-app__post-item">
                 <BlueskyPostCard
@@ -163,7 +231,22 @@
         </template>
 
         <template v-if="currentView === 'sources'">
-          <SourcesPage></SourcesPage>
+          <SourcesPage :listId="selectedListId"></SourcesPage>
+        </template>
+
+        <template v-if="currentView === 'newsletter'">
+          <NewsletterPage
+            edition="both"
+            :action="newsletterSubscribeUrl"
+            :frenchMediaOnly="!showNewsletter"
+          ></NewsletterPage>
+        </template>
+
+        <template v-if="currentView === 'newsletter-coop-medias'">
+          <NewsletterPage
+            edition="coop-medias"
+            :action="newsletterSubscribeUrl"
+          ></NewsletterPage>
         </template>
 
         <BannerAbout
@@ -172,8 +255,32 @@
           :onContactClick="(event) => goTo('contact')"
           :onSupportClick="(event) => goTo('support')"
           :onSourcesClick="(event) => goTo('sources')"
+          :onNewsletterClick="(event) => goTo('newsletter')"
+          :showNewsletter="showNewsletter"
         ></BannerAbout>
       </main>
+
+      <template v-if="isFiltersOpen">
+        <FiltersSheet
+          :lists="lists"
+          :selectedListId="selectedListId"
+          :rankings="rankings ?? []"
+          :selectedRankingId="selectedRankingId"
+          :onListSelect="
+            (id) => {
+              closeFilters();
+              selectList(id);
+            }
+          "
+          :onRankingSelect="
+            (id) => {
+              closeFilters();
+              selectRanking(id);
+            }
+          "
+          :onDismiss="(event) => closeFilters()"
+        ></FiltersSheet>
+      </template>
 
       <template v-if="isCalendarOpen">
         <Calendar
@@ -193,6 +300,8 @@
           :date="focusedDate"
           :locale="locale"
           :onPillClick="(event) => openCalendar()"
+          :showFilters="hasFilters"
+          :onFiltersClick="(event) => openFilters()"
           :onPrev="(event) => prevDay()"
           :onNext="(event) => nextDay()"
           :prevDisabled="prevDayDisabled"
@@ -206,7 +315,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import { t } from "../utils/i18n";
 import { formatLegacyShortDay } from "../utils/intl";
@@ -222,6 +331,8 @@ import TermsOfServicePage from "./TermsOfServicePage.vue";
 import ContactPage from "./ContactPage.vue";
 import SupportPage from "./SupportPage.vue";
 import SourcesPage from "./SourcesPage.vue";
+import FiltersSheet from "./FiltersSheet.vue";
+import NewsletterPage from "./NewsletterPage.vue";
 import IntroCard from "./IntroCard.vue";
 import Spinner from "./Spinner.vue";
 import type { BlueskyPost } from "./BlueskyPostCard.vue";
@@ -231,13 +342,23 @@ type SnapshotItem = {
   id: string;
   label: string;
 };
-type ViewKey = "main" | "legal" | "terms" | "contact" | "support" | "sources";
+type ViewKey =
+  | "main"
+  | "legal"
+  | "terms"
+  | "contact"
+  | "support"
+  | "sources"
+  | "newsletter"
+  | "newsletter-coop-medias";
 type AppProps = {
   layout?: "mobile" | "desktop";
   posts: BlueskyPost[];
   pickedDate: Date;
   lists: SnapshotItem[];
   selectedListId?: string;
+  rankings?: SnapshotItem[];
+  selectedRankingId?: string;
   yearRange: {
     min: number;
     max: number;
@@ -245,10 +366,17 @@ type AppProps = {
   minDate?: Date;
   loading?: boolean;
   emptyMessageKey?: string;
+  // A message shown in the main panel instead of any post (e.g. an unknown
+  // address), inside the usual header, calendar and sidebar.
+  noticeMessageKey?: string;
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
+  newsletterSubscribeUrl?: string;
+  /** The invitation to the newsletter in the footer, only shown when true (until its release). */
+  showNewsletter?: boolean;
   onListSelect?: (id: string) => void;
+  onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
@@ -257,7 +385,8 @@ type AppProps = {
 const props = defineProps<AppProps>();
 const focusedDate = ref(new Date());
 const isCalendarOpen = ref(false);
-const currentView = ref("main");
+const isFiltersOpen = ref(false);
+const currentView = ref(props.initialView ?? "main");
 const initialised = ref(false);
 
 onMounted(() => {
@@ -276,6 +405,9 @@ const popularNewsLine = computed(() => {
     },
     props.locale ?? "fr-FR"
   );
+});
+const hasFilters = computed(() => {
+  return props.lists.length > 1 || (props.rankings ?? []).length > 1;
 });
 const prevDayDisabled = computed(() => {
   if (!props.minDate) return false;
@@ -303,6 +435,22 @@ const nextDayDisabled = computed(() => {
   return cur.getTime() >= yesterday.getTime();
 });
 
+watch(
+  () => [props.initialView],
+  () => {
+    if (props.initialView) {
+      currentView.value = props.initialView;
+    }
+  },
+  { immediate: true }
+);
+watch(
+  () => [props.pickedDate],
+  () => {
+    focusedDate.value = props.pickedDate;
+  },
+  { immediate: true }
+);
 function prevDay() {
   const next = new Date(focusedDate.value);
   next.setDate(next.getDate() - 1);
@@ -325,6 +473,12 @@ function openCalendar() {
 function closeCalendar() {
   isCalendarOpen.value = false;
 }
+function openFilters() {
+  isFiltersOpen.value = true;
+}
+function closeFilters() {
+  isFiltersOpen.value = false;
+}
 function pickFromCalendar(d: Date) {
   focusedDate.value = d;
   isCalendarOpen.value = false;
@@ -341,6 +495,22 @@ function selectFromSidebar(d: Date) {
 function goTo(view: ViewKey) {
   currentView.value = view;
   props.onViewChange?.(view);
+}
+function selectList(id: string) {
+  // The sources page follows the selected list; every other page goes
+  // back to the posts of that list.
+  if (currentView.value !== "sources") {
+    currentView.value = "main";
+    props.onViewChange?.("main");
+  }
+  props.onListSelect?.(id);
+}
+function selectRanking(id: string) {
+  if (currentView.value !== "sources") {
+    currentView.value = "main";
+    props.onViewChange?.("main");
+  }
+  props.onRankingSelect?.(id);
 }
 function goHome() {
   const yesterday = new Date();

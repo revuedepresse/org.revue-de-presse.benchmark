@@ -1,7 +1,8 @@
 import { readFile, writeFile, rename } from 'node:fs/promises';
-import type { StateFile } from './types.ts';
+import type { PublisherList, StateFile } from './types.ts';
 
-const HISTORY_CAP = 30;
+// A month of posts, for each list.
+const HISTORY_CAP = 60;
 
 const EMPTY: StateFile = { lastPostedDate: null, history: [] };
 
@@ -33,9 +34,15 @@ export async function writeStateFile(path: string, state: StateFile): Promise<vo
   await rename(tmp, path);
 }
 
-export async function hasPostedFor(path: string, isoDate: string): Promise<boolean> {
+export async function hasPostedFor(
+  path: string,
+  isoDate: string,
+  list: PublisherList = 'fr',
+): Promise<boolean> {
   const state = await readStateFile(path);
-  return state?.lastPostedDate === isoDate;
+  if (!state) return false;
+  if (list === 'fr' && state.lastPostedDate === isoDate) return true;
+  return state.history.some((entry) => entry.date === isoDate && (entry.list ?? 'fr') === list);
 }
 
 export async function recordPost(
@@ -43,11 +50,13 @@ export async function recordPost(
   isoDate: string,
   postUrn: string,
   postedAt: string,
+  list: PublisherList = 'fr',
 ): Promise<void> {
   const current = (await readStateFile(path)) ?? EMPTY;
   const next: StateFile = {
-    lastPostedDate: isoDate,
-    history: [{ date: isoDate, postUrn, postedAt }, ...current.history].slice(0, HISTORY_CAP),
+    // Kept for French media only, as before lists, so a rollback still dedupes.
+    lastPostedDate: list === 'fr' ? isoDate : current.lastPostedDate,
+    history: [{ date: isoDate, postUrn, postedAt, list }, ...current.history].slice(0, HISTORY_CAP),
   };
   await writeStateFile(path, next);
 }

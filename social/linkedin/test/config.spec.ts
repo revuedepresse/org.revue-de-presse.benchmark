@@ -21,6 +21,9 @@ describe('loadConfig', () => {
     delete process.env.TZ;
     delete process.env.POST_FOOTER_URL;
     delete process.env.POST_HASHTAG;
+    delete process.env.NEWSLETTER_URL_FR;
+    delete process.env.NEWSLETTER_URL_COOP_MEDIAS;
+    delete process.env.LINKEDIN_PUBLISH_LISTS;
     delete process.env.LINKEDIN_REFRESH_TOKEN;
     delete process.env.LINKEDIN_ROTATED_REFRESH_TOKEN_FILE;
   });
@@ -50,6 +53,21 @@ describe('loadConfig', () => {
       'https://play.google.com/store/apps/details?id=org.revue_2_presse&hl=fr',
     );
     expect(cfg.postHashtag).toBe('#RevueDePresse');
+    // Coop-médias is built in but not posted until enabled.
+    expect(cfg.publishLists).toEqual(['fr']);
+    expect(cfg.newsletterUrls).toEqual({
+      fr: 'https://revue-de-presse.org/lettre-quotidienne',
+      'coop-medias': 'https://revue-de-presse.org/lettre-quotidienne-coop-medias',
+    });
+  });
+
+  it('posts the lists LINKEDIN_PUBLISH_LISTS names, refusing unknown ones', async () => {
+    Object.assign(process.env, REQUIRED, { LINKEDIN_PUBLISH_LISTS: 'fr, coop-medias' });
+    const { loadConfig, ConfigError } = await import('../src/config.ts');
+    expect(loadConfig().publishLists).toEqual(['fr', 'coop-medias']);
+    process.env.LINKEDIN_PUBLISH_LISTS = 'fr,nope';
+    expect(() => loadConfig()).toThrow(ConfigError);
+    expect(() => loadConfig()).toThrow(/LINKEDIN_PUBLISH_LISTS/);
   });
 
   it('honours overrides for optional vars', async () => {
@@ -60,6 +78,8 @@ describe('loadConfig', () => {
       TZ: 'UTC',
       POST_FOOTER_URL: 'https://example.org/digest',
       POST_HASHTAG: '#MyDigest',
+      NEWSLETTER_URL_FR: 'https://example.org/fr',
+      NEWSLETTER_URL_COOP_MEDIAS: 'https://example.org/coop',
     });
     const { loadConfig } = await import('../src/config.ts');
     const cfg = loadConfig();
@@ -69,6 +89,7 @@ describe('loadConfig', () => {
     expect(cfg.tz).toBe('UTC');
     expect(cfg.postFooterUrl).toBe('https://example.org/digest');
     expect(cfg.postHashtag).toBe('#MyDigest');
+    expect(cfg.newsletterUrls).toEqual({ fr: 'https://example.org/fr', 'coop-medias': 'https://example.org/coop' });
   });
 
   it('throws listing a single missing key', async () => {

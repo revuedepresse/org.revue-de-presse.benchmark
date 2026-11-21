@@ -42,6 +42,7 @@ describe('stateStore', () => {
       threadRootUri: 'at://did:plc:abc/app.bsky.feed.post/1',
       postedAt: '2026-05-21T05:30:15Z',
       publicationIds: ['pub-1', 'pub-2', 'pub-3'],
+      list: 'fr',
     });
   });
 
@@ -53,14 +54,14 @@ describe('stateStore', () => {
     expect(state?.history[1].publicationIds).toEqual(['a', 'b', 'c']);
   });
 
-  it('caps history at 30 entries (oldest dropped)', async () => {
-    for (let i = 0; i < 35; i += 1) {
+  it('caps history at 60 entries, a month of threads for each list (oldest dropped)', async () => {
+    for (let i = 0; i < 65; i += 1) {
       const tag = `d-${String(i).padStart(2, '0')}`;
       await recordPost(path, tag, `at://did:plc:abc/app.bsky.feed.post/${i}`, '2026-01-01T00:00:00Z', [`p-${i}-1`, `p-${i}-2`, `p-${i}-3`]);
     }
     const state = await readStateFile(path);
-    expect(state?.history).toHaveLength(30);
-    expect(state?.history[0].date).toBe('d-34');
+    expect(state?.history).toHaveLength(60);
+    expect(state?.history[0].date).toBe('d-64');
     expect(state?.history.find((e) => e.date === 'd-00')).toBeUndefined();
     expect(state?.history.find((e) => e.date === 'd-05')).toBeDefined();
   });
@@ -112,5 +113,16 @@ describe('stateStore', () => {
       expect(JSON.parse(readFileSync(rot, 'utf8'))).toEqual(state);
       expect(statSync(rot).mode & 0o777).toBe(0o600);
     });
+  });
+
+  it('keeps each list on its own: last ids and history entries per list', async () => {
+    await recordPost(path, '2026-10-24', 'at://fr', 't1', ['a', 'b', 'c']);
+    await recordPost(path, '2026-10-24', 'at://coop', 't2', ['x', 'y', 'z'], 'coop-medias');
+    expect(await previousPublicationIds(path)).toEqual(['a', 'b', 'c']);
+    expect(await previousPublicationIds(path, 'fr')).toEqual(['a', 'b', 'c']);
+    expect(await previousPublicationIds(path, 'coop-medias')).toEqual(['x', 'y', 'z']);
+    const state = await readStateFile(path);
+    expect(state?.history[0].list).toBe('coop-medias');
+    expect(state?.lastPostedDate).toBe('2026-10-24');
   });
 });

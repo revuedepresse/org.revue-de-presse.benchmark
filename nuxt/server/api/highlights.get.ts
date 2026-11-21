@@ -31,12 +31,34 @@ type HydraCollection<T> = {
   member?: T[];
 };
 
+// Publisher lists the API ranks into a daily top 10. `fr` is the API default,
+// so it is never forwarded: that keeps this proxy compatible with API releases
+// that predate the `list` parameter. `fr-coop-medias` ranks the members of
+// either list together, each post once.
+const PUBLISHER_LISTS = ['fr', 'coop-medias', 'fr-coop-medias'];
+
+// Rankings the API serves. Forwarded only when asked for, so that the API's
+// configured default applies otherwise.
+const RANKINGS = ['first-sighting', 'end-of-day'];
+
 export default defineEventHandler(async (event) => {
-  const { startDate, endDate } = getQuery(event) as Record<string, string | undefined>;
+  const { startDate, endDate, list, ranking } = getQuery(event) as Record<string, string | undefined>;
   if (!startDate || !endDate) {
     throw createError({
       statusCode: 400,
       statusMessage: 'startDate and endDate query params are required',
+    });
+  }
+  if (ranking !== undefined && !RANKINGS.includes(ranking)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `ranking must be one of ${RANKINGS.join(', ')}`,
+    });
+  }
+  if (list !== undefined && !PUBLISHER_LISTS.includes(list)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `list must be one of ${PUBLISHER_LISTS.join(', ')}`,
     });
   }
 
@@ -56,6 +78,14 @@ export default defineEventHandler(async (event) => {
   url.searchParams.set('startDate', startDate);
   url.searchParams.set('endDate', endDate);
   url.searchParams.set('itemsPerPage', '10');
+  // The French media are what the API ranks without being asked, so only the
+  // other lists are named.
+  if (list !== undefined && list !== 'fr') {
+    url.searchParams.set('list', list);
+  }
+  if (ranking !== undefined) {
+    url.searchParams.set('ranking', ranking);
+  }
 
   const callOnce = async (token: string) =>
     $fetch<HydraCollection<HydraHighlight>>(url.toString(), {

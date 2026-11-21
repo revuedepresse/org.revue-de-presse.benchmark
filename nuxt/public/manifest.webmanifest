@@ -25,5 +25,19 @@
       "type": "image/png",
       "purpose": "monochrome"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Médias français",
+      "short_name": "Français",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/revue-de-presse_96x96_006663.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
   ]
 }

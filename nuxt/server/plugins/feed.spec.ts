@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  buildUpstreamUrl,
   mapStatusToFeedItem,
   shrinkBlueskyAvatar,
   linkifyForFeed,
@@ -295,5 +296,31 @@ describe('linkifyForFeed', () => {
 
   it('returns the empty string for empty input', () => {
     expect(linkifyForFeed('')).toBe('');
+  });
+});
+
+describe('buildUpstreamUrl', () => {
+  const API = 'https://api.example.org';
+
+  it('asks for the day, and names no list for the French media', () => {
+    const url = buildUpstreamUrl(API, '2026-11-14', 'fr');
+
+    expect(url.pathname).toBe('/api/highlights');
+    expect(url.searchParams.get('startDate')).toBe('2026-11-14');
+    expect(url.searchParams.get('endDate')).toBe('2026-11-14');
+    // The feed keeps the legacy reposts-and-media parameters of /feed.xml.
+    expect(url.searchParams.get('distinctSources')).toBe('1');
+    expect(url.searchParams.get('includeRetweets')).toBe('1');
+    expect(url.searchParams.get('excludeMedia')).toBe('0');
+    expect(url.searchParams.has('list')).toBe(false);
+  });
+
+  it('names the list for the other feeds', () => {
+    expect(buildUpstreamUrl(API, '2026-11-14', 'coop-medias').searchParams.get('list')).toBe(
+      'coop-medias',
+    );
+    expect(buildUpstreamUrl(API, '2026-11-14', 'fr-coop-medias').searchParams.get('list')).toBe(
+      'fr-coop-medias',
+    );
   });
 });

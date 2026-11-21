@@ -100,6 +100,7 @@
 </template>
 
 <script setup lang="ts">
+import { displayUrl } from "../utils/display-url";
 import { computed } from "vue";
 
 import { t } from "../utils/i18n";
@@ -146,6 +147,7 @@ const publicationUrl = computed(() => {
     `https://bsky.app/profile/${props.post.authorHandle}`
   );
 });
+
 const bodySegments = computed(() => {
   const text = props.post.body ?? "";
   const out: Segment[] = [];
@@ -182,7 +184,7 @@ const bodySegments = computed(() => {
       const trailing = matched.length - trimmed.length;
       out.push({
         kind: "url",
-        value: trimmed,
+        value: displayUrl(trimmed),
         href: trimmed,
       });
       if (trailing > 0) {
@@ -197,7 +199,7 @@ const bodySegments = computed(() => {
       const trailing = matched.length - trimmed.length;
       out.push({
         kind: "url",
-        value: trimmed,
+        value: displayUrl(trimmed),
         href: `https://${trimmed}`,
       });
       if (trailing > 0) {

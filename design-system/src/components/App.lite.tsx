@@ -1,4 +1,4 @@
-import { onMount, useStore } from '@builder.io/mitosis';
+import { onMount, onUpdate, useStore } from '@builder.io/mitosis';
 import { t } from '../utils/i18n';
 import { formatLegacyShortDay } from '../utils/intl';
 import AppHeader from './AppHeader.lite';
@@ -13,6 +13,8 @@ import TermsOfServicePage from './TermsOfServicePage.lite';
 import ContactPage from './ContactPage.lite';
 import SupportPage from './SupportPage.lite';
 import SourcesPage from './SourcesPage.lite';
+import FiltersSheet from './FiltersSheet.lite';
+import NewsletterPage from './NewsletterPage.lite';
 import IntroCard from './IntroCard.lite';
 import Spinner from './Spinner.lite';
 import type { BlueskyPost } from './BlueskyPostCard.lite';
@@ -20,7 +22,15 @@ import type { Locale } from '../utils/i18n';
 
 type SnapshotItem = { id: string; label: string };
 
-type ViewKey = 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources';
+type ViewKey =
+  | 'main'
+  | 'legal'
+  | 'terms'
+  | 'contact'
+  | 'support'
+  | 'sources'
+  | 'newsletter'
+  | 'newsletter-coop-medias';
 
 type AppProps = {
   layout?: 'mobile' | 'desktop';
@@ -28,14 +38,23 @@ type AppProps = {
   pickedDate: Date;
   lists: SnapshotItem[];
   selectedListId?: string;
+  rankings?: SnapshotItem[];
+  selectedRankingId?: string;
   yearRange: { min: number; max: number };
   minDate?: Date;
   loading?: boolean;
   emptyMessageKey?: string;
+  // A message shown in the main panel instead of any post (e.g. an unknown
+  // address), inside the usual header, calendar and sidebar.
+  noticeMessageKey?: string;
   showPopularNews?: boolean;
   locale?: Locale;
   initialView?: ViewKey;
+  newsletterSubscribeUrl?: string;
+  /** The invitation to the newsletter in the footer, only shown when true (until its release). */
+  showNewsletter?: boolean;
   onListSelect?: (id: string) => void;
+  onRankingSelect?: (id: string) => void;
   onDateSelect?: (date: Date) => void;
   onLogoClick?: () => void;
   onViewChange?: (view: ViewKey) => void;
@@ -45,7 +64,10 @@ export default function App(props: AppProps) {
   const state = useStore({
     focusedDate: new Date(),
     isCalendarOpen: false,
-    currentView: 'main' as 'main' | 'legal' | 'terms' | 'contact' | 'support' | 'sources',
+    isFiltersOpen: false,
+    // Seeded from the prop (not only in onMount) so server-rendered HTML
+    // already shows the requested view instead of flashing the home view.
+    currentView: (props.initialView ?? 'main') as ViewKey,
     initialised: false,
     get popularNewsLine(): string {
       return t(
@@ -76,6 +98,15 @@ export default function App(props: AppProps) {
     closeCalendar() {
       state.isCalendarOpen = false;
     },
+    openFilters() {
+      state.isFiltersOpen = true;
+    },
+    closeFilters() {
+      state.isFiltersOpen = false;
+    },
+    get hasFilters(): boolean {
+      return props.lists.length > 1 || (props.rankings ?? []).length > 1;
+    },
     pickFromCalendar(d: Date) {
       state.focusedDate = d;
       state.isCalendarOpen = false;
@@ -92,6 +123,22 @@ export default function App(props: AppProps) {
     goTo(view: ViewKey) {
       state.currentView = view;
       props.onViewChange?.(view);
+    },
+    selectList(id: string) {
+      // The sources page follows the selected list; every other page goes
+      // back to the posts of that list.
+      if (state.currentView !== 'sources') {
+        state.currentView = 'main';
+        props.onViewChange?.('main');
+      }
+      props.onListSelect?.(id);
+    },
+    selectRanking(id: string) {
+      if (state.currentView !== 'sources') {
+        state.currentView = 'main';
+        props.onViewChange?.('main');
+      }
+      props.onRankingSelect?.(id);
     },
     goHome() {
       const yesterday = new Date();
@@ -130,6 +177,19 @@ export default function App(props: AppProps) {
     },
   });
 
+  // The shell stays mounted across routes (Nuxt layout), so follow the
+  // route-driven props instead of reading them once: browser back/forward
+  // and direct links switch the view without remounting the app.
+  onUpdate(() => {
+    if (props.initialView) {
+      state.currentView = props.initialView;
+    }
+  }, [props.initialView]);
+
+  onUpdate(() => {
+    state.focusedDate = props.pickedDate;
+  }, [props.pickedDate]);
+
   onMount(() => {
     state.focusedDate = props.pickedDate;
     if (props.initialView) {
@@ -163,13 +223,18 @@ export default function App(props: AppProps) {
               yearRange={props.yearRange}
               minDate={props.minDate}
               locale={props.locale}
-              onListSelect={(id: string) => props.onListSelect?.(id)}
+              onListSelect={(id: string) => state.selectList(id)}
+              rankings={props.rankings}
+              selectedRankingId={props.selectedRankingId}
+              onRankingSelect={(id: string) => state.selectRanking(id)}
               onDateSelect={(d: Date) => state.selectFromSidebar(d)}
               onLegalNoticeClick={() => state.goTo('legal')}
               onTermsOfServiceClick={() => state.goTo('terms')}
               onContactClick={() => state.goTo('contact')}
               onSupportClick={() => state.goTo('support')}
               onSourcesClick={() => state.goTo('sources')}
+              onNewsletterClick={() => state.goTo('newsletter')}
+              showNewsletter={props.showNewsletter}
             />
           </aside>
 
@@ -186,17 +251,20 @@ export default function App(props: AppProps) {
             <Show when={state.currentView === 'main'}>
               <IntroCard />
             </Show>
-            <Show when={state.currentView === 'main' && props.loading === true}>
+            <Show when={state.currentView === 'main' && !!props.noticeMessageKey}>
+              <Alert variant="empty" messageKey={props.noticeMessageKey} />
+            </Show>
+            <Show when={state.currentView === 'main' && !props.noticeMessageKey && props.loading === true && props.posts.length === 0}>
               <Spinner />
             </Show>
-            <Show when={state.currentView === 'main' && !props.loading && props.posts.length === 0}>
+            <Show when={state.currentView === 'main' && !props.noticeMessageKey && !props.loading && props.posts.length === 0}>
               <Alert
                 variant="empty"
                 messageKey={props.emptyMessageKey ?? 'alert.empty.no-content-for-date'}
               />
             </Show>
-            <Show when={state.currentView === 'main' && !props.loading && props.posts.length > 0}>
-              <ol class="rdp-app__post-list">
+            <Show when={state.currentView === 'main' && !props.noticeMessageKey && props.posts.length > 0}>
+              <ol class={props.loading ? 'rdp-app__post-list rdp-app__post-list--stale' : 'rdp-app__post-list'}>
                 <For each={props.posts}>
                   {(post) => (
                     <li class="rdp-app__post-item">
@@ -219,7 +287,20 @@ export default function App(props: AppProps) {
               <SupportPage />
             </Show>
             <Show when={state.currentView === 'sources'}>
-              <SourcesPage />
+              <SourcesPage listId={props.selectedListId} />
+            </Show>
+            <Show when={state.currentView === 'newsletter'}>
+              <NewsletterPage
+                edition="both"
+                action={props.newsletterSubscribeUrl}
+                frenchMediaOnly={!props.showNewsletter}
+              />
+            </Show>
+            <Show when={state.currentView === 'newsletter-coop-medias'}>
+              <NewsletterPage
+                edition="coop-medias"
+                action={props.newsletterSubscribeUrl}
+              />
             </Show>
           </main>
         </div>
@@ -239,17 +320,20 @@ export default function App(props: AppProps) {
           <Show when={state.currentView === 'main'}>
             <IntroCard />
           </Show>
-          <Show when={state.currentView === 'main' && props.loading === true}>
+          <Show when={state.currentView === 'main' && !!props.noticeMessageKey}>
+            <Alert variant="empty" messageKey={props.noticeMessageKey} />
+          </Show>
+          <Show when={state.currentView === 'main' && !props.noticeMessageKey && props.loading === true && props.posts.length === 0}>
             <Spinner />
           </Show>
-          <Show when={state.currentView === 'main' && !props.loading && props.posts.length === 0}>
+          <Show when={state.currentView === 'main' && !props.noticeMessageKey && !props.loading && props.posts.length === 0}>
             <Alert
               variant="empty"
               messageKey={props.emptyMessageKey ?? 'alert.empty.no-content-for-date'}
             />
           </Show>
-          <Show when={state.currentView === 'main' && !props.loading && props.posts.length > 0}>
-            <ol class="rdp-app__post-list">
+          <Show when={state.currentView === 'main' && !props.noticeMessageKey && props.posts.length > 0}>
+            <ol class={props.loading ? 'rdp-app__post-list rdp-app__post-list--stale' : 'rdp-app__post-list'}>
               <For each={props.posts}>
                 {(post) => (
                   <li class="rdp-app__post-item">
@@ -272,7 +356,20 @@ export default function App(props: AppProps) {
             <SupportPage />
           </Show>
           <Show when={state.currentView === 'sources'}>
-            <SourcesPage />
+            <SourcesPage listId={props.selectedListId} />
+          </Show>
+          <Show when={state.currentView === 'newsletter'}>
+            <NewsletterPage
+              edition="both"
+              action={props.newsletterSubscribeUrl}
+              frenchMediaOnly={!props.showNewsletter}
+            />
+          </Show>
+          <Show when={state.currentView === 'newsletter-coop-medias'}>
+            <NewsletterPage
+              edition="coop-medias"
+              action={props.newsletterSubscribeUrl}
+            />
           </Show>
           <BannerAbout
             onLegalNoticeClick={() => state.goTo('legal')}
@@ -280,8 +377,27 @@ export default function App(props: AppProps) {
             onContactClick={() => state.goTo('contact')}
             onSupportClick={() => state.goTo('support')}
             onSourcesClick={() => state.goTo('sources')}
+            onNewsletterClick={() => state.goTo('newsletter')}
+            showNewsletter={props.showNewsletter}
           />
         </main>
+        <Show when={state.isFiltersOpen}>
+          <FiltersSheet
+            lists={props.lists}
+            selectedListId={props.selectedListId}
+            rankings={props.rankings ?? []}
+            selectedRankingId={props.selectedRankingId}
+            onListSelect={(id: string) => {
+              state.closeFilters();
+              state.selectList(id);
+            }}
+            onRankingSelect={(id: string) => {
+              state.closeFilters();
+              state.selectRanking(id);
+            }}
+            onDismiss={() => state.closeFilters()}
+          />
+        </Show>
         <Show when={state.isCalendarOpen}>
           <Calendar
             selectedDate={state.focusedDate}
@@ -299,6 +415,8 @@ export default function App(props: AppProps) {
             locale={props.locale}
             position="bottom"
             onPillClick={() => state.openCalendar()}
+            showFilters={state.hasFilters}
+            onFiltersClick={() => state.openFilters()}
             onPrev={() => state.prevDay()}
             onNext={() => state.nextDay()}
             prevDisabled={state.prevDayDisabled}
@@ -383,6 +501,9 @@ export default function App(props: AppProps) {
           padding: var(--separation-2);
           padding-bottom: calc(64px + var(--separation-2));
         }
+        /* Previous day's posts stay in place (dimmed) while the next day loads,
+           instead of being swapped for a spinner and back. */
+        .rdp-app__post-list--stale { opacity: 0.55; transition: opacity 120ms ease-in; }
         .rdp-app__post-list {
           list-style: none;
           margin: 0;
@@ -439,6 +560,22 @@ export default function App(props: AppProps) {
           width: 100%;
           max-width: 480px;
           padding-bottom: var(--rdp-mobile-dock-height);
+        }
+        .rdp-app--mobile .rdp-filters-sheet {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          padding-bottom: var(--rdp-mobile-dock-height);
+        }
+        .rdp-app--mobile .rdp-filters-sheet__scrim {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 480px;
+          bottom: var(--rdp-mobile-dock-height);
         }
         .rdp-app--mobile .rdp-calendar__scrim {
           left: 50%;

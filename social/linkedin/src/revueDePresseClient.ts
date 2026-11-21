@@ -1,4 +1,4 @@
-import type { Highlight } from './types.ts';
+import type { Highlight, PublisherList } from './types.ts';
 
 export class UpstreamError extends Error {
   constructor(public readonly statusCode: number, message: string) {
@@ -25,7 +25,7 @@ type HydraCollection = {
 };
 
 export type RevueDePresseClient = {
-  fetchTopTen: (isoDate: string) => Promise<Highlight[]>;
+  fetchTopTen: (isoDate: string, list?: PublisherList) => Promise<Highlight[]>;
 };
 
 export function createRevueDePresseClient(opts: {
@@ -61,8 +61,12 @@ export function createRevueDePresseClient(opts: {
     return mintToken();
   }
 
-  async function callHighlights(token: string, isoDate: string): Promise<Response> {
+  async function callHighlights(token: string, isoDate: string, list: PublisherList): Promise<Response> {
     const url = new URL('/api/highlights', opts.baseUrl);
+    url.searchParams.set('list', list);
+    // Counts as they stood at the end of the day, not when each post was
+    // first fetched. Yesterday's end-of-day snapshot is written at ~22:15.
+    url.searchParams.set('ranking', 'end-of-day');
     url.searchParams.set('distinctSources', '1');
     url.searchParams.set('includeRetweets', '0');
     url.searchParams.set('excludeMedia', '1');
@@ -86,10 +90,10 @@ export function createRevueDePresseClient(opts: {
   }
 
   return {
-    async fetchTopTen(isoDate: string): Promise<Highlight[]> {
-      let res = await callHighlights(await getToken(), isoDate);
+    async fetchTopTen(isoDate: string, list: PublisherList = 'fr'): Promise<Highlight[]> {
+      let res = await callHighlights(await getToken(), isoDate, list);
       if (res.status === 401) {
-        res = await callHighlights(await getToken(true), isoDate);
+        res = await callHighlights(await getToken(true), isoDate, list);
       }
       if (!res.ok) {
         throw new UpstreamError(res.status, `Highlights fetch failed: ${res.status}`);
