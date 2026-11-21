@@ -6,7 +6,8 @@ describe('sources of each publisher list', () => {
     const fr = sourcesOf(undefined);
     expect(fr.list).toBe('fr');
     expect(fr.roster.map((r) => r.handle)).toContain('lemonde.fr');
-    expect(fr.roster).toHaveLength(41);
+    expect(fr.roster.map((r) => r.handle)).toContain('arretsurimages.net');
+    expect(fr.roster).toHaveLength(42);
   });
 
   it('keeps the French media and Coop-médias lists disjoint', () => {

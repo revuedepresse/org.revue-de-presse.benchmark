@@ -21,6 +21,7 @@ export type Sources = {
 // this list and COOP_MEDIAS: the two lists are disjoint.
 const FRENCH_MEDIA: SourceRow[] = [
   { handle: 'afp.com', displayName: 'Agence France-Presse', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:ffccycfh6c6pmxwkhvq5clkv/bafkreiadcsh7hzzurk5joh7bhxxlyqlvr26mg25f6dnozuwhsz72jz2cme' },
+  { handle: 'arretsurimages.net', displayName: 'Arrêt sur images', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:jmusvarqn5czqikhnqdmjyum/bafkreibbltn4p7fij7ssdpqyjjpgbl6c47hc45xduecvf5dtszl4ltsbqe' },
   { handle: 'bfmtv.com', displayName: 'BFMTV', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:wb4ovhhcrif6cp66oe2pqx7i/bafkreic3fjfw4c2hbqailogxb2nusnspddwczt5bhyib3enp5qxl5bslla' },
   { handle: 'challengesfr.bsky.social', displayName: 'Challenges', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:56yk6cagxatjj2k4eh5cobpo/bafkreiav6xfv33jsusr7jkuukpzwwdoolsrmbmpjjtjgyrulh7zxffeuxa' },
   { handle: 'charliehebdo.fr', displayName: 'Charlie Hebdo', avatar: 'https://cdn.bsky.app/img/avatar/plain/did:plc:vm2tsoixg7vsygrolxd4rrho/bafkreibtzaftgx54wwclo7ocd6skgozsbx7jq5m7vyetmkpubyijdhzgf4' },
