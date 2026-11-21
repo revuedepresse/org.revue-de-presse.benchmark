@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "linkifyjs": "^4.4.0",
-    "nuxt": "^3.21.11",
+    "nuxt": "^4.6.4",
     "pino": "^10.4.0",
     "vue": "^3.5.45",
     "vue-router": "^4.6.5"
