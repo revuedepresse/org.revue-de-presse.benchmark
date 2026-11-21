@@ -2,7 +2,7 @@
 # lives here — keep it the single source of truth or the two majors resolve
 # different trees and fight over the lockfile.
 overrides:
-  vite: ^7.0.0
+  vite: ^8.0.0
   esbuild: ^0.25.0
   tar: ^7.5.11
   # Dependabot advisories on transitive packages; each floor is the first
