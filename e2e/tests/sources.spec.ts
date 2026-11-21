@@ -8,6 +8,7 @@ import { appShell } from '../support/selectors';
 // here points the reader at the right file to update.
 const ROSTER: { handle: string; displayName: string }[] = [
   { handle: 'afp.com',                     displayName: 'Agence France-Presse' },
+  { handle: 'arretsurimages.net',          displayName: 'Arrêt sur images' },
   { handle: 'bfmtv.com',                   displayName: 'BFMTV' },
   { handle: 'challengesfr.bsky.social',    displayName: 'Challenges' },
   { handle: 'charliehebdo.fr',             displayName: 'Charlie Hebdo' },
